@@ -151,8 +151,9 @@
     }
 
     /* ===== オーバーレイ ===== */
-    .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
-    .overlay-screen.active { display: flex; }
+    .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 1s ease; }
+    .overlay-screen.active { display: flex; opacity: 1; }
+    .overlay-screen.fade-out { opacity: 0; }
     #jumpscare-screen { background: #000; }
     #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: shake 0.3s infinite; }
     @keyframes shake { 0%{transform:translate(0,0) scale(1.05)} 25%{transform:translate(-5px,3px) scale(1.08)} 50%{transform:translate(4px,-4px) scale(1.05)} 75%{transform:translate(-3px,5px) scale(1.07)} 100%{transform:translate(5px,-2px) scale(1.05)} }
@@ -1019,11 +1020,11 @@ function retryGame() {
   $('title-text').textContent = 'NIGHT 4';
   $('start-sub').style.animation = 'none'; $('start-sub').style.opacity = '1';
   $('start-screen').classList.remove('fade-out','hidden');
+  $('start-screen').style.opacity = '1';
   $('start-screen').classList.add('active');
   setTimeout(function(){
-    $('start-screen').classList.remove('active');
-    $('start-screen').classList.add('hidden');
-    startGame();
+    $('start-screen').classList.add('fade-out');
+    setTimeout(function(){ $('start-screen').classList.remove('active','fade-out'); $('start-screen').classList.add('hidden'); startGame(); }, 1000);
   }, 2000);
 
   // 状態リセット
@@ -1128,7 +1129,7 @@ $('briefing-start-btn').addEventListener('click', () => {
   var i = 0;
   setTimeout(function typeTitle(){
     if(i < text.length){ titleEl.textContent += text[i]; i++; setTimeout(typeTitle, 150); }
-    else { setTimeout(function(){ $('start-screen').classList.remove('active'); $('start-screen').classList.add('hidden'); startGame(); }, 1500); }
+    else { setTimeout(function(){ $('start-screen').classList.add('fade-out'); setTimeout(function(){ $('start-screen').classList.remove('active','fade-out'); $('start-screen').classList.add('hidden'); startGame(); }, 1000); }, 1500); }
   }, 400);
 });
 $('retry-btn').addEventListener('click', retryGame);
