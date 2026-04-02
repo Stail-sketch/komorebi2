@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html" class="active">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>お問い合わせ</h1>
+    <p class="hero-subtitle">情報提供・ご連絡はこちらから</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">情報提供フォーム</h2>
+      <div class="card">
+        <p style="margin-bottom: 24px;">「木漏れ日遊園地」に関する情報をお持ちの方は、以下のフォームよりご連絡ください。いただいた情報は番組制作にのみ使用いたします。</p>
+
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="contact-name">お名前（任意）</label>
+            <input type="text" id="contact-name" placeholder="山田 太郎">
+          </div>
+          <div class="form-group">
+            <label for="contact-category">お問い合わせの種類</label>
+            <select id="contact-category">
+              <option value="">選択してください</option>
+              <option value="impression">番組の感想</option>
+              <option value="info">情報提供</option>
+              <option value="cooperation">取材協力について</option>
+              <option value="error">サイト内容の誤りを報告する</option>
+              <option value="other">その他</option>
+            </select>
+          </div>
+          <div class="form-group" id="error-detail-group" style="display:none;">
+            <label for="contact-error">誤りの内容を具体的にご記載ください</label>
+            <textarea id="contact-error" placeholder="例：○○ページに記載されている△△が間違っています"></textarea>
+          </div>
+          <div class="form-group" id="normal-body-group">
+            <label for="contact-body">お問い合わせ内容</label>
+            <textarea id="contact-body" placeholder="情報提供の内容をご記入ください"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">送信する</button>
+        </form>
+
+        <div id="error-progress" style="display:none;margin-top:16px;padding:12px;background:var(--color-gray-50);border-radius:6px;font-size:0.85rem;color:var(--color-gray-700);">
+          <p>報告された誤り：<span id="error-count">0</span>/3</p>
+        </div>
+
+        <p id="form-result" style="margin-top: 16px; display: none;"></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">ご注意</h2>
+      <div class="card">
+        <p style="font-size: 0.85rem; color: var(--color-gray-500);">ご提供いただいた個人情報は、番組制作および調査目的にのみ使用し、第三者への提供は行いません。回答にお時間をいただく場合がございます。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+(function(){
+  var category = document.getElementById('contact-category');
+  var errorGroup = document.getElementById('error-detail-group');
+  var normalGroup = document.getElementById('normal-body-group');
+  var errorProgress = document.getElementById('error-progress');
+  var errorCount = document.getElementById('error-count');
+  var form = document.getElementById('contact-form');
+  var result = document.getElementById('form-result');
+
+  // Night1クリア済みかつNight2未クリアの場合のみ誤り報告パズルが有効
+  var puzzleActive = localStorage.getItem('night1_clear') === 'true' && localStorage.getItem('night2_clear') !== 'true';
+
+  // 既に見つけた誤り
+  var foundErrors = JSON.parse(localStorage.getItem('contact_errors') || '[]');
+
+  function updateProgress(){
+    if(puzzleActive && foundErrors.length > 0){
+      errorProgress.style.display = 'block';
+      errorCount.textContent = foundErrors.length;
+    }
+  }
+  updateProgress();
+
+  // カテゴリ変更時
+  category.addEventListener('change', function(){
+    if(category.value === 'error'){
+      errorGroup.style.display = 'block';
+      normalGroup.style.display = 'none';
+      if(puzzleActive) errorProgress.style.display = 'block';
+    } else {
+      errorGroup.style.display = 'none';
+      normalGroup.style.display = 'block';
+      if(!puzzleActive || foundErrors.length === 0) errorProgress.style.display = 'none';
+    }
+  });
+
+  // 誤りキーワード定義
+  var errorKeywords = [
+    { id: 'year', keywords: ['1998'], response: null },
+    { id: 'count', keywords: ['320'], response: null },
+    { id: 'song', keywords: ['ソング'], response: null }
+  ];
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    // 誤り報告モード
+    if(category.value === 'error' && puzzleActive){
+      var errorText = document.getElementById('contact-error').value.trim();
+      if(!errorText){
+        result.style.display = 'block';
+        result.style.color = '#c00';
+        result.textContent = '誤りの内容をご記載ください。';
+        return;
+      }
+
+      var matched = false;
+      for(var i = 0; i < errorKeywords.length; i++){
+        var err = errorKeywords[i];
+        if(foundErrors.indexOf(err.id) !== -1) continue;
+        for(var j = 0; j < err.keywords.length; j++){
+          if(errorText.indexOf(err.keywords[j]) !== -1){
+            foundErrors.push(err.id);
+            localStorage.setItem('contact_errors', JSON.stringify(foundErrors));
+
+            // 件数に応じた返答
+            var responses = [
+              '※ ご指摘ありがとうございます。該当箇所を確認いたします。他にもお気づきの点はございませんか？',
+              '※ 2件目の誤りを確認いたしました。まだ確認が必要な箇所があるようです。引き続きご報告をお待ちしております。',
+              ''
+            ];
+            result.style.display = 'block';
+            result.style.color = 'var(--color-accent-dark)';
+            result.textContent = responses[foundErrors.length - 1] || '';
+            document.getElementById('contact-error').value = '';
+            updateProgress();
+            matched = true;
+            break;
+          }
+        }
+        if(matched) break;
+      }
+
+      if(!matched){
+        result.style.display = 'block';
+        result.style.color = 'var(--color-gray-500)';
+        result.textContent = '※ ご報告ありがとうございます。こちらでは誤りを確認できませんでした。具体的な数字や名称をご記載ください。';
+      }
+
+      // 3つ揃ったらNight2へ
+      if(foundErrors.length >= 3){
+        setTimeout(function(){
+          result.textContent = '';
+          errorProgress.innerHTML = '<p style="color:#c00;font-weight:bold;">3件の誤りが確認されました。調査を開始します…</p>';
+
+          setTimeout(function(){
+            // グリッチ演出
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;';
+            document.body.appendChild(overlay);
+            var flicks = 0;
+            var flickInterval = setInterval(function(){
+              overlay.style.background = flicks % 2 === 0 ? 'rgba(0,0,0,0.85)' : 'transparent';
+              flicks++;
+              if(flicks >= 6){
+                clearInterval(flickInterval);
+                overlay.style.background = 'rgba(0,0,0,1)';
+                setTimeout(function(){ window.location.href = '../night2/'; }, 400);
+              }
+            }, 100);
+          }, 2000);
+        }, 1000);
+      }
+      return;
+    }
+
+    // 通常送信
+    result.style.display = 'block';
+    result.style.color = 'var(--color-accent-dark)';
+    result.textContent = 'お問い合わせを受け付けました。ご協力ありがとうございます。';
+  });
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ending B - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{
+    width:100%;height:100%;
+    background:#000;
+    overflow:hidden;
+    font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN','MS PMincho',serif;
+  }
+  #screen{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;
+    z-index:1;
+  }
+
+  /* Terminal log (黒幕) */
+  .terminal-line{
+    color:#00ff41;
+    font-family:'Courier New',Consolas,monospace;
+    font-size:clamp(14px,2.2vw,20px);
+    text-align:left;
+    opacity:0;
+    white-space:pre;
+    text-shadow:0 0 8px rgba(0,255,65,0.4);
+    letter-spacing:0.08em;
+    line-height:1.8;
+    transition:opacity 0.3s ease;
+  }
+  .terminal-line.visible{opacity:1;}
+
+  #terminal-container{
+    width:80%;
+    max-width:700px;
+    max-height:80vh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    gap:0.2em;
+  }
+
+  /* 吉田一郎 text */
+  .yoshida-text{
+    color:#e0e0e0;
+    font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN',serif;
+    font-size:clamp(18px,3vw,28px);
+    text-align:center;
+    opacity:0;
+    position:absolute;
+    letter-spacing:0.15em;
+    line-height:2.2;
+    transition:opacity 1.5s ease;
+  }
+  .yoshida-text.visible{opacity:1;}
+
+  /* 予定通りです callback */
+  #yotei{
+    position:absolute;
+    color:#00ff41;
+    font-family:'Courier New',monospace;
+    font-size:clamp(24px,5vw,48px);
+    letter-spacing:0.35em;
+    text-align:center;
+    opacity:0;
+    text-shadow:0 0 10px rgba(0,255,65,0.4);
+  }
+  @keyframes slow-pulse{
+    0%,100%{opacity:0.85;text-shadow:0 0 10px rgba(0,255,65,0.4);}
+    50%{opacity:1;text-shadow:0 0 20px rgba(0,255,65,0.7),0 0 40px rgba(0,255,65,0.3);}
+  }
+  #yotei.pulsing{
+    animation:slow-pulse 4s ease-in-out infinite;
+  }
+
+  /* Glitch effects */
+  @keyframes glitch-skew{
+    0%{transform:skew(0deg);}
+    20%{transform:skew(-3deg);}
+    40%{transform:skew(5deg);}
+    60%{transform:skew(-1deg);}
+    80%{transform:skew(3deg);}
+    100%{transform:skew(0deg);}
+  }
+  @keyframes scanline{
+    0%{background-position:0 0;}
+    100%{background-position:0 100vh;}
+  }
+  .screen-corrupt{
+    animation:glitch-skew 0.1s linear infinite;
+  }
+  .screen-corrupt::after{
+    content:'';
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:repeating-linear-gradient(
+      0deg,
+      rgba(0,255,65,0.03) 0px,
+      rgba(0,255,65,0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    animation:scanline 0.5s linear infinite;
+    pointer-events:none;
+    z-index:5;
+  }
+  @keyframes hard-glitch{
+    0%{opacity:0;}
+    5%{opacity:1;background:#fff;}
+    10%{opacity:0;}
+    15%{opacity:0.8;background:#0f0;}
+    20%{opacity:0;}
+    30%{opacity:0.5;background:#f00;}
+    35%{opacity:0;}
+    100%{opacity:0;}
+  }
+  .hard-glitch{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    z-index:15;
+    pointer-events:none;
+    animation:hard-glitch 0.3s linear forwards;
+  }
+
+  /* PROCESS STILL RUNNING */
+  .process-text{
+    color:#00ff41;
+    font-family:'Courier New',Consolas,monospace;
+    font-size:clamp(14px,2.2vw,20px);
+    text-align:center;
+    opacity:0;
+    position:absolute;
+    letter-spacing:0.12em;
+    text-shadow:0 0 8px rgba(0,255,65,0.4);
+    transition:opacity 1s ease;
+  }
+  .process-text.visible{opacity:1;}
+
+  /* Return prompt */
+  #return-prompt{
+    position:absolute;
+    text-align:center;
+    opacity:0;
+    transition:opacity 2s ease;
+  }
+  #return-prompt.visible{opacity:1;}
+  #return-prompt p{
+    color:#aaa;
+    font-size:clamp(14px,2.5vw,20px);
+    letter-spacing:0.1em;
+    margin-bottom:1.5rem;
+  }
+  #return-prompt a{
+    display:inline-block;
+    color:#888;
+    font-size:clamp(13px,2vw,18px);
+    text-decoration:none;
+    letter-spacing:0.1em;
+    border:1px solid #555;
+    padding:0.5em 2em;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  #return-prompt a:hover{
+    color:#ccc;
+    border-color:#999;
+  }
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<div id="glitch-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;opacity:0;"></div>
+
+<script>
+(function(){
+  var screen = document.getElementById('screen');
+
+  function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  function clearScreen(){
+    screen.innerHTML = '';
+    screen.style.display = 'flex';
+    screen.style.alignItems = 'center';
+    screen.style.justifyContent = 'center';
+    screen.style.flexDirection = 'column';
+  }
+
+  function flashGlitch(){
+    var g = document.createElement('div');
+    g.className = 'hard-glitch';
+    document.body.appendChild(g);
+    setTimeout(function(){ g.remove(); }, 400);
+  }
+
+  /* Typewriter for terminal lines */
+  function typewriterLine(container, text, speed){
+    return new Promise(function(resolve){
+      var line = document.createElement('div');
+      line.className = 'terminal-line visible';
+      line.textContent = '';
+      container.appendChild(line);
+      var i = 0;
+      var iv = setInterval(function(){
+        if(i < text.length){
+          line.textContent += text[i];
+          i++;
+        } else {
+          clearInterval(iv);
+          resolve(line);
+        }
+      }, speed || 40);
+    });
+  }
+
+  /* Show yoshida text centered */
+  function showYoshidaLine(text){
+    return new Promise(function(resolve){
+      var el = document.createElement('div');
+      el.className = 'yoshida-text';
+      el.textContent = text;
+      screen.appendChild(el);
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          el.classList.add('visible');
+        });
+      });
+      setTimeout(function(){ resolve(el); }, 300);
+    });
+  }
+
+  function fadeOutEl(el, ms){
+    el.style.transition = 'opacity ' + (ms || 1500) + 'ms ease';
+    el.style.opacity = '0';
+    return wait(ms || 1500);
+  }
+
+  /* ===== MAIN SEQUENCE ===== */
+  async function main(){
+    await wait(1000);
+
+    // --- STAGE 1: 黒幕's log ---
+    var termContainer = document.createElement('div');
+    termContainer.id = 'terminal-container';
+    screen.appendChild(termContainer);
+
+    var logLines = [
+      '> 接続確認　完了',
+      '> 対象：K-059',
+      '> …知っていた　お前が来ることは　最初から',
+      '> 感情データ収集率：98.7%',
+      '> 恐怖　　…取得済',
+      '> 悲しみ　…取得済',
+      '> 好奇心　…取得済',
+      '> 罪悪感　…取得済',
+      '> 執着　　…取得済',
+      '> 同情　　…取得済',
+      '> 全パラメータ　基準値を超過',
+      '> 全部　お前のために作った',
+      '> …うまくいった',
+      '> お前は優しいな　だから選んだ',
+      '> 協力者：吉田一郎',
+      '> 担当：K-059の感情誘導・信頼構築',
+      '> 手段：Popin偽装接触→DM移行→情報提供による感情増幅',
+      '> 状況：予定通り'
+    ];
+
+    for(var i = 0; i < logLines.length; i++){
+      await typewriterLine(termContainer, logLines[i], 35);
+      // Shorter pause for data lines, longer for dramatic lines
+      if(i === 2 || i === 12 || i === 13) await wait(1500);
+      else if(i >= 4 && i <= 9) await wait(400);
+      else await wait(800);
+    }
+
+    await wait(2000);
+
+    // --- STAGE 2: Transfer initiation ---
+    await typewriterLine(termContainer, '> 器の条件　…充足', 40);
+    await wait(1500);
+    await typewriterLine(termContainer, '> K-059　転送開始', 40);
+    await wait(800);
+
+    // --- STAGE 3: Intense glitch ---
+    document.body.classList.add('screen-corrupt');
+    for(var g = 0; g < 6; g++){
+      flashGlitch();
+      await wait(150);
+    }
+    await wait(800);
+    document.body.classList.remove('screen-corrupt');
+
+    // Black screen
+    clearScreen();
+    await wait(2000);
+
+    // --- STAGE 4: 吉田一郎's voice ---
+    var y1 = await showYoshidaLine('「…すまない」');
+    await wait(3000);
+    await fadeOutEl(y1, 1500);
+    y1.remove();
+
+    var y2 = await showYoshidaLine('「あの子のために…お前を…」');
+    await wait(3500);
+    await fadeOutEl(y2, 1500);
+    y2.remove();
+
+    var y3 = await showYoshidaLine('「でも…もう止められない」');
+    await wait(3500);
+    await fadeOutEl(y3, 1500);
+    y3.remove();
+
+    // --- STAGE 5: Long silence, then PROCESS STILL RUNNING ---
+    await wait(4000);
+
+    var proc = document.createElement('div');
+    proc.className = 'process-text';
+    proc.textContent = '> PROCESS STILL RUNNING';
+    screen.appendChild(proc);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        proc.classList.add('visible');
+      });
+    });
+
+    await wait(4000);
+    await fadeOutEl(proc, 2000);
+    proc.remove();
+
+    // --- STAGE 6: Longer silence, then 予定通りです ---
+    await wait(5000);
+
+    clearScreen();
+    var yotei = document.createElement('div');
+    yotei.id = 'yotei';
+    yotei.textContent = '予定通りです';
+    screen.appendChild(yotei);
+
+    // Very slow fade in
+    var opacity = 0;
+    await new Promise(function(resolve){
+      var fadeIn = setInterval(function(){
+        opacity += 0.005;
+        if(opacity >= 0.85){
+          clearInterval(fadeIn);
+          yotei.style.opacity = '0.85';
+          yotei.classList.add('pulsing');
+          resolve();
+        } else {
+          yotei.style.opacity = String(opacity);
+        }
+      }, 30);
+    });
+
+    await wait(6000);
+
+    // Fade out 予定通りです
+    yotei.classList.remove('pulsing');
+    yotei.style.transition = 'opacity 3s ease';
+    yotei.style.opacity = '0';
+    await wait(3000);
+
+    // --- STAGE 7: Return prompt ---
+    clearScreen();
+    await wait(3000);
+
+    var prompt = document.createElement('div');
+    prompt.id = 'return-prompt';
+    prompt.innerHTML = '<p>「Night5クリア地点に戻りますか？」</p><a href="#" id="return-btn">戻る</a>';
+    screen.appendChild(prompt);
+
+    await wait(500);
+    prompt.classList.add('visible');
+
+    document.getElementById('return-btn').addEventListener('click', function(e){
+      e.preventDefault();
+      // Navigate to night5 save point
+      window.location.href = '../night5/';
+    });
+
+    // --- Set localStorage flags ---
+    try {
+      localStorage.setItem('ending_b_seen', 'true');
+      localStorage.setItem('save_point_night5', 'true');
+    } catch(e){}
+  }
+
+  main();
+})();
+</script>
+</body>
+</html>

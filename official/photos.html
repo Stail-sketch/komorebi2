@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旧キャラクター写真資料 - あの番組を覚えていますか</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .evidence-clickable {
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      color: var(--color-navy-light);
+    }
+    .chara-card {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .chara-placeholder {
+      width: 150px;
+      height: 150px;
+      background: var(--color-gray-100);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+      border: 3px solid var(--color-gray-200);
+    }
+    .chara-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center top;
+      border-radius: 50%;
+    }
+    .chara-info h3 {
+      font-size: 1.05rem;
+      color: var(--color-navy);
+      margin-bottom: 8px;
+    }
+    .chara-info p {
+      font-size: 0.9rem;
+      color: var(--color-gray-700);
+    }
+    .chara-note {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--color-gray-500);
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    if (localStorage.getItem('night1_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="basic.html">基本資料</a></li>
+          <li><a href="photos.html" class="active">写真資料</a></li>
+          <li><a href="tips.html">情報提供</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ヒーロー -->
+  <section class="page-hero">
+    <h1>旧キャラクター写真資料</h1>
+    <p class="hero-subtitle">旧4体アニマトロニクス 〜 番組初期メインキャラクター</p>
+  </section>
+
+  <!-- メインコンテンツ -->
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">番組キャラクター紹介</h2>
+      <div class="card">
+        <p>「木漏れ日遊園地」に登場した4体のアニマトロニクスキャラクターです。番組放送当時の資料写真をもとに、各キャラクターの特徴をまとめています。</p>
+        <p style="margin-top: 8px; font-size: 0.85rem; color: var(--color-gray-500);">※ 写真資料は関係者の方からご提供いただいたものです。</p>
+      </div>
+    </section>
+
+    <!-- キツネ団長 -->
+    <section class="section">
+      <div class="card">
+        <div class="chara-card">
+          <div class="chara-placeholder memory-fragment" data-fragment="ki" id="kitsune-photo" onclick="collectFragment('ki',this)" style="cursor:pointer;padding:0;overflow:hidden;"><img src="../image/charas_f1/kitsune_normal.png" alt="キツネ団長" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="chara-info">
+            <h3>キツネ団長（きつねだんちょう）</h3>
+            <p>遊園地の団長を務めるキツネのキャラクター。帽子とマントを身につけ、懐中時計で時間管理するのが好き。4体の中ではリーダー的存在で、番組の司会と「キツネ団長の冒険タイム」を担当していた。子どもたちからの人気も高く、番組を代表するキャラクターだった。</p>
+            <p class="chara-note">初期設定では「園長」という肩書きだったが、放送前に「団長」に変更された。</p>
+            <p class="chara-note"><span class="evidence-clickable" onclick="collectEvidence('02')">※ 放送前の試作機あり。現存するかは不明。試作段階では目の形状が異なっていたとの証言がある。</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- かあ博士 -->
+    <section class="section">
+      <div class="card">
+        <div class="chara-card">
+          <div class="chara-placeholder" style="padding:0;overflow:hidden;"><img src="../image/charas_f1/kaa_normal.png" alt="かあ博士" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="chara-info">
+            <h3>かあ博士（かあはかせ）</h3>
+            <p>物知りなカラスの博士キャラクター。白衣と丸い眼鏡がトレードマーク。番組内では「かあ博士のなぜなぜ教室」を担当し、科学や自然に関する「なぜ？」を調べて子どもたちに教える役割だった。口癖は「なぜなぜ？ ふむ、調べてみよう」。</p>
+            <p class="chara-note">羽の動きが他のキャラクターと比べて精巧に作られており、技術的に最も高度なアニマトロニクスだった。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- うっきち -->
+    <section class="section">
+      <div class="card">
+        <div class="chara-card">
+          <div class="chara-placeholder" style="padding:0;overflow:hidden;"><img src="../image/charas_f1/ukkichi_normal.png" alt="うっきち" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="chara-info">
+            <h3>うっきち</h3>
+            <p>元気いっぱいのサルのキャラクター。「うっきちのいたずら大作戦」を担当し、いたずらで子どもたちを笑わせるムードメーカーだった。番組内では最も動きの多いキャラクターだった。</p>
+            <p class="chara-note">名前の由来は「ウキウキ」＋「きち（吉）」。初期企画書では「うきまる」という名前だった。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ぽたまる -->
+    <section class="section">
+      <div class="card">
+        <div class="chara-card">
+          <div class="chara-placeholder" style="padding:0;overflow:hidden;"><img src="../image/charas_f1/potamaru_normal.png" alt="ぽたまる" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div class="chara-info">
+            <h3>ぽたまる</h3>
+            <p>元気な性格のタヌキのキャラクター。「ぽたまるダンス♪」を担当し、おなかの太鼓を叩きながら元気に踊っていた。まんまるな体が特徴で、子どもたちに大人気だった。</p>
+            <p class="chara-note">丸いフォルムが特徴で、ぬいぐるみ商品化の際に最も売れたキャラクターだったという。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <p style="font-size: 0.85rem; color: var(--color-gray-500);">このページの情報は、番組関係者および視聴者の方々からの情報提供に基づいています。誤りがある場合は<a href="contact.html">お問い合わせフォーム</a>よりご連絡ください。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script>
+// キツネ団長の写真：一瞬だけジャンプスケア顔になるサブリミナル演出
+(function(){
+  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+  var photo = document.getElementById('kitsune-photo');
+  if(!photo) return;
+
+  var normalImg = photo.querySelector('img');
+  if(!normalImg) return;
+
+  var normalSrc = '../image/charas_f1/kitsune_normal.png';
+  var scareSrc = '../image/charas_f1/kitsune_jumpscare.png';
+
+  if(frags.indexOf('ki')!==-1){
+    // 既に収集済み：写真が暗くなる
+    photo.style.opacity = '0.5';
+    photo.style.cursor = 'default';
+    photo.style.filter = 'grayscale(0.5)';
+    return;
+  }
+
+  // 未収集：4〜7秒ごとに一瞬（80ms）だけジャンプスケア顔にする
+  var scareInterval = setInterval(function(){
+    var f = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+    if(f.indexOf('ki')!==-1){
+      clearInterval(scareInterval);
+      return;
+    }
+    normalImg.src = scareSrc;
+    setTimeout(function(){
+      normalImg.src = normalSrc;
+    }, 80);
+  }, 4000 + Math.random() * 3000);
+
+  // プリロード
+  var preload = new Image();
+  preload.src = scareSrc;
+})();
+
+function collectFragment(id, el){
+  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+  if(frags.indexOf(id)===-1){
+    frags.push(id);
+    localStorage.setItem('memory_fragments',JSON.stringify(frags));
+  }
+  // 収集演出：一瞬白く光って暗くなる
+  el.style.transition = 'all 0.5s';
+  el.style.filter = 'brightness(2)';
+  setTimeout(function(){
+    el.style.opacity = '0.5';
+    el.style.filter = 'grayscale(0.5)';
+    el.style.cursor = 'default';
+  }, 500);
+}
+</script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

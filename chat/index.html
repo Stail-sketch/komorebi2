@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>チャット - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      background:#f0e6d3;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
+      padding:0;
+    }
+
+    .chat-window{
+      width:100%;max-width:100%;height:100vh;max-height:none;
+      background:#faf6ef;
+      border:none;
+      border-radius:0;
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+
+    /* Header */
+    .chat-header{
+      background:linear-gradient(180deg,#f5deb3 0%,#e8c88a 100%);
+      padding:12px 16px;
+      display:flex;align-items:center;gap:12px;
+      border-bottom:2px solid #c8a96e;
+    }
+    .avatar{
+      width:44px;height:44px;
+      background:#fff8e7;border:2px solid #c8a96e;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:24px;flex-shrink:0;position:relative;
+    }
+    .status-dot{
+      position:absolute;bottom:0;right:0;
+      width:12px;height:12px;background:#6bba6b;border-radius:50%;
+      border:2px solid #e8c88a;
+    }
+    .contact-info{flex:1;}
+    .contact-name{font-size:20px;font-weight:700;color:#5d4220;}
+    .contact-status{font-size:14px;color:#6bba6b;}
+
+    /* Channel name bar */
+    .channel-bar{
+      background:#f5edd8;border-bottom:1px solid #ddd0b8;
+      padding:8px 16px;font-size:15px;color:#8b7355;
+      display:flex;align-items:center;gap:6px;
+    }
+    .channel-bar .hash{color:#c8a96e;font-weight:700;font-size:16px;}
+
+    /* Chat area */
+    .chat-area{
+      flex:1;background:#faf6ef;overflow-y:auto;padding:12px 16px;
+    }
+    .chat-area::-webkit-scrollbar{width:8px;}
+    .chat-area::-webkit-scrollbar-track{background:#f5edd8;}
+    .chat-area::-webkit-scrollbar-thumb{background:#d4bd8a;border-radius:4px;}
+
+    .message{
+      display:flex;gap:10px;margin-bottom:12px;
+      padding:4px 0;
+    }
+    .msg-avatar{
+      width:36px;height:36px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;flex-shrink:0;border:2px solid #ddd0b8;
+    }
+    .message.partner .msg-avatar{background:#fff3d6;border-color:#c8a96e;}
+    .message.user .msg-avatar{background:#d6eaff;border-color:#7badd4;}
+    .msg-body{flex:1;min-width:0;}
+    .msg-header{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;}
+    .msg-name{font-size:16px;font-weight:700;}
+    .message.partner .msg-name{color:#c8760e;}
+    .message.user .msg-name{color:#2b6cb0;}
+    .msg-time{font-size:12px;color:#b8a080;}
+    .msg-text{font-size:18px;line-height:1.8;color:#4a3520;word-wrap:break-word;}
+    .msg-text a{color:#c8760e;text-decoration:underline;}
+
+    .typing-indicator{
+      font-size:12px;color:#b8a080;padding:4px 0 4px 46px;
+      display:none;font-style:italic;
+    }
+    .typing-indicator.show{display:block;}
+    .typing-dots span{animation:dotBlink 1.4s infinite;font-size:16px;}
+    .typing-dots span:nth-child(2){animation-delay:0.2s;}
+    .typing-dots span:nth-child(3){animation-delay:0.4s;}
+    @keyframes dotBlink{0%,60%,100%{opacity:0.2;}30%{opacity:1;}}
+
+    /* Input area */
+    .input-area{
+      background:#f5edd8;border-top:2px solid #ddd0b8;padding:12px 16px;
+    }
+    .input-row{display:flex;gap:8px;align-items:center;}
+    .input-row input{
+      flex:1;height:48px;
+      background:#fff;border:2px solid #ddd0b8;border-radius:24px;
+      padding:0 20px;font-size:18px;color:#4a3520;
+      font-family:inherit;outline:none;
+    }
+    .input-row input:focus{border-color:#c8a96e;}
+    .input-row input:disabled{background:#f0e8d8;color:#b8a080;}
+    .input-row input::placeholder{color:#c8b090;}
+    .send-btn{
+      width:48px;height:48px;
+      background:#c8a96e;border:none;border-radius:50%;
+      color:#fff;font-size:18px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background 0.2s;flex-shrink:0;
+    }
+    .send-btn:hover{background:#b8953e;}
+    .send-btn:disabled{background:#ddd0b8;cursor:default;}
+
+    /* System message */
+    .system-msg{
+      text-align:center;color:#b8a080;font-size:12px;
+      margin:12px 0;padding:4px 12px;
+      background:#f5edd8;border-radius:12px;display:inline-block;
+      width:100%;
+    }
+
+    /* Night6 glitch */
+    .glitch-text{animation:glitch 0.3s infinite;}
+    @keyframes glitch{
+      0%{opacity:1;transform:translate(0);}
+      20%{opacity:0.8;transform:translate(-2px,1px);}
+      40%{opacity:1;transform:translate(1px,-1px);}
+      60%{opacity:0.7;transform:translate(-1px,2px);}
+      80%{opacity:1;transform:translate(2px,-1px);}
+      100%{opacity:1;transform:translate(0);}
+    }
+
+    @media(max-width:600px){
+      body{padding:0;}
+      .chat-window{width:100%;height:100vh;max-height:none;border-radius:0;border:none;}
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-window">
+    <div class="chat-header">
+      <div class="avatar">
+        🦊
+        <div class="status-dot"></div>
+      </div>
+      <div class="contact-info">
+        <div class="contact-name" id="contactName">???</div>
+        <div class="contact-status" id="contactStatus">● オンライン</div>
+      </div>
+    </div>
+
+    <div class="channel-bar">
+      <span class="hash">#</span> ダイレクトメッセージ
+    </div>
+
+    <div class="chat-area" id="chatArea">
+      <div class="system-msg">チャットを開始しました</div>
+      <div class="typing-indicator" id="typingIndicator">
+        <span>入力中</span><span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <input type="text" id="messageInput" placeholder="メッセージを入力..." autofocus>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Access control (一時的に無効化)
+    // if (!localStorage.getItem('night3_clear')) {
+    //   window.location.href = '../index.html';
+    // }
+
+    // State
+    var isNight6 = !!localStorage.getItem('night6_started');
+    var isKitsuneIdentified = !!localStorage.getItem('kitsune_identified');
+    var isProcessing = false;
+
+    // Set partner name (always キツネ団長)
+    var partnerName = 'キツネ団長';
+    document.getElementById('contactName').textContent = partnerName;
+    // titleText removed in new UI
+
+    // Keyword responses (子ども番組MC口調)
+    var keywordResponses = [
+      // === 旧キャラクター ===
+      { keywords: ['キツネ団長', 'きつねだんちょう'], response: 'ん？ぼくのこと？えへへ、時間だぞー！今日も冒険だ！…なんてね' },
+      { keywords: ['きつね', 'キツネ'], response: 'キツネって言えばぼくだね！帽子とマントがトレードマークだよ！' },
+      { keywords: ['かあ博士', 'かあはかせ'], response: 'かあ博士はね、なんでも知ってるんだよ！なぜなぜ？ふむ、調べてみよう！って' },
+      { keywords: ['カラス'], response: 'カラスって頭いいんだって！かあ博士もすっごく賢いんだよ' },
+      { keywords: ['ぽたまる'], response: 'ぽたまる！おなかの太鼓がかわいいよね。ポンポコポン♪いっしょにおどろう！' },
+      { keywords: ['タヌキ', 'たぬき'], response: 'タヌキといえばぽたまる！ダンスが得意なんだ！' },
+      { keywords: ['うっきち'], response: 'うっきちはいたずらっ子だけど、みんな大好きだったんだよ。えへへ、いたずら大成功～！…あれ？って' },
+      { keywords: ['サル', 'さる', '猿'], response: 'おサルさんのうっきち！いたずら大作戦はいつもドキドキだったなぁ' },
+      // === 新キャラクター（AIキャスト） ===
+      { keywords: ['くるる'], response: 'くるる？あのリスのAIの子だよね！元気いっぱいでかわいいよね！' },
+      { keywords: ['まだら'], response: 'まだらはカメレオンのAIだね。冷静でかっこいいなぁ。ぼくとは正反対かも！' },
+      { keywords: ['よわり'], response: 'よわりはヒツジのAIの子。ちょっと怖がりだけど、優しいんだよね' },
+      { keywords: ['アラネ', 'あらね'], response: 'アラネはクモのAIだね！データ分析が得意なんだって。すごいなぁ' },
+      { keywords: ['かすみ'], response: 'かすみはシカのAIの子！おたよりを読むのが上手で、聞いてると温かい気持ちになるよ' },
+      { keywords: ['リス'], response: 'リスといえばくるる！好奇心旺盛で走り回ってるんだって' },
+      { keywords: ['カメレオン'], response: 'カメレオンのまだら！何でも見抜いちゃうんだよ' },
+      { keywords: ['ヒツジ', 'ひつじ', '羊'], response: 'ヒツジのよわり！ちょっと泣き虫だけど、勇気があるんだよ' },
+      { keywords: ['クモ', 'くも', '蜘蛛'], response: 'クモのアラネ！一度つかんだデータは絶対離さないんだって' },
+      { keywords: ['シカ', 'しか', '鹿'], response: 'シカのかすみ！みんなの気持ちに寄り添えるすてきな子だよ' },
+      { keywords: ['AI', 'エーアイ'], response: 'AIキャストのみんな、すごいよね！ぼくとは違う新しいおともだちなんだ' },
+      // === コーナー名 ===
+      { keywords: ['冒険タイム', 'ぼうけん'], response: '冒険タイムはぼくの担当コーナーだよ！宝箱を見つけるんだ！…でもたまに見つからない時もあったなぁ' },
+      { keywords: ['なぜなぜ教室', 'なぜなぜ'], response: 'なぜなぜ教室はかあ博士のコーナー！なぜ空は青いの？とか、いろんなこと教えてくれたんだよ' },
+      { keywords: ['ぽたまるダンス', 'ダンス', 'おどる', '踊'], response: 'ぽたまるダンス♪！ポンポコポンのリズムに合わせて、みんなで踊るんだよ！楽しかったなぁ' },
+      { keywords: ['いたずら大作戦', 'いたずら'], response: 'いたずら大作戦はうっきちのコーナー！毎回オチがあってね、みんな笑ってたんだ' },
+      { keywords: ['みんなであそぼう'], response: 'みんなであそぼう…あれ、そんなコーナーあったっけ？…うーん、思い出せないなぁ' },
+      // === 旧スタッフ ===
+      { keywords: ['吉田', 'よしだ'], response: 'うーん、その人のことはぼくもよく知ってるよ。でもまだ話せないんだ、ごめんね' },
+      { keywords: ['高橋', 'たかはし', 'プロデューサー'], response: '高橋さんはね、番組を作ってくれた人だよ。でも番組が終わった後…どこに行っちゃったんだろう' },
+      { keywords: ['松田', 'まつだ', '演出'], response: '松田さんは演出の人だね。番組をどう見せるか考えてくれてたんだ' },
+      { keywords: ['斎藤', 'さいとう', '技術'], response: '斎藤さんはぼくたちの体をメンテナンスしてくれてた人だよ！ぼくたちが動けるのは斎藤さんのおかげなんだ' },
+      { keywords: ['木村', 'きむら', '音楽', '作曲'], response: '木村さんはぼくたちの歌を作ってくれた人！OPもEDもコーナーの曲も全部！すてきな曲ばっかりだったなぁ' },
+      { keywords: ['伊藤', 'いとう', 'デザイン'], response: '伊藤さんはぼくたちの見た目を考えてくれた人だよ！ぼくの帽子もマントも伊藤さんのデザインなんだ' },
+      { keywords: ['小林', 'こばやし', '音声'], response: '小林さんは音のことを担当してくれてた人だね。ぼくたちの声がちゃんと届くようにしてくれてたんだ' },
+      // === 場所 ===
+      { keywords: ['スタジオ', 'すたじお'], response: 'スタジオかぁ…ぼくたちの「おうち」みたいな場所だったよ。今はもうないんだけどね' },
+      { keywords: ['世田谷', 'せたがや'], response: 'スタジオがあった場所だね！今はマンションが建ってるんだって' },
+      { keywords: ['遊園地', 'ゆうえんち'], response: '木漏れ日遊園地！ぼくたちが冒険したり踊ったりした場所だよ！…テレビの中だけどね' },
+      // === 番組情報 ===
+      { keywords: ['きらら放送', 'きらら'], response: 'きらら放送で毎週土曜の朝に放送してたんだ！朝8時30分から！…懐かしいなぁ' },
+      { keywords: ['最終回', 'さいしゅうかい'], response: '最終回…うん、あの日のことは…覚えてるよ。でも今は話せないんだ' },
+      { keywords: ['放送', 'ほうそう', '番組'], response: '1991年から1997年まで放送してたんだよ！315回もあったんだ！' },
+      // === 相槌・返事 ===
+      { keywords: ['そうだよ', 'そうです'], response: 'やっぱり！嬉しいな、仲間がいて！一緒にがんばろうね！' },
+      { keywords: ['うん'], response: 'うんうん！いい返事だね！' },
+      { keywords: ['はい'], response: 'はいっ！元気がいいね！ぼくも負けないぞー！' },
+      { keywords: ['違う', 'ちがう', 'いいえ', 'いや'], response: 'あれ、違った？ごめんごめん！じゃあ何をしてるの？' },
+      { keywords: ['わからない', 'わかんない', 'わかりません', '知らない', 'しらない'], response: 'わからなくても大丈夫だよ！一緒に調べていこう！' },
+      { keywords: ['よろしく', 'よろしくね'], response: 'こちらこそよろしく！キミと話せて嬉しいよ！' },
+      { keywords: ['何', 'なに', 'なんだ'], response: 'ん？何か気になることがあったの？なんでも聞いてよ！' },
+      { keywords: ['なんで', 'どうして', 'なぜ'], response: 'いい質問だね！なぜなぜ教室みたい！…でもぼくはかあ博士ほど詳しくないんだ、えへへ' },
+      { keywords: ['どこ'], response: 'どこだろう？サイトのいろんなページを見てみると見つかるかもね！' },
+      { keywords: ['いつ'], response: 'いつかなぁ…時間に関係することならぼくの懐中時計に聞いてみようか！…なんてね' },
+      // === 感情・雑談 ===
+      { keywords: ['黒幕', 'くろまく', '敵'], response: 'わっ、それはちょっと怖い話だね…今はまだやめておこう！' },
+      { keywords: ['K-059', 'k059', 'K059'], response: 'うーん？その番号、どこで見つけたの？気になるなぁ' },
+      { keywords: ['怖い', 'こわい', '危険', 'あぶない'], response: '怖いよね…でも大丈夫、ぼくがついてるから！…たぶん！' },
+      { keywords: ['ありがとう', 'ありがと'], response: 'えへへ、こちらこそ来てくれてありがとう！' },
+      { keywords: ['ごめん', 'すみません', 'すまない'], response: '謝らなくていいよ！キミは何も悪くないんだから！' },
+      { keywords: ['名前', 'なまえ'], response: '名前はね、すっごく大事だよ。ちゃんと覚えてあげてね' },
+      { keywords: ['記憶', 'きおく'], response: '記憶かぁ…覚えてること、忘れちゃったこと、どっちも大事だよね' },
+      { keywords: ['こんにちは', 'こんにちわ'], response: 'こんにちは！今日も冒険だ！…あ、もう夜か。こんばんは！' },
+      { keywords: ['こんばんは', 'こんばんわ'], response: 'こんばんは！夜遅くまで調べてくれてるんだね。えらいなぁ' },
+      { keywords: ['おはよう'], response: 'おはよう！朝から元気いっぱいだね！時間だぞー！' },
+      { keywords: ['おやすみ'], response: 'おやすみ！ゆっくり寝てね。…でもまた来てくれると嬉しいな' },
+      { keywords: ['好き', 'すき'], response: 'えへへ、ぼくもキミのこと好きだよ！来てくれて嬉しいんだ' },
+      { keywords: ['かわいい'], response: 'えっ、ぼく！？えへへへ…ありがとう！キミも素敵だよ！' },
+      { keywords: ['悲しい', 'かなしい', 'つらい'], response: '悲しいことがあったの？大丈夫、ぼくがそばにいるよ' },
+      { keywords: ['楽しい', 'たのしい', '面白い', 'おもしろい'], response: '楽しんでくれてるならぼくも嬉しい！もっと冒険しようね！' },
+      { keywords: ['嘘', 'うそ'], response: '嘘…？うーん、ぼくは嘘つかないよ。…たぶんね' },
+      { keywords: ['本当', 'ほんとう', 'マジ', 'まじ'], response: '本当だよ！ぼくは嘘つかないもん！…あ、でも冒険タイムの「宝箱」は作り物だったけどね、えへへ' },
+      { keywords: ['誰', 'だれ'], response: 'ぼくはキツネ団長だよ！木漏れ日遊園地のリーダー！…だったんだ' },
+      { keywords: ['助けて', 'たすけて'], response: '…うん、ぼくもキミに助けてほしいことがあるんだ。でもまだ言えないんだ…ごめんね' },
+      { keywords: ['懐かしい', 'なつかしい'], response: '懐かしいって思ってくれるんだ…嬉しいなぁ。ぼくたちのこと覚えててくれたんだね' },
+      { keywords: ['元気', 'げんき'], response: '元気だよ！キミが来てくれるとますます元気になるんだ！' },
+      { keywords: ['暇', 'ひま', 'つまんない'], response: 'じゃあ一緒に冒険しよう！サイトにはまだまだ秘密があるよ！' },
+      { keywords: ['疲れ', 'つかれ'], response: 'お疲れさま！無理しなくていいよ。休んでからまた来てね' },
+      { keywords: ['すごい', 'すげー', 'すげえ'], response: 'えへへ、ぼくすごい？ありがとう！キミだってすごいよ！' },
+      // === 調査関連 ===
+      { keywords: ['調査', '調べ', 'しらべ'], response: 'おっ、調べてるんだね！えらいなぁ。サイトのページをよく読んでみて！' },
+      { keywords: ['証拠', 'しょうこ'], response: '証拠を集めてるの？さすが！ちゃんと隅々まで見てね！' },
+      { keywords: ['ゆめスタジオ', '制作会社'], response: 'ゆめスタジオプロダクション…ぼくたちを作ってくれた会社だよ。でも今はもうないんだ' },
+      { keywords: ['1986', '1988', '1990', '1991', '1993', '1997'], response: 'その年に何かあったのかな？サイトで調べてみよう！' },
+      { keywords: ['試作', 'しさく', 'プロトタイプ'], response: '試作…？ぼくの前に別のキツネがいた…って話、聞いたことある？' },
+      { keywords: ['グッズ', 'ぬいぐるみ', 'おもちゃ'], response: 'グッズ！ぽたまるのぬいぐるみが一番人気だったんだよ！ぼくのはあんまり売れなかったけど…えへへ' },
+      { keywords: ['VHS', 'ビデオ', 'テープ'], response: 'ビデオテープかぁ…ほとんど残ってないんだよね。見つけた人がいたらすごいなぁ' },
+      { keywords: ['懐中時計', 'とけい', '時計'], response: 'ぼくの懐中時計！冒険の始まりの合図なんだ。パカッて開けて「時間だぞー！」ってね' }
+    ];
+
+    var defaultResponses = [
+      'うーん、ちょっとわからないなぁ。もう少しヒントちょうだい！',
+      'サイトのページを読んでみた？答えはきっとどこかにあるよ！',
+      'がんばって！キミならきっと見つけられるよ！',
+      'もうちょっと考えてみて！ぼくは待ってるから！',
+      'ぼくにもわからないことがあるんだ…ごめんね',
+      'うーん…なんだろう。一緒に考えよう！',
+      '冒険にはね、時間がかかることもあるんだよ。ゆっくりでいいからね',
+      'ぼくはここにいるよ。いつでも話しかけてね！',
+      'もっといろんなこと教えてよ！ぼく、キミと話すの楽しいんだ',
+      'そうなんだ！もっと聞かせて！'
+    ];
+
+    var noiseResponse = 'あれ？ちょっと声が聞こえにくいなぁ…もう一回言ってくれる？';
+
+    // Elements
+    var chatArea = document.getElementById('chatArea');
+    var typingIndicator = document.getElementById('typingIndicator');
+    var messageInput = document.getElementById('messageInput');
+    var sendBtn = document.getElementById('sendBtn');
+
+    // Night6 glitch mode
+    if (isNight6) {
+      messageInput.disabled = true;
+      sendBtn.disabled = true;
+      messageInput.placeholder = '';
+
+      // Clear chat and show final message
+      var systemMsgs = chatArea.querySelectorAll('.system-msg');
+      for (var i = 0; i < systemMsgs.length; i++) {
+        systemMsgs[i].remove();
+      }
+
+      var glitchMsg = document.createElement('div');
+      glitchMsg.className = 'message partner';
+      glitchMsg.innerHTML = '<span class="sender glitch-text">' + partnerName + ':</span><span class="text"> …もう…話せない…</span>';
+      chatArea.insertBefore(glitchMsg, typingIndicator);
+
+      document.getElementById('contactStatus').innerHTML = '● <span class="glitch-text">オンライン</span>';
+    } else {
+      // Warmup conversation stage
+      var warmupStage = parseInt(localStorage.getItem('chat_warmup_stage') || '0');
+      var puzzleStarted = localStorage.getItem('chat_puzzle_started') === 'true';
+
+      // Warmup script: キツネ団長の質問 + プレイヤーの返事に対する反応 + 次の質問
+      var warmupScript = [
+        {
+          // Stage 0: 初回挨拶→プレイヤーの1回目の返事を待つ
+          greeting: ['やあ、来てくれたんだね！', 'ぼくはキツネ団長！よろしくね！', 'キミもこの番組のこと調べてるの？'],
+          responses: [
+            { keywords: ['そう', 'うん', 'はい', 'yes', '調べてる'], reply: 'やっぱり！仲間がいて嬉しいなぁ！' },
+            { keywords: ['違う', 'いいえ', 'いや', '別に'], reply: 'そうなんだ？でもここに来てくれたってことは気になってるんでしょ？えへへ' },
+            { keywords: ['キツネ', 'きつね', '団長'], reply: 'えへへ、ぼくのこと知ってくれてるの？嬉しい！' }
+          ],
+          defaultReply: 'そうなんだ！キミが来てくれて嬉しいよ！',
+          next: 'ぼくたちのこと覚えてくれてる人がいるって、すごく嬉しいんだ。キミはどのキャラクターが好き？'
+        },
+        {
+          // Stage 1: どのキャラが好き？
+          greeting: null,
+          responses: [
+            { keywords: ['キツネ', 'きつね', '団長'], reply: 'えっ、ぼく！？えへへへ…ありがとう！照れちゃうなぁ' },
+            { keywords: ['かあ博士', 'かあ', 'カラス'], reply: 'かあ博士！物知りですごいよね。なぜなぜ？ふむ、調べてみよう！って！' },
+            { keywords: ['ぽたまる', 'タヌキ', 'たぬき'], reply: 'ぽたまる！太鼓がかわいいよね。ポンポコポン♪' },
+            { keywords: ['うっきち', 'サル', 'さる'], reply: 'うっきち！いたずらっ子だけどみんな大好きだったんだ。えへへ、いたずら大成功～！' },
+            { keywords: ['くるる', 'リス'], reply: 'くるる！新しいAIの子だよね。元気いっぱいで可愛いよね！' },
+            { keywords: ['まだら', 'カメレオン'], reply: 'まだら！冷静でかっこいいよね。ぼくとは正反対かも！' },
+            { keywords: ['よわり', 'ヒツジ'], reply: 'よわり！ちょっと泣き虫だけど優しいんだ' },
+            { keywords: ['アラネ', 'クモ'], reply: 'アラネ！データ分析が得意ですごいんだよ！' },
+            { keywords: ['かすみ', 'シカ'], reply: 'かすみ！おたよりを読んでくれる優しい子だよ' },
+            { keywords: ['全員', 'みんな', 'ぜんぶ', '全部'], reply: 'みんな！？えへへ、みんなそう言ってくれたら嬉しいだろうなぁ' }
+          ],
+          defaultReply: 'そっかぁ！みんなそれぞれ個性があっていいよね！',
+          next: 'ところでキミ、サイトのページちゃんと読んでくれた？けっこう色々載ってるんだよ！'
+        },
+        {
+          // Stage 2: サイト読んだ？→クイズへの導入
+          greeting: null,
+          responses: [
+            { keywords: ['読んだ', 'よんだ', '見た', 'みた', 'うん', 'はい'], reply: 'おぉ！さすがだね！' },
+            { keywords: ['まだ', 'これから', '少し', 'ちょっと'], reply: 'じゃあまた後で読んでみてね！でもとりあえず…' },
+            { keywords: ['違う', 'いいえ', '読んでない'], reply: 'そっかぁ。でもちょっとだけ聞いてみてもいい？' }
+          ],
+          defaultReply: 'うんうん！',
+          next: null // ここでパズルに移行
+        }
+      ];
+
+      // Show initial greeting or resume
+      setTimeout(function () {
+        showTyping(function () {
+          if(allPuzzlesClear()){
+            addMessage(partnerName, 'やあ！また来てくれたんだね！嬉しいなぁ！', true);
+          } else if(puzzleStarted){
+            addMessage(partnerName, 'おかえり！続きからいこう！', true);
+            setTimeout(function(){ showCurrentQuestion(); }, 1500);
+          } else if(warmupStage > 0 && warmupStage <= 2){
+            // 途中から再開
+            var script = warmupScript[warmupStage];
+            addMessage(partnerName, 'おかえり！話の続きだね！', true);
+            if(script.greeting === null && warmupStage === 1){
+              setTimeout(function(){ showTyping(function(){
+                addMessage(partnerName, 'ぼくたちのこと覚えてくれてる人がいるって、すごく嬉しいんだ。キミはどのキャラクターが好き？', true);
+              }); }, 1500);
+            } else if(warmupStage === 2){
+              setTimeout(function(){ showTyping(function(){
+                addMessage(partnerName, 'ところでキミ、サイトのページちゃんと読んでくれた？', true);
+              }); }, 1500);
+            }
+          } else if(warmupStage >= 3){
+            // ウォームアップ終了済み、パズルへ
+            addMessage(partnerName, 'おかえり！クイズの続きだよ！', true);
+            setTimeout(function(){
+              localStorage.setItem('chat_puzzle_started', 'true');
+              showCurrentQuestion();
+            }, 1500);
+          } else {
+            // 初回: Stage 0の挨拶を順番に表示
+            var greetings = warmupScript[0].greeting;
+            addMessage(partnerName, greetings[0], true);
+            setTimeout(function(){ showTyping(function(){
+              addMessage(partnerName, greetings[1], true);
+              setTimeout(function(){ showTyping(function(){
+                addMessage(partnerName, greetings[2], true);
+              }); }, 1500);
+            }); }, 1500);
+          }
+        });
+      }, 1000);
+
+      function showCurrentQuestion(){
+        showTyping(function(){
+          var q1 = localStorage.getItem('chat_q1_clear') === 'true';
+          var q2 = localStorage.getItem('chat_q2_clear') === 'true';
+          var q3 = localStorage.getItem('chat_q3_clear') === 'true';
+          if(!q1){
+            addMessage(partnerName, 'この番組でね、自分が書いたものと違うものが放送されてるのに気づいて、辞めちゃった人がいるんだ。その人の名前、わかるかな？', true);
+          } else if(!q2){
+            addMessage(partnerName, 'コーナーとコーナーの間に何か挟まってたの、知ってるかな？脚本家さんは書いてないのに、なぜかそこにあったんだ。あれ、なんて呼ばれてたっけ？', true);
+          } else if(!q3){
+            addMessage(partnerName, '企画書にはね、ぼくたちの名前が5つ書いてあったんだ。でも放送されたのは4つだけ。消えちゃった5番目のおともだち、名前わかるかな？', true);
+          }
+        });
+      }
+    }
+
+    function getTimeString() {
+      var now = new Date();
+      var h = now.getHours();
+      var m = now.getMinutes();
+      return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+    }
+
+    function addMessage(sender, text, isPartner) {
+      var div = document.createElement('div');
+      div.className = 'message ' + (isPartner ? 'partner' : 'user');
+      var emoji = isPartner ? '🦊' : '👤';
+      div.innerHTML = '<div class="msg-avatar">' + emoji + '</div>' +
+        '<div class="msg-body">' +
+        '<div class="msg-header"><span class="msg-name">' + escapeHtml(sender) + '</span></div>' +
+        '<div class="msg-text">' + text + '</div>' +
+        '</div>';
+      chatArea.insertBefore(div, typingIndicator);
+      scrollToBottom();
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    function scrollToBottom() {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping(callback) {
+      typingIndicator.classList.add('show');
+      scrollToBottom();
+      var delay = 2000 + Math.random() * 1000; // 2-3 seconds
+      setTimeout(function () {
+        typingIndicator.classList.remove('show');
+        callback();
+      }, delay);
+    }
+
+    // Night3 puzzle: 3 questions (子ども番組MC口調)
+    var puzzleQuestions = [
+      {
+        key: 'chat_q1_clear',
+        keywords: ['渡辺千春', 'わたなべちはる', '渡辺', 'わたなべ'],
+        correctResponse: 'すごいね！正解だよ！渡辺千春さん。自分の台本と違うものが放送されてるのを見て、辞めちゃったんだ',
+        nextQuestion: 'じゃあ次の問題！コーナーとコーナーの間に何か挟まってたの、知ってるかな？脚本家さんは書いてないのに、なぜかそこにあったんだ。あれ、なんて呼ばれてたっけ？'
+      },
+      {
+        key: 'chat_q2_clear',
+        keywords: ['ブリッジ映像', 'ブリッジ', 'ぶりっじ'],
+        correctResponse: 'さすがだね！ブリッジ映像！誰が作ったのか、誰も知らなかったんだよ',
+        nextQuestion: 'さすがだね！もう一問いくよ！企画書にはね、ぼくたちの名前が5つ書いてあったんだ。でも放送されたのは4つだけ。消えちゃった5番目のおともだち、名前わかるかな？'
+      },
+      {
+        key: 'chat_q3_clear',
+        keywords: ['ひかりちゃん', 'ひかり', 'hikari'],
+        correctResponse: '全問正解！キミはすごいね！'
+      }
+    ];
+
+    function getCurrentQuestion() {
+      for (var i = 0; i < puzzleQuestions.length; i++) {
+        if (localStorage.getItem(puzzleQuestions[i].key) !== 'true') return i;
+      }
+      return -1; // all cleared
+    }
+
+    function checkPuzzleAnswer(input) {
+      var qi = getCurrentQuestion();
+      if (qi === -1) return null; // all done
+      var q = puzzleQuestions[qi];
+      var lowerInput = input.toLowerCase();
+      for (var j = 0; j < q.keywords.length; j++) {
+        if (lowerInput.indexOf(q.keywords[j].toLowerCase()) !== -1) {
+          localStorage.setItem(q.key, 'true');
+          return { correct: true, response: q.correctResponse, nextQuestion: q.nextQuestion || null };
+        }
+      }
+      return null; // no match
+    }
+
+    function allPuzzlesClear() {
+      return localStorage.getItem('chat_q1_clear') === 'true' &&
+             localStorage.getItem('chat_q2_clear') === 'true' &&
+             localStorage.getItem('chat_q3_clear') === 'true';
+    }
+
+    function showNight3Unlock() {
+      showTyping(function () {
+        addMessage(partnerName, '……', true);
+        setTimeout(function(){
+          showTyping(function(){
+            addMessage(partnerName, '……ねえ', true);
+            setTimeout(function(){
+              showTyping(function(){
+                addMessage(partnerName, 'ぼくのこと、もっと知りたい？', true);
+                setTimeout(function(){
+                  showTyping(function(){
+                    addMessage(partnerName, 'でもね、ここから先は怖いかもしれないよ', true);
+                    setTimeout(function(){
+                      showTyping(function(){
+                        addMessage(partnerName, 'それでも、来てくれる？', true);
+                        // Show link
+                        setTimeout(function(){
+                          var linkDiv = document.createElement('div');
+                          linkDiv.className = 'message partner';
+                          linkDiv.innerHTML = '<span class="sender" style="color:#c00;">' + escapeHtml(partnerName) + ':</span>' +
+                            '<span class="time">' + getTimeString() + '</span>' +
+                            '<span class="text"> <a href="../night3/" style="color:#0054e3; text-decoration:underline; cursor:pointer; font-weight:bold;">▶ 行く</a></span>';
+                          chatArea.insertBefore(linkDiv, typingIndicator);
+                          scrollToBottom();
+                          localStorage.setItem('night3_unlocked', 'true');
+                        }, 1000);
+                      });
+                    }, 1500);
+                  });
+                }, 1500);
+              });
+            }, 1500);
+          });
+        }, 2000);
+      });
+    }
+
+    function getResponse(input) {
+      var lowerInput = input.toLowerCase();
+
+      // Check general keyword responses
+      for (var i = 0; i < keywordResponses.length; i++) {
+        var entry = keywordResponses[i];
+        for (var j = 0; j < entry.keywords.length; j++) {
+          if (lowerInput.indexOf(entry.keywords[j].toLowerCase()) !== -1) {
+            return entry.response;
+          }
+        }
+      }
+
+      // Default random response
+      return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+    }
+
+    function sendMessage() {
+      if (isProcessing || isNight6) return;
+
+      var text = messageInput.value.trim();
+      if (!text) return;
+
+      isProcessing = true;
+      messageInput.value = '';
+
+      // Add user message
+      addMessage('あなた', text, false);
+
+      // Warmup phase: scripted conversation
+      if (!localStorage.getItem('chat_puzzle_started')) {
+        var stage = parseInt(localStorage.getItem('chat_warmup_stage') || '0');
+
+        if (stage < warmupScript.length) {
+          var script = warmupScript[stage];
+          var lowerInput = text.toLowerCase();
+
+          // Find matching response
+          var reply = script.defaultReply;
+          for (var i = 0; i < script.responses.length; i++) {
+            var r = script.responses[i];
+            for (var j = 0; j < r.keywords.length; j++) {
+              if (lowerInput.indexOf(r.keywords[j].toLowerCase()) !== -1) {
+                reply = r.reply;
+                break;
+              }
+            }
+            if (reply !== script.defaultReply) break;
+          }
+
+          // Advance stage
+          stage++;
+          localStorage.setItem('chat_warmup_stage', String(stage));
+
+          showTyping(function () {
+            addMessage(partnerName, reply, true);
+
+            if (script.next) {
+              // Show next question
+              setTimeout(function(){
+                showTyping(function(){
+                  addMessage(partnerName, script.next, true);
+                  isProcessing = false;
+                  messageInput.focus();
+                });
+              }, 1500);
+            } else {
+              // Warmup done → transition to puzzle
+              setTimeout(function(){
+                showTyping(function(){
+                  addMessage(partnerName, 'じゃあさ、ぼくからクイズを出してもいい？ サイトをちゃんと読んでたら答えられるやつ！', true);
+                  setTimeout(function(){
+                    showTyping(function(){
+                      localStorage.setItem('chat_puzzle_started', 'true');
+                      showCurrentQuestion();
+                      isProcessing = false;
+                      messageInput.focus();
+                    });
+                  }, 1500);
+                });
+              }, 1500);
+            }
+          });
+          return;
+        }
+      }
+
+      // Check puzzle answer FIRST
+      var puzzleResult = checkPuzzleAnswer(text);
+      if (puzzleResult && puzzleResult.correct) {
+        showTyping(function () {
+          addMessage(partnerName, puzzleResult.response, true);
+
+          // Check if all 3 are done
+          if (allPuzzlesClear() && !localStorage.getItem('night3_unlocked')) {
+            setTimeout(function () {
+              showNight3Unlock();
+            }, 2000);
+          } else if (puzzleResult.nextQuestion) {
+            // Show next question
+            setTimeout(function () {
+              showTyping(function () {
+                addMessage(partnerName, puzzleResult.nextQuestion, true);
+                isProcessing = false;
+                messageInput.focus();
+              });
+            }, 1500);
+            return; // don't set isProcessing=false yet
+          }
+          isProcessing = false;
+          messageInput.focus();
+        });
+        return;
+      }
+
+      // Normal response
+      var response = getResponse(text);
+      showTyping(function () {
+        addMessage(partnerName, response, true);
+        isProcessing = false;
+        messageInput.focus();
+      });
+    }
+
+    // Enter key to send
+    messageInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Update last activity
+    document.getElementById('lastActivity').textContent = '最終更新: ' + getTimeString();
+  </script>
+</body>
+</html>

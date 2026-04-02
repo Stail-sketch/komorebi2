@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>復元アーカイブ - あの番組を覚えて��ますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組���覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>復元アーカイブ</h1>
+    <p class="hero-subtitle">削除・消去されたデータの復元記録</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">復元について</h2>
+      <div class="card">
+        <p>本番組の調査過程で、消去・廃棄されたはずのデータの一部が復元されました。以下はその記��です。</p>
+        <p style="margin-top: 12px;">復元データは断片的であり、完全な状態ではありません。欠損部分は[データ欠損]と表記しています。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">復元データ #01：音声サーバーのログ</h2>
+      <div class="card" style="font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 1.8; background: #111; color: #0f0; padding: 24px;">
+        <p>[YSP-AUDIO-SERVER] ACCESS LOG (PARTIAL RECOVERY)</p>
+        <p>---</p>
+        <p>1996/04/15 02:14:33 - USER:<span class="redacted" style="background:#0f0;color:#0f0;">████</span> - ACCESS: /restricted/pattern_B3.wav - STATUS: OK</p>
+        <p>1996/04/15 02:14:45 - SYSTEM: Pattern B-3 loaded to broadcast queue</p>
+        <p>1996/04/15 02:15:01 - SYSTEM: Embedding process started [target: bridge_047.avi]</p>
+        <p>1996/04/15 02:18:22 - SYSTEM: Embedding complete. Subliminal layer: ACTIVE</p>
+        <p>---</p>
+        <p>1996/07/22 23:47:11 - USER:<span class="redacted" style="background:#0f0;color:#0f0;">████</span> - ACCESS: /restricted/protocol_transfer.dat - STATUS: OK</p>
+        <p>1996/07/22 23:47:15 - SYSTEM: [データ欠損]</p>
+        <p>1996/07/22 23:52:00 - SYSTEM: WARNING - Subject G-0 response anomaly detected</p>
+        <p>1996/07/22 23:52:01 - SYSTEM: [データ欠損]</p>
+        <p>---</p>
+        <p>1997/07/28 19:00:00 - USER:<span class="redacted" style="background:#0f0;color:#0f0;">████</span> - COMMAND: FORMAT ALL</p>
+        <p>1997/07/28 19:00:01 - SYSTEM: Initiating full server wipe...</p>
+        <p>1997/07/28 19:00:02 - SYSTEM: [ログ終了]</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">復元データ #02：被験者管理データベースの断片</h2>
+      <div class="card" style="font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 1.8; background: #111; color: #0f0; padding: 24px;">
+        <p>[YSP-SUBJECT-DB] TABLE: subjects (PARTIAL RECOVERY)</p>
+        <p>---</p>
+        <p>ID | CODE | NAME       | BIRTH  | REG_DATE   | STATUS</p>
+        <p>---</p>
+        <p>01 | G-0  | [データ欠損] | 1987   | 1988/03/20 | [デー��欠損]</p>
+        <p>02 | G-1  | [データ欠損] | 1986   | 1991/05/10 | RELEASED</p>
+        <p>03 | G-2  | [データ欠���] | 1987   | 1991/05/10 | RELEASED</p>
+        <p>04 | G-3  | [データ欠損] | 1985   | 1991/09/03 | RELEASED</p>
+        <p>05 | G-4  | [データ欠損] | 1988   | 1992/04/01 | RELEASED</p>
+        <p>06 | G-5  | [デー��欠損] | 1986   | 1992/04/01 | RELEASED</p>
+        <p>07 | G-6  | [データ欠損] | 1987   | 1993/04/05 | WITHDRAWN 1993</p>
+        <p>08 | G-7  | [データ欠損] | 1989   | 1993/04/05 | RELEASED</p>
+        <p>09 | G-8  | [データ欠損] | 1988   | 1994/04/02 | RELEASED</p>
+        <p>10 | G-9  | [データ欠損] | 1990   | 1995/01/15 | RELEASED</p>
+        <p>11 | G-10 | [データ欠損] | 1989   | 1995/01/15 | INCOMPLETE</p>
+        <p>---</p>
+        <p>NOTE: G-0 registration predates company founding.</p>
+        <p>NOTE: G-0 status field corrupted. Last known entry: 1997/09/27</p>
+        <p>NOTE: G-6 withdrawal reason: [データ欠損]</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">復元データ #03：社内チャットログの断片</h2>
+      <div class="card" style="font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 1.8; background: #111; color: #0f0; padding: 24px;">
+        <p>[YSP-INTERNAL-CHAT] RECOVERED FRAGMENTS</p>
+        <p>---</p>
+        <p>[1997/08/02 11:23] saito_m: 吉田さんが昨日から来ていません</p>
+        <p>[1997/08/02 11:25] takahashi_s: 知っている。<span class="redacted" style="background:#0f0;color:#0f0;">████</span>さんが対応中</p>
+        <p>[1997/08/02 11:25] saito_m: 対応？どういう意味ですか</p>
+        <p>[1997/08/02 11:26] takahashi_s: これ以上聞くな</p>
+        <p>[1997/08/02 11:30] saito_m: 吉田さんの娘さんは</p>
+        <p>[1997/08/02 11:30] takahashi_s: 斎藤、やめろ</p>
+        <p>[1997/08/02 11:31] saito_m: ……分かりました</p>
+        <p>---</p>
+        <p>[1997/09/28 03:00] [SYSTEM]: User <span class="redacted" style="background:#0f0;color:#0f0;">████</span> initiated data purge</p>
+        <p>[1997/09/28 03:00] [SYSTEM]: Chat history deletion in progress...</p>
+        <p>[1997/09/28 03:00] [UNKNOWN]: まだここにいるよ</p>
+        <p>[1997/09/28 03:00] [SYSTEM]: ERROR - Unrecognized user input</p>
+        <p>[1997/09/28 03:00] [UNKNOWN]: わすれないで</p>
+        <p>[1997/09/28 03:01] [SYSTEM]: Chat server shutdown complete</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特���番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

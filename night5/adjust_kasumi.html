@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>かすみ位置調整ツール</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;color:#fff;font-family:'Courier New',monospace;overflow:hidden;}
+#bg{width:100vw;height:100vh;object-fit:cover;position:absolute;top:0;left:0;z-index:0;}
+#kasumi-box{
+  position:absolute;
+  z-index:10;
+  background:#000;
+  border:2px solid #400;
+  cursor:move;
+  overflow:hidden;
+}
+#kasumi-box .inner{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;
+}
+#kasumi-box img{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  height:80%;opacity:0.4;filter:brightness(0.6) saturate(0.3);
+  pointer-events:none;
+}
+#kasumi-box p{z-index:1;}
+#resize-handle{
+  position:absolute;bottom:0;right:0;width:20px;height:20px;
+  background:#c00;cursor:nwse-resize;z-index:20;
+}
+#controls{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(0,0,0,0.9);padding:12px 20px;
+  display:flex;gap:20px;align-items:center;font-size:13px;
+}
+#controls span{color:#0f0;}
+#controls button{
+  padding:6px 16px;background:#222;border:1px solid #0f0;color:#0f0;
+  cursor:pointer;font-family:inherit;
+}
+</style>
+</head>
+<body>
+
+<!-- Night5のオフィス背景 -->
+<img id="bg" src="../image/camera/desk_on.png.png" alt="">
+
+<!-- かすみボックス（ドラッグ＆リサイズ可能） -->
+<div id="kasumi-box" style="top:5%;left:33%;width:34%;height:55%;">
+  <div class="inner">
+    <img src="../image/character/kasumi door.png" draggable="false">
+    <p style="color:#c00;font-size:22px;font-weight:bold;text-shadow:0 0 15px rgba(200,0,0,0.8);letter-spacing:2px;">手を貸してあげようか？？</p>
+    <p style="color:#800;font-size:13px;margin-top:8px;">電力を少し分けてあげる…</p>
+    <div style="display:flex;gap:24px;margin-top:20px;z-index:1;">
+      <button style="padding:10px 32px;background:#200;border:2px solid #c00;color:#c00;font-family:'Courier New',monospace;font-size:15px;letter-spacing:2px;">受け取る</button>
+      <button style="padding:10px 32px;background:#111;border:2px solid #444;color:#444;font-family:'Courier New',monospace;font-size:15px;letter-spacing:2px;">受け取らない</button>
+    </div>
+  </div>
+  <div id="resize-handle"></div>
+</div>
+
+<!-- コントロールパネル -->
+<div id="controls">
+  <span>位置: <span id="pos-display">top:5% left:33%</span></span>
+  <span>サイズ: <span id="size-display">width:34% height:55%</span></span>
+  <button onclick="copyCSS()">CSSコピー</button>
+  <span id="copy-msg" style="color:#ff0;display:none;">コピーしました！</span>
+</div>
+
+<script>
+var box = document.getElementById('kasumi-box');
+var handle = document.getElementById('resize-handle');
+var posDisp = document.getElementById('pos-display');
+var sizeDisp = document.getElementById('size-display');
+var dragging = false, resizing = false;
+var startX, startY, startLeft, startTop, startW, startH;
+
+function updateDisplay(){
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var topPct = (box.offsetTop / vh * 100).toFixed(1);
+  var leftPct = (box.offsetLeft / vw * 100).toFixed(1);
+  var widthPct = (box.offsetWidth / vw * 100).toFixed(1);
+  var heightPct = (box.offsetHeight / vh * 100).toFixed(1);
+  posDisp.textContent = 'top:' + topPct + '% left:' + leftPct + '%';
+  sizeDisp.textContent = 'width:' + widthPct + '% height:' + heightPct + '%';
+}
+
+// ドラッグ（移動）
+box.addEventListener('mousedown', function(e){
+  if(e.target === handle) return;
+  dragging = true;
+  startX = e.clientX;
+  startY = e.clientY;
+  startLeft = box.offsetLeft;
+  startTop = box.offsetTop;
+  e.preventDefault();
+});
+
+// リサイズ
+handle.addEventListener('mousedown', function(e){
+  resizing = true;
+  startX = e.clientX;
+  startY = e.clientY;
+  startW = box.offsetWidth;
+  startH = box.offsetHeight;
+  e.preventDefault();
+  e.stopPropagation();
+});
+
+document.addEventListener('mousemove', function(e){
+  if(dragging){
+    box.style.left = (startLeft + e.clientX - startX) + 'px';
+    box.style.top = (startTop + e.clientY - startY) + 'px';
+    box.style.transform = 'none';
+    updateDisplay();
+  }
+  if(resizing){
+    box.style.width = (startW + e.clientX - startX) + 'px';
+    box.style.height = (startH + e.clientY - startY) + 'px';
+    updateDisplay();
+  }
+});
+
+document.addEventListener('mouseup', function(){
+  dragging = false;
+  resizing = false;
+});
+
+function copyCSS(){
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var topPct = (box.offsetTop / vh * 100).toFixed(1);
+  var leftPct = (box.offsetLeft / vw * 100).toFixed(1);
+  var widthPct = (box.offsetWidth / vw * 100).toFixed(1);
+  var heightPct = (box.offsetHeight / vh * 100).toFixed(1);
+  var css = 'top:' + topPct + '%; left:' + leftPct + '%; width:' + widthPct + '%; height:' + heightPct + '%;';
+  navigator.clipboard.writeText(css);
+  var msg = document.getElementById('copy-msg');
+  msg.style.display = 'inline';
+  setTimeout(function(){ msg.style.display = 'none'; }, 2000);
+}
+
+updateDisplay();
+</script>
+</body>
+</html>

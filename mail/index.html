@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>受信ボックス</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overflow:hidden;height:100vh;}
+
+/* Header */
+.header{display:flex;align-items:center;height:40px;background:#12121e;border-bottom:1px solid #2a2a3e;padding:0 16px;position:fixed;top:0;left:0;right:0;z-index:100;}
+.header-title{font-size:15px;color:#8888aa;letter-spacing:1px;}
+.header-count{margin-left:auto;font-size:13px;color:#555570;}
+
+/* Layout */
+.container{display:flex;margin-top:40px;height:calc(100vh - 40px);}
+
+/* Mail list */
+.mail-list{width:380px;min-width:300px;overflow-y:auto;border-right:1px solid #2a2a3e;background:#161624;flex-shrink:0;}
+.mail-list.has-detail{width:380px;}
+.mail-row{display:flex;align-items:center;padding:14px 16px;cursor:pointer;border-bottom:1px solid #1e1e30;font-size:14px;position:relative;transition:background 0.15s;}
+.mail-row:hover{background:#1e1e34;}
+.mail-row.selected{background:#22224a;border-left:2px solid #6666aa;}
+.mail-row:not(.selected){border-left:2px solid transparent;}
+.mail-row.unread .row-sender,.mail-row.unread .row-subject{color:#e0e0f0;font-weight:700;}
+.mail-row.unread::after{content:'';position:absolute;left:7px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:#6670aa;}
+.row-info{flex:1;overflow:hidden;padding-left:8px;}
+.row-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px;}
+.row-sender{color:#9999b0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row-date{color:#555570;font-size:10px;flex-shrink:0;margin-left:8px;}
+.row-bottom{display:flex;align-items:baseline;overflow:hidden;}
+.row-subject{color:#8888a0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row-snippet{color:#555570;font-size:13px;margin-left:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1;}
+.row-attach{color:#6666aa;font-size:14px;margin-left:6px;flex-shrink:0;}
+.mail-empty{display:flex;align-items:center;justify-content:center;height:100%;color:#444460;font-size:14px;}
+
+/* Detail pane */
+.detail-pane{flex:1;overflow-y:auto;display:none;background:#1a1a2a;}
+.detail-pane.show{display:flex;flex-direction:column;}
+.detail-header{padding:16px 24px;border-bottom:1px solid #2a2a3e;background:#161624;}
+.detail-subject{font-size:18px;color:#d0d0e0;margin-bottom:12px;line-height:1.5;}
+.detail-meta{display:flex;align-items:center;gap:10px;}
+.detail-from{font-size:15px;color:#9999b0;font-weight:600;}
+.detail-to{font-size:13px;color:#555570;}
+.detail-date-full{margin-left:auto;font-size:13px;color:#555570;}
+.detail-body-wrap{flex:1;padding:20px 24px;overflow-y:auto;}
+.detail-body{font-size:16px;line-height:2;color:#b0b0c8;white-space:pre-wrap;}
+.detail-body a{color:#7788cc;text-decoration:none;border-bottom:1px solid #7788cc44;}
+.detail-body a:hover{color:#99aaee;border-bottom-color:#99aaee;}
+.detail-attachment{display:inline-flex;align-items:center;gap:6px;border:1px solid #2a2a3e;border-radius:4px;padding:8px 14px;margin-top:16px;cursor:pointer;font-size:14px;color:#8888a0;transition:background 0.2s;background:#161624;}
+.detail-attachment:hover{background:#22224a;border-color:#4444666;}
+.detail-back{display:none;font-size:16px;cursor:pointer;color:#6666aa;padding:8px;margin:-8px;margin-right:8px;}
+
+/* Empty detail */
+.empty-state{display:flex;align-items:center;justify-content:center;height:100%;color:#333350;font-size:12px;flex:1;}
+
+/* Night6 glitch */
+.glitch-body{background:#000!important;color:#000!important;}
+.glitch-body *{color:#000!important;}
+.glitch-visible{color:#4a4a5a!important;background:#000!important;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:#12121e;}
+::-webkit-scrollbar-thumb{background:#2a2a3e;border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#3a3a50;}
+
+@media(max-width:768px){
+  .mail-list.has-detail{display:none;}
+  .detail-back{display:inline-block;}
+  .detail-pane.show{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <span class="header-title">受信ボックス</span>
+  <span class="header-count" id="headerCount"></span>
+</div>
+
+<div class="container">
+  <!-- Mail List -->
+  <div class="mail-list" id="mailList"></div>
+
+  <!-- Detail Pane -->
+  <div class="detail-pane" id="detailPane">
+    <div class="empty-state" id="emptyState">メールを選択してください</div>
+    <div id="detailContent" style="display:none;">
+      <div class="detail-header">
+        <div style="display:flex;align-items:center;">
+          <div class="detail-back" id="detailBack">&#8592;</div>
+          <div class="detail-subject" id="dSubject"></div>
+        </div>
+        <div class="detail-meta">
+          <span class="detail-from" id="dFrom"></span>
+          <span class="detail-to">&#8594; 自分</span>
+          <span class="detail-date-full" id="dDate"></span>
+        </div>
+      </div>
+      <div class="detail-body-wrap">
+        <div class="detail-body" id="dBody"></div>
+        <div id="dAttachment"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---- Helpers ----
+  var LS = localStorage;
+  function flag(k){ return LS.getItem(k)==='true' || LS.getItem(k)==='1'; }
+  var night6 = flag('show_night6');
+
+  // Garbled generators
+  function garble(len){
+    var c='■□▪▫▬▮▰░▒▓█▌▐';
+    var s='';for(var i=0;i<(len||6);i++) s+=c[Math.floor(Math.random()*c.length)];
+    return s;
+  }
+  function garbleSender(){ return '???@???.??'; }
+  function garbleSubject(){ return garble(4)+'…'+garble(3); }
+  function garbleDate(base){
+    var d=new Date(2026,2,15);
+    d.setDate(d.getDate()+base);
+    return (d.getMonth()+1)+'/'+d.getDate();
+  }
+
+  // ---- Mail Definitions ----
+  var mails=[];
+
+  // ===== Night5クリア後（+7通） =====
+  if(flag('night5_clear')){
+    mails.push({id:'n5_trigger', from:'', subject:'', snippet:'準備はできましたか', body:'<div style="text-align:center;padding:40px 0;"><p style="font-size:18px;color:#8888aa;margin-bottom:30px;">準備はできましたか</p><a href="../night6/" style="display:inline-block;padding:12px 40px;border:1px solid #6666aa;color:#6666aa;font-size:16px;letter-spacing:2px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.background=\'#6666aa\';this.style.color=\'#000\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'#6666aa\'">開始</a></div>', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n5_creepy3', from:'0x00000000', subject:'K-059', snippet:'PROCESS COMPLETING...', body:'SUBJECT: K-059\nSTATUS: PROCESS COMPLETING\nESTIMATED COMPLETION: IMMINENT\n\n予定通りです', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n5_creepy2', from:'', subject:'', snippet:'35.6812° N, 139.7671° E', body:'35.6812° N, 139.7671° E\n\n...', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n5b', from:garbleSender(), subject:garbleSubject(), snippet:'…もう…時間がない…', body:'「…もう…時間がない……急いで……全てが…消える前に…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n5', from:'キツネ団長', subject:garbleSubject(), snippet:'…もうすぐ…終わる…', body:'「…もうすぐ…終わる……全部……ありがとう…」\n\n<span onclick="if(typeof collectEvidence===\'function\'){collectEvidence(\'20\');}this.style.color=\'#6a6\';this.style.textShadow=\'0 0 8px rgba(100,200,100,0.3)\';" style="font-size:14px;color:#555570;cursor:pointer;letter-spacing:1px;transition:color 0.3s;">…忘れないで…あの子のことを…</span>', unread:true, attachment:null, type:'n5'});
+    mails.push({id:'n5_spam1', from:'no-reply@electric-bill.example', subject:'4月分電気料金のお知らせ', snippet:'今月のご利用金額', body:'4月分電気料金のお知らせ\n\nご利用金額: ¥6,842\nお支払い期限: 4月25日\n\n口座振替をご利用の場合、自動で引き落とされます。', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n5_spam2', from:'news@weather-app.example', subject:'明日の天気：曇りのち雨', snippet:'傘を忘れずに', body:'明日の天気予報\n\n東京: 曇りのち雨 最高18℃/最低12℃\n降水確率: 70%\n\n傘を忘れずにお出かけください。', unread:false, attachment:null, type:'normal'});
+  }
+
+  // ===== Night4クリア後（+7通） =====
+  if(flag('night4_clear')){
+    mails.push({id:'n4_daughter', from:'', subject:'パパ', snippet:'パパ…', body:'パパ\n\nどこにいるの\nさがしてるの\n\nわたしはここにいるよ', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n4_creepy', from:'no-reply@████████.██', subject:'自動通知：異常なアクセスを検知しました', snippet:'あなたのアクセスログに異常が…', body:'あなたのアクセスログに異常なパターンが検出されました。\n\n対象: あなた\n行動: 全て記録済み\n\n※ このメールに心当たりがない場合は無視してください。', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n4b', from:garbleSender(), subject:garbleSubject(), snippet:'…あの子の…名前を…', body:'「…あの子の…名前を……覚えていて……お願い…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n4', from:garbleSender(), subject:garbleSubject(), snippet:'…古い場所を…見た…か…', body:'「…古い場所を…見た…か……あそこに…答えが……でも…気をつけて…見られている…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n4_binary', from:'00000000@null', subject:'01001011', snippet:'010010110010110100110101...', body:'01001011 00101101 00110000 00110101 00111001\n01010000 01010010 01001111 01000011 01000101 01010011 01010011\n01010011 01010100 01001001 01001100 01001100\n01010010 01010101 01001110 01001110 01001001 01001110 01000111', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n4_spam1', from:'update@app-store.example', subject:'アプリのアップデートがあります', snippet:'3件のアップデート', body:'以下のアプリのアップデートが利用可能です:\n\n・Popin v4.2.1 - バグ修正\n・カメラアプリ v2.0 - 新フィルター追加\n・天気予報 v3.1 - UI改善', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n4_spam2', from:'no-reply@delivery.example', subject:'お届け完了のお知らせ', snippet:'ご注文の商品をお届けしました', body:'ご注文の商品をお届けしました。\n\n注文番号: #D-85723\n商品: ワイヤレスイヤホン\n\nご不在の場合は宅配ボックスに投函しております。', unread:false, attachment:null, type:'normal'});
+  }
+
+  // ===== Night3クリア後（+7通） =====
+  if(flag('night3_clear')){
+    mails.push({id:'n3_self', from:'（あなたのメールアドレス）', subject:'（件名なし）', snippet:'覚えていないけど…', body:'このメールはあなた自身から送信されました。\n\n…覚えていますか？\n\n送信日時: 2026年3月31日 03:47', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n3_kitsune', from:garbleSender(), subject:garbleSubject(), snippet:'…嘘が…混じっている…', body:'「…調査記録に……嘘が…混じっている……見つけて…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n3b', from:garbleSender(), subject:garbleSubject(), snippet:'…矛盾に…気づいた…か…', body:'「…矛盾に…気づいた…か……三つ…ある……全部…見つけて…伝えて…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n3', from:'キツネ団長', subject:'クイズの準備ができたよ！', snippet:'ぼくとチャットで話そう！', body:'やあ！\n\nサイトのこと、いっぱい調べてくれてるみたいだね！\n\nぼくからキミにクイズを出したいんだ。\nチャットで待ってるから、来てね！\n\nキツネ団長より', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n3_spam1', from:'no-reply@video-tube.example', subject:'あなたへのおすすめ動画', snippet:'話題の動画をチェック', body:'あなたへのおすすめ\n\n▶ 90年代の子ども番組まとめ【懐かしすぎる】- 再生回数 234万回\n▶ 【閲覧注意】放送事故になった子ども番組5選 - 再生回数 89万回\n▶ 都市伝説！あの番組の裏側とは - 再生回数 156万回', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n3_spam2', from:'campaign@shopping-mall.example', subject:'【期間限定】春の大セール開催中！', snippet:'最大50%OFF', body:'春の大セール開催中！\n\n対象商品が最大50%OFF！\n期間: 3月25日〜4月7日\n\nお見逃しなく！', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n3_spam3', from:'no-reply@library.example', subject:'返却期限のお知らせ', snippet:'貸出中の本があります', body:'返却期限のお知らせ\n\n以下の本の返却期限が近づいています。\n\n・「日本のテレビ番組史 1980-2000」\n  返却期限: 4月5日\n\n延長手続きはWebサイトから。', unread:false, attachment:null, type:'normal'});
+  }
+
+  // ===== Night2クリア後（+7通） =====
+  if(flag('night2_clear')){
+    mails.push({id:'n2_chat', from:'キツネ団長', subject:'ぼくと話そう！', snippet:'やあ！ぼくとチャットしない？', body:'やあ！\n\nぼくはキツネ団長！\nキミのことが気になってたんだ。\n\nよかったら、ぼくとチャットしない？\n\n<span id="chat-unlock-btn" onclick="unlockChat()" style="color:#c8760e;font-weight:bold;text-decoration:underline;font-size:16px;cursor:pointer;">\u25b6 チャットを始める</span>\n\nキミが来てくれるの、待ってるよ！\n\nキツネ団長より', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n2_staff', from:'tokuhan_staff@komorebi-special.tv', subject:'視聴データについて', snippet:'あなたの視聴データを確認しました', body:'視聴者各位\n\nあなたの視聴データを確認しました。\n視聴時間、クリック回数、滞在ページ、全て記録しています。\n\nご協力ありがとうございます。\n\n特番スタッフ', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n2_creepy', from:'████@████.██', subject:garble(4), snippet:garble(8), body:garble(6)+'\n'+garble(10)+'\n'+garble(4)+'\n\n'+garble(12), unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n2b', from:garbleSender(), subject:garbleSubject(), snippet:'…信じるな…', body:'「…サイトの情報を……そのまま…信じるな……書き換えられている…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n2', from:garbleSender(), subject:garbleSubject(), snippet:'…見ている…ものがいる…', body:'「…見ている…ものがいる……サイトの…情報は……全部では…ない…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n2_spam1', from:'info@card-statement.example', subject:'3月分ご利用明細', snippet:'今月のご利用金額', body:'3月分のクレジットカードご利用明細\n\nご利用金額合計: ¥34,521\nお支払い日: 4月10日\n\n明細の詳細はWebサイトからご確認ください。', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n2_spam2', from:'magazine@tech-news.example', subject:'週刊テックニュース vol.203', snippet:'今週のAI関連ニュース', body:'週刊テックニュース vol.203\n\n■ AI生成コンテンツの著作権問題、新判例\n■ 量子コンピュータ、商用化へ前進\n■ SNS新規制法案、来月施行\n\n詳しくはWebサイトで。', unread:false, attachment:null, type:'normal'});
+  }
+
+  // ===== うっきちメール =====
+  if(flag('ukki_mail_trigger')){
+    mails.push({id:'ukki', from:'█▓▒░'+garble(2), subject:garble(6), snippet:garble(10), body:garble(8)+garble(12)+garble(6), unread:true, attachment:{name:garble(5)+'.???', type:'ukki'}, type:'ukki'});
+  }
+
+  // ===== Night1クリア後（+6通） =====
+  if(flag('night1_clear')){
+    mails.push({id:'potamaru', from:'ぽ■た■る', subject:'▓▒░'+garble(2), snippet:'…ｺﾚ…ｷｲﾃ…', body:'「…ｺﾚ…ｷｲﾃ…」', unread:true, attachment:{name:'voice_???.wav', type:'potamaru'}, type:'potamaru'});
+    mails.push({id:'n1b', from:'キ■ネ団■', subject:garbleSubject(), snippet:'…間違ってる…ところがある…', body:'「…このサイト…よく読んで…\n…間違ってる…ところがある…\n…ひとつじゃない…\n…見つけたら…教えて…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n1', from:garbleSender(), subject:garbleSubject(), snippet:'…来てくれた…', body:'「…来てくれた……でも…まだ……気をつけて…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n1_spam_sub', from:'newsletter@retro-tv.example', subject:'懐かしの90年代テレビ特集', snippet:'今週のピックアップ番組は…', body:'懐かしの90年代テレビ特集\n\n今週のピックアップ：\n■ 忘れられた子ども番組たち\n■ 90年代のアニメ主題歌ランキング\n■ あの頃のCMを振り返る\n\n※ 配信停止はこちらから', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n1_spam1', from:'no-reply@point-card.example', subject:'ポイント有効期限のお知らせ', snippet:'1,200ポイントが失効します', body:'ポイント有効期限のお知らせ\n\n1,200ポイントが4月末に失効します。\n\nお早めにご利用ください。\nポイント交換はマイページから。', unread:false, attachment:null, type:'normal'});
+    mails.push({id:'n1_spam2', from:'shop@amazon-deals.example', subject:'ご注文の確認 #A-29481', snippet:'ご注文ありがとうございます', body:'ご注文番号: #A-29481\nお届け予定日: 4月2日\n\n商品: USB充電ケーブル 3本セット\n金額: ¥1,280\n\nお届け先の変更はマイページから。', unread:false, attachment:null, type:'normal'});
+  }
+
+  // ===== 常時表示（初期・10通） =====
+  mails.push({id:'spam_lottery', from:'info@deals-now.xyz', subject:'【当選】おめでとうございます！', snippet:'特別キャンペーンに当選しました…', body:'おめでとうございます！特別キャンペーンに当選しました！\n\n今すぐ以下のリンクから賞品をお受け取りください。\n\n※リンクの有効期限は24時間です。', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'spam_tvguide', from:'newsletter@tv-guide.example', subject:'今週のおすすめ番組特集', snippet:'話題の特番をチェック！', body:'今週のおすすめ番組特集\n\n▶ あの番組を覚えていますか 〜木漏れ日遊園地編〜\n  放送中の話題の特番！30年前の子ども番組の謎に迫る。\n\n▶ 深夜の料理バトル\n▶ 世界の絶景100選', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'spam_security', from:'no-reply@account-security.example', subject:'アカウントのセキュリティに関するお知らせ', snippet:'不審なログインが検出されました…', body:'お客様のアカウントで不審なログインが検出されました。\n\n心当たりがない場合はパスワードを変更してください。\n\n※このメールは自動送信されています。', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'spam_wifi', from:'support@home-wifi.example', subject:'ルーターのファームウェア更新のお知らせ', snippet:'最新版に更新してください', body:'ルーターのファームウェア更新のお知らせ\n\nお使いのルーター（型番: WR-2600X）に\n新しいファームウェアが公開されました。\n\nセキュリティ改善が含まれますので、\nお早めに更新をお願いいたします。', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'spam_coupon', from:'campaign@food-delivery.example', subject:'初回注文500円OFFクーポン', snippet:'今すぐ使える！', body:'初回注文限定！500円OFFクーポン\n\nクーポンコード: WELCOME500\n有効期限: 4月30日まで\n\n今すぐ注文する >', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'spam_clinic', from:'info@dental-clinic.example', subject:'定期検診のお知らせ', snippet:'次回の検診日が近づいています', body:'定期検診のお知らせ\n\n次回の検診予定日: 4月15日（火）14:00\n\n変更・キャンセルの場合はお電話ください。\n\nさくら歯科クリニック', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'spam_library', from:'no-reply@city-library.example', subject:'図書館からのお知らせ：返却期限', snippet:'返却期限が近づいています', body:'以下の図書の返却期限が近づいています。\n\n■「日本のテレビ番組の歴史 1980-2000」\n  返却期限: 4月8日\n\nお早めにご返却ください。\n\n市立図書館', unread:false, attachment:null, type:'normal'});
+  mails.push({id:'creepy_1997', from:'system@yume-studio.co.jp', subject:'テスト収録完了報告', snippet:'1997年9月の…', body:'日時: 1997年9月15日\n件名: テスト収録完了報告\n\n本日のテスト収録は予定通り完了しました。\n被験者の反応は想定内です。\n\nデータは保管庫に転送済み。\n\n追記: 次回の収録は中止となりました。', unread:true, attachment:null, type:'normal'});
+  mails.push({id:'init', from:garbleSender(), subject:'■■■■', snippet:'…離さないで…あの名前を…', body:'「…離さないで…あの名前を…」', unread:true, attachment:null, type:'normal'});
+  mails.push({id:'spam_music', from:'recommend@music-stream.example', subject:'今週のおすすめプレイリスト', snippet:'あなたへのおすすめ曲', body:'今週のおすすめプレイリスト\n\n♪ 夜のドライブ - Chill Mix\n♪ 90年代J-POPヒッツ\n♪ 作業用BGM - Lo-Fi\n\n今すぐ聴く >', unread:false, attachment:null, type:'normal'});
+
+  // Track read state (localStorage永続化)
+  var readState = JSON.parse(LS.getItem('mail_read_state') || '{}');
+  function saveReadState() { LS.setItem('mail_read_state', JSON.stringify(readState)); }
+
+  // ---- Header count ----
+  function updateCount(){
+    var count=0;
+    mails.forEach(function(m){if(!readState[m.id]) count++;});
+    var el=document.getElementById('headerCount');
+    if(mails.length>0){
+      el.textContent=count>0?'未読 '+count+' 件 / 全 '+mails.length+' 件':'全 '+mails.length+' 件';
+    } else {
+      el.textContent='';
+    }
+  }
+
+  // ---- Render Mail List ----
+  var selectedId=null;
+  var listEl=document.getElementById('mailList');
+  var detailEl=document.getElementById('detailPane');
+  var emptyEl=document.getElementById('emptyState');
+  var contentEl=document.getElementById('detailContent');
+
+  function renderList(){
+    listEl.innerHTML='';
+    if(mails.length===0){
+      listEl.innerHTML='<div class="mail-empty">メールはありません</div>';
+      return;
+    }
+    mails.forEach(function(m){
+      var row=document.createElement('div');
+      row.className='mail-row'+(readState[m.id]?'':' unread')+(selectedId===m.id?' selected':'');
+      row.innerHTML=
+        '<div class="row-info">'+
+          '<div class="row-top">'+
+            '<span class="row-sender">'+esc(m.from)+'</span>'+
+          '</div>'+
+          '<div class="row-bottom">'+
+            '<span class="row-subject">'+esc(m.subject)+'</span>'+
+            '<span class="row-snippet">'+esc(m.snippet)+'</span>'+
+            (m.attachment?'<span class="row-attach">&#9901;</span>':'')+
+          '</div>'+
+        '</div>';
+      row.addEventListener('click', function(){ selectMail(m.id); });
+      listEl.appendChild(row);
+    });
+  }
+
+  function esc(s){
+    var d=document.createElement('div');d.textContent=s;return d.innerHTML;
+  }
+
+  // チャット解放ボタン
+  window.unlockChat = function(){
+    LS.setItem('chat_unlocked','true');
+    var btn = document.getElementById('chat-unlock-btn');
+    if(btn){
+      btn.textContent = '\u2705 チャットが追加されました！デスクトップに戻ってね';
+      btn.style.color = '#4ca64c';
+      btn.style.cursor = 'default';
+      btn.onclick = null;
+    }
+  };
+
+  // ---- Select Mail ----
+  function selectMail(id){
+    selectedId=id;
+    readState[id]=true;
+    saveReadState();
+    var m=null;
+    for(var i=0;i<mails.length;i++){if(mails[i].id===id){m=mails[i];break;}}
+    if(!m) return;
+
+    listEl.classList.add('has-detail');
+    detailEl.classList.add('show');
+    emptyEl.style.display='none';
+    contentEl.style.display='flex';
+    contentEl.style.flexDirection='column';
+    contentEl.style.height='100%';
+
+    document.getElementById('dSubject').textContent=m.subject;
+    document.getElementById('dFrom').textContent=m.from;
+    document.getElementById('dDate').textContent='';
+
+    var bodyEl=document.getElementById('dBody');
+    var attEl=document.getElementById('dAttachment');
+    attEl.innerHTML='';
+
+    // Night6 glitch
+    if(night6){
+      bodyEl.className='detail-body glitch-body';
+      bodyEl.innerHTML='<span class="glitch-visible">「…もう…話せない…」</span>';
+      document.getElementById('dSubject').style.cssText='color:#1a1a2a;background:#1a1a2a;';
+    } else {
+      bodyEl.className='detail-body';
+      // Allow HTML for chat link and evidence items
+      if(m.id==='n3' || m.id==='n2_chat' || m.type==='n5'){
+        bodyEl.innerHTML=m.body;
+      } else {
+        bodyEl.textContent='';
+        bodyEl.innerText=m.body;
+      }
+      document.getElementById('dSubject').style.cssText='';
+    }
+
+    // Attachments
+    if(m.attachment){
+      var att=document.createElement('div');
+      att.className='detail-attachment';
+      if(m.attachment.type==='potamaru'){
+        att.innerHTML='&#9835; '+esc(m.attachment.name);
+        att.addEventListener('click',function(){ playPotamaruSound(); });
+      } else if(m.attachment.type==='ukki'){
+        att.innerHTML='&#9634; '+esc(m.attachment.name);
+        att.title='ファイルを開けません';
+      }
+      attEl.appendChild(att);
+    }
+
+    renderList();
+    updateCount();
+  }
+
+  // ---- Potamaru Sound ----
+  function playPotamaruSound(){
+    try{
+      var ctx=new (window.AudioContext||window.webkitAudioContext)();
+      var osc=ctx.createOscillator();
+      var gain=ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if(flag('night3_clear')){
+        osc.type='sine';
+        osc.frequency.setValueAtTime(440,ctx.currentTime);
+        gain.gain.setValueAtTime(0.15,ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+2);
+      } else {
+        osc.type='sawtooth';
+        osc.frequency.setValueAtTime(800,ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(200,ctx.currentTime+0.5);
+        osc.frequency.linearRampToValueAtTime(900,ctx.currentTime+1.0);
+        osc.frequency.linearRampToValueAtTime(100,ctx.currentTime+1.5);
+        osc.frequency.setValueAtTime(800,ctx.currentTime+1.5);
+        gain.gain.setValueAtTime(0.4,ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.5,ctx.currentTime+1);
+        gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+2);
+      }
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime+2);
+    }catch(e){}
+  }
+
+  // ---- Back button (mobile) ----
+  document.getElementById('detailBack').addEventListener('click',function(){
+    selectedId=null;
+    listEl.classList.remove('has-detail');
+    detailEl.classList.remove('show');
+    emptyEl.style.display='';
+    contentEl.style.display='none';
+    renderList();
+  });
+
+  // ---- Night6 full glitch ----
+  if(night6){
+    document.body.style.background='#080810';
+    setInterval(function(){
+      document.body.style.opacity=Math.random()>0.1?'1':'0.7';
+    },200);
+  }
+
+  // ---- Init ----
+  renderList();
+  updateCount();
+
+})();
+</script>
+<script src="../js/main.js"></script>
+</body>
+</html>

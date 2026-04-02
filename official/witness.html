@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>視聴者証言コーナー - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .testimony-item {
+      border-left: 3px solid var(--color-gray-300);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .testimony-item:last-child {
+      margin-bottom: 0;
+    }
+    .testimony-quote {
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .testimony-source {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--color-gray-500);
+    }
+    .testimony-anon {
+      border-left-color: var(--color-gray-500);
+      background: rgba(0, 0, 0, 0.03);
+      font-family: monospace;
+    }
+    .testimony-anon .testimony-quote {
+      font-style: normal;
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+    .testimony-anon .testimony-source {
+      font-family: var(--font-main);
+    }
+    .evidence-clickable {
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      background-color: rgba(180, 180, 255, 0.05);
+      border-left-color: rgba(180, 180, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>視聴者証言コーナー</h1>
+    <p class="hero-subtitle">追加証言・第三回集計分</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">証言について</h2>
+      <div class="card">
+        <p>第三回放送後に新たに寄せられた視聴者証言をまとめています。</p>
+        <p style="margin-top: 8px; font-size: 0.85rem; color: var(--color-gray-500);">※証言者のプライバシー保護のため、氏名等は伏せております。匿名投稿については原文のまま掲載しています。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">番組の記憶に関する証言</h2>
+      <div class="card">
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「キツネ団長の冒険タイムを今でも覚えている。でも内容を思い出そうとすると、なぜか頭が痛くなる」</p>
+          <p class="testimony-source">30代女性・東京都（当時幼稚園児）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「番組に出てくる"おひさまのへや"というコーナーが好きだった。でも母に聞いたら、そんなコーナーはなかったと言われた」</p>
+          <p class="testimony-source">30代男性・埼玉県（当時小学1年生）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「夢の中で番組の続きを見ることがあった。目が覚めても内容を鮮明に覚えていて、それが放送されたものなのか夢なのか分からなくなった」</p>
+          <p class="testimony-source">30代女性・千葉県（当時小学2年生）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「番組を見ていた友達が何人かいたが、みんな内容の記憶が微妙に違う。同じ番組を見ていたはずなのに」</p>
+          <p class="testimony-source">30代男性・神奈川県（当時小学3年生）</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">スタジオ周辺の目撃証言</h2>
+      <div class="card">
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「1993年頃、スタジオの裏手で子どもたちが並んで歩いているのを見た。全員同じ白い服を着ていた」</p>
+          <p class="testimony-source">50代女性・東京都（当時、近隣住民）</p>
+        </div>
+
+        <div class="testimony-item evidence-clickable" onclick="collectEvidence('10')">
+          <p class="testimony-quote">「1990年春にスタジオ近くで小さな女の子を見た。一人で泣いていたので声をかけようとしたが、スタッフらしき男性がすぐに連れて行った。あの子は番組が始まる前からスタジオにいたことになる」</p>
+          <p class="testimony-source">60代男性・東京都（当時、近隣で散歩中）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「深夜にスタジオから搬出作業をしているのを何度か見た。大きな箱を黒い車に積んでいた」</p>
+          <p class="testimony-source">50代男性・東京都（当時、近隣でタクシー運転手）</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">匿名投稿</h2>
+      <div class="card">
+
+        <div class="testimony-item testimony-anon">
+          <p class="testimony-quote">あの番組のことを調べるのはやめた方がいい。<br>知らない方が幸せなこともある。<br>自分はあの場所にいた。だから分かる。<br>あれは子ども番組なんかじゃなかった。</p>
+          <p class="testimony-source">匿名投稿（投稿日：2026年3月15日）</p>
+        </div>
+
+        <div class="testimony-item testimony-anon">
+          <p class="testimony-quote">G-0のことを覚えている人はもういないのだろうか。<br>あの子の名前は記録から消された。<br>でも、自分は覚えている。<br><br>吉田。<br><br>あの子は最初の被験者だった。番組が始まるずっと前から。<br>1987年。まだスタジオが完成する前のことだ。</p>
+          <p class="testimony-source">匿名投稿・吉田一郎（投稿日：2026年3月22日） ※投稿者が実名を使用</p>
+        </div>
+
+        <div class="testimony-item testimony-anon">
+          <p class="testimony-quote">番組制作委員会の皆さんへ。<br>これ以上調べないでください。<br>関係者の安全が保障できません。</p>
+          <p class="testimony-source">匿名投稿（投稿日：2026年3月28日）</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card" style="text-align: center; font-size: 0.85rem; color: var(--color-gray-500);">
+        <p>情報をお持ちの方は<a href="contact.html">お問い合わせフォーム</a>よりご連絡ください。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Night3クリアチェック
+    if (localStorage.getItem('night3_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

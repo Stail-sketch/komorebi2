@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基本資料 - あの番組を覚えていますか</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .evidence-clickable {
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      color: var(--color-navy-light);
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    if (localStorage.getItem('night1_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="basic.html" class="active">基本資料</a></li>
+          <li><a href="photos.html">写真資料</a></li>
+          <li><a href="tips.html">情報提供</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ヒーロー -->
+  <section class="page-hero">
+    <h1>基本資料</h1>
+    <p class="hero-subtitle">「木漏れ日遊園地」番組基本情報</p>
+  </section>
+
+  <!-- メインコンテンツ -->
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">番組基本情報</h2>
+      <div class="card">
+        <table class="info-table">
+          <tr>
+            <th>番組名</th>
+            <td>木漏れ日遊園地（こもれびゆうえんち）</td>
+          </tr>
+          <tr>
+            <th>放送期間</th>
+            <td>1991年4月〜1997年9月</td>
+          </tr>
+          <tr>
+            <th>放送局</th>
+            <td>きらら放送</td>
+          </tr>
+          <tr>
+            <th>放送時間</th>
+            <td>毎週土曜 8:30〜9:00（30分番組）</td>
+          </tr>
+          <tr>
+            <th>制作</th>
+            <td>ゆめスタジオプロダクション</td>
+          </tr>
+          <tr>
+            <th>ジャンル</th>
+            <td>子ども向け教育・エンターテインメント</td>
+          </tr>
+          <tr>
+            <th>総放送回数</th>
+            <td><span id="episode-count" class="memory-fragment" data-fragment="oku" style="cursor:pointer;" onclick="collectFragment('oku',this)">315回</span></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">番組概要</h2>
+      <div class="card">
+        <p>「木漏れ日遊園地」は、4体のアニマトロニクスキャラクターが主役の子ども向け番組です。「遊園地」を舞台に、冒険・ダンス・なぜなぜ教室・いたずらコーナーなど、さまざまなコーナーが設けられていました。</p>
+        <p style="margin-top: 12px;">番組は1991年4月の放送開始以来、幼児〜小学校低学年を中心に高い人気を誇り、1997年9月の最終回まで約6年半にわたって放送されました。</p>
+        <p style="margin-top: 12px;">キャラクターの操演にはアニマトロニクス技術が使用されており、当時としては非常に高い技術力が投入されていたと言われています。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">制作に関する記録</h2>
+      <div class="card">
+        <p>番組の制作は「ゆめスタジオプロダクション」が担当しました。同社は1988年に設立され、主にテレビ番組の企画・制作を手がけていた中堅プロダクションです。記録をおくことに関しては徹底していたと言われています。</p>
+        <p style="margin-top: 12px;">番組の企画自体は1989年頃から進められており、キャラクターデザインやアニマトロニクスの開発に約2年の期間が費やされました。</p>
+        <p style="margin-top: 12px;" class="evidence-clickable" onclick="collectEvidence('01')">1990年のテスト収録については記録が残っていない。</p>
+        <p style="margin-top: 12px;">なお、ゆめスタジオプロダクションは番組終了直後の1997年秋に事業を停止し、解散しています。当時の関係者への連絡は困難な状況です。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">主なコーナー</h2>
+      <div class="card">
+        <table class="info-table">
+          <tr>
+            <th>キツネ団長の冒険タイム</th>
+            <td>キツネ団長が冒険の物語を繰り広げるメインコーナー。番組の中心的な存在だった。</td>
+          </tr>
+          <tr>
+            <th>かあ博士のなぜなぜ教室</th>
+            <td>かあ博士が科学や自然の「なぜ？」を調べて紹介するコーナー。</td>
+          </tr>
+          <tr>
+            <th>ぽたまるダンス♪</th>
+            <td>ぽたまると一緒にダンスをするコーナー。子どもたちの参加型。</td>
+          </tr>
+          <tr>
+            <th>うっきちのいたずら大作戦</th>
+            <td>うっきちがいたずらを仕掛けるコメディコーナー。毎回オチがつくのがお約束だった。</td>
+          </tr>
+          <tr>
+            <th>みんなであそぼう！</th>
+            <td>視聴者参加型のコーナー。子どもたちと一緒に遊ぶ企画が人気だった。</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <p style="font-size: 0.85rem; color: var(--color-gray-500);">本ページの情報は、現時点で確認できる資料に基づいています。追加情報をお持ちの方は<a href="contact.html">お問い合わせフォーム</a>よりご連絡ください。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script>
+// 放送回数の数字がチカチカする仕掛け
+(function(){
+  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+  var el = document.getElementById('episode-count');
+  if(!el) return;
+
+  if(frags.indexOf('oku')!==-1){
+    // 既に収集済み
+    el.style.color = '#7070ff';
+    el.style.cursor = 'default';
+    el.textContent = '315回';
+    return;
+  }
+
+  // 未収集：3秒ごとに一瞬だけ「約0回」や「約???回」に変わる
+  var glitchTexts = ['約0回','約???回','約■■■回','約1回'];
+  var glitchInterval = setInterval(function(){
+    var original = el.textContent;
+    var glitch = glitchTexts[Math.floor(Math.random()*glitchTexts.length)];
+    el.textContent = glitch;
+    el.style.color = '#7070ff';
+    setTimeout(function(){
+      // 収集済みチェック
+      var f = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+      if(f.indexOf('oku')===-1){
+        el.textContent = '315回';
+        el.style.color = '';
+      }
+    }, 150);
+  }, 3000 + Math.random()*2000);
+})();
+
+function collectFragment(id, el){
+  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+  if(frags.indexOf(id)===-1){
+    frags.push(id);
+    localStorage.setItem('memory_fragments',JSON.stringify(frags));
+  }
+  el.textContent = '315回';
+  el.style.color = '#7070ff';
+  el.style.textShadow = '0 0 8px rgba(100,100,255,0.6)';
+  el.style.cursor = 'default';
+}
+</script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

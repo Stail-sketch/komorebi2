@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ending A - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{
+    width:100%;height:100%;
+    background:#000;
+    overflow:hidden;
+    font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN','MS PMincho',serif;
+  }
+  #screen{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;
+    z-index:1;
+  }
+
+  /* Terminal log (黒幕) */
+  .terminal-line{
+    color:#00ff41;
+    font-family:'Courier New',Consolas,monospace;
+    font-size:clamp(14px,2.2vw,20px);
+    text-align:left;
+    opacity:0;
+    white-space:pre;
+    text-shadow:0 0 8px rgba(0,255,65,0.4);
+    letter-spacing:0.08em;
+    line-height:1.8;
+    transition:opacity 0.3s ease;
+  }
+  .terminal-line.visible{opacity:1;}
+  .terminal-line.error{
+    color:#ff3333;
+    text-shadow:0 0 8px rgba(255,50,50,0.5);
+  }
+  .terminal-line.warning{
+    color:#ffaa00;
+    text-shadow:0 0 8px rgba(255,170,0,0.4);
+  }
+
+  #terminal-container{
+    width:80%;
+    max-width:700px;
+    max-height:80vh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    gap:0.2em;
+  }
+
+  /* 吉田一郎 text */
+  .yoshida-text{
+    color:#e0e0e0;
+    font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN',serif;
+    font-size:clamp(18px,3vw,28px);
+    text-align:center;
+    opacity:0;
+    position:absolute;
+    letter-spacing:0.15em;
+    line-height:2.2;
+    transition:opacity 1.5s ease;
+  }
+  .yoshida-text.visible{opacity:1;}
+
+  /* あかね text - fragile, transparent */
+  .akane-text{
+    color:#e8d0d8;
+    font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN',serif;
+    font-size:clamp(14px,2.2vw,22px);
+    text-align:center;
+    opacity:0;
+    position:absolute;
+    letter-spacing:0.2em;
+    line-height:2;
+    transition:opacity 2s ease;
+    filter:blur(0.3px);
+  }
+  .akane-text.visible{opacity:0.6;}
+
+  /* Glitch effects */
+  @keyframes glitch-skew{
+    0%{transform:skew(0deg);}
+    20%{transform:skew(-3deg);}
+    40%{transform:skew(5deg);}
+    60%{transform:skew(-1deg);}
+    80%{transform:skew(3deg);}
+    100%{transform:skew(0deg);}
+  }
+  @keyframes scanline{
+    0%{background-position:0 0;}
+    100%{background-position:0 100vh;}
+  }
+  .screen-corrupt{
+    animation:glitch-skew 0.1s linear infinite;
+  }
+  .screen-corrupt::after{
+    content:'';
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:repeating-linear-gradient(
+      0deg,
+      rgba(0,255,65,0.03) 0px,
+      rgba(0,255,65,0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    animation:scanline 0.5s linear infinite;
+    pointer-events:none;
+    z-index:5;
+  }
+  @keyframes hard-glitch{
+    0%{opacity:0;}
+    5%{opacity:1;background:#fff;}
+    10%{opacity:0;}
+    15%{opacity:0.8;background:#0f0;}
+    20%{opacity:0;}
+    30%{opacity:0.5;background:#f00;}
+    35%{opacity:0;}
+    100%{opacity:0;}
+  }
+  .hard-glitch{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    z-index:15;
+    pointer-events:none;
+    animation:hard-glitch 0.3s linear forwards;
+  }
+
+  /* White overlay for true ending */
+  #white-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:#fff;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 5s ease;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+  }
+  #white-overlay.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+  #owari{
+    font-size:clamp(28px,5vw,48px);
+    color:#222;
+    letter-spacing:0.5em;
+    opacity:0;
+    transition:opacity 2s ease;
+  }
+  #owari.visible{opacity:1;}
+  #epilogue-text{
+    margin-top:3rem;
+    font-size:clamp(12px,1.8vw,16px);
+    color:#888;
+    letter-spacing:0.15em;
+    opacity:0;
+    transition:opacity 2s ease;
+  }
+  #epilogue-text.visible{opacity:1;}
+
+  /* Deletion log style */
+  .delete-line{
+    color:#ff5555;
+    font-family:'Courier New',Consolas,monospace;
+    font-size:clamp(12px,1.8vw,18px);
+    text-align:left;
+    opacity:0;
+    white-space:pre;
+    text-shadow:0 0 6px rgba(255,85,85,0.4);
+    letter-spacing:0.08em;
+    line-height:1.8;
+    transition:opacity 0.3s ease;
+  }
+  .delete-line.visible{opacity:1;}
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<div id="glitch-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;opacity:0;"></div>
+<div id="white-overlay">
+  <div id="owari">おわり</div>
+  <div id="epilogue-text">木漏れ日遊園地の物語はここで終わります</div>
+</div>
+
+<script>
+(function(){
+  var screen = document.getElementById('screen');
+
+  function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  function clearScreen(){
+    screen.innerHTML = '';
+    screen.style.display = 'flex';
+    screen.style.alignItems = 'center';
+    screen.style.justifyContent = 'center';
+    screen.style.flexDirection = 'column';
+  }
+
+  function flashGlitch(){
+    var g = document.createElement('div');
+    g.className = 'hard-glitch';
+    document.body.appendChild(g);
+    setTimeout(function(){ g.remove(); }, 400);
+  }
+
+  /* Typewriter for terminal lines */
+  function typewriterLine(container, text, speed, cls){
+    return new Promise(function(resolve){
+      var line = document.createElement('div');
+      line.className = (cls || 'terminal-line') + ' visible';
+      line.textContent = '';
+      container.appendChild(line);
+      var i = 0;
+      var iv = setInterval(function(){
+        if(i < text.length){
+          line.textContent += text[i];
+          i++;
+        } else {
+          clearInterval(iv);
+          resolve(line);
+        }
+      }, speed || 40);
+    });
+  }
+
+  /* Typewriter that gets cut off mid-character */
+  function typewriterCutoff(container, text, cutAt, speed){
+    return new Promise(function(resolve){
+      var line = document.createElement('div');
+      line.className = 'terminal-line visible';
+      line.textContent = '';
+      container.appendChild(line);
+      var i = 0;
+      var iv = setInterval(function(){
+        if(i < cutAt){
+          line.textContent += text[i];
+          i++;
+        } else {
+          clearInterval(iv);
+          resolve(line);
+        }
+      }, speed || 40);
+    });
+  }
+
+  /* Show yoshida text centered */
+  function showYoshidaLine(text){
+    return new Promise(function(resolve){
+      var el = document.createElement('div');
+      el.className = 'yoshida-text';
+      el.textContent = text;
+      screen.appendChild(el);
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          el.classList.add('visible');
+        });
+      });
+      setTimeout(function(){ resolve(el); }, 300);
+    });
+  }
+
+  /* Show akane text centered */
+  function showAkaneLine(text){
+    return new Promise(function(resolve){
+      var el = document.createElement('div');
+      el.className = 'akane-text';
+      el.textContent = text;
+      screen.appendChild(el);
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          el.classList.add('visible');
+        });
+      });
+      setTimeout(function(){ resolve(el); }, 300);
+    });
+  }
+
+  function fadeOutEl(el, ms){
+    el.style.transition = 'opacity ' + (ms || 1500) + 'ms ease';
+    el.style.opacity = '0';
+    return wait(ms || 1500);
+  }
+
+  function fadeOutAllChildren(ms){
+    var children = screen.querySelectorAll('*');
+    children.forEach(function(c){
+      c.style.transition = 'opacity ' + (ms || 1500) + 'ms ease';
+      c.style.opacity = '0';
+    });
+    return wait(ms || 1500);
+  }
+
+  /* ===== MAIN SEQUENCE ===== */
+  async function main(){
+    await wait(1000);
+
+    // --- STAGE 1: 黒幕's log (same as End B) ---
+    var termContainer = document.createElement('div');
+    termContainer.id = 'terminal-container';
+    screen.appendChild(termContainer);
+
+    var logLines = [
+      '> 接続確認　完了',
+      '> 対象：K-059',
+      '> …知っていた　お前が来ることは　最初から',
+      '> 感情データ収集率：98.7%',
+      '> 恐怖　　…取得済',
+      '> 悲しみ　…取得済',
+      '> 好奇心　…取得済',
+      '> 罪悪感　…取得済',
+      '> 執着　　…取得済',
+      '> 同情　　…取得済',
+      '> 全パラメータ　基準値を超過',
+      '> 全部　お前のために作った',
+      '> …うまくいった',
+      '> お前は優しいな　だから選んだ',
+      '> 協力者：吉田一郎',
+      '> 担当：K-059の感情誘導・信頼構築',
+      '> 手段：Popin偽装接触→DM移行→情報提供による感情増幅',
+      '> 状況：予定通り'
+    ];
+
+    for(var i = 0; i < logLines.length; i++){
+      await typewriterLine(termContainer, logLines[i], 35);
+      if(i === 2 || i === 12 || i === 13) await wait(1500);
+      else if(i >= 4 && i <= 9) await wait(400);
+      else await wait(800);
+    }
+
+    await wait(2000);
+
+    // --- STAGE 2: Transfer interrupted ---
+    await typewriterLine(termContainer, '> 器の条件　…充足', 40);
+    await wait(1500);
+
+    // Type "K-059　転送開s" then cut off
+    await typewriterCutoff(termContainer, '> K-059　転送開始', 12, 40);
+    await wait(300);
+
+    // Glitch flash on interruption
+    flashGlitch();
+    await wait(500);
+
+    // ERROR lines
+    var errLine = await typewriterLine(termContainer, '> ERROR', 30, 'terminal-line error');
+    await wait(600);
+    await typewriterLine(termContainer, '> 外部入力検知', 30, 'terminal-line error');
+    await wait(400);
+    await typewriterLine(termContainer, '> 送信元：管理者権限', 30, 'terminal-line error');
+
+    await wait(2000);
+
+    // Fade out terminal
+    await fadeOutAllChildren(1500);
+    clearScreen();
+    await wait(1500);
+
+    // --- STAGE 3: 吉田一郎 breaks in ---
+    var yoshidaLines1 = [
+      '「…もうやめる」',
+      '「全部俺がやった。お前を売った」',
+      '「キツネ団長のフリをして、ゆうやけさんぽのフリをして」',
+      '「お前の感情を…あいつに渡してた」',
+      '「でも…お前と話してるうちに分かった」',
+      '「あの子も…こんなこと望んでない」'
+    ];
+
+    for(var j = 0; j < yoshidaLines1.length; j++){
+      var yEl = await showYoshidaLine(yoshidaLines1[j]);
+      if(j === 0) await wait(3000);
+      else if(j === 1) await wait(3500);
+      else await wait(3500);
+      await fadeOutEl(yEl, 1500);
+      yEl.remove();
+      await wait(500);
+    }
+
+    await wait(2000);
+
+    // --- STAGE 4: 黒幕 responds ---
+    var termContainer2 = document.createElement('div');
+    termContainer2.id = 'terminal-container';
+    screen.appendChild(termContainer2);
+
+    var warningLines = [
+      '> 警告：管理者権限による介入を検知',
+      '> 吉田一郎　契約違反',
+      '> 復元対象データ「あかね」の保全が不可能になります',
+      '> 続行しますか'
+    ];
+
+    for(var w = 0; w < warningLines.length; w++){
+      await typewriterLine(termContainer2, warningLines[w], 35, 'terminal-line warning');
+      await wait(1000);
+    }
+
+    await wait(3000);
+
+    // Fade out warning
+    await fadeOutAllChildren(1500);
+    clearScreen();
+    await wait(1500);
+
+    // --- STAGE 5: 吉田一郎's resolve ---
+    var yoshidaLines2 = [
+      '「…36年間、あの子のデータにすがってた」',
+      '「データでもいい、声が聞きたい、顔が見たいって」',
+      '「でも…もうあの子じゃない」',
+      '「あの子はとっくに…」',
+      '「…いかせてやらなきゃいけなかったんだ」',
+      '「ずっと前に」'
+    ];
+
+    for(var k = 0; k < yoshidaLines2.length; k++){
+      var yEl2 = await showYoshidaLine(yoshidaLines2[k]);
+      if(k === 3) await wait(4000); // pause on "あの子はとっくに…"
+      else if(k === 5) await wait(3000);
+      else await wait(3500);
+      await fadeOutEl(yEl2, 1500);
+      yEl2.remove();
+      await wait(500);
+    }
+
+    await wait(2000);
+
+    // --- STAGE 6: 吉田一郎 decides to destroy the system ---
+    var yDec1 = await showYoshidaLine('「…システムを落とす」');
+    await wait(3000);
+    await fadeOutEl(yDec1, 1500);
+    yDec1.remove();
+
+    var yDec2 = await showYoshidaLine('「俺が作ったんだ。壊し方も分かる」');
+    await wait(3500);
+    await fadeOutEl(yDec2, 1500);
+    yDec2.remove();
+
+    await wait(1500);
+
+    // --- STAGE 7: System shutdown - screen breaks apart ---
+    document.body.classList.add('screen-corrupt');
+    flashGlitch();
+    await wait(300);
+    flashGlitch();
+    await wait(500);
+
+    var termContainer3 = document.createElement('div');
+    termContainer3.id = 'terminal-container';
+    screen.appendChild(termContainer3);
+
+    await typewriterLine(termContainer3, '> WARNING: SYSTEM SHUTDOWN INITIATED', 25, 'terminal-line warning');
+    flashGlitch();
+    await wait(600);
+    await typewriterLine(termContainer3, '> DATA INTEGRITY COMPROMISED', 25, 'terminal-line warning');
+    flashGlitch();
+    await wait(400);
+
+    // Blank line
+    var blank = document.createElement('div');
+    blank.className = 'terminal-line visible';
+    blank.innerHTML = '&nbsp;';
+    termContainer3.appendChild(blank);
+    await wait(800);
+
+    // Deletion lines
+    await typewriterLine(termContainer3, '> あかね.dat ... 削除中', 30, 'delete-line');
+    flashGlitch();
+    await wait(800);
+    await typewriterLine(termContainer3, '> process_main ... 停止中', 30, 'delete-line');
+    flashGlitch();
+    await wait(800);
+    await typewriterLine(termContainer3, '> K-059_profile ... 削除中', 30, 'delete-line');
+    flashGlitch();
+
+    await wait(1500);
+
+    // --- STAGE 8: あかね's fragment ---
+    document.body.classList.remove('screen-corrupt');
+    await fadeOutAllChildren(1000);
+    clearScreen();
+    await wait(2000);
+
+    var ak1 = await showAkaneLine('…パパ');
+    await wait(3000);
+    await fadeOutEl(ak1, 2000);
+    ak1.remove();
+
+    await wait(1000);
+
+    var ak2 = await showAkaneLine('…ありがとう');
+    await wait(3500);
+    await fadeOutEl(ak2, 2500);
+    ak2.remove();
+
+    // --- STAGE 9: Everything black, long silence ---
+    clearScreen();
+    await wait(5000);
+
+    // --- STAGE 10: PROCESS TERMINATED ---
+    var proc = document.createElement('div');
+    proc.className = 'terminal-line';
+    proc.textContent = '> PROCESS TERMINATED';
+    proc.style.textAlign = 'center';
+    proc.style.width = 'auto';
+    screen.appendChild(proc);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        proc.classList.add('visible');
+      });
+    });
+
+    await wait(4000);
+    await fadeOutEl(proc, 2000);
+    proc.remove();
+
+    // --- STAGE 11: 吉田一郎's last words ---
+    await wait(3000);
+
+    var lastLines = [
+      '「…行けたかな」',
+      '「あの子…笑ってたかな」',
+      '「…もう分からない」',
+      '「でも…これでよかったんだ」'
+    ];
+
+    for(var m = 0; m < lastLines.length; m++){
+      var yLast = await showYoshidaLine(lastLines[m]);
+      if(m === 1) await wait(4000);
+      else await wait(3500);
+      await fadeOutEl(yLast, 1500);
+      yLast.remove();
+      await wait(800);
+    }
+
+    // --- STAGE 12: Fade to white ---
+    await wait(3000);
+
+    var overlay = document.getElementById('white-overlay');
+    overlay.classList.add('active');
+    await wait(3000);
+
+    document.getElementById('owari').classList.add('visible');
+    await wait(5000);
+
+    document.getElementById('epilogue-text').classList.add('visible');
+
+    // --- Set localStorage flags ---
+    try {
+      localStorage.setItem('ending_a_seen', 'true');
+      // Clear game state
+      localStorage.removeItem('save_point_night5');
+      localStorage.removeItem('current_night');
+      localStorage.removeItem('game_progress');
+    } catch(e){}
+  }
+
+  main();
+})();
+</script>
+</body>
+</html>

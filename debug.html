@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEBUG TOOLS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#0f0;font-family:'Courier New',monospace;padding:20px;font-size:14px;}
+h1{font-size:20px;margin-bottom:20px;color:#0f0;border-bottom:1px solid #333;padding-bottom:10px;}
+h2{font-size:16px;margin:20px 0 10px;color:#0a0;}
+.section{background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:16px;margin-bottom:16px;}
+button{background:#222;color:#0f0;border:1px solid #0f0;padding:8px 16px;margin:4px;cursor:pointer;font-family:inherit;font-size:13px;border-radius:3px;transition:all 0.15s;}
+button:hover{background:#0f0;color:#000;}
+button.danger{border-color:#f44;color:#f44;}
+button.danger:hover{background:#f44;color:#000;}
+button.warn{border-color:#fa0;color:#fa0;}
+button.warn:hover{background:#fa0;color:#000;}
+button.blue{border-color:#48f;color:#48f;}
+button.blue:hover{background:#48f;color:#000;}
+.flag-row{display:flex;align-items:center;gap:10px;padding:4px 0;}
+.flag-name{width:220px;color:#888;}
+.flag-value{color:#0f0;font-weight:bold;}
+.flag-value.off{color:#f44;}
+.links a{display:inline-block;margin:4px;padding:8px 16px;border:1px solid #48f;color:#48f;text-decoration:none;border-radius:3px;transition:all 0.15s;}
+.links a:hover{background:#48f;color:#000;}
+#log{background:#0a0a0a;border:1px solid #222;padding:12px;margin-top:10px;max-height:200px;overflow-y:auto;font-size:12px;color:#888;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+
+<h1>🔧 DEBUG TOOLS — こもれびゆうえんち2</h1>
+
+<!-- Night Clear Flags -->
+<div class="section">
+  <h2>Night クリアフラグ</h2>
+  <div id="night-flags"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setAllNights()">全Nightクリア済みにする</button>
+    <button class="danger" onclick="clearAllNights()">全Nightクリアを解除</button>
+  </div>
+</div>
+
+<!-- Ending Flags -->
+<div class="section">
+  <h2>エンディング・セーブフラグ</h2>
+  <div id="ending-flags"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setFlag('ending_b_seen','true')">エンドB視聴済みにする</button>
+    <button onclick="setFlag('ending_a_seen','true')">エンドA視聴済みにする</button>
+    <button onclick="setFlag('save_point_night5','true')">Night5セーブポイント設定</button>
+    <button onclick="setFlag('custom_night_unlocked','true')">カスタムナイト解放</button>
+  </div>
+</div>
+
+<!-- Persuasion Keys -->
+<div class="section">
+  <h2>DM説得キーワード (persuasion_keys)</h2>
+  <div id="persuasion-display"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setPersuasion(['吉田','あかね','騙されてる'])">3キー設定（エンドA条件達成）</button>
+    <button onclick="setPersuasion(['吉田','あかね','騙されてる','K-059','データ'])">5キー設定（フル）</button>
+    <button class="danger" onclick="setPersuasion([])">クリア</button>
+  </div>
+</div>
+
+<!-- Chat -->
+<div class="section">
+  <h2>チャット</h2>
+  <div id="chat-display"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setFlag('chat_unlocked','true')">チャット解放</button>
+    <button onclick="setFlag('chat_puzzle_started','true')">パズル開始済みにする</button>
+    <button onclick="setFlag('chat_q1_clear','true');setFlag('chat_q2_clear','true');setFlag('chat_q3_clear','true')">全問正解済み</button>
+    <button class="danger" onclick="clearChat()">チャット初期化</button>
+  </div>
+</div>
+
+<!-- Night4 Puzzle -->
+<div class="section">
+  <h2>Night4パズル（DM差分報告）</h2>
+  <div id="n4-puzzle-display"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setFlag('n4_puzzle_diffs',JSON.stringify(['diff_name','diff_kitsune','diff_year']))">全差分報告済み</button>
+    <button class="danger" onclick="localStorage.removeItem('n4_puzzle_diffs');updateN4PuzzleDisplay();addLog('Night4パズルリセット')">パズルリセット</button>
+  </div>
+</div>
+
+<!-- Evidence -->
+<div class="section">
+  <h2>証拠</h2>
+  <div id="evidence-display"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setAllEvidence()">全証拠収集済み</button>
+    <button class="danger" onclick="clearEvidence()">証拠リセット</button>
+  </div>
+</div>
+
+<!-- Direct Links -->
+<div class="section">
+  <h2>直接ジャンプ</h2>
+  <div class="links">
+    <a href="index.html">デスクトップ</a>
+    <a href="official/index.html">特番サイト</a>
+    <a href="twitter/index.html">Popin</a>
+    <a href="mail/index.html">メール</a>
+    <a href="chat/index.html">チャット</a>
+    <a href="archive/index.html">アーカイブ</a>
+  </div>
+  <div class="links" style="margin-top:8px;">
+    <a href="night1/">Night1</a>
+    <a href="night2/">Night2</a>
+    <a href="night3/">Night3</a>
+    <a href="night4/">Night4</a>
+    <a href="night5/">Night5</a>
+    <a href="night6/">Night6</a>
+  </div>
+  <div class="links" style="margin-top:8px;">
+    <a href="ending_a/">エンドA</a>
+    <a href="ending_b/">エンドB</a>
+    <a href="custom/">カスタムナイト</a>
+    <a href="custom/game.html">カスタムゲーム</a>
+  </div>
+</div>
+
+<!-- All localStorage -->
+<div class="section">
+  <h2>全localStorage</h2>
+  <button onclick="showAll()">全表示</button>
+  <button class="danger" onclick="if(confirm('本当に全削除しますか？')){localStorage.clear();refreshAll();addLog('全localStorage削除');}">⚠ 全削除</button>
+  <div id="log"></div>
+</div>
+
+<script>
+var NIGHT_FLAGS = ['night1_clear','night2_clear','night3_clear','night4_clear','night5_clear','night6_clear'];
+var ENDING_FLAGS = ['ending_a_seen','ending_b_seen','save_point_night5','custom_night_unlocked','night5_pages_unlocked','show_night6','chat_unlocked'];
+
+function setFlag(key, val){
+  localStorage.setItem(key, val);
+  refreshAll();
+  addLog('SET: '+key+' = '+val);
+}
+
+function removeFlag(key){
+  localStorage.removeItem(key);
+  refreshAll();
+  addLog('REMOVE: '+key);
+}
+
+function toggleFlag(key){
+  if(localStorage.getItem(key)==='true'){
+    removeFlag(key);
+    // nightX_clearをOFFにしたらpages_unlockedも消す
+    var m = key.match(/^night(\d)_clear$/);
+    if(m) removeFlag('night'+m[1]+'_pages_unlocked');
+  } else {
+    setFlag(key,'true');
+    // nightX_clearをONにしたらpages_unlockedも設定
+    var m = key.match(/^night(\d)_clear$/);
+    if(m) setFlag('night'+m[1]+'_pages_unlocked','true');
+  }
+}
+
+function setAllNights(){
+  NIGHT_FLAGS.forEach(function(f){ localStorage.setItem(f,'true'); });
+  for(var i=1;i<=6;i++) localStorage.setItem('night'+i+'_pages_unlocked','true');
+  localStorage.setItem('save_point_night5','true');
+  refreshAll();
+  addLog('全Nightクリア済み（pages_unlocked含む）');
+}
+
+function clearAllNights(){
+  NIGHT_FLAGS.forEach(function(f){ localStorage.removeItem(f); });
+  for(var i=1;i<=6;i++) localStorage.removeItem('night'+i+'_pages_unlocked');
+  localStorage.removeItem('save_point_night5');
+  refreshAll();
+  addLog('全Nightクリア解除（pages_unlocked含む）');
+}
+
+function setPersuasion(keys){
+  localStorage.setItem('persuasion_keys', JSON.stringify(keys));
+  refreshAll();
+  addLog('persuasion_keys = '+JSON.stringify(keys));
+}
+
+function clearChat(){
+  localStorage.removeItem('chat_unlocked');
+  localStorage.removeItem('chat_puzzle_started');
+  localStorage.removeItem('chat_msg_count');
+  localStorage.removeItem('chat_q1_clear');
+  localStorage.removeItem('chat_q2_clear');
+  localStorage.removeItem('chat_q3_clear');
+  localStorage.removeItem('night3_unlocked');
+  localStorage.removeItem('dm_history');
+  localStorage.removeItem('dm_last_read_phase');
+  localStorage.removeItem('dm_warmup_1');
+  localStorage.removeItem('dm_warmup_2');
+  localStorage.removeItem('dm_warmup_3');
+  localStorage.removeItem('dm_warmup_4');
+  localStorage.removeItem('n4_puzzle_diffs');
+  refreshAll();
+  addLog('チャット・DM全初期化');
+}
+
+function renderChat(){
+  var el = document.getElementById('chat-display');
+  var unlocked = localStorage.getItem('chat_unlocked')==='true';
+  var started = localStorage.getItem('chat_puzzle_started')==='true';
+  var q1 = localStorage.getItem('chat_q1_clear')==='true';
+  var q2 = localStorage.getItem('chat_q2_clear')==='true';
+  var q3 = localStorage.getItem('chat_q3_clear')==='true';
+  var msgs = localStorage.getItem('chat_msg_count')||'0';
+  el.innerHTML = '<span class="flag-value '+(unlocked?'':'off')+'">解放:'+(unlocked?'ON':'OFF')+'</span> | '+
+    '<span class="flag-value '+(started?'':'off')+'">パズル:'+(started?'ON':'OFF')+'</span> | '+
+    'メッセージ数:'+msgs+' | Q1:'+(q1?'✓':'×')+' Q2:'+(q2?'✓':'×')+' Q3:'+(q3?'✓':'×');
+}
+
+function setAllEvidence(){
+  for(var i=1;i<=20;i++){
+    var id = i<10?'0'+i:String(i);
+    localStorage.setItem('evidence_'+id,'true');
+  }
+  refreshAll();
+  addLog('全証拠20個設定');
+}
+
+function clearEvidence(){
+  for(var i=1;i<=20;i++){
+    var id = i<10?'0'+i:String(i);
+    localStorage.removeItem('evidence_'+id);
+  }
+  refreshAll();
+  addLog('証拠全削除');
+}
+
+function renderFlags(containerId, flags){
+  var el = document.getElementById(containerId);
+  var html = '';
+  flags.forEach(function(f){
+    var val = localStorage.getItem(f);
+    var isOn = val === 'true';
+    html += '<div class="flag-row">';
+    html += '<span class="flag-name">'+f+'</span>';
+    html += '<span class="flag-value '+(isOn?'':'off')+'">'+(isOn?'ON':'OFF')+'</span>';
+    html += '<button onclick="toggleFlag(\''+f+'\')" style="font-size:11px;padding:2px 8px;">'+(isOn?'OFF':'ON')+'にする</button>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderPersuasion(){
+  var keys = JSON.parse(localStorage.getItem('persuasion_keys')||'[]');
+  var el = document.getElementById('persuasion-display');
+  el.innerHTML = '<span class="flag-value">'+keys.length+'個: '+(keys.length?keys.join(', '):'なし')+'</span>';
+}
+
+function renderEvidence(){
+  var count = 0;
+  for(var i=1;i<=20;i++){
+    var id = i<10?'0'+i:String(i);
+    if(localStorage.getItem('evidence_'+id)==='true') count++;
+  }
+  var el = document.getElementById('evidence-display');
+  el.innerHTML = '<span class="flag-value">'+count+'/20 収集済み</span>';
+}
+
+function showAll(){
+  var el = document.getElementById('log');
+  var items = [];
+  for(var i=0;i<localStorage.length;i++){
+    var key = localStorage.key(i);
+    items.push(key + ' = ' + localStorage.getItem(key));
+  }
+  items.sort();
+  el.textContent = items.length ? items.join('\n') : '(空)';
+}
+
+function updateN4PuzzleDisplay(){
+  var el = document.getElementById('n4-puzzle-display');
+  if(!el) return;
+  var diffs = [];
+  try{ diffs = JSON.parse(localStorage.getItem('n4_puzzle_diffs') || '[]'); }catch(e){}
+  var labels = {diff_name:'名前消失', diff_kitsune:'試作きつね', diff_year:'設立年'};
+  var parts = ['diff_name','diff_kitsune','diff_year'].map(function(k){
+    var found = diffs.indexOf(k) !== -1;
+    return '<span class="flag-value '+(found?'':'off')+'">'+labels[k]+':'+(found?'✓':'×')+'</span>';
+  });
+  el.innerHTML = parts.join(' | ') + ' <span style="color:#888;">('+diffs.length+'/3)</span>';
+}
+
+function addLog(msg){
+  var el = document.getElementById('log');
+  el.textContent = '['+new Date().toLocaleTimeString()+'] '+msg+'\n'+el.textContent;
+}
+
+function refreshAll(){
+  renderFlags('night-flags', NIGHT_FLAGS);
+  renderFlags('ending-flags', ENDING_FLAGS);
+  renderPersuasion();
+  renderChat();
+  renderEvidence();
+  updateN4PuzzleDisplay();
+}
+
+refreshAll();
+addLog('DEBUG TOOLS 起動');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1134 @@
+/* ===== こもれびゆうえんち 公式アーカイブ v2 ===== */
+/* 2000年代NHK教育テレビ番組サイト風 */
+
+/* 画像保護：ドラッグ・右クリック保存防止 */
+img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+a img, .ukkichi-image-container img {
+    pointer-events: auto;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap');
+
+/* ===== 背景：空＋草原 ===== */
+body {
+    background: linear-gradient(180deg, #87CEEB 0%, #b5e8f7 40%, #d4f5d4 80%, #90EE90 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: 'Kosugi Maru', 'ヒラギノ丸ゴ Pro', 'Hiragino Maru Gothic Pro', sans-serif;
+    font-size: 14px;
+    color: #4a3728;
+    margin: 0;
+    padding: 0;
+}
+
+/* 雲 */
+.cloud {
+    position: fixed;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+}
+.cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+}
+.cloud-1 {
+    width: 120px; height: 40px; top: 30px; left: 5%;
+}
+.cloud-1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+.cloud-1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+
+.cloud-2 {
+    width: 150px; height: 45px; top: 80px; right: 10%;
+}
+.cloud-2::before { width: 60px; height: 55px; top: -28px; left: 25px; }
+.cloud-2::after { width: 45px; height: 45px; top: -18px; left: 70px; }
+
+.cloud-3 {
+    width: 100px; height: 35px; top: 140px; left: 50%;
+}
+.cloud-3::before { width: 45px; height: 45px; top: -22px; left: 15px; }
+.cloud-3::after { width: 35px; height: 35px; top: -12px; left: 45px; }
+
+/* ===== ヘッダー：番組セット風 ===== */
+.official-header {
+    background: linear-gradient(to bottom, #228B22, #32CD32);
+    padding: 10px 20px 5px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    border-bottom: 8px solid #FFD700;
+    z-index: 1;
+}
+
+.official-header .logo {
+    font-size: 36px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow:
+        3px 3px 0 #1a6b1a,
+        -1px -1px 0 #1a6b1a,
+        1px -1px 0 #1a6b1a,
+        -1px 1px 0 #1a6b1a;
+    letter-spacing: 6px;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+}
+
+.official-header .logo .logo-img {
+    height: 180px;
+    width: auto;
+    vertical-align: middle;
+    pointer-events: auto;
+}
+
+.official-header .logo::before {
+    content: "✦ ";
+    color: #fff;
+    font-size: 20px;
+    text-shadow: none;
+}
+
+.official-header .logo::after {
+    content: " ✦";
+    color: #fff;
+    font-size: 20px;
+    text-shadow: none;
+}
+
+.official-header .subtitle {
+    font-size: 14px;
+    color: #d4f0cd;
+    margin-top: 4px;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+}
+
+.header-welcome {
+    font-size: 13px;
+    color: #ffffcc;
+    margin-top: 6px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ヘッダー中央横一列レイアウト */
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.header-chars-left,
+.header-chars-right {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.header-chars-left img,
+.header-chars-right img {
+    height: 110px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+}
+
+.header-title-area {
+    text-align: center;
+}
+
+/* ヘッダー中央のキャラアイコン行（立ち絵がない場合のフォールバック） */
+.header-characters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.header-char-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 3px solid rgba(255,255,255,0.7);
+    font-size: 10px;
+    color: #fff;
+    line-height: 50px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.header-char-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 木の装飾 */
+.header-tree-left,
+.header-tree-right {
+    position: absolute;
+    bottom: 0;
+    font-size: 60px;
+    opacity: 0.3;
+    z-index: 1;
+}
+.header-tree-left { left: 5px; }
+.header-tree-right { right: 5px; transform: scaleX(-1); }
+
+/* ===== ナビゲーション：積み木ボタン ===== */
+.official-nav {
+    background: rgba(255,255,255,0.85);
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 4px dashed #FFD700;
+    position: relative;
+    z-index: 1;
+}
+
+.official-nav a {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #fff;
+    border: 3px solid rgba(0,0,0,0.12);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    top: 0;
+}
+
+.official-nav a:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+    text-decoration: none;
+    color: #fff;
+}
+
+.official-nav a:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+.official-nav a:nth-child(1) { background: #FF6B6B; }
+.official-nav a:nth-child(2) { background: #4ECDC4; }
+.official-nav a:nth-child(3) { background: #FFB347; }
+.official-nav a:nth-child(4) { background: #87CEEB; }
+.official-nav a:nth-child(5) { background: #DDA0DD; }
+.official-nav a:nth-child(6) { background: #98D8C8; }
+.official-nav a:nth-child(7) { background: #F0A0A0; }
+.official-nav a:nth-child(8) { background: #A0C4E8; }
+.official-nav a:nth-child(9) { background: #C8B8D8; }
+
+/* ===== コンテンツエリア：看板風 ===== */
+.official-main {
+    max-width: 900px;
+    margin: 25px auto;
+    background: rgba(255,255,255,0.92);
+    border-radius: 25px;
+    border: 4px solid #8B4513;
+    box-shadow:
+        0 6px 0 #6B3410,
+        0 8px 20px rgba(0,0,0,0.15);
+    padding: 30px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 見出し：リボン風 ===== */
+.section-title {
+    font-size: 22px;
+    color: #fff;
+    background: #FF6B6B;
+    display: inline-block;
+    padding: 8px 30px;
+    border-radius: 30px;
+    margin: 25px 0 15px;
+    box-shadow: 0 3px 0 #cc5555;
+    position: relative;
+}
+
+.section-title::before {
+    content: "⭐";
+    margin-right: 8px;
+}
+
+.section-title::after {
+    content: "⭐";
+    margin-left: 8px;
+}
+
+h3.section-title {
+    font-size: 18px;
+    background: #4ECDC4;
+    box-shadow: 0 3px 0 #3bafa7;
+}
+
+/* ===== カード ===== */
+.card {
+    border: 3px solid #FFD700;
+    border-radius: 20px;
+    padding: 18px;
+    margin: 15px 0;
+    background-color: #FFFEF5;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+.card strong {
+    color: #336633;
+}
+
+/* ===== キャラクターグリッド ===== */
+.char-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.char-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 0;
+    width: 200px;
+    text-align: center;
+    border: 4px solid #dde8da;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.12);
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.char-card:hover {
+    transform: translateY(-5px) rotate(-1deg);
+}
+
+.char-card.kitsune, .char-card:nth-child(1) { border-color: #FF8C00; }
+.char-card.kaa, .char-card:nth-child(2) { border-color: #555; }
+.char-card.potamaru, .char-card:nth-child(3) { border-color: #D2B48C; }
+.char-card.ukkichi, .char-card:nth-child(4) { border-color: #B5651D; }
+
+.char-card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a3728;
+    margin: 8px 0 4px;
+}
+
+.char-card p {
+    font-size: 13px;
+    color: #666;
+    margin: 4px 0 8px;
+}
+
+.char-card a {
+    display: inline-block;
+    background: #FFB347;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 5px 15px;
+    border-radius: 15px;
+    border: 2px solid #e6952e;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+    transition: transform 0.15s;
+}
+
+.char-card a:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #fff;
+}
+
+/* キャラ吹き出し */
+.char-speech {
+    background: #FFFACD;
+    border: 2px solid #FFD700;
+    border-radius: 15px;
+    padding: 8px 15px;
+    margin-top: 10px;
+    font-size: 12px;
+    position: relative;
+}
+
+.char-speech::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    margin-left: -8px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid #FFD700;
+}
+
+/* キャラ紹介冒頭の吹き出し */
+.char-intro-speech {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto 30px;
+    max-width: 600px;
+}
+
+.char-intro-icon {
+    width: 80px;
+    height: auto;
+    flex-shrink: 0;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+}
+
+.char-intro-bubble {
+    background: #FFFACD;
+    border: 3px solid #FFD700;
+    border-radius: 20px;
+    padding: 15px 20px;
+    font-size: 15px;
+    line-height: 1.8;
+    position: relative;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.08);
+}
+
+.char-intro-bubble::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 20px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 12px solid #FFD700;
+}
+
+.char-intro-bubble::after {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 22px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 10px solid #FFFACD;
+}
+
+.char-intro-name {
+    display: block;
+    font-weight: bold;
+    color: #FF8C00;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+/* ===== キャラクター画像（一覧ページ用） ===== */
+.char-placeholder {
+    display: inline-block;
+    max-width: 300px;
+    height: auto;
+}
+
+/* ===== キャラ詳細ページ ===== */
+
+/* テーマカラー変数 */
+.char-page.kitsune {
+    --theme-primary: #FF8C00;
+    --theme-secondary: #2856A3;
+    --theme-light: #FFF3E0;
+    --theme-accent: #FFD700;
+    --theme-gradient: linear-gradient(135deg, #FF8C00, #FFA940);
+    --theme-bg-pattern: radial-gradient(circle at 30% 50%, rgba(255,140,0,0.08) 0%, transparent 50%);
+}
+
+.char-page.kaa {
+    --theme-primary: #333333;
+    --theme-secondary: #FFFFFF;
+    --theme-light: #F5F5F5;
+    --theme-accent: #4FC3F7;
+    --theme-gradient: linear-gradient(135deg, #444, #666);
+    --theme-bg-pattern: radial-gradient(circle at 70% 30%, rgba(79,195,247,0.08) 0%, transparent 50%);
+}
+
+.char-page.potamaru {
+    --theme-primary: #D2A06C;
+    --theme-secondary: #FF6B9D;
+    --theme-light: #FFF5EB;
+    --theme-accent: #FF6B9D;
+    --theme-gradient: linear-gradient(135deg, #D2A06C, #E8C49A);
+    --theme-bg-pattern: radial-gradient(circle at 50% 50%, rgba(255,107,157,0.08) 0%, transparent 50%);
+}
+
+.char-page.ukkichi {
+    --theme-primary: #8B5E3C;
+    --theme-secondary: #4CAF50;
+    --theme-light: #FFF8F0;
+    --theme-accent: #FFD700;
+    --theme-gradient: linear-gradient(135deg, #8B5E3C, #A97850);
+    --theme-bg-pattern: radial-gradient(circle at 40% 60%, rgba(76,175,80,0.08) 0%, transparent 50%);
+}
+
+.char-page {
+    background-image: var(--theme-bg-pattern);
+}
+
+/* キャラ専用ヘッダー帯 */
+.char-header {
+    background: var(--theme-gradient);
+    padding: 20px 30px;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 5px solid var(--theme-accent);
+}
+
+.char-header h1 {
+    font-size: 36px;
+    color: #fff;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+.char-header::before {
+    content: "⭐ ✨ ⭐ ✨ ⭐";
+    position: absolute;
+    top: 5px;
+    left: 20px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+.char-header::after {
+    content: "⭐ ✨ ⭐ ✨ ⭐";
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* メインエリア：画像＋プロフィール横並び */
+.char-main {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    align-items: flex-start;
+}
+
+/* キャラ画像 */
+.char-image-area {
+    flex: 0 0 350px;
+    text-align: center;
+}
+
+.char-image-area img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.2));
+    animation: charFloat 3s ease-in-out infinite;
+}
+
+@keyframes charFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* プロフィールカード */
+.char-profile-card {
+    flex: 1;
+    background: var(--theme-light);
+    border: 3px solid var(--theme-primary);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+.char-profile-card table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.char-profile-card th {
+    background: var(--theme-primary);
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 8px 0 0 8px;
+    font-size: 14px;
+    width: 80px;
+    text-align: center;
+}
+
+.char-profile-card td {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    border: 1px solid #eee;
+}
+
+/* キャラのセリフ吹き出し */
+.char-quote {
+    background: #fff;
+    border: 3px solid var(--theme-accent);
+    border-radius: 20px;
+    padding: 15px 20px;
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--theme-primary);
+    text-align: center;
+    position: relative;
+}
+
+.char-quote::before {
+    content: "💬";
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    font-size: 20px;
+}
+
+/* 紹介セクション */
+.char-intro {
+    background: linear-gradient(to right, var(--theme-light), #fff);
+    border-left: 6px solid var(--theme-primary);
+    border-radius: 0 15px 15px 0;
+    padding: 20px 25px;
+    margin: 20px 30px;
+    font-size: 15px;
+    line-height: 2;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+/* 得意なこと＆出演コーナー：2カラム */
+.char-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 0 30px 30px;
+}
+
+.char-detail-box {
+    background: #fff;
+    border: 3px solid var(--theme-primary);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+}
+
+.char-detail-box h3 {
+    font-size: 18px;
+    color: #fff;
+    background: var(--theme-gradient);
+    display: inline-block;
+    padding: 5px 20px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.char-detail-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.char-detail-box li {
+    padding: 6px 0;
+    font-size: 14px;
+    border-bottom: 1px dashed #eee;
+}
+
+.char-detail-box li::before {
+    content: "🌟 ";
+}
+
+/* 戻るボタン */
+.char-back-btn {
+    display: inline-block;
+    background: var(--theme-primary);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 20px 30px 30px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.char-back-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 0 rgba(0,0,0,0.2);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* キャラサムネイル：顔ドアップ用ラッパー */
+.char-thumb-wrapper {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 10px;
+    border: 4px solid #FFD700;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+}
+
+.char-placeholder-thumb {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(2.5);
+    transform-origin: top center;
+}
+
+/* キャラ別の顔位置調整 */
+.char-face-kitsune { object-position: 40% 18%; transform-origin: 40% 18%; }
+.char-face-kaa { object-position: center 16%; transform-origin: center 16%; }
+.char-face-potamaru { object-position: center 18%; transform-origin: center 18%; }
+.char-face-ukkichi { object-position: center 22%; transform-origin: center 22%; }
+
+.char-kitsune { background-color: #ff8c00; border-color: #FF8C00; }
+.char-kaa { background-color: #555555; border-color: #555; }
+.char-potamaru { background-color: #d2b48c; color: #333; border-color: #D2B48C; }
+.char-ukkichi { background-color: #b5651d; border-color: #B5651D; }
+
+/* ===== フッター：草むら＋空 ===== */
+.official-footer {
+    background: linear-gradient(to bottom, #90EE90, #228B22);
+    color: #fff;
+    padding: 30px 15px 20px;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 40px;
+    position: relative;
+    border-top: 6px solid #FFD700;
+    z-index: 1;
+}
+
+.official-footer::before {
+    content: "🌳🌿🌸🌿🌳🌿🌸🌿🌳";
+    display: block;
+    font-size: 24px;
+    margin-bottom: 10px;
+    letter-spacing: 8px;
+}
+
+.footer-message {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #FFD700;
+    text-shadow: 1px 1px 0 #228B22;
+}
+
+.official-footer p {
+    margin: 2px 0;
+    color: #d4f0cd;
+}
+
+/* ===== テーブル ===== */
+table.official-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #8B4513;
+}
+
+table.official-table th {
+    background-color: #228B22;
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 13px;
+}
+
+table.official-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0d8c8;
+    font-size: 13px;
+}
+
+table.official-table tr:nth-child(even) td {
+    background-color: #fefdf5;
+}
+
+/* 塗りつぶし表現 */
+.redacted {
+    background-color: #1a1a1a;
+    color: #1a1a1a;
+    padding: 1px 4px;
+    border-radius: 2px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    cursor: default;
+}
+
+/* 黒幕の黒塗り（同一人物） - ホバーでわずかに透ける */
+.redacted.mastermind {
+    transition: opacity 0.3s;
+}
+.redacted.mastermind:hover {
+    opacity: 0.92;
+}
+
+/* 基本情報テーブル */
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #8B4513;
+}
+
+.info-table th {
+    background-color: #FFF8DC;
+    border: 1px solid #DEB887;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+    width: 150px;
+    color: #8B4513;
+    font-weight: bold;
+}
+
+.info-table td {
+    border: 1px solid #DEB887;
+    padding: 10px 14px;
+    font-size: 13px;
+    background-color: #fff;
+}
+
+/* ===== Night2入口：うっきちホバー ===== */
+.ukkichi-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.ukkichi-image-container .normal {
+    display: block;
+}
+
+.ukkichi-image-container .hover-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+}
+
+.ukkichi-image-container .normal,
+.ukkichi-image-container .hover-image {
+    transition: opacity 1s;
+}
+
+/* ===== おしらせリスト ===== */
+.news-list {
+    margin: 15px 0;
+}
+
+.news-list .news-item {
+    padding: 12px 15px;
+    border-bottom: 2px dashed #FFD700;
+    font-size: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.news-list .news-item::before {
+    content: "📢";
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.news-list .news-date {
+    color: #8B4513;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* ===== メインビジュアル ===== */
+.main-visual {
+    background: linear-gradient(135deg, #e8f5e9 0%, #fff8e1 30%, #ffe0ec 60%, #e8f5e9 100%);
+    border: 4px solid #FFD700;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    font-size: 18px;
+    color: #8B4513;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+.main-visual::before {
+    content: "🌸";
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 28px;
+    opacity: 0.5;
+}
+
+.main-visual::after {
+    content: "🌸";
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 28px;
+    opacity: 0.5;
+}
+
+/* ===== フォーム ===== */
+.form-group {
+    margin: 15px 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #8B4513;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 12px;
+    border: 3px solid #DEB887;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group textarea:focus {
+    border-color: #FFD700;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
+}
+
+.form-group textarea {
+    max-width: 520px;
+}
+
+.form-group .radio-group label {
+    display: inline;
+    margin-right: 15px;
+    font-weight: normal;
+}
+
+.form-submit {
+    background-color: #FF6B6B;
+    color: #fff;
+    border: 3px solid #cc5555;
+    padding: 10px 30px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: inherit;
+    margin-top: 12px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.form-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 0 rgba(0,0,0,0.2);
+}
+
+.form-submit:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+#form-result {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    background-color: #FFF0F0;
+    border: 3px solid #FFB0B0;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #cc3333;
+}
+
+/* ===== その他 ===== */
+.profile-section {
+    margin: 15px 0;
+}
+
+.profile-section h3 {
+    color: #8B4513;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.back-link {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.back-link a {
+    display: inline-block;
+    background: #98D8C8;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 2px solid #7cc0b0;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+    transition: transform 0.15s;
+}
+
+.back-link a:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #fff;
+}
+
+/* リスト装飾 */
+ul {
+    padding-left: 20px;
+}
+
+ul li {
+    margin: 6px 0;
+    list-style-type: none;
+    font-size: 14px;
+}
+
+ul li::before {
+    content: "🌟 ";
+    font-size: 12px;
+}
+
+/* hr */
+hr {
+    border: none;
+    border-top: 3px dashed #FFD700;
+    margin: 20px 0;
+}
+
+/* ロゴプレースホルダー */
+.logo-placeholder {
+    background-color: #228B22;
+    color: #FFD700;
+    padding: 20px 40px;
+    font-size: 28px;
+    font-weight: bold;
+    display: inline-block;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 3px solid #FFD700;
+}
+
+/* ===== アーカイブバナー ===== */
+.archive-banner {
+    background: #2d2d2d;
+    color: #ccc;
+    padding: 10px 20px;
+    font-size: 12px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    border-bottom: 2px solid #555;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+}
+.archive-banner strong {
+    color: #f0c040;
+}
+.archive-banner .archive-url {
+    color: #88aacc;
+    margin-left: 12px;
+}
+body.has-archive-banner {
+    padding-top: 38px;
+}
+
+/* セピア調オーバーレイ */
+body.archived-page {
+    position: relative;
+}
+body.archived-page::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(120, 100, 60, 0.04);
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* ロゴ文字版 */
+.logo-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow:
+        3px 3px 0 #1a6b1a,
+        -1px -1px 0 #1a6b1a,
+        1px -1px 0 #1a6b1a,
+        -1px 1px 0 #1a6b1a;
+    letter-spacing: 6px;
+}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>視聴者情報提供コーナー - あの番組を覚えていますか</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .evidence-clickable {
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      color: var(--color-navy-light);
+    }
+    .tip-entry {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+    .tip-entry:last-child {
+      border-bottom: none;
+    }
+    .tip-meta {
+      font-size: 0.8rem;
+      color: var(--color-gray-500);
+      margin-bottom: 8px;
+    }
+    .tip-meta .tip-id {
+      background: var(--color-gray-100);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-family: monospace;
+      margin-right: 8px;
+    }
+    .tip-body {
+      font-size: 0.9rem;
+      color: var(--color-gray-700);
+      line-height: 1.9;
+    }
+    .tip-body p + p {
+      margin-top: 8px;
+    }
+    .staff-sign {
+      margin-top: 40px;
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--color-gray-500);
+    }
+    .staff-sign-sub {
+      font-size: 0.65rem;
+      color: var(--color-gray-300);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    if (localStorage.getItem('night1_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="basic.html">基本資料</a></li>
+          <li><a href="photos.html">写真資料</a></li>
+          <li><a href="tips.html" class="active">情報提供</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ヒーロー -->
+  <section class="page-hero">
+    <h1>視聴者情報提供コーナー</h1>
+    <p class="hero-subtitle">番組に関する視聴者の皆さまからの情報</p>
+  </section>
+
+  <!-- メインコンテンツ -->
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">お寄せいただいた情報</h2>
+      <div class="card">
+        <p>特別番組の放送開始以降、多くの視聴者の方々から「木漏れ日遊園地」に関する情報が寄せられています。以下に、ご本人の許可を得た情報を掲載しています。</p>
+        <p style="margin-top: 8px; font-size: 0.85rem; color: var(--color-gray-500);">※ 投稿者名はプライバシー保護のため仮名で表記しています。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">投稿一覧</h2>
+
+      <div class="card">
+        <!-- 投稿1 -->
+        <div class="tip-entry">
+          <div class="tip-meta">
+            <span class="tip-id">#001</span> 投稿者：さくらもちさん（30代・女性） / 2026年3月15日
+          </div>
+          <div class="tip-body">
+            <p>小さい頃に毎朝見ていました。全320回の放送を全部見たと思います。キツネ団長が好きで、ぬいぐるみを買ってもらった記憶があります。番組の最終回がすごく寂しかったのを覚えています。</p>
+            <p>うっきちのいたずらコーナーの歌、今でも歌えます。「えへへ、いたずら大成功～！」というフレーズが耳に残っています。</p>
+          </div>
+        </div>
+
+        <!-- 投稿2 -->
+        <div class="tip-entry">
+          <div class="tip-meta">
+            <span class="tip-id">#002</span> 投稿者：たけのこさん（30代・男性） / 2026年3月16日
+          </div>
+          <div class="tip-body">
+            <p>1993年頃に見ていたと思います。かあ博士のなぜなぜ教室が好きで、「なぜなぜ？ ふむ、調べてみよう」の口癖を友達と真似していました。</p>
+            <p>一度だけ、番組の収録見学に行ったことがあります。スタジオは思ったより小さくて、キャラクターの後ろ側が見えそうになって怖かった記憶があります。</p>
+          </div>
+        </div>
+
+        <!-- 投稿3 -->
+        <div class="tip-entry">
+          <div class="tip-meta">
+            <span class="tip-id">#003</span> 投稿者：やまびこさん（40代・男性） / 2026年3月18日
+          </div>
+          <div class="tip-body">
+            <p>番組の途中で、ぽたまるの声が変わったのを覚えています。1994年くらいだったと思います。子ども心に「何か違う」と感じたのですが、親に言っても「気のせいでしょ」と言われました。</p>
+          </div>
+        </div>
+
+        <!-- 投稿4（不自然な古い言葉遣い - evidence 03） -->
+        <div class="tip-entry">
+          <div class="tip-meta">
+            <span class="tip-id">#004</span> 投稿者：匿名希望 / 2026年3月20日
+          </div>
+          <div class="tip-body evidence-clickable" onclick="collectEvidence('03')">
+            <p>拝啓、時下ますますご清祥のこととお慶び申し上げます。</p>
+            <p>さて、貴番組にて取り上げられておりまする「木漏れ日遊園地」の件につきまして、小生より一筆申し上げたく存じます。当該番組の収録に際しまして、1990年の秋口に試験的な撮影が行われたことは、関係者の間では周知の事実にございます。しかしながら、その記録が何故に残されておらぬのか、甚だ不可解と申さざるを得ませぬ。</p>
+            <p>何卒、この点につきましてご調査賜りますようお願い申し上げます。敬具</p>
+          </div>
+        </div>
+
+        <!-- 投稿5 -->
+        <div class="tip-entry">
+          <div class="tip-meta">
+            <span class="tip-id">#005</span> 投稿者：こまどりさん（30代・女性） / 2026年3月22日
+          </div>
+          <div class="tip-body">
+            <p>母がゆめスタジオプロダクションで事務をしていました。番組のことはあまり詳しく話してくれませんでしたが、「あの番組は色々あった」とだけ言っていたのが気になります。</p>
+            <p>母は2019年に亡くなりましたので、もう詳しいことは聞けません。何かの参考になれば幸いです。</p>
+          </div>
+        </div>
+
+        <!-- 投稿6 -->
+        <div class="tip-entry">
+          <div class="tip-meta">
+            <span class="tip-id">#006</span> 投稿者：かえでさん（30代・女性） / 2026年3月25日
+          </div>
+          <div class="tip-body">
+            <p>1995年頃、番組宛にお手紙を書いて送ったことがあります。しばらくして番組オリジナルのポストカードが届きました。4体のキャラクターが描かれたもので、裏面に「こもれびゆうえんちで待ってるよ！」とスタンプが押されていました。</p>
+            <p>実家を探したら見つかるかもしれません。見つかったらまた連絡します。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="opacity:0.4;border-left:3px solid #4a4a6a;">
+        <p style="font-size:0.8rem;color:var(--color-gray-500);">投稿者：??? / 受付日：????/??/??</p>
+        <p style="margin-top:12px;color:#6a6a8a;cursor:default;" class="memory-fragment" data-fragment="kioku" onclick="collectFragment('kioku',this)">…き…おく…の…かけら…を…あつめ…て…</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <p>引き続き、「木漏れ日遊園地」に関する情報を募集しています。些細なことでも構いませんので、何かお気づきの点がございましたら<a href="contact.html">お問い合わせフォーム</a>よりお寄せください。</p>
+        <div class="staff-sign">
+          <p>スタッフ一同</p>
+          <p class="staff-sign-sub evidence-clickable" onclick="collectEvidence('04')">Y.I</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script>
+function collectFragment(id, el){
+  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+  if(frags.indexOf(id)===-1){
+    frags.push(id);
+    localStorage.setItem('memory_fragments',JSON.stringify(frags));
+  }
+  el.style.color='#7070ff';
+  el.style.textShadow='0 0 8px rgba(100,100,255,0.6)';
+  setTimeout(function(){ el.style.opacity='0'; },1000);
+}
+// Restore if already collected
+(function(){
+  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
+  if(frags.indexOf('kioku')!==-1){
+    var el = document.querySelector('[data-fragment="kioku"]');
+    if(el){ el.style.opacity='0.3'; el.style.color='#7070ff'; }
+  }
+})();
+</script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>視聴者証言まとめ - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .testimony-item {
+      border-left: 3px solid var(--color-gray-300);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .testimony-item:last-child {
+      margin-bottom: 0;
+    }
+    .testimony-quote {
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .testimony-source {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--color-gray-500);
+    }
+    .evidence-clickable {
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      background-color: rgba(180, 180, 255, 0.05);
+      border-left-color: rgba(180, 180, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>視聴者証言まとめ</h1>
+    <p class="hero-subtitle">番組を覚えている方々の声</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">寄せられた証言</h2>
+      <div class="card">
+        <p>番組放送開始以降、多くの方から「木漏れ日遊園地」に関する証言が寄せられています。以下に主な証言をまとめました。</p>
+        <p style="margin-top: 8px; font-size: 0.85rem; color: var(--color-gray-500);">※証言者のプライバシー保護のため、氏名等は伏せております。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">番組内容に関する証言</h2>
+      <div class="card">
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「番組の最終回を見た記憶がある。突然終わった印象だった」</p>
+          <p class="testimony-source">30代女性・東京都（当時小学3年生）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「キツネ団長の声が途中で変わった気がする」</p>
+          <p class="testimony-source">30代男性・神奈川県（当時小学1年生）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「最後の方は子どもが怖がって見なくなった」</p>
+          <p class="testimony-source">50代女性・埼玉県（当時、子どもと一緒に視聴）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「1995年頃から番組の雰囲気が変わった。なぜなぜ教室がなくなって、暗い話が増えた」</p>
+          <p class="testimony-source">30代男性・千葉県（当時小学4年生）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「最終回のエンディングで、キツネ団長がカメラに向かって何か言っていた。字幕もなく、聞き取れなかった」</p>
+          <p class="testimony-source">30代女性・大阪府（当時小学2年生）</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">関係者に関する証言</h2>
+      <div class="card">
+
+        <div class="testimony-item evidence-clickable" onclick="collectEvidence('07')">
+          <p class="testimony-quote">「あの番組に出た子どもが行方不明になったと聞いた」</p>
+          <p class="testimony-source">40代男性・茨城県（当時、近隣住民）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「ゆめスタジオの建物の前を通ったことがある。夜中なのに明かりがついていて、子どもの声が聞こえた」</p>
+          <p class="testimony-source">50代男性・東京都（当時、近隣で勤務）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「番組が終わった後、スタッフだった知人と連絡が取れなくなった。引っ越したのだと思っていたが……」</p>
+          <p class="testimony-source">50代女性・東京都（元テレビ局関係者）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「制作会社の社長は、子どもの教育に異常なほど熱心だった。"理想の子ども"という言葉をよく使っていた」</p>
+          <p class="testimony-source">60代男性・東京都（元テレビ業界関係者）</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">番組終了後に関する証言</h2>
+      <div class="card">
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「再放送が一度もないのが不自然だと思っていた。あの時代の子ども番組は大体再放送されていたのに」</p>
+          <p class="testimony-source">40代男性・愛知県（当時小学5年生）</p>
+        </div>
+
+        <div class="testimony-item">
+          <p class="testimony-quote">「VHSに録画していたはずなのに、テープを再生したら別の番組が入っていた。上書きした覚えはない」</p>
+          <p class="testimony-source">30代女性・福岡県（当時小学3年生）</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card" style="text-align: center; font-size: 0.85rem; color: var(--color-gray-500);">
+        <p>情報をお持ちの方は<a href="contact.html">お問い合わせフォーム</a>よりご連絡ください。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Night2クリアチェック
+    if (localStorage.getItem('night2_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

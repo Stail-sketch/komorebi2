@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カスタムナイト</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a12;color:#c8c8d4;font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;min-height:100vh;}
+
+/* Access check */
+.locked-msg{display:flex;align-items:center;justify-content:center;height:100vh;font-size:18px;color:#444;}
+
+/* Header */
+.cn-header{text-align:center;padding:40px 20px 20px;border-bottom:1px solid #1a1a2e;}
+.cn-title{font-size:2rem;font-weight:800;letter-spacing:4px;color:#c8c8d4;margin-bottom:8px;}
+.cn-subtitle{font-size:0.85rem;color:#555570;letter-spacing:2px;}
+
+/* Character Grid */
+.cn-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:30px 20px;max-width:1100px;margin:0 auto;}
+
+.cn-card{width:180px;background:#111118;border:2px solid #1a1a2e;border-radius:12px;padding:16px;text-align:center;transition:all 0.3s;position:relative;}
+.cn-card:hover{transform:translateY(-2px);border-color:#3a3a5e;}
+.cn-card[data-active="true"]{border-color:#6666aa;}
+.cn-card[data-high="true"]{border-color:#e8a040;}
+.cn-card[data-maxed="true"]{border-color:#ff4444;box-shadow:0 0 20px rgba(255,68,68,0.2);}
+
+.cn-avatar{width:100px;height:100px;border-radius:50%;margin:0 auto 12px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all 0.3s;}
+.cn-avatar img{width:100%;height:100%;object-fit:cover;}
+.cn-card[data-active="false"] .cn-avatar{filter:grayscale(1) brightness(0.4);}
+
+.cn-name{font-size:0.95rem;font-weight:700;margin-bottom:10px;color:#9999b0;}
+.cn-card[data-active="true"] .cn-name{color:#d0d0e0;}
+
+.cn-controls{display:flex;align-items:center;justify-content:center;gap:12px;}
+.cn-btn{width:32px;height:32px;border-radius:50%;border:2px solid #3a3a5e;background:transparent;color:#6666aa;font-size:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.cn-btn:hover{background:#6666aa;color:#fff;border-color:#6666aa;}
+.cn-level{font-size:2rem;font-weight:900;width:48px;text-align:center;color:#6666aa;transition:color 0.3s;}
+.cn-card[data-high="true"] .cn-level{color:#e8a040;}
+.cn-card[data-maxed="true"] .cn-level{color:#ff4444;}
+
+/* New/Old labels */
+.cn-group-label{width:100%;text-align:center;padding:10px;font-size:0.8rem;color:#444460;letter-spacing:2px;text-transform:uppercase;}
+
+/* Presets */
+.cn-presets{max-width:900px;margin:20px auto;padding:0 20px;}
+.cn-presets-title{text-align:center;font-size:0.85rem;color:#555570;margin-bottom:16px;letter-spacing:2px;}
+.cn-presets-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;}
+.cn-preset{padding:10px 20px;border:1px solid #2a2a3e;border-radius:8px;background:#111118;color:#8888aa;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+.cn-preset:hover{border-color:#6666aa;color:#6666aa;transform:translateY(-1px);}
+.cn-preset.all20{color:#444;font-style:italic;border-color:#1a1a2e;}
+.cn-preset.all20:hover{color:#ff4444;border-color:#ff4444;}
+
+/* Stars */
+.cn-stars{display:flex;justify-content:center;gap:8px;padding:20px;font-size:1.5rem;}
+.cn-star{color:#2a2a3e;transition:color 0.3s;}
+.cn-star.cleared{color:#e8a040;}
+.cn-star.all-clear{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,0.5);}
+
+/* Start Button */
+.cn-start-area{text-align:center;padding:20px;}
+.cn-start-btn{padding:14px 60px;border:2px solid #6666aa;background:transparent;color:#6666aa;font-size:1.1rem;font-weight:700;letter-spacing:3px;cursor:pointer;border-radius:8px;transition:all 0.3s;font-family:inherit;}
+.cn-start-btn:hover{background:#6666aa;color:#0a0a12;box-shadow:0 0 30px rgba(102,102,170,0.3);}
+
+/* Back & Share */
+.cn-footer-btns{display:flex;justify-content:center;gap:16px;padding:20px 20px 40px;}
+.cn-footer-btn{padding:8px 24px;border:1px solid #2a2a3e;background:transparent;color:#555570;font-size:0.85rem;cursor:pointer;border-radius:6px;transition:all 0.2s;font-family:inherit;text-decoration:none;}
+.cn-footer-btn:hover{border-color:#6666aa;color:#8888aa;}
+
+/* Secret message */
+.cn-secret{text-align:center;padding:10px;font-size:0.75rem;color:#333350;display:none;}
+
+/* Responsive */
+@media(max-width:768px){
+  .cn-card{width:140px;padding:12px;}
+  .cn-avatar{width:72px;height:72px;}
+  .cn-level{font-size:1.6rem;}
+  .cn-grid{gap:10px;}
+}
+</style>
+</head>
+<body>
+
+<script>
+if(localStorage.getItem('custom_night_unlocked')!=='true' && localStorage.getItem('night6_clear')!=='true'){
+  document.body.innerHTML='<div class="locked-msg">Night6をクリアすると解放されます</div>';
+}
+</script>
+
+<div class="cn-header">
+  <div class="cn-title">CUSTOM NIGHT</div>
+  <div class="cn-subtitle">カスタムナイト</div>
+</div>
+
+<div class="cn-grid">
+  <div class="cn-group-label">— NEW CAST —</div>
+
+  <div class="cn-card" data-char="kururu" data-active="false">
+    <div class="cn-avatar"><img src="../image/character/kururu nomal.png" alt=""></div>
+    <div class="cn-name">くるる</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('kururu',-1)">◄</button>
+      <div class="cn-level" id="lv-kururu">0</div>
+      <button class="cn-btn" onclick="updateLevel('kururu',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="madara" data-active="false">
+    <div class="cn-avatar"><img src="../image/character/madara nomal.png" alt=""></div>
+    <div class="cn-name">まだら</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('madara',-1)">◄</button>
+      <div class="cn-level" id="lv-madara">0</div>
+      <button class="cn-btn" onclick="updateLevel('madara',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="kasumi" data-active="false">
+    <div class="cn-avatar"><img src="../image/character/kasumi nomal.png" alt=""></div>
+    <div class="cn-name">かすみ</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('kasumi',-1)">◄</button>
+      <div class="cn-level" id="lv-kasumi">0</div>
+      <button class="cn-btn" onclick="updateLevel('kasumi',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="arane" data-active="false">
+    <div class="cn-avatar"><img src="../image/character/araane nomal.png" alt=""></div>
+    <div class="cn-name">アラネ</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('arane',-1)">◄</button>
+      <div class="cn-level" id="lv-arane">0</div>
+      <button class="cn-btn" onclick="updateLevel('arane',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="yowari" data-active="false">
+    <div class="cn-avatar"><img src="../image/character/yowari nomal.png" alt=""></div>
+    <div class="cn-name">よわり</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('yowari',-1)">◄</button>
+      <div class="cn-level" id="lv-yowari">0</div>
+      <button class="cn-btn" onclick="updateLevel('yowari',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-group-label">— ORIGINAL CAST —</div>
+
+  <div class="cn-card" data-char="kitsune" data-active="false">
+    <div class="cn-avatar"><img src="../image/charas_f1/kitsune_normal.png" alt=""></div>
+    <div class="cn-name">キツネ団長</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('kitsune',-1)">◄</button>
+      <div class="cn-level" id="lv-kitsune">0</div>
+      <button class="cn-btn" onclick="updateLevel('kitsune',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="kaa" data-active="false">
+    <div class="cn-avatar"><img src="../image/charas_f1/kaa_normal.png" alt=""></div>
+    <div class="cn-name">かあ博士</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('kaa',-1)">◄</button>
+      <div class="cn-level" id="lv-kaa">0</div>
+      <button class="cn-btn" onclick="updateLevel('kaa',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="ukkichi" data-active="false">
+    <div class="cn-avatar"><img src="../image/charas_f1/ukkichi_normal.png" alt=""></div>
+    <div class="cn-name">うっきち</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('ukkichi',-1)">◄</button>
+      <div class="cn-level" id="lv-ukkichi">0</div>
+      <button class="cn-btn" onclick="updateLevel('ukkichi',1)">►</button>
+    </div>
+  </div>
+
+  <div class="cn-card" data-char="potamaru" data-active="false">
+    <div class="cn-avatar"><img src="../image/charas_f1/potamaru_normal.png" alt=""></div>
+    <div class="cn-name">ぽたまる</div>
+    <div class="cn-controls">
+      <button class="cn-btn" onclick="updateLevel('potamaru',-1)">◄</button>
+      <div class="cn-level" id="lv-potamaru">0</div>
+      <button class="cn-btn" onclick="updateLevel('potamaru',1)">►</button>
+    </div>
+  </div>
+</div>
+
+<!-- Presets -->
+<div class="cn-presets">
+  <div class="cn-presets-title">— PRESET CHALLENGES —</div>
+  <div class="cn-presets-grid">
+    <button class="cn-preset" data-preset="newcast" onclick="applyPreset('newcast')">NEW CAST</button>
+    <button class="cn-preset" data-preset="oldcast" onclick="applyPreset('oldcast')">ORIGINAL CAST</button>
+    <button class="cn-preset" data-preset="allcast" onclick="applyPreset('allcast')">ALL CAST</button>
+    <button class="cn-preset" data-preset="project_k" onclick="applyPreset('project_k')">PROJECT K</button>
+    <button class="cn-preset" data-preset="oct1997" onclick="applyPreset('oct1997')">1997.10</button>
+    <button class="cn-preset" data-preset="kuromaku" onclick="applyPreset('kuromaku')">黒幕</button>
+    <button class="cn-preset all20" data-preset="all20" onclick="applyPreset('all20')">ALL 20</button>
+  </div>
+</div>
+
+<!-- Stars -->
+<div class="cn-stars" id="stars"></div>
+
+<!-- Secret -->
+<div class="cn-secret" id="secret">全ての試練を越えた者だけが、ここに辿り着く。</div>
+
+<!-- Start -->
+<div class="cn-start-area">
+  <button class="cn-start-btn" onclick="startGame()">START</button>
+</div>
+
+<!-- Footer buttons -->
+<div class="cn-footer-btns">
+  <a class="cn-footer-btn" href="../index.html">戻る</a>
+  <button class="cn-footer-btn" onclick="shareResult()">共有</button>
+</div>
+
+<script>
+(function(){
+
+var CHARS = ['kururu','madara','kasumi','arane','yowari','kitsune','kaa','ukkichi','potamaru'];
+var levels = {};
+CHARS.forEach(function(c){ levels[c] = 0; });
+
+var PRESETS = {
+  newcast:    {kururu:10, madara:10, kasumi:10, arane:10, yowari:10, kitsune:0, kaa:0, ukkichi:0, potamaru:0},
+  oldcast:    {kururu:0, madara:0, kasumi:0, arane:0, yowari:0, kitsune:10, kaa:10, ukkichi:10, potamaru:10},
+  allcast:    {kururu:10, madara:10, kasumi:10, arane:10, yowari:10, kitsune:10, kaa:10, ukkichi:10, potamaru:10},
+  project_k:  {kururu:15, madara:15, kasumi:15, arane:15, yowari:15, kitsune:15, kaa:15, ukkichi:15, potamaru:0},
+  oct1997:    {kururu:15, madara:15, kasumi:15, arane:15, yowari:15, kitsune:15, kaa:15, ukkichi:15, potamaru:15},
+  kuromaku:   {kururu:10, madara:10, kasumi:10, arane:10, yowari:10, kitsune:20, kaa:20, ukkichi:20, potamaru:20},
+  all20:      {kururu:20, madara:20, kasumi:20, arane:20, yowari:20, kitsune:20, kaa:20, ukkichi:20, potamaru:20}
+};
+
+var JUMPSCARE_IMGS = {
+  kururu: '../image/character/kururu jumpscare.png',
+  madara: '../image/character/madara jumpscare.png',
+  kasumi: '../image/character/kasumi jumpscare.png',
+  arane: '../image/character/arane jumpscare.png',
+  yowari: '../image/character/yowari jumpscare.png',
+  kitsune: '../image/charas_f1/kitsune_jumpscare.png',
+  kaa: '../image/charas_f1/kaa_jumpscare.png',
+  ukkichi: '../image/charas_f1/ukkichi_jumpscare.png',
+  potamaru: '../image/charas_f1/potamaru_jumpscare.png'
+};
+
+var NORMAL_IMGS = {
+  kururu: '../image/character/kururu nomal.png',
+  madara: '../image/character/madara nomal.png',
+  kasumi: '../image/character/kasumi nomal.png',
+  arane: '../image/character/araane nomal.png',
+  yowari: '../image/character/yowari nomal.png',
+  kitsune: '../image/charas_f1/kitsune_normal.png',
+  kaa: '../image/charas_f1/kaa_normal.png',
+  ukkichi: '../image/charas_f1/ukkichi_normal.png',
+  potamaru: '../image/charas_f1/potamaru_normal.png'
+};
+
+window.updateLevel = function(char, delta){
+  levels[char] = Math.max(0, Math.min(20, levels[char] + delta));
+  refreshCard(char);
+};
+
+function refreshCard(char){
+  var lv = levels[char];
+  var el = document.getElementById('lv-'+char);
+  var card = document.querySelector('[data-char="'+char+'"]');
+  var img = card.querySelector('.cn-avatar img');
+
+  el.textContent = lv;
+  el.style.transform = 'scale(1.3)';
+  setTimeout(function(){ el.style.transform = 'scale(1)'; }, 150);
+
+  card.setAttribute('data-active', lv > 0 ? 'true' : 'false');
+  card.setAttribute('data-high', lv >= 15 ? 'true' : 'false');
+  card.setAttribute('data-maxed', lv >= 20 ? 'true' : 'false');
+
+  if(lv >= 20 && JUMPSCARE_IMGS[char]){
+    img.src = JUMPSCARE_IMGS[char];
+  } else {
+    img.src = NORMAL_IMGS[char];
+  }
+}
+
+window.applyPreset = function(name){
+  var preset = PRESETS[name];
+  if(!preset) return;
+
+  if(name === 'all20'){
+    document.body.style.filter = 'invert(1)';
+    setTimeout(function(){ document.body.style.filter = ''; }, 80);
+  }
+
+  CHARS.forEach(function(c){
+    levels[c] = preset[c] || 0;
+    refreshCard(c);
+  });
+};
+
+window.startGame = function(){
+  var total = 0;
+  CHARS.forEach(function(c){ total += levels[c]; });
+  if(total === 0){
+    alert('キャラクターのレベルを1以上に設定してください');
+    return;
+  }
+
+  localStorage.setItem('custom_levels', JSON.stringify(levels));
+  localStorage.setItem('custom_night', 'true');
+
+  // Detect preset match
+  var matched = 'custom';
+  Object.keys(PRESETS).forEach(function(name){
+    var p = PRESETS[name];
+    var match = true;
+    CHARS.forEach(function(c){
+      if((p[c]||0) !== levels[c]) match = false;
+    });
+    if(match) matched = name;
+  });
+  localStorage.setItem('custom_current_preset', matched);
+
+  window.location.href = 'game.html';
+};
+
+// Stars
+function renderStars(){
+  var container = document.getElementById('stars');
+  var presetNames = ['newcast','oldcast','allcast','project_k','oct1997','kuromaku','all20'];
+  var allCleared = true;
+  var html = '';
+
+  presetNames.forEach(function(name){
+    var cleared = localStorage.getItem('cn_cleared_'+name) === 'true';
+    if(!cleared) allCleared = false;
+    if(allCleared && cleared && name === 'all20'){
+      html += '<span class="cn-star all-clear">★</span>';
+    } else if(cleared){
+      html += '<span class="cn-star cleared">★</span>';
+    } else {
+      html += '<span class="cn-star">☆</span>';
+    }
+  });
+
+  container.innerHTML = html;
+
+  if(allCleared){
+    document.getElementById('secret').style.display = 'block';
+  }
+}
+
+renderStars();
+
+// Share
+window.shareResult = function(){
+  var allCleared = true;
+  ['newcast','oldcast','allcast','project_k','oct1997','kuromaku','all20'].forEach(function(n){
+    if(localStorage.getItem('cn_cleared_'+n)!=='true') allCleared = false;
+  });
+  var text = allCleared
+    ? 'こもれびゆうえんち2 カスタムナイト全クリア!! #こもれびゆうえんち2 #ARG'
+    : 'こもれびゆうえんち2 カスタムナイトに挑戦中 #こもれびゆうえんち2 #ARG';
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text), '_blank');
+};
+
+})();
+</script>
+
+</body>
+</html>

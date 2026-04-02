@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>内部文書 - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .document-item {
+      font-family: "Courier New", Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.8;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--color-gray-700);
+      padding: 24px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .document-item:last-child {
+      margin-bottom: 0;
+    }
+    .doc-type {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: var(--color-gray-500);
+      border: 1px solid var(--color-gray-600);
+      padding: 2px 8px;
+      margin-bottom: 12px;
+      letter-spacing: 0.1em;
+    }
+    .doc-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--color-gray-300);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-gray-700);
+    }
+    .doc-body {
+      color: var(--color-gray-400);
+    }
+    .doc-body p {
+      margin-bottom: 6px;
+    }
+    .doc-meta {
+      margin-top: 16px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--color-gray-700);
+      font-size: 0.75rem;
+      color: var(--color-gray-600);
+    }
+    .stamp-confidential {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border: 2px solid rgba(200, 80, 80, 0.4);
+      color: rgba(200, 80, 80, 0.5);
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      transform: rotate(5deg);
+    }
+    .handwritten-note {
+      font-family: serif;
+      font-style: italic;
+      color: rgba(200, 160, 120, 0.7);
+      font-size: 0.8rem;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-left: 2px solid rgba(200, 160, 120, 0.3);
+    }
+    .evidence-clickable {
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      background-color: rgba(180, 180, 255, 0.05);
+      border-color: rgba(180, 180, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>内部文書</h1>
+    <p class="hero-subtitle">ゆめスタジオプロダクション 流出文書</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <h2 class="section-title">文書について</h2>
+      <div class="card">
+        <p>以下は、ゆめスタジオプロダクションの元関係者から提供された内部文書です。真贋の検証は継続中ですが、紙質・インクの年代鑑定では1990年代のものと一致しています。</p>
+        <p style="margin-top: 8px; font-size: 0.85rem; color: var(--color-gray-500);">※文書の大部分は墨消し処理が施されていました。読み取り可能な箇所のみ転記しています。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">社内メモ</h2>
+      <div class="card">
+
+        <div class="document-item">
+          <span class="doc-type">社内メモ</span>
+          <span class="stamp-confidential">社外秘</span>
+          <div class="doc-title">プロジェクト████ 進捗報告</div>
+          <div class="doc-body">
+            <p>日付: 1994年11月██日</p>
+            <p>宛先: ████████ 殿</p>
+            <p>差出人: 技術開発部 ████</p>
+            <p>&nbsp;</p>
+            <p>████████████████████████████████</p>
+            <p>音声パターンの████████████████ 番組への組み込みは████████</p>
+            <p>████████████████ 被験者の████████████████████████</p>
+            <p>████████████████████████████████████████████████</p>
+            <p>次回████は12月██日を████████████████</p>
+          </div>
+          <div class="doc-meta">文書番号: YS-MEMO-1994-████</div>
+        </div>
+
+        <div class="document-item evidence-clickable" onclick="collectEvidence('15')">
+          <span class="doc-type">私的メモ</span>
+          <span class="stamp-confidential">極秘</span>
+          <div class="doc-title">（手書きメモ ― 付箋に記載）</div>
+          <div class="doc-body">
+            <p class="handwritten-note">娘の件、極秘</p>
+            <p class="handwritten-note">████に報告済　処理は████が担当</p>
+            <p class="handwritten-note">記録には残さないこと</p>
+          </div>
+          <div class="doc-meta">※本メモは文書ファイルの間に挟まれていた。日付の記載なし。</div>
+        </div>
+
+        <div class="document-item">
+          <span class="doc-type">社内メモ</span>
+          <div class="doc-title">スタジオ使用スケジュール変更について</div>
+          <div class="doc-body">
+            <p>日付: 1995年3月14日</p>
+            <p>宛先: 各部門長 各位</p>
+            <p>差出人: 総務部</p>
+            <p>&nbsp;</p>
+            <p>下記の通り、Bスタジオの夜間使用スケジュールを変更します。</p>
+            <p>22:00〜翌06:00 ████████████████ 専用</p>
+            <p>上記時間帯は許可なく立ち入りを禁止します。</p>
+            <p>████████████████████████████████████████</p>
+          </div>
+          <div class="doc-meta">文書番号: YS-MEMO-1995-031</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">報告書</h2>
+      <div class="card">
+
+        <div class="document-item">
+          <span class="doc-type">報告書</span>
+          <span class="stamp-confidential">機密</span>
+          <div class="doc-title">████████ 実施報告</div>
+          <div class="doc-body">
+            <p>日付: 1995年10月██日</p>
+            <p>担当：吉田</p>
+            <p>&nbsp;</p>
+            <p>1. 概要</p>
+            <p>　████████████████████████████████████████</p>
+            <p>2. 実施内容</p>
+            <p>　対象████に対し████████████████を実施。</p>
+            <p>　████████████████ 意識レベルの████████████████</p>
+            <p>3. 結果</p>
+            <p>　████████████████████████████████</p>
+            <p>　████████ 想定以上の████████████████████████</p>
+            <p>4. 所見</p>
+            <p>　████████████████████████████████████████████████</p>
+            <p>　████████ 倫理面での████████████████████████████████</p>
+          </div>
+          <div class="doc-meta">文書番号: YS-RPT-1995-████　　承認印: ████</div>
+        </div>
+
+        <div class="document-item">
+          <span class="doc-type">指示書</span>
+          <span class="stamp-confidential">極秘</span>
+          <div class="doc-title">資料廃棄に関する指示</div>
+          <div class="doc-body">
+            <p>日付: 1997年7月28日</p>
+            <p>宛先: 全部門長 各位</p>
+            <p>差出人: ████████</p>
+            <p>&nbsp;</p>
+            <p>本日をもって、下記の資料を全て廃棄すること。</p>
+            <p>・プロジェクト████ 関連資料一式</p>
+            <p>・████████████████</p>
+            <p>・被験者████████████████</p>
+            <p>・Bスタジオ████████████████</p>
+            <p>&nbsp;</p>
+            <p>廃棄完了後、確認報告を████████████████まで提出のこと。</p>
+            <p>本指示書自体も廃棄対象とする。</p>
+          </div>
+          <div class="doc-meta">文書番号: YS-DIR-1997-FINAL　　※「本指示書自体も廃棄対象」と記載があるが、現存している。</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card" style="text-align: center; font-size: 0.85rem; color: var(--color-gray-500);">
+        <p>これらの文書の検証は継続中です。</p>
+        <p style="margin-top: 4px;">関連する情報をお持ちの方は<a href="contact.html">お問い合わせフォーム</a>よりご連絡ください。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Night4クリアチェック
+    if (localStorage.getItem('night4_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

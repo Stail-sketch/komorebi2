@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>緊急情報提供 - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .urgent-banner {
+      background: rgba(200, 40, 40, 0.1);
+      border: 2px solid rgba(200, 40, 40, 0.4);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .urgent-banner h3 {
+      color: #991b1b;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .urgent-banner p {
+      font-size: 0.9rem;
+      color: #7f1d1d;
+    }
+    .urgent-badge {
+      display: inline-block;
+      background: #dc2626;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 3px;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      animation: pulse 1.5s infinite;
+    }
+
+    .summary-entry {
+      border-left: 3px solid var(--color-gray-300);
+      padding: 14px 20px;
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .summary-entry:last-child {
+      margin-bottom: 0;
+    }
+    .summary-label {
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .summary-critical {
+      border-left-color: rgba(200, 80, 80, 0.5);
+    }
+
+    .link-list {
+      list-style: none;
+      padding: 0;
+    }
+    .link-list li {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-gray-200);
+      font-size: 0.9rem;
+    }
+    .link-list li:last-child {
+      border-bottom: none;
+    }
+    .link-list li a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .link-list .link-status {
+      font-size: 0.75rem;
+      color: var(--color-gray-400);
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--color-gray-100);
+      font-size: 0.9rem;
+    }
+    .timeline-item:last-child {
+      border-bottom: none;
+    }
+    .timeline-time {
+      flex-shrink: 0;
+      width: 80px;
+      font-size: 0.8rem;
+      color: var(--color-gray-500);
+      font-family: monospace;
+    }
+    .timeline-text {
+      color: var(--color-gray-700);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>緊急情報提供</h1>
+    <p class="hero-subtitle">調査チームからの緊急報告</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <div class="urgent-banner">
+        <span class="urgent-badge">URGENT</span>
+        <h3>重大な情報が寄せられました</h3>
+        <p>調査チームは現在、複数の重要情報の検証を進めています。以下は現時点で確認されている事項の概要です。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">調査概要まとめ</h2>
+      <div class="card">
+
+        <div class="summary-entry">
+          <p class="summary-label">番組の実態</p>
+          <p>「木漏れ日遊園地」（1991-1997）は、制作会社ゆめスタジオプロダクションが制作した子ども番組。放送終了後、制作会社は消滅し、関連資料の大半が失われている。</p>
+        </div>
+
+        <div class="summary-entry">
+          <p class="summary-label">主な疑惑</p>
+          <p>被験者番号の存在、使途不明の特別研究費、番組終了直後のスタジオ解体、関係者との連絡途絶など、複数の不審点が確認されている。</p>
+        </div>
+
+        <div class="summary-entry summary-critical">
+          <p class="summary-label">被験者リスト</p>
+          <p>番号体系「A-0」～「G-0」の被験者リストの存在が確認された。一部の被験者について、現在の所在が確認できていない。</p>
+        </div>
+
+        <div class="summary-entry summary-critical">
+          <p class="summary-label">掲示板の書き込み</p>
+          <p>匿名掲示板にて番組の内部情報と思われる書き込みを確認。書き込み主は被験者の一人である可能性が浮上している。</p>
+        </div>
+
+        <div class="summary-entry">
+          <p class="summary-label">証言の状況</p>
+          <p>元視聴者・近隣住民・元関係者から多数の証言が寄せられている。証言内容は概ね一致しており、信憑性は高いと判断される。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">調査タイムライン</h2>
+      <div class="card">
+
+        <div class="timeline-item">
+          <span class="timeline-time">Night 1</span>
+          <span class="timeline-text">番組の基本情報を公開。旧キャラクター資料の発見。視聴者からの情報提供受付を開始。</span>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-time">Night 2</span>
+          <span class="timeline-text">視聴者証言の収集・公開。ゆめスタジオの調査を実施。公式記録と実態の矛盾を確認。</span>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-time">Night 3</span>
+          <span class="timeline-text">被験者番号リストの存在を確認。調査範囲を拡大。</span>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-time">Night 4</span>
+          <span class="timeline-text">内部文書の一部が関係者から提供される。実験記録の断片を確認。</span>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-time">Night 5</span>
+          <span class="timeline-text">掲示板書き込み主の特定に成功。被験者レコードの部分的復元。大量の情報提供が殺到。</span>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">関連調査ページ</h2>
+      <div class="card">
+        <ul class="link-list">
+          <li>
+            <a href="final_report.html">
+              <span>最終調査結果</span>
+              <span class="link-status">一部削除進行中</span>
+            </a>
+          </li>
+          <li>
+            <a href="flood.html">
+              <span>情報提供一覧</span>
+              <span class="link-status">2,847件受信</span>
+            </a>
+          </li>
+          <li>
+            <a href="investigation.html">
+              <span>ゆめスタジオ調査記録</span>
+              <span class="link-status">更新済</span>
+            </a>
+          </li>
+          <li>
+            <a href="testimony.html">
+              <span>視聴者証言一覧</span>
+              <span class="link-status">更新済</span>
+            </a>
+          </li>
+          <li>
+            <a href="staff_update.html">
+              <span>スタッフクレジット更新</span>
+              <span class="link-status">更新済</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card" style="text-align: center;">
+        <p style="font-size: 0.9rem; color: var(--color-gray-700);">情報をお持ちの方は、どんな些細なことでもご連絡ください。</p>
+        <p style="margin-top: 12px;">
+          <a href="contact.html" class="btn btn-primary">情報提供フォーム</a>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <!-- 全ての断片を...つなげろ.../night5/の先に...数字が待っている... -->
+  <div style="position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 6px; font-size: 0.45rem; color: rgba(255,255,255,0.04); letter-spacing: 0.3em; pointer-events: none; user-select: all;">全ての断片を…つなげろ…/night5/の先に…</div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Night5クリアチェック
+    if (localStorage.getItem('night5_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Popin - ポピン</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0f;color:#e8e0f0;font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',system-ui,sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden;}
+a{color:#FF6B6B;text-decoration:none;}
+a:hover{color:#FF7EB3;}
+
+/* Top Navigation Bar */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.95);backdrop-filter:blur(16px);border-bottom:2px solid #2a1530;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.topbar::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF7EB3,#FFE66D,#88D8B0,#FF7EB3);opacity:0.4;}
+.topbar-left{display:flex;align-items:center;gap:28px;}
+.brand{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800;letter-spacing:-0.5px;color:#FF6B6B;cursor:pointer;}
+.brand-bubble{width:36px;height:36px;background:linear-gradient(135deg,#FF6B6B,#FF7EB3);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 10px rgba(255,107,107,.3);}
+.brand-bubble::after{content:'';position:absolute;bottom:-3px;left:5px;width:10px;height:10px;background:#FF7EB3;clip-path:polygon(50% 100%,0 0,100% 0);border-radius:0 0 2px 2px;}
+.brand-bubble-dot{width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 6px rgba(255,255,255,.8);}
+.brand span{background:linear-gradient(135deg,#FF6B6B,#FF7EB3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.topbar-nav{display:flex;gap:4px;}
+.topbar-nav a{padding:8px 18px;border-radius:20px;font-size:14px;font-weight:600;color:#b0a0b8;transition:all .2s;}
+.topbar-nav a:hover{background:rgba(255,107,107,.08);color:#FF6B6B;}
+.topbar-nav a.active{background:rgba(255,107,107,.12);color:#FF6B6B;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.search-box{background:#1a1520;border-radius:24px;padding:8px 16px;display:flex;align-items:center;gap:8px;border:2px solid #2a1530;transition:border-color .2s;width:220px;}
+.search-box:focus-within{border-color:#FF7EB3;}
+.search-box svg{width:16px;height:16px;fill:#d4b0c0;flex-shrink:0;}
+.search-box input{background:transparent;border:none;outline:none;color:#e8e0f0;font-size:13px;width:100%;}
+.search-box input::placeholder{color:#d4b0c0;}
+
+/* Page Layout */
+.page{max-width:600px;margin:0 auto;padding:20px 16px 40px;}
+
+/* Post Composer */
+.composer{background:#fff;border-radius:24px;padding:18px 20px;margin-bottom:20px;box-shadow:0 2px 12px rgba(255,126,179,.08);border:2px solid #ffe8ee;}
+.composer-inner{display:flex;gap:12px;align-items:flex-start;}
+.composer-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FFE66D,#FF7EB3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.composer-input{flex:1;display:flex;flex-direction:column;gap:10px;}
+.composer-input textarea{width:100%;border:none;outline:none;resize:none;font-size:15px;font-family:inherit;color:#3d3247;background:transparent;min-height:44px;line-height:1.5;}
+.composer-input textarea::placeholder{color:#d4b0c0;}
+.composer-bottom{display:flex;justify-content:flex-end;align-items:center;gap:10px;}
+.composer-btn{background:linear-gradient(135deg,#FF6B6B,#FF7EB3);color:#fff;border:none;border-radius:24px;padding:8px 24px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(255,107,107,.25);font-family:inherit;}
+.composer-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(255,107,107,.35);}
+
+/* Trending strip */
+.trending-strip{display:flex;gap:10px;overflow-x:auto;padding:4px 0 20px;scrollbar-width:none;-ms-overflow-style:none;}
+.trending-strip::-webkit-scrollbar{display:none;}
+.trending-chip{flex-shrink:0;background:#141018;border:2px solid #2a1530;border-radius:24px;padding:8px 18px;font-size:13px;font-weight:600;color:#FF6B6B;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.trending-chip:nth-child(2){border-color:#2a2015;color:#e8a040;}
+.trending-chip:nth-child(3){border-color:#152a1a;color:#4dba7a;}
+.trending-chip:nth-child(4){border-color:#d8d0f8;color:#8b6ec0;background:#faf8ff;}
+.trending-chip:hover{transform:translateY(-2px);border-color:#FF7EB3;}
+.trending-chip .chip-count{font-weight:400;color:#605068;margin-left:6px;font-size:12px;}
+
+/* Post Card */
+.post-card{background:#141018;border:1px solid #2a2035;border-radius:24px;padding:18px 20px;margin-bottom:14px;transition:all .25s;cursor:pointer;}
+.post-card:hover{transform:translateY(-2px);border-color:#FF7EB3;box-shadow:0 4px 20px rgba(255,126,179,.1);}
+.post-top{display:flex;align-items:flex-start;gap:12px;}
+.avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:pointer;transition:transform .2s;}
+.avatar:hover{transform:scale(1.1);}
+.post-meta{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;}
+.post-author{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;}
+.post-name{font-weight:700;font-size:17px;white-space:nowrap;color:#f0e8f8;cursor:pointer;}
+.post-name:hover{text-decoration:underline;}
+.verified-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;}
+.post-handle{color:#8070a0;font-size:14px;white-space:nowrap;cursor:pointer;}
+.post-handle:hover{text-decoration:underline;}
+.post-time{color:#8070a0;font-size:14px;white-space:nowrap;flex-shrink:0;}
+.post-text{margin-top:10px;margin-left:56px;word-break:break-word;white-space:pre-wrap;font-size:17px;line-height:1.7;color:#e0d8ee;}
+.post-actions{display:flex;gap:12px;margin-top:14px;margin-left:56px;}
+.post-actions span{display:flex;align-items:center;gap:6px;font-size:16px;color:#8070a0;cursor:pointer;padding:8px 18px;border-radius:24px;transition:all .2s;font-weight:500;border:1px solid #2a2035;}
+.post-actions span:hover{background:rgba(255,107,107,.12);color:#FF6B6B;border-color:#FF6B6B;}
+.action-heart:hover{background:rgba(255,107,107,.15) !important;color:#FF6B6B !important;border-color:#FF6B6B !important;}
+
+/* Back button */
+.back-btn{display:flex;align-items:center;gap:8px;padding:10px 18px;margin-bottom:16px;border:1px solid #2a2035;background:#141018;border-radius:24px;font-size:15px;font-weight:600;color:#FF6B6B;cursor:pointer;transition:all .2s;font-family:inherit;}
+.back-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(255,107,107,.15);background:#fff5f7;}
+.back-btn svg{width:18px;height:18px;fill:#FF6B6B;}
+
+/* Post Detail View */
+.detail-original{background:#141018;border:1px solid #2a2035;border-radius:24px;padding:22px 24px;margin-bottom:4px;}
+.detail-original .post-text{font-size:19px;line-height:1.8;}
+.replies-divider{display:flex;align-items:center;gap:12px;padding:16px 0;color:#8070a0;font-size:14px;font-weight:600;}
+.replies-divider::before,.replies-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#2a2035,transparent);}
+.reply-card{background:#141018;border:1px solid #2a2035;border-radius:20px;padding:14px 18px;margin-bottom:10px;margin-left:24px;border-left:3px solid #FF7EB3;transition:all .2s;}
+.reply-card:hover{border-color:#FF7EB3;}
+.reply-card .post-text{font-size:16px;margin-left:48px;}
+.reply-card .avatar{width:36px;height:36px;font-size:13px;}
+.reply-card .post-name{font-size:14px;}
+.reply-card .post-handle{font-size:12px;}
+.no-replies{text-align:center;padding:24px;color:#8070a0;font-size:14px;}
+
+/* Profile View */
+.profile-header{background:#141018;border:1px solid #2a2035;border-radius:24px;padding:28px 24px;margin-bottom:20px;text-align:center;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;margin:0 auto 14px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.profile-name{font-size:22px;font-weight:800;color:#f0e8f8;display:flex;align-items:center;justify-content:center;gap:6px;}
+.profile-handle{color:#8070a0;font-size:14px;margin-top:2px;}
+.profile-bio{margin-top:12px;font-size:14px;color:#c0b8d0;line-height:1.6;max-width:400px;margin-left:auto;margin-right:auto;}
+.profile-info{display:flex;justify-content:center;gap:24px;margin-top:16px;font-size:13px;color:#c0a8b4;}
+.profile-info strong{color:#3d3247;font-weight:700;}
+.profile-joined{margin-top:8px;font-size:13px;color:#c0a8b4;display:flex;align-items:center;justify-content:center;gap:4px;}
+.profile-posts-label{font-size:16px;font-weight:700;color:#f0e8f8;margin-bottom:14px;padding-left:4px;}
+
+/* View transitions */
+.view{display:none;}
+.view.active{display:block;}
+
+/* Glitch effects */
+.glitch-text{font-family:monospace;color:#ff0033;animation:glitchFlicker 0.3s infinite alternate;}
+@keyframes glitchFlicker{0%{opacity:1;text-shadow:2px 0 #0ff,-2px 0 #f0f;}50%{opacity:0.8;text-shadow:-2px 0 #0ff,2px 0 #f0f;}100%{opacity:1;text-shadow:1px 0 #ff0,-1px 0 #0f0;}}
+.glitch-avatar{animation:avatarGlitch 1.5s infinite;background:#330000 !important;box-shadow:0 0 12px rgba(255,0,0,.3) !important;}
+@keyframes avatarGlitch{0%,100%{transform:translate(0);filter:none;}25%{transform:translate(-2px,1px);filter:hue-rotate(90deg);}50%{transform:translate(1px,-1px);filter:brightness(2);}75%{transform:translate(-1px,2px);filter:hue-rotate(180deg);}
+}
+.night6-override{background:#1a0008 !important;}
+.night6-override .topbar{background:rgba(26,0,8,.95) !important;border-bottom-color:rgba(255,0,0,.2) !important;}
+.night6-override .topbar::after{background:linear-gradient(90deg,#ff0033,#330000,#ff0033) !important;opacity:1 !important;}
+.night6-override .brand span{background:linear-gradient(135deg,#ff0033,#660000) !important;-webkit-background-clip:text !important;background-clip:text !important;}
+.night6-override .post-card,.night6-override .detail-original,.night6-override .reply-card{background:rgba(40,0,10,.9) !important;box-shadow:0 0 20px rgba(255,0,0,.05) !important;}
+.night6-override .post-text{color:#ff0033 !important;}
+.night6-override .post-name{color:#ff3355 !important;}
+.night6-override .post-handle,.night6-override .post-time,.night6-override .post-actions span{color:#660022 !important;}
+.night6-override .composer{background:rgba(40,0,10,.9) !important;border-color:rgba(255,0,0,.2) !important;}
+.night6-override .trending-chip{background:rgba(40,0,10,.9) !important;border-color:rgba(255,0,0,.2) !important;color:#ff0033 !important;}
+.night6-override .trending-chip .chip-count{color:#660022 !important;}
+.night6-override .back-btn{background:rgba(40,0,10,.9) !important;color:#ff0033 !important;box-shadow:0 0 10px rgba(255,0,0,.1) !important;}
+.night6-override .back-btn svg{fill:#ff0033 !important;}
+.night6-override .profile-header{background:rgba(40,0,10,.9) !important;box-shadow:0 0 20px rgba(255,0,0,.05) !important;}
+.night6-override .profile-name,.night6-override .profile-posts-label,.night6-override .profile-info strong{color:#ff3355 !important;}
+.night6-override .profile-handle,.night6-override .profile-bio,.night6-override .profile-joined,.night6-override .profile-info,.night6-override .replies-divider,.night6-override .no-replies{color:#660022 !important;}
+.night6-override .replies-divider::before,.night6-override .replies-divider::after{background:linear-gradient(90deg,transparent,rgba(255,0,0,.2),transparent) !important;}
+.night6-override .reply-card{border-left-color:rgba(255,0,0,.2) !important;}
+
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:2px solid #ffe0e6;display:flex;justify-content:center;gap:0;z-index:100;padding:0;height:56px;}
+.bottom-nav a{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600;color:#c0a8b4;text-decoration:none;transition:color .2s;padding:6px 0;}
+.bottom-nav a.active{color:#FF6B6B;}
+.bottom-nav a .nav-icon{font-size:22px;line-height:1;}
+
+/* Night6 bottom nav override */
+.night6-override .bottom-nav{background:rgba(26,0,8,.95) !important;border-top-color:rgba(255,0,0,.2) !important;}
+.night6-override .bottom-nav a{color:#660022 !important;}
+.night6-override .bottom-nav a.active{color:#ff0033 !important;}
+
+/* DM View */
+.dm-container{display:flex;flex-direction:column;height:calc(100vh - 120px);}
+.dm-header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #2a1530;}
+.dm-header-avatar{width:40px;height:40px;border-radius:50%;background:#e8945a;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;}
+.dm-header-info{flex:1;}
+.dm-header-name{font-weight:700;font-size:16px;color:#f0e8f8;}
+.dm-header-handle{font-size:13px;color:#8070a0;}
+.dm-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:4px;}
+.dm-bubble{max-width:75%;padding:10px 16px;border-radius:18px;margin-bottom:8px;font-size:15px;line-height:1.6;word-break:break-word;white-space:pre-wrap;}
+.dm-bubble-left{background:#1a1520;color:#e8e0f0;align-self:flex-start;border-bottom-left-radius:4px;}
+.dm-bubble-right{background:linear-gradient(135deg,#FF6B6B,#FF7EB3);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.dm-input-area{display:flex;gap:8px;padding:12px 16px;border-top:2px solid #2a1530;}
+.dm-input{flex:1;background:#1a1520;border:2px solid #2a1530;border-radius:24px;padding:10px 16px;color:#e8e0f0;font-size:15px;outline:none;font-family:inherit;}
+.dm-input:focus{border-color:#FF7EB3;}
+.dm-input::placeholder{color:#8070a0;}
+.dm-send-btn{background:linear-gradient(135deg,#FF6B6B,#FF7EB3);color:#fff;border:none;border-radius:24px;padding:10px 20px;font-weight:700;cursor:pointer;font-family:inherit;font-size:15px;transition:all .2s;}
+.dm-send-btn:hover{transform:translateY(-1px);box-shadow:0 2px 10px rgba(255,107,107,.3);}
+.dm-typing{color:#8070a0;font-size:13px;padding:8px 16px;font-style:italic;align-self:flex-start;}
+.dm-date-divider{text-align:center;color:#8070a0;font-size:12px;padding:8px 0;margin:8px 0;}
+.dm-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 120px);color:#8070a0;text-align:center;padding:40px;}
+.dm-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.5;}
+.dm-locked-text{font-size:16px;line-height:1.8;}
+
+/* DM Button */
+.dm-btn{position:relative;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:#1a1520;border:2px solid #2a1530;cursor:pointer;transition:all .2s;}
+.dm-btn:hover{border-color:#FF7EB3;background:rgba(255,107,107,.08);}
+.dm-btn svg{width:20px;height:20px;fill:#e8e0f0;}
+.dm-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#FF6B6B;border-radius:50%;font-size:11px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(255,107,107,.4);animation:dmBadgePulse 2s infinite;}
+@keyframes dmBadgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+
+/* Night6 DM overrides */
+.night6-override .dm-container,.night6-override .dm-locked{color:#660022;}
+.night6-override .dm-bubble-left{background:rgba(40,0,10,.9);color:#ff0033;}
+.night6-override .dm-input{background:rgba(40,0,10,.9);border-color:rgba(255,0,0,.2);color:#ff0033;}
+.night6-override .dm-header{border-bottom-color:rgba(255,0,0,.2);}
+.night6-override .dm-input-area{border-top-color:rgba(255,0,0,.2);}
+.night6-override .dm-btn{background:rgba(40,0,10,.9);border-color:rgba(255,0,0,.2);}
+.night6-override .dm-btn svg{fill:#ff0033;}
+.night6-override .dm-typing,.night6-override .dm-header-handle,.night6-override .dm-date-divider{color:#660022;}
+.night6-override .dm-header-name{color:#ff3355;}
+
+/* Responsive */
+@media(max-width:768px){
+  .topbar-nav{display:none;}
+  .search-box{width:160px;}
+  .page{padding:16px 10px 100px;}
+  .post-card,.detail-original{padding:14px 16px;}
+  .post-text{margin-left:0;margin-top:10px;}
+  .post-actions{margin-left:0;}
+  .reply-card{margin-left:12px;}
+  .reply-card .post-text{margin-left:0;}
+}
+@media(max-width:480px){
+  .search-box{display:none;}
+  .topbar{padding:0 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="brand" onclick="showTimeline()">
+      <div class="brand-bubble"><div class="brand-bubble-dot"></div></div>
+      <span>Popin</span>
+    </div>
+    <nav class="topbar-nav">
+      <a href="#" class="active" onclick="showTimeline();return false;">ホーム</a>
+      <a href="#">検索</a>
+      <a href="#">通知</a>
+    </nav>
+  </div>
+  <div class="topbar-right">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"/></svg>
+      <input type="text" placeholder="ポピンを検索...">
+    </div>
+    <div class="dm-btn" id="dm-btn" onclick="showDM()" title="ダイレクトメッセージ">
+      <svg viewBox="0 0 24 24"><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v.511l8 5.334 8-5.334V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 2.644l-8 5.334-8-5.334V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5V7.644z"/></svg>
+      <span class="dm-badge" id="dm-badge" style="display:none;">1</span>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="page">
+
+  <!-- VIEW: Timeline (default) -->
+  <div id="view-timeline" class="view active">
+    <!-- Trending Chips -->
+    <div class="trending-strip">
+      <div class="trending-chip">#木漏れ日遊園地<span class="chip-count">2,847</span></div>
+      <div class="trending-chip">#あの子を探して<span class="chip-count">1,203</span></div>
+      <div class="trending-chip">特番<span class="chip-count">956</span></div>
+    </div>
+
+    <!-- Timeline -->
+    <div id="timeline"></div>
+  </div>
+
+  <!-- VIEW: Post Detail (replies) -->
+  <div id="view-post-detail" class="view"></div>
+
+  <!-- VIEW: Profile -->
+  <div id="view-profile" class="view"></div>
+
+  <!-- VIEW: DM -->
+  <div id="view-dm" class="view"></div>
+
+</div>
+
+<!-- Bottom Navigation -->
+
+<script>
+(function(){
+
+// Account definitions
+var ACCOUNTS = {
+  official: {name:'木漏れ日遊園地特番【公式】', handle:'@komorebi_special', color:'#7c3aed', initial:'公', verified:true, bio:'「木漏れ日遊園地〜あの子を探して〜」公式アカウントです。情報提供お待ちしています。', joined:'2024年3月'},
+  yoshi: {name:'ゆうやけさんぽ', handle:'@yuuyake_sanpo', color:'#e8945a', initial:'夕', verified:false, bio:'散歩が日課。夕焼けの写真を撮るのが好きです。', joined:'2019年8月'},
+  ukkichi: {name:'うっきち', handle:'@\uff8d\uff7c\uff92\uff72\uff6f\uff81\uff70', color:'#330000', initial:'?', verified:false, glitch:true, bio:'\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0', joined:'2020年1月'},
+  potamaru: {name:'ぽたまる', handle:'@\uff8e\uff9f\uff80\uff8f\uff99\uff70\uff70', color:'#1a0a2e', initial:'?', verified:false, glitch:true, bio:'\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000', joined:'2021年6月'},
+  viewer1: {name:'たくみん', handle:'@takumin_tv', color:'#b45309', initial:'た', verified:false, bio:'テレビ好き。特番はだいたい見る。', joined:'2020年4月'},
+  viewer2: {name:'さっちゃんママ', handle:'@sacchan_mama', color:'#be185d', initial:'さ', verified:false, bio:'2児の母。懐かしい番組の話が好き。', joined:'2021年11月'},
+  viewer3: {name:'テレビっ子おじさん', handle:'@tvkko_ojisan', color:'#4a7c59', initial:'テ', verified:false, bio:'暇つぶしにネット見てる会社員。', joined:'2022年5月'},
+  viewer4: {name:'夜更かし太郎', handle:'@yofukashi_t', color:'#5c5c8a', initial:'夜', verified:false, bio:'夜型人間。深夜番組が好き。', joined:'2023年2月'},
+  viewer5: {name:'めいちゃん', handle:'@mei_chan22', color:'#d946a8', initial:'め', verified:false, bio:'大学生。レトロなものが好き。', joined:'2023年4月'},
+  viewer6: {name:'おたく太郎', handle:'@otaku_taro55', color:'#0891b2', initial:'お', verified:false, bio:'アニメ・特撮・昔の番組なんでも見る。', joined:'2020年11月'},
+  viewer7: {name:'まりこ', handle:'@mariko_haha', color:'#e879a0', initial:'ま', verified:false, bio:'主婦。子どもと一緒にテレビ見てます。', joined:'2022年6月'},
+  viewer8: {name:'けんた', handle:'@kenta_1995', color:'#7c5cbf', initial:'け', verified:false, bio:'会社員。帰ったらテレビ見るのが日課。', joined:'2021年9月'},
+  viewer9: {name:'ゆうき', handle:'@yuuki_2000', color:'#2d8659', initial:'ゆ', verified:false, bio:'高校生。親に教えてもらって見始めた。', joined:'2025年1月'},
+  viewer10: {name:'ノスタルジーおばさん', handle:'@nostalgia_oba', color:'#c4762e', initial:'ノ', verified:false, bio:'70年代〜90年代のテレビが大好き。', joined:'2019年5月'},
+  viewer11: {name:'りょうへい', handle:'@ryohei_ch', color:'#3b6fa0', initial:'り', verified:false, bio:'テレビ制作会社勤務。業界の端っこにいます。', joined:'2020年8月'},
+  viewer12: {name:'ぴよちゃん', handle:'@piyo_chan_tv', color:'#e8c840', initial:'ぴ', verified:false, bio:'テレビっ子！感想つぶやきます🐤', joined:'2024年2月'},
+};
+
+// Check flags
+function hasFlag(key){try{return localStorage.getItem(key)!==null;}catch(e){return false;}}
+function removeFlag(key){try{localStorage.removeItem(key);}catch(e){}}
+
+var n1=hasFlag('night1_clear'), n2=hasFlag('night2_clear'), n3=hasFlag('night3_clear'), n4=hasFlag('night4_clear'), n5=hasFlag('night5_clear');
+var night6=hasFlag('night6_started');
+var ukki_takeover=hasFlag('ukki_takeover');
+
+// Determine highest cleared night (0-5)
+var highestCleared = n5?5 : n4?4 : n3?3 : n2?2 : n1?1 : 0;
+
+// Generate timestamp text based on phase difference from current highest cleared night
+function getTimeText(phase, indexInPhase, totalInPhase){
+  var diff = highestCleared - phase;
+  if(diff < 0) diff = 0;
+  // Spread within each phase using indexInPhase
+  var t = totalInPhase > 1 ? indexInPhase / (totalInPhase - 1) : 0; // 0..1
+
+  if(diff === 0){
+    // Latest phase: 数分前 range (2分前 ~ 45分前)
+    var mins = [2, 5, 8, 12, 18, 22, 28, 35, 40, 45];
+    return mins[Math.min(indexInPhase, mins.length-1)] + '分前';
+  } else if(diff === 1){
+    // One phase older: 1時間前 range
+    var opts = ['1時間前','1時間前','1時間半前','1時間半前','1時間前','1時間半前'];
+    return opts[indexInPhase % opts.length];
+  } else if(diff === 2){
+    // Two phases older: 2〜3時間前
+    var opts2 = ['2時間前','2時間前','3時間前','2時間半前','3時間前','2時間前','3時間前'];
+    return opts2[indexInPhase % opts2.length];
+  } else if(diff === 3){
+    // Three phases older: 4〜5時間前
+    var opts3 = ['4時間前','4時間前','5時間前','4時間半前','5時間前','4時間前','5時間前'];
+    return opts3[indexInPhase % opts3.length];
+  } else if(diff === 4){
+    // Four phases older: 6〜8時間前
+    var opts4 = ['6時間前','7時間前','8時間前','6時間半前','7時間前','8時間前'];
+    return opts4[indexInPhase % opts4.length];
+  } else {
+    // Five+ phases older: 10〜12時間前
+    var opts5 = ['10時間前','11時間前','12時間前','10時間半前','11時間前','12時間前'];
+    return opts5[indexInPhase % opts5.length];
+  }
+}
+
+// Build posts array (newest first)
+var posts = [];
+
+// Night5 posts
+if(n5){
+  posts.push({account:'official', text:'見えています。', phase:5, replies:[
+    {account:'viewer3', text:'もう見るのやめる'},
+    {account:'viewer4', text:'マジで怖い'},
+    {account:'viewer5', text:'え、何が見えてるの…'},
+    {account:'viewer8', text:'スタッフさんどうしたんだろ…'},
+    {account:'viewer6', text:'公式スタッフのアカウントでこれはやばい'},
+    {account:'viewer7', text:'通報しようかな…'}
+  ]});
+  posts.push({account:'viewer8', text:'なんか特番どんどん雰囲気変わってきたな…最初は懐かしかったのに', phase:5, replies:[
+    {account:'viewer6', text:'わかる、最初と全然違うよね'},
+    {account:'viewer8', text:'でもなんか気になって見ちゃうんだよな'},
+    {account:'viewer5', text:'私も…やめられない'},
+    {account:'viewer4', text:'深夜に見るもんじゃないわ'},
+    {account:'viewer3', text:'俺はもう寝るわ'}
+  ]});
+  posts.push({account:'viewer6', text:'もうやめられない。最後まで見届ける', phase:5, replies:[
+    {account:'viewer8', text:'わかるわ'},
+    {account:'viewer5', text:'私も気になって寝れない'},
+    {account:'viewer1', text:'みんな元気だな…俺は怖くて無理'},
+    {account:'viewer7', text:'体調悪くならないようにね…'}
+  ]});
+  posts.push({account:'yoshi', text:'連絡、来るといいな', phase:5, replies:[
+    {account:'viewer2', text:'何の連絡を待ってるんですか？'},
+    {account:'viewer5', text:'ゆうやけさん、大丈夫ですか？'},
+    {account:'viewer1', text:'誰かに連絡してるの？'},
+    {account:'viewer6', text:'ゆうやけさんのポストいつも味があるよね'},
+    {account:'viewer8', text:'ゆうやけさん、番組好きなんだろうなって伝わる'},
+    {account:'viewer7', text:'心配になってきた。ご無事で…'}
+  ]});
+  posts.push({account:'viewer7', text:'怖いけど応援してる。ゆうやけさんの連絡来るといいね', phase:5, replies:[
+    {account:'viewer2', text:'同じ気持ちです'},
+    {account:'viewer5', text:'うん、見守るしかないよね'},
+    {account:'viewer1', text:'みんな優しいな'},
+    {account:'viewer9', text:'ゆうやけさんって誰なの？途中から見始めたからわからない'},
+    {account:'viewer12', text:'ゆうやけさんのポスト遡ると色々わかるよ🐤'}
+  ]});
+  posts.push({account:'viewer10', text:'昔のテレビ番組って今見ると違う怖さがあるのよね…こんな展開になるとは思わなかった', phase:5, replies:[
+    {account:'viewer2', text:'ほんとですよね…'},
+    {account:'viewer11', text:'制作側の意図が読めないのが一番怖い'},
+    {account:'viewer6', text:'確かに。昔の番組の裏側って闇あるよな'},
+    {account:'viewer9', text:'え、そうなんですか？'},
+    {account:'viewer5', text:'深い…'},
+    {account:'viewer12', text:'怖いけど気になるやつ🐤'}
+  ]});
+  posts.push({account:'viewer11', text:'業界にいるけど、スタッフアカウントの発言は普通じゃないよ。公式なら止めるはず', phase:5, replies:[
+    {account:'viewer6', text:'マジ？やっぱおかしいのか'},
+    {account:'viewer8', text:'業界の人が言うと説得力あるな'},
+    {account:'viewer4', text:'もう寝れないわ'},
+    {account:'viewer5', text:'えぇ…'},
+    {account:'viewer3', text:'怖すぎるだろ'},
+    {account:'viewer10', text:'やっぱりそうよね…'}
+  ]});
+  posts.push({account:'viewer9', text:'親に「この番組なんか変じゃない？」って聞いたら「昔は普通だったよ」って言われた。マジで？', phase:5, replies:[
+    {account:'viewer10', text:'昔は色々ゆるかったからね…'},
+    {account:'viewer12', text:'www'},
+    {account:'viewer1', text:'お前の親すごいなｗ'},
+    {account:'viewer7', text:'時代が違ったのかもね'},
+    {account:'viewer5', text:'それな'}
+  ]});
+  posts.push({account:'viewer4', text:'なんか今日の放送、雰囲気おかしくなかった？', phase:5, replies:[
+    {account:'viewer8', text:'わかる。いつもと違った'},
+    {account:'viewer5', text:'私もそう思った…'},
+    {account:'viewer3', text:'気のせいじゃないよな'},
+    {account:'viewer6', text:'明らかにおかしかった'},
+    {account:'viewer12', text:'怖かった…🐤'}
+  ]});
+  posts.push({account:'viewer2', text:'最後まで見届けたい。なんか使命感みたいなの感じる', phase:5, replies:[
+    {account:'viewer7', text:'わかる。もう引き返せない感じ'},
+    {account:'viewer1', text:'使命感ってすごいな'},
+    {account:'viewer5', text:'私も同じ気持ち'},
+    {account:'viewer6', text:'最後まで付き合うわ'}
+  ]});
+  posts.push({account:'viewer6', text:'ここまで来たら最後まで付き合うわ', phase:5, replies:[
+    {account:'viewer8', text:'同志よ'},
+    {account:'viewer4', text:'俺も'},
+    {account:'viewer2', text:'一緒に見届けましょう'},
+    {account:'viewer12', text:'みんな仲間🐤'},
+    {account:'viewer5', text:'頼もしい'}
+  ]});
+  posts.push({account:'viewer9', text:'親が「もう見るのやめなさい」って言ってきた。なんでだろ', phase:5, replies:[
+    {account:'viewer10', text:'親御さん、何か知ってるのかしらね'},
+    {account:'viewer6', text:'え、なんで止めるんだろ'},
+    {account:'viewer1', text:'気になるな…'},
+    {account:'viewer5', text:'えぇ…'},
+    {account:'viewer11', text:'何か理由があるのかもね'}
+  ]});
+  posts.push({account:'viewer11', text:'制作サイドとして気になることがいくつかあるけど…まあいいか', phase:5, replies:[
+    {account:'viewer6', text:'え、気になるなら教えてよ'},
+    {account:'viewer8', text:'業界人の勘ってやつ？'},
+    {account:'viewer4', text:'言いかけてやめるのが一番怖い'},
+    {account:'viewer10', text:'やっぱりプロから見てもおかしいのね…'},
+    {account:'viewer5', text:'気になる…'}
+  ]});
+  posts.push({account:'official', text:'間もなく全てが明らかになります。ご期待ください。', phase:5, replies:[
+    {account:'viewer3', text:'何が明らかになるんだよ…'},
+    {account:'viewer4', text:'怖すぎるんだけど'},
+    {account:'viewer8', text:'ご期待って…何を期待すればいいの'},
+    {account:'viewer6', text:'このスタッフアカウント本当にやばい'},
+    {account:'viewer5', text:'もう無理…'}
+  ]});
+  posts.push({account:'ukkichi', text:'ﾖﾃｲﾄﾞｵﾘ', phase:5, replies:[
+    {account:'viewer4', text:'予定通りって何の予定だよ…'},
+    {account:'viewer6', text:'このアカウント本当に怖い'},
+    {account:'viewer8', text:'えぇ…'},
+    {account:'viewer3', text:'もうブロックするわ'},
+    {account:'viewer5', text:'鳥肌立った'}
+  ]});
+  posts.push({account:'potamaru', text:'おわり', phase:5, replies:[
+    {account:'viewer1', text:'何が終わるの…？'},
+    {account:'viewer4', text:'怖すぎる'},
+    {account:'viewer5', text:'やめて…'},
+    {account:'viewer8', text:'ぽたまるがこんなこと言うの怖すぎる'},
+    {account:'viewer6', text:'番組のこと？それとも…'}
+  ]});
+}
+
+// Night4 posts
+if(n4){
+  posts.push({account:'potamaru', text:'きこえた', phase:4, replies:[
+    {account:'viewer1', text:'前は「きこえない」だったのに…'},
+    {account:'viewer4', text:'何がきこえたんだよ…'},
+    {account:'viewer6', text:'ぽたまるってタヌキのキャラだよね？なんでこんな不気味なの'},
+    {account:'viewer8', text:'なんかこのアカウント怖いな…'},
+    {account:'viewer5', text:'えぇ…'},
+    {account:'viewer3', text:'もうこのアカウントミュートした'}
+  ]});
+  posts.push({account:'viewer8', text:'特番のサイト結構しっかり作ってあるなー。仕事帰りに見てるけど読み応えある', phase:4, replies:[
+    {account:'viewer6', text:'わかる、ちゃんとしてるよね'},
+    {account:'viewer8', text:'昔の番組の情報とかまとまってて助かる'},
+    {account:'viewer5', text:'サイトあるんだ！見てみよう'},
+    {account:'viewer8', text:'うん、結構面白いよ'},
+    {account:'viewer4', text:'暇な時に見るわ'},
+    {account:'viewer1', text:'俺も見てるよ'}
+  ]});
+  posts.push({account:'official', text:'あなたの行動は記録されています。', phase:4, replies:[
+    {account:'viewer4', text:'え、怖…'},
+    {account:'viewer3', text:'公式アカウントがこれ言う？'},
+    {account:'viewer5', text:'何の行動…？サイト閲覧のこと？'},
+    {account:'viewer8', text:'なんかスタッフさんの投稿怖くない…？'},
+    {account:'viewer6', text:'番組の演出だと思いたい…'},
+    {account:'viewer7', text:'もう子どもに見せられない…'},
+    {account:'viewer2', text:'運営さん、ちょっと怖すぎます'}
+  ]});
+  posts.push({account:'viewer6', text:'番組のサイト見たんだけどなんか色々載ってて読み応えあるな', phase:4, replies:[
+    {account:'viewer8', text:'番組の演出だと思うけど…ちょっとゾッとするね'},
+    {account:'viewer4', text:'読んだけどゾッとした'},
+    {account:'viewer5', text:'サイト全部見た？'},
+    {account:'viewer6', text:'サイトに色々載ってるよ'},
+    {account:'viewer1', text:'読んだけどなんか不思議な気分になった'}
+  ]});
+  posts.push({account:'yoshi', text:'この番組見てて、あの頃のことを思い出した人いるんじゃないかな。俺だけじゃないはず', phase:4, replies:[
+    {account:'viewer2', text:'私も思い出しました'},
+    {account:'viewer1', text:'同じ気持ちの人がいて安心した'},
+    {account:'viewer5', text:'あの頃って…？'},
+    {account:'viewer6', text:'ゆうやけさんは番組に関わってた人なのかな'},
+    {account:'viewer7', text:'懐かしい気持ちと切ない気持ちが混ざる'},
+    {account:'viewer3', text:'わかるｗ'}
+  ]});
+  posts.push({account:'viewer5', text:'え、まって、前作のサイトまだあるの？誰か教えて', phase:4, replies:[
+    {account:'viewer8', text:'番組名で検索したら出てきたよ'},
+    {account:'viewer6', text:'出てくる出てくる'},
+    {account:'viewer5', text:'ありがとう！見てみる！'},
+    {account:'viewer4', text:'深みにはまるぞ…'},
+    {account:'viewer9', text:'親に聞いたら知ってたわ'},
+    {account:'viewer12', text:'見つけた！すごいまだ残ってるんだね🐤'}
+  ]});
+  posts.push({account:'viewer10', text:'当時のスタッフさんたち元気かしらね。あの頃のテレビは温かかった', phase:4, replies:[
+    {account:'viewer2', text:'ほんとですよね…あの時代が懐かしい'},
+    {account:'viewer11', text:'当時の制作スタッフ、何人かは今も業界にいますよ'},
+    {account:'viewer7', text:'温かい番組でしたよね'},
+    {account:'viewer6', text:'え、りょうへいさん詳しいね'},
+    {account:'viewer1', text:'マジで？'},
+    {account:'viewer5', text:'すごい情報…'}
+  ]});
+  posts.push({account:'viewer9', text:'親と一緒に見てる。親世代ドンピシャらしい', phase:4, replies:[
+    {account:'viewer10', text:'親御さんと一緒に見られるっていいわね'},
+    {account:'viewer2', text:'うちも子どもと一緒に見てるよ！'},
+    {account:'viewer12', text:'いいねー！家族で見るの最高🐤'},
+    {account:'viewer7', text:'うちも親子で見てます！'},
+    {account:'viewer1', text:'家族団らんだな'}
+  ]});
+  posts.push({account:'viewer12', text:'ぽたまるアカウントの「きこえた」ってやつ、公式のキャンペーンなのかな？怖いんだけど🐤', phase:4, replies:[
+    {account:'viewer6', text:'キャンペーンにしては怖すぎる'},
+    {account:'viewer4', text:'誰かのいたずらでしょ'},
+    {account:'viewer8', text:'公式は何も言ってないんだよな'},
+    {account:'viewer5', text:'怖い…'},
+    {account:'viewer9', text:'意味わかんない'},
+    {account:'viewer11', text:'番組の宣伝なら公式が説明するはず…'}
+  ]});
+  posts.push({account:'viewer3', text:'特番のサイト、更新されてたから見てみたけど読み応えある', phase:4, replies:[
+    {account:'viewer6', text:'ほんとだ、更新されてる'},
+    {account:'viewer8', text:'じっくり読むと面白いよな'},
+    {account:'viewer5', text:'見てくる！'},
+    {account:'viewer1', text:'俺も見たわ。なかなかだった'}
+  ]});
+  posts.push({account:'viewer5', text:'なんかこの番組見てると不思議な気持ちになる', phase:4, replies:[
+    {account:'viewer2', text:'わかる…言葉にしにくいけど'},
+    {account:'viewer8', text:'独特の空気感あるよね'},
+    {account:'viewer4', text:'それな。ノスタルジーとは違う何か'},
+    {account:'viewer7', text:'私も…なんだろうこの感じ'},
+    {account:'viewer6', text:'引き込まれるよな'}
+  ]});
+  posts.push({account:'viewer12', text:'今日の放送なんか怖かった…🐤', phase:4, replies:[
+    {account:'viewer7', text:'大丈夫？無理しないでね'},
+    {account:'viewer5', text:'わかる…ちょっとゾッとした'},
+    {account:'viewer1', text:'子ども番組なのにな'},
+    {account:'viewer9', text:'どこが怖かったの？'},
+    {account:'viewer6', text:'後半の演出がちょっとね…'}
+  ]});
+  posts.push({account:'viewer10', text:'昔の子ども番組って、大人が見ても面白いのよね', phase:4, replies:[
+    {account:'viewer2', text:'ほんとそう。深みがある'},
+    {account:'viewer11', text:'子ども向けだからこその丁寧さがありますよね'},
+    {account:'viewer6', text:'わかる。今見ると別の発見がある'},
+    {account:'viewer7', text:'大人になってから見返すのいいですよね'}
+  ]});
+  posts.push({account:'viewer1', text:'家族みんなで見るようになった。不思議な魅力がある', phase:4, replies:[
+    {account:'viewer2', text:'うちも！家族で見てます'},
+    {account:'viewer7', text:'家族で見るの最高ですよね'},
+    {account:'viewer12', text:'いいなー🐤'},
+    {account:'viewer9', text:'うちも親と見てるよ'},
+    {account:'viewer10', text:'家族団らんにぴったりね'}
+  ]});
+  posts.push({account:'ukkichi', text:'ﾆｹﾞﾗﾚﾅｲﾆｹﾞﾗﾚﾅｲﾆｹﾞﾗﾚﾅｲ', phase:4, replies:[
+    {account:'viewer3', text:'逃げられないって…何から？'},
+    {account:'viewer4', text:'マジでやめてくれ'},
+    {account:'viewer5', text:'怖い怖い怖い'},
+    {account:'viewer8', text:'このアカウント本当になんなの'},
+    {account:'viewer6', text:'通報した方がいいんじゃないか？'}
+  ]});
+  posts.push({account:'potamaru', text:'もうすぐ', phase:4, replies:[
+    {account:'viewer4', text:'何がもうすぐなんだよ…'},
+    {account:'viewer1', text:'意味深すぎる'},
+    {account:'viewer5', text:'怖い…'},
+    {account:'viewer8', text:'ぽたまるのアカウント本当に不気味'},
+    {account:'viewer6', text:'もうすぐ…何が？'}
+  ]});
+}
+
+// Night3 posts
+if(n3){
+  posts.push({account:'viewer4', text:'見てたら変な気分になった。気のせいかな', phase:3, replies:[
+    {account:'viewer3', text:'俺も。見るのやめた方がいいのかな'},
+    {account:'viewer5', text:'私も…なんか落ち着かない'},
+    {account:'viewer7', text:'無理しないでね'},
+    {account:'viewer8', text:'なんか独特な雰囲気あるよねこの番組'},
+    {account:'viewer6', text:'子ども向け番組なのに夜見るとちょっと怖いよな'}
+  ]});
+  posts.push({account:'viewer6', text:'サイトの記事読んだけど、昔の番組って色々あったんだね', phase:3, replies:[
+    {account:'viewer8', text:'へー、そうなんだ。よく覚えてるね'},
+    {account:'viewer6', text:'昔の番組雑誌と照らし合わせると微妙に違うんだよな'},
+    {account:'viewer5', text:'え、そうなの？'},
+    {account:'viewer1', text:'細かいなぁ…'},
+    {account:'viewer4', text:'制作側のミスか、わざとか'},
+    {account:'viewer8', text:'まあ昔の番組だし記録が曖昧なのかもね'}
+  ]});
+  posts.push({account:'potamaru', text:'きこえない　きこえない　きこえない', phase:3, replies:[
+    {account:'viewer4', text:'きこえないって何が？'},
+    {account:'viewer1', text:'通報した方がいい？'},
+    {account:'viewer5', text:'怖い怖い怖い'},
+    {account:'viewer8', text:'なんなんだろうこのアカウント…宣伝にしては怖すぎる'},
+    {account:'viewer6', text:'ぽたまるの声優さん、今何してるんだろ'},
+    {account:'viewer3', text:'このアカウント本当に何なの'},
+    {account:'viewer7', text:'子どもが見たら泣くよこれ…'}
+  ]});
+  posts.push({account:'viewer8', text:'仕事終わりに毎回見てるけどBGMが懐かしい感じでいいよね', phase:3, replies:[
+    {account:'viewer6', text:'わかる。音楽いいよな'},
+    {account:'viewer8', text:'帰ってきてこれ見るの日課になってきたわ'},
+    {account:'viewer5', text:'BGM良いよね！'},
+    {account:'viewer4', text:'夜に聞くと沁みるわ'},
+    {account:'viewer1', text:'わかるｗ'},
+    {account:'viewer10', text:'あの曲、口ずさんじゃうのよね'},
+    {account:'viewer12', text:'BGM最高🐤'},
+    {account:'viewer9', text:'いい曲だよね'}
+  ]});
+  posts.push({account:'official', text:'視聴者の反応を観察しています。全て記録しております。', phase:3, replies:[
+    {account:'viewer3', text:'記録って何を…？'},
+    {account:'viewer4', text:'こういうの普通に怖いからやめて'},
+    {account:'viewer8', text:'スタッフさんの投稿なんか怖いな…'},
+    {account:'viewer5', text:'スタッフさん…？大丈夫ですか？'},
+    {account:'viewer6', text:'番組の演出だよね…？そうだよね？'},
+    {account:'viewer7', text:'もうこの番組見るのやめようかな…でも気になる'}
+  ]});
+  posts.push({account:'viewer7', text:'もうこの番組見るのやめようかな…でも気になる', phase:3, replies:[
+    {account:'viewer2', text:'わかる。私も同じ気持ち'},
+    {account:'viewer5', text:'やめられないよね…'},
+    {account:'viewer3', text:'俺はもうやめた。おやすみ'},
+    {account:'viewer4', text:'おやすみ。俺はまだ見る'},
+    {account:'viewer9', text:'え、怖いの？僕まだ全然平気なんだけど'},
+    {account:'viewer10', text:'気になるなら見た方がいいわよ'},
+    {account:'viewer12', text:'私もやめられない…🐤'}
+  ]});
+  posts.push({account:'yoshi', text:'春になると散歩しながらいろいろ考える。毎年ね', phase:3, replies:[
+    {account:'viewer1', text:'素敵ですね'},
+    {account:'viewer5', text:'ゆうやけさんのポスト好き。穏やか'},
+    {account:'viewer2', text:'春の散歩いいですよね'},
+    {account:'viewer7', text:'何を考えるんですか？'},
+    {account:'viewer6', text:'この人のポスト、番組関係なく普通に良い'},
+    {account:'viewer10', text:'散歩日和よね。私もよく歩くわ'},
+    {account:'viewer12', text:'いい趣味🐤'}
+  ]});
+  posts.push({account:'viewer11', text:'特番のナレーション聞きやすくていいね。プロの仕事だわ', phase:3, replies:[
+    {account:'viewer8', text:'わかる。落ち着いた声でいい'},
+    {account:'viewer6', text:'ナレーターさん誰だろう'},
+    {account:'viewer10', text:'最近のナレーションって聞きやすいわよね'},
+    {account:'viewer12', text:'いいね'},
+    {account:'viewer5', text:'同じく'},
+    {account:'viewer1', text:'確かにいい声だよね'}
+  ]});
+  posts.push({account:'viewer9', text:'90年代の子ども番組って独特の雰囲気あるよね。今の番組と全然違う', phase:3, replies:[
+    {account:'viewer10', text:'あの頃はセットも手作り感あって良かったのよ'},
+    {account:'viewer11', text:'今と制作手法が全然違うからね'},
+    {account:'viewer6', text:'わかる。あの独特な感じが好き'},
+    {account:'viewer2', text:'手作り感がいいのよね'},
+    {account:'viewer12', text:'レトロ感すき🐤'}
+  ]});
+  posts.push({account:'viewer12', text:'スタッフさんのアカウント、なんか怖くない？「記録しております」って公式が言う？🐤', phase:3, replies:[
+    {account:'viewer4', text:'思った。あれ普通じゃないよな'},
+    {account:'viewer6', text:'公式がこんなこと言う？'},
+    {account:'viewer9', text:'マジで？'},
+    {account:'viewer8', text:'えぇ…'},
+    {account:'viewer11', text:'番組の演出としてもちょっとやりすぎな気が…'},
+    {account:'viewer5', text:'怖い…'}
+  ]});
+  posts.push({account:'viewer2', text:'毎回見るたびに新しい発見がある。スタッフさんすごいなぁ', phase:3, replies:[
+    {account:'viewer7', text:'わかる。細かいところまで凝ってるよね'},
+    {account:'viewer6', text:'それな。見るたびに気づくことがある'},
+    {account:'viewer10', text:'丁寧な番組づくりよね'},
+    {account:'viewer5', text:'私も毎回発見ある！'}
+  ]});
+  posts.push({account:'viewer9', text:'親が「この番組、途中から雰囲気変わったんだよ」って言ってた', phase:3, replies:[
+    {account:'viewer10', text:'お母さんの言う通りよ。後半から変わったの'},
+    {account:'viewer6', text:'え、そうなの？どう変わったの？'},
+    {account:'viewer1', text:'気になるな'},
+    {account:'viewer5', text:'怖い…'},
+    {account:'viewer11', text:'スタッフの交代があったのかもしれないね'}
+  ]});
+  posts.push({account:'viewer1', text:'特番のナレーション、聞きやすくていいね', phase:3, replies:[
+    {account:'viewer8', text:'わかる。落ち着く声だよな'},
+    {account:'viewer2', text:'プロの仕事って感じ'},
+    {account:'viewer6', text:'ナレーターさん上手いよね'}
+  ]});
+  posts.push({account:'viewer6', text:'当時のスタッフさんたち、今どうしてるんだろう', phase:3, replies:[
+    {account:'viewer10', text:'気になるわよね…もう引退してる人も多いでしょうし'},
+    {account:'viewer11', text:'何人かは別の番組でまだやってるみたいだけど'},
+    {account:'viewer2', text:'元気でいてほしいね'},
+    {account:'viewer8', text:'ほんとそれ'},
+    {account:'viewer5', text:'気になる…'}
+  ]});
+  posts.push({account:'viewer8', text:'なんか最近この番組のこと考えちゃう。気になって仕方ない', phase:3, replies:[
+    {account:'viewer6', text:'わかる。仕事中もふと思い出す'},
+    {account:'viewer4', text:'同じだわ。頭から離れない'},
+    {account:'viewer5', text:'私も…夢にまで出てきた'},
+    {account:'viewer7', text:'それはハマってる証拠だよ'},
+    {account:'viewer1', text:'中毒性あるよなこの番組'}
+  ]});
+  posts.push({account:'potamaru', text:'しってる　しってる　しってる', phase:3, replies:[
+    {account:'viewer4', text:'何を知ってるの…？'},
+    {account:'viewer1', text:'怖すぎる'},
+    {account:'viewer5', text:'やめてよ…'},
+    {account:'viewer8', text:'ぽたまるのアカウントまでおかしくなってきた'},
+    {account:'viewer6', text:'このアカウント何者なんだ'}
+  ]});
+  posts.push({account:'official', text:'皆様の反応は全て想定の範囲内です。', phase:3, replies:[
+    {account:'viewer3', text:'想定って何の想定だよ'},
+    {account:'viewer4', text:'怖すぎるんですけど'},
+    {account:'viewer6', text:'普通のスタッフはこんなこと言わない'},
+    {account:'viewer8', text:'えぇ…'},
+    {account:'viewer5', text:'もうやだ…'}
+  ]});
+}
+
+// Night2 posts
+if(n2){
+  posts.push({account:'ukkichi', text:'\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77', phase:2, replies:[
+    {account:'viewer3', text:'なにこのアカウント…'},
+    {account:'viewer4', text:'怖いんだけど'},
+    {account:'viewer5', text:'公式に関係あるの？'},
+    {account:'viewer8', text:'なにこれ…変なアカウント'},
+    {account:'viewer6', text:'うっきちってあのサルのキャラだよね？なんで…'},
+    {account:'viewer7', text:'子どもが見たら泣くからやめて'},
+    {account:'viewer1', text:'ブロックした方がいい？'}
+  ]});
+  posts.push({account:'viewer7', text:'子どもに見せようと思ったけどなんか怖くなってきた', phase:2, replies:[
+    {account:'viewer2', text:'わかる…最初は懐かしかったのに'},
+    {account:'viewer5', text:'子ども向け番組なのに怖いって変だよね'},
+    {account:'viewer6', text:'子どもには見せない方がいいかも'},
+    {account:'viewer1', text:'まあ特番は大人向けだからね'},
+    {account:'viewer10', text:'子ども向けの皮を被ってる感じがするのよね…'},
+    {account:'viewer12', text:'えぇ…🐤'},
+    {account:'viewer9', text:'僕は普通に面白いと思うけど'}
+  ]});
+  posts.push({account:'viewer8', text:'録画しとけばよかった…見逃した回ある', phase:2, replies:[
+    {account:'viewer6', text:'あー、あるある'},
+    {account:'viewer8', text:'来週からはちゃんと録画するわ'},
+    {account:'viewer5', text:'見逃し配信とかないのかな'},
+    {account:'viewer4', text:'深夜枠だと録画必須だよな'},
+    {account:'viewer3', text:'俺も忘れてた回あるわ'}
+  ]});
+  posts.push({account:'official', text:'視聴者の皆様の反応を参考にさせていただいております。', phase:2, replies:[
+    {account:'viewer6', text:'参考にして何するんですか'},
+    {account:'viewer8', text:'まあ普通のお知らせだよね'},
+    {account:'viewer5', text:'普通のお知らせだと思いたい'},
+    {account:'viewer1', text:'まあスタッフだしね'},
+    {account:'viewer11', text:'この文面、ちょっと引っかかるな…'},
+    {account:'viewer10', text:'普通のスタッフならこういう言い方しないわよね'},
+    {account:'viewer12', text:'www まあ大丈夫でしょ🐤'}
+  ]});
+  posts.push({account:'viewer5', text:'うっきちってアカウント何…？公式のイベント？', phase:2, replies:[
+    {account:'viewer6', text:'公式はノーコメントっぽい'},
+    {account:'viewer8', text:'ファンが作ったアカウントかな？よくわからないけど'},
+    {account:'viewer4', text:'2020年って…番組終わってからだいぶ経ってるのに'},
+    {account:'viewer3', text:'怖…'},
+    {account:'viewer7', text:'そういうの気にしだすと止まらないよ'}
+  ]});
+  posts.push({account:'yoshi', text:'仕事辞めてもう何年経つんだろ。あの頃は毎日必死だったな', phase:2, replies:[
+    {account:'viewer2', text:'大丈夫ですか…？'},
+    {account:'viewer5', text:'ゆうやけさん、何のお仕事してたんですか？'},
+    {account:'viewer1', text:'ものづくりの仕事ってプロフに書いてあるね'},
+    {account:'viewer6', text:'…セットの？'},
+    {account:'viewer8', text:'お疲れ様でしたって気持ちになるポストだな'},
+    {account:'viewer7', text:'考えすぎだよ…多分'},
+    {account:'viewer10', text:'昔の仕事って懐かしいわよね'},
+    {account:'viewer11', text:'ものづくりの仕事か…業界関係者かな'}
+  ]});
+  posts.push({account:'viewer10', text:'再放送してほしい…当時見てた番組をもう一度ちゃんと見たいのよ', phase:2, replies:[
+    {account:'viewer2', text:'わかります！再放送希望！'},
+    {account:'viewer6', text:'ほんとそれ。配信でもいいから'},
+    {account:'viewer7', text:'うちの子にも見せたい'},
+    {account:'viewer9', text:'配信してほしい。テレビないし'},
+    {account:'viewer12', text:'同じく🐤'},
+    {account:'viewer1', text:'円盤出してくれてもいい'}
+  ]});
+  posts.push({account:'viewer11', text:'うっきちってアカウント、botかな？投稿パターンが機械的だけど', phase:2, replies:[
+    {account:'viewer6', text:'botにしては不気味すぎない？'},
+    {account:'viewer4', text:'なんだこれ'},
+    {account:'viewer8', text:'公式のキャンペーン？'},
+    {account:'viewer3', text:'わからん…気持ち悪い'},
+    {account:'viewer5', text:'botだとしたら誰が作ったんだろう'},
+    {account:'viewer9', text:'意味わかんない'}
+  ]});
+  posts.push({account:'viewer9', text:'え、まだやってるの？見なきゃ。親が昔見てた番組の特番らしい', phase:2, replies:[
+    {account:'viewer1', text:'見た方がいいよ。面白いから'},
+    {account:'viewer12', text:'一緒に見よう🐤'},
+    {account:'viewer5', text:'私も最近知った！'},
+    {account:'viewer10', text:'若い子が見てくれるの嬉しいわ'},
+    {account:'viewer7', text:'お母さんと一緒に見てね！'}
+  ]});
+  posts.push({account:'viewer5', text:'え、まだ続くの？嬉しいけど', phase:2, replies:[
+    {account:'viewer6', text:'まだまだ続くよ！'},
+    {account:'viewer1', text:'嬉しいよな'},
+    {account:'viewer2', text:'もっと見たい！'},
+    {account:'viewer12', text:'やったー🐤'}
+  ]});
+  posts.push({account:'viewer12', text:'今日も見てる〜🐤 BGMが耳に残る', phase:2, replies:[
+    {account:'viewer5', text:'わかるー！口ずさんじゃう'},
+    {account:'viewer8', text:'あのBGMいいよな'},
+    {account:'viewer6', text:'耳から離れないやつだよな'},
+    {account:'viewer10', text:'昔から名曲だったのよ'}
+  ]});
+  posts.push({account:'viewer10', text:'この番組の裏側、もっと知りたいわ', phase:2, replies:[
+    {account:'viewer6', text:'わかる。制作秘話とか聞きたい'},
+    {account:'viewer11', text:'業界内でも情報少ないんですよね…'},
+    {account:'viewer2', text:'裏側気になりますよね'},
+    {account:'viewer5', text:'ドキュメンタリーとか作ってほしい'}
+  ]});
+  posts.push({account:'viewer4', text:'深夜に特番サイト見てたら時間溶けた', phase:2, replies:[
+    {account:'viewer3', text:'あるあるｗ'},
+    {account:'viewer8', text:'わかるわ。気づいたら朝'},
+    {account:'viewer6', text:'あのサイト沼だよな'},
+    {account:'viewer5', text:'私も昨日それだった'},
+    {account:'viewer1', text:'睡眠大事にしろよｗ'}
+  ]});
+  posts.push({account:'viewer11', text:'番組の構成、普通の特番とちょっと違う気がする。気のせいかな', phase:2, replies:[
+    {account:'viewer6', text:'業界人が言うと気になるな'},
+    {account:'viewer8', text:'どう違うの？'},
+    {account:'viewer10', text:'確かに普通の特番とは違う雰囲気よね'},
+    {account:'viewer4', text:'言われてみれば確かに'}
+  ]});
+  posts.push({account:'ukkichi', text:'ﾐﾃﾙﾐﾃﾙﾐﾃﾙﾐﾃﾙﾐﾃﾙ', phase:2, replies:[
+    {account:'viewer3', text:'見てるって…誰を？'},
+    {account:'viewer4', text:'怖いんだけど'},
+    {account:'viewer5', text:'何これ…'},
+    {account:'viewer8', text:'このアカウントまた投稿してる…'},
+    {account:'viewer6', text:'さっきのよりやばくない？'}
+  ]});
+}
+
+// Night1 posts
+if(n1){
+  posts.push({account:'viewer3', text:'この番組サイト、なんか引っかかるんだよな。うまく言えないけど', phase:1, replies:[
+    {account:'viewer4', text:'わかる。なんか変だよね'},
+    {account:'viewer5', text:'どこが引っかかる？'},
+    {account:'viewer3', text:'なんだろう…雰囲気？'},
+    {account:'viewer8', text:'確かになんか雰囲気あるよね'},
+    {account:'viewer6', text:'このサイト夜に見るの怖い'},
+    {account:'viewer1', text:'考えすぎだってｗ'}
+  ]});
+  posts.push({account:'viewer5', text:'特番サイト見たけど結構ちゃんと作ってある', phase:1, replies:[
+    {account:'viewer6', text:'ちゃんとしてるからこそ怖いんだよな'},
+    {account:'viewer8', text:'デザインいいよね。見やすい'},
+    {account:'viewer5', text:'うんうん、情報まとまってる！'},
+    {account:'viewer7', text:'デザインは可愛いよね'},
+    {account:'viewer1', text:'普通にいいサイトだと思う'}
+  ]});
+  posts.push({account:'viewer8', text:'キャラクター可愛かった記憶ある。特にぽたまる', phase:1, replies:[
+    {account:'viewer6', text:'わかる。ぽたまる癒されるよな'},
+    {account:'viewer5', text:'ぽたまる可愛い！グッズとかないのかな'},
+    {account:'viewer4', text:'懐かしいな'},
+    {account:'viewer3', text:'俺はキツネ団長派だったわ'},
+    {account:'viewer8', text:'キツネ団長もいいよね'}
+  ]});
+  posts.push({account:'official', text:'本日の放送ご覧いただきありがとうございます。引き続き情報提供をお待ちしております。', phase:1, replies:[
+    {account:'viewer1', text:'応援してます！'},
+    {account:'viewer5', text:'見ました！面白かったです'},
+    {account:'viewer6', text:'情報提供って具体的に何を？'},
+    {account:'viewer2', text:'毎回楽しみにしてます'},
+    {account:'viewer7', text:'子どもと一緒に見てます！'}
+  ]});
+  posts.push({account:'viewer6', text:'スタッフクレジットに吉田一郎って人いるけど、あのセット作った人だよね確か', phase:1, replies:[
+    {account:'viewer8', text:'へー、そうなんだ。詳しいね'},
+    {account:'viewer6', text:'昔の番組雑誌に載ってたんだよ'},
+    {account:'viewer5', text:'番組雑誌とか持ってるのすごい'},
+    {account:'viewer1', text:'さすがオタクｗ'},
+    {account:'viewer6', text:'褒め言葉として受け取る'}
+  ]});
+  posts.push({account:'yoshi', text:'久しぶりにテレビつけたら懐かしい顔が映ってた', phase:1, replies:[
+    {account:'viewer3', text:'何の番組ですか？'},
+    {account:'yoshi', text:'…昔の番組だよ'},
+    {account:'viewer5', text:'木漏れ日遊園地のことかな？'},
+    {account:'viewer6', text:'ゆうやけさんのプロフ見ると色々考えちゃう'},
+    {account:'viewer8', text:'懐かしい番組っていいよね。ほっこりする'},
+    {account:'viewer7', text:'懐かしいのってなんかいいですよね'},
+    {account:'viewer4', text:'お前ら詳しいなｗ'}
+  ]});
+  posts.push({account:'viewer10', text:'キツネ団長の声優さんって誰だったんだろう。当時は気にしてなかったけど', phase:1, replies:[
+    {account:'viewer6', text:'調べたけど出てこないんだよな…'},
+    {account:'viewer11', text:'当時のキャスト情報って結構散逸してるんですよ'},
+    {account:'viewer2', text:'気になる！'},
+    {account:'viewer5', text:'声優さん今も活動してるのかな'},
+    {account:'viewer9', text:'へー、声優さんいたんだ'},
+    {account:'viewer12', text:'気になるー🐤'}
+  ]});
+  posts.push({account:'viewer12', text:'今日の特番めっちゃ良かった！ぽたまるダンス♪が一番好きだった🐤', phase:1, replies:[
+    {account:'viewer5', text:'わかるｗ'},
+    {account:'viewer2', text:'ダンスのコーナー懐かしい！'},
+    {account:'viewer7', text:'あのダンス真似しちゃうよね'},
+    {account:'viewer1', text:'それな'},
+    {account:'viewer10', text:'あのダンスは神だよ'},
+    {account:'viewer9', text:'楽しかったよね'}
+  ]});
+  posts.push({account:'viewer9', text:'木漏れ日遊園地のグッズとか出ないかな。普通に欲しい', phase:1, replies:[
+    {account:'viewer5', text:'わかる！ぽたまるのぬいぐるみ欲しい'},
+    {account:'viewer6', text:'昔はあったらしいよ。今はプレミアついてる'},
+    {account:'viewer12', text:'マジで？www'},
+    {account:'viewer10', text:'昔持ってたけど引っ越しの時に捨てちゃったのよ…'},
+    {account:'viewer1', text:'メルカリで探してみたら？'},
+    {account:'viewer8', text:'公式グッズ出してくれ…'}
+  ]});
+  posts.push({account:'viewer11', text:'番組のセット、手作り感があって温かいよね。今の番組にはない良さがある', phase:1, replies:[
+    {account:'viewer10', text:'そうそう！あの時代のセットは職人技よ'},
+    {account:'viewer6', text:'わかる。CGじゃないのがいい'},
+    {account:'viewer8', text:'懐かしすぎる…'},
+    {account:'viewer2', text:'手作りの温もりよね'},
+    {account:'viewer11', text:'こういう仕事ができる人、今は少なくなってるんですよ'}
+  ]});
+  posts.push({account:'viewer10', text:'ぽたまるの声優さん、確か当時新人だったのよ。今は引退してるみたいだけど', phase:1, replies:[
+    {account:'viewer6', text:'そうなんだ！知らなかった'},
+    {account:'viewer5', text:'引退しちゃったんだ…残念'},
+    {account:'viewer11', text:'当時の声優さん、情報少ないんですよね'},
+    {account:'viewer2', text:'新人であのクオリティはすごいわ'}
+  ]});
+  posts.push({account:'viewer9', text:'うちの親、このあとのコーナーが好きだったらしい', phase:1, replies:[
+    {account:'viewer10', text:'お母さんの推しコーナーがあるのね'},
+    {account:'viewer6', text:'どのコーナーだろう'},
+    {account:'viewer1', text:'親子で見てるのいいな'},
+    {account:'viewer12', text:'ほっこりする🐤'},
+    {account:'viewer7', text:'うちも子どもとお気に入りのコーナーが違うのよ'}
+  ]});
+  posts.push({account:'viewer11', text:'セットの作り込みがすごいな。手作り感があって温かい', phase:1, replies:[
+    {account:'viewer10', text:'あの時代のセットは本当に凝ってたのよ'},
+    {account:'viewer6', text:'CGじゃない良さがあるよな'},
+    {account:'viewer8', text:'職人技だよね'},
+    {account:'viewer2', text:'温もりが伝わってくる'}
+  ]});
+  posts.push({account:'viewer7', text:'子どもが「もう一回見たい」って言ってる', phase:1, replies:[
+    {account:'viewer2', text:'かわいい！うちもそうだった'},
+    {account:'viewer5', text:'子どもにも伝わるんだね'},
+    {account:'viewer10', text:'いい番組は世代を超えるのよ'},
+    {account:'viewer1', text:'いい話だ'},
+    {account:'viewer12', text:'かわいい〜🐤'}
+  ]});
+  posts.push({account:'viewer3', text:'仕事帰りに見るのが日課になりつつある', phase:1, replies:[
+    {account:'viewer8', text:'わかるわ。俺も毎日見てる'},
+    {account:'viewer4', text:'深夜に見るのいいよな'},
+    {account:'viewer6', text:'日課になるよなこれ'},
+    {account:'viewer5', text:'わかる！'}
+  ]});
+}
+
+// Initial posts (always shown)
+posts.push({account:'viewer5', text:'友達に教えてもらった。木漏れ日遊園地って番組知ってる人いる？', phase:0, replies:[
+  {account:'viewer6', text:'知ってる知ってる！名作だよ'},
+  {account:'viewer2', text:'子どもの頃毎週見てた！'},
+  {account:'viewer7', text:'うちの子も好きだったなぁ'},
+  {account:'viewer1', text:'特番やってるから見てみて'},
+  {account:'viewer5', text:'みんな知ってるんだ！見てみる！'},
+  {account:'viewer8', text:'うちの地域でもやってたのかな。気になる'}
+]});
+posts.push({account:'viewer6', text:'キツネ団長、かあ博士、うっきち、ぽたまる…全員覚えてるわ', phase:0, replies:[
+  {account:'viewer2', text:'全員言えるのすごい！'},
+  {account:'viewer1', text:'かあ博士が一番好きだった'},
+  {account:'viewer5', text:'ぽたまるって何の動物？'},
+  {account:'viewer6', text:'タヌキだよ。のんびりしたキャラ'},
+  {account:'viewer7', text:'うっきちはお猿さんだよね。子どもが好きだった'},
+  {account:'viewer3', text:'俺はキツネ団長派'}
+]});
+posts.push({account:'viewer2', text:'あの番組懐かしい。子どもの頃見てたな', phase:0, replies:[
+  {account:'viewer1', text:'キツネ団長覚えてる？'},
+  {account:'viewer2', text:'覚えてる！ぽたまるダンス♪が好きだった'},
+  {account:'viewer5', text:'ダンスのコーナーあったんだ！'},
+  {account:'viewer7', text:'「おひさまぽかぽか」って曲覚えてる？'},
+  {account:'viewer2', text:'覚えてる！今でも歌えるｗ'},
+  {account:'viewer6', text:'あの曲神曲だよな'}
+]});
+posts.push({account:'viewer7', text:'子どもの頃これ見てた！まさか特番やるとは', phase:0, replies:[
+  {account:'viewer2', text:'ね！嬉しいよね'},
+  {account:'viewer5', text:'特番って最近始まったの？'},
+  {account:'viewer1', text:'最近だよ。サイトもあるよ'},
+  {account:'viewer6', text:'まさかの復活で震えた'},
+  {account:'viewer3', text:'テレビ欄で見つけてびっくりした'}
+]});
+posts.push({account:'viewer1', text:'木漏れ日遊園地の特番やってるの知らなかった。見てみよう', phase:0, replies:[
+  {account:'viewer2', text:'私も今知った！一緒に見よう'},
+  {account:'viewer5', text:'私も友達に教えてもらったばかり！'},
+  {account:'viewer6', text:'絶対見た方がいい。色々すごいから'},
+  {account:'viewer7', text:'懐かしくて泣けるよ'},
+  {account:'viewer3', text:'暇だし見るか'}
+]});
+posts.push({account:'viewer4', text:'深夜にこのサイト見てるんだけど、なんか雰囲気あるな', phase:0, replies:[
+  {account:'viewer3', text:'夜に見るなよｗ'},
+  {account:'viewer5', text:'このサイト夜に見るの怖い'},
+  {account:'viewer8', text:'夜に見ると雰囲気あっていいよね'},
+  {account:'viewer4', text:'わかるわ'},
+  {account:'viewer6', text:'夜はテンション上がるからなｗ'}
+]});
+posts.push({account:'viewer3', text:'職場で木漏れ日遊園地の話したら同期が3人知ってた。意外と見てた人多いんだな', phase:0, replies:[
+  {account:'viewer1', text:'あるあるｗ 世代がバレるｗ'},
+  {account:'viewer7', text:'ママ友も知ってたよ！'},
+  {account:'viewer2', text:'わかるｗ'},
+  {account:'viewer5', text:'大学でも話題になってた'},
+  {account:'viewer11', text:'うちの会社でも話題になってたよ'},
+  {account:'viewer10', text:'みんな実は見てたのよね'},
+  {account:'viewer9', text:'www'}
+]});
+posts.push({account:'official', text:'皆様の温かいコメントありがとうございます。引き続き番組をお楽しみください。', phase:0, replies:[
+  {account:'viewer1', text:'こちらこそありがとうございます！'},
+  {account:'viewer2', text:'応援してます！'},
+  {account:'viewer5', text:'公式さん優しい'},
+  {account:'viewer7', text:'これからも楽しみにしてます'},
+  {account:'viewer6', text:'神運営'}
+]});
+posts.push({account:'viewer10', text:'木漏れ日遊園地、リアルタイムで見てた世代よ。まさか特番やるとは思わなかった。感激', phase:0, replies:[
+  {account:'viewer2', text:'同世代ですかね！嬉しい'},
+  {account:'viewer6', text:'リアタイ世代の話聞きたい！'},
+  {account:'viewer9', text:'すごい、リアルタイムで見てたんだ'},
+  {account:'viewer5', text:'当時の思い出教えてください！'},
+  {account:'viewer7', text:'私もリアルタイム世代です！'},
+  {account:'viewer12', text:'先輩！🐤'},
+  {account:'viewer1', text:'いいね'}
+]});
+posts.push({account:'viewer9', text:'親に教えてもらって見始めたんだけどこの番組面白いね。昔の番組もいいじゃん', phase:0, replies:[
+  {account:'viewer10', text:'若い子が見てくれるの嬉しいわ'},
+  {account:'viewer2', text:'いい番組でしょ？'},
+  {account:'viewer6', text:'わかるだろ？名作だよ'},
+  {account:'viewer5', text:'私も最近ハマった！'},
+  {account:'viewer11', text:'いい番組は世代を超えるよね'},
+  {account:'viewer1', text:'www'}
+]});
+posts.push({account:'viewer11', text:'制作会社の先輩に聞いたら木漏れ日遊園地のこと知ってた。業界でも伝説らしい', phase:0, replies:[
+  {account:'viewer6', text:'マジで？伝説とか胸熱'},
+  {account:'viewer10', text:'当時の制作スタッフは凄腕揃いだったからね'},
+  {account:'viewer8', text:'へー、業界人の反応気になる'},
+  {account:'viewer5', text:'伝説…すごい'},
+  {account:'viewer3', text:'大げさじゃねｗ'},
+  {account:'viewer12', text:'かっこいい🐤'}
+]});
+posts.push({account:'viewer12', text:'うちの子にも見せたい！こういう温かい番組って今少ないよね🐤', phase:0, replies:[
+  {account:'viewer7', text:'うちは一緒に見てるよ！おすすめ'},
+  {account:'viewer2', text:'子どもも楽しめると思う！'},
+  {account:'viewer10', text:'いい番組は親子で楽しめるわよ'},
+  {account:'viewer1', text:'いいね'},
+  {account:'viewer9', text:'僕も親と見てるよ'}
+]});
+posts.push({account:'viewer11', text:'特番のカメラワークとか編集とか、地味にちゃんとしてるんだよな。スタッフ頑張ってる', phase:0, replies:[
+  {account:'viewer8', text:'わかる。丁寧に作ってるよね'},
+  {account:'viewer6', text:'さすが業界人、目の付け所が違う'},
+  {account:'viewer10', text:'昔の番組の雰囲気大事にしてるわよね'},
+  {account:'viewer5', text:'それな'},
+  {account:'viewer12', text:'いいね🐤'}
+]});
+posts.push({account:'viewer10', text:'懐かしいわ…あの頃はテレビの前に座って夢中になってた。時代は変わったけど番組の魅力は変わらない', phase:0, replies:[
+  {account:'viewer2', text:'懐かしすぎる…'},
+  {account:'viewer7', text:'わかります。テレビの前が特等席でしたよね'},
+  {account:'viewer5', text:'素敵…'},
+  {account:'viewer9', text:'今の子はスマホだけど、テレビもいいよね'},
+  {account:'viewer11', text:'いい時代でしたよね'},
+  {account:'viewer6', text:'泣けるわ'}
+]});
+posts.push({account:'viewer9', text:'親に「これ知ってる？」って聞いたら「懐かしい！」ってめっちゃ語り始めたｗ', phase:0, replies:[
+  {account:'viewer10', text:'親世代にはドンピシャよね'},
+  {account:'viewer1', text:'あるあるｗ'},
+  {account:'viewer5', text:'うちの親も同じだったｗ'},
+  {account:'viewer6', text:'親世代の食いつきすごいよなｗ'},
+  {account:'viewer12', text:'www🐤'}
+]});
+posts.push({account:'viewer10', text:'この番組、70年代の教育番組の系譜なのよね。もっと評価されるべき', phase:0, replies:[
+  {account:'viewer6', text:'さすが詳しい！'},
+  {account:'viewer11', text:'確かに。教育番組の文脈で見ると面白いですよね'},
+  {account:'viewer2', text:'もっと評価されるべきって同意！'},
+  {account:'viewer5', text:'勉強になる'},
+  {account:'viewer8', text:'へー、そういう系譜があるんだ'}
+]});
+posts.push({account:'viewer11', text:'制作会社の人間として言うけど、この時代にこのクオリティはすごい', phase:0, replies:[
+  {account:'viewer6', text:'プロが言うと説得力あるな'},
+  {account:'viewer10', text:'本当にそうよね。予算も限られてたはずなのに'},
+  {account:'viewer8', text:'へー、業界の人から見てもすごいんだ'},
+  {account:'viewer5', text:'さすがプロの視点'}
+]});
+posts.push({account:'viewer12', text:'家族で見てる〜！お母さんが泣いてる🐤', phase:0, replies:[
+  {account:'viewer7', text:'わかる…懐かしくて泣いちゃうよね'},
+  {account:'viewer2', text:'お母さんの気持ちわかります'},
+  {account:'viewer1', text:'泣けるよなぁ'},
+  {account:'viewer10', text:'世代にはたまらないのよ…'},
+  {account:'viewer5', text:'ほっこりする'}
+]});
+posts.push({account:'viewer6', text:'OPの曲、今聴いても名曲だと思う', phase:0, replies:[
+  {account:'viewer10', text:'名曲よ。作曲家さんも有名な方だったはず'},
+  {account:'viewer8', text:'耳に残るいい曲だよな'},
+  {account:'viewer2', text:'今でも歌えるよ！'},
+  {account:'viewer5', text:'サブスクで配信してほしい'},
+  {account:'viewer12', text:'神曲🐤'}
+]});
+// ↓ 一番最初の告知（一番古い＝一番下）
+posts.push({account:'official', text:'【特番のお知らせ】本日より「木漏れ日遊園地〜あの子を探して〜」生放送開始です。情報をお持ちの方はぜひご連絡ください。', phase:0, replies:[
+  {account:'viewer1', text:'情報提供ってどうすればいいんだろう'},
+  {account:'viewer2', text:'サイトにフォームがあるみたいだよ'},
+  {account:'viewer5', text:'友達にも共有した！'},
+  {account:'viewer6', text:'まさかの特番…感動する'},
+  {account:'viewer7', text:'子どもの頃の思い出が蘇る'},
+  {account:'viewer8', text:'面白そう。仕事終わりに見てみるわ'},
+  {account:'viewer3', text:'楽しみにしてます！'},
+  {account:'viewer4', text:'深夜枠？見るわ'},
+  {account:'viewer10', text:'まさか令和に復活するとは…涙'},
+  {account:'viewer9', text:'親が興奮してたから見てみるわ'}
+]});
+
+// Compute phase index for each post (index within its phase group)
+(function(){
+  var phaseCounts = {};
+  var phaseIndexes = {};
+  // First pass: count posts per phase
+  posts.forEach(function(p){
+    var ph = p.phase !== undefined ? p.phase : 0;
+    phaseCounts[ph] = (phaseCounts[ph] || 0) + 1;
+    phaseIndexes[ph] = 0;
+  });
+  // Second pass: assign index within phase and compute time text
+  posts.forEach(function(p){
+    var ph = p.phase !== undefined ? p.phase : 0;
+    var idx = phaseIndexes[ph];
+    var total = phaseCounts[ph];
+    p.time = getTimeText(ph, idx, total);
+    phaseIndexes[ph] = idx + 1;
+  });
+})();
+
+// Stable random likes/retweets per post (seeded by index)
+function stableRandom(seed){var x=Math.sin(seed*9301+49297)%233280;return Math.abs(x/233280);}
+posts.forEach(function(p,i){
+  p._hearts=Math.floor(stableRandom(i*7+3)*80);
+  p._replyCount=(p.replies&&p.replies.length)||0;
+});
+
+// Night6 override
+if(night6){
+  document.body.classList.add('night6-override');
+  posts = posts.filter(function(p){return p.account!=='yoshi';});
+  posts.forEach(function(p){p.text='予定通りです';p.replies=[];p._replyCount=0;});
+}
+
+// Ukki takeover (one-time)
+if(ukki_takeover && !night6){
+  var garbled = [
+    '\uff8d\uff7c\uff92\uff72\uff6f\uff81\uff70\uff8d\uff7c\uff92\uff72',
+    '\u2588\u2588\u2588\u2591\u2591\u2588\u2588\u2588\u2591\u2591\u2588',
+    '\u304d\u304d\u304d\u304d\u304d\u304d\u304d\u304d\u304d\u304d\u304d\u304d\u304d',
+    '\u3042\u306a\u305f\u306e\u756a\u3060\u3088',
+    '\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0',
+    '\u898b\u3064\u3051\u305f\u898b\u3064\u3051\u305f\u898b\u3064\u3051\u305f',
+    '\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77\uff77',
+    '\u305f\u3059\u3051\u3066\u305f\u3059\u3051\u3066\u305f\u3059\u3051\u3066',
+    '\u0455\u043e\u0440\u0072\u0443\u006e\u006f\u0072\u0065\u0062\u006f',
+    '\u2588\u25b2\u25bc\u25b2\u2588\u25a0\u25a1\u25a0\u2588'
+  ];
+  posts.forEach(function(p,i){
+    p.text=garbled[i%garbled.length];
+    p.account='ukkichi';
+    p.replies=[];
+    p._replyCount=0;
+  });
+  removeFlag('ukki_takeover');
+}
+
+// Verified badge SVG (coral/pink for Popin branding)
+var BADGE_SVG='<svg class="verified-badge" viewBox="0 0 22 22"><defs><linearGradient id="vg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF7EB3"/></linearGradient></defs><path fill="url(#vg)" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.855-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.69-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.636.433 1.221.878 1.69.47.446 1.055.752 1.69.883.635.13 1.294.083 1.902-.143.271.586.702 1.084 1.24 1.438.54.354 1.167.551 1.813.568.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.225 1.261.272 1.893.143.636-.131 1.22-.437 1.69-.882.445-.47.75-1.055.88-1.69.131-.634.084-1.292-.139-1.9.584-.272 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"/></svg>';
+
+var BACK_SVG='<svg viewBox="0 0 24 24"><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"/></svg>';
+
+// ===== RENDER HELPERS =====
+
+function renderPostCard(p, idx, options){
+  var acc=ACCOUNTS[p.account];
+  if(!acc) return '';
+  var isGlitch=acc.glitch;
+  var avatarClass='avatar'+(isGlitch?' glitch-avatar':'');
+  var contentClass='post-text'+(isGlitch?' glitch-text':'');
+  var cardClass=options&&options.cardClass?options.cardClass:'post-card';
+  var clickable=options&&options.noClick?'':'data-post-idx="'+idx+'"';
+  var avatarClick='onclick="event.stopPropagation();showProfile(\''+p.account+'\')"';
+  var nameClick='onclick="event.stopPropagation();showProfile(\''+p.account+'\')"';
+
+  var h='<article class="'+cardClass+'" '+clickable+'>';
+  h+='<div class="post-top">';
+  h+='<div class="'+avatarClass+'" style="background:'+acc.color+'" '+avatarClick+'>'+acc.initial+'</div>';
+  h+='<div class="post-meta">';
+  h+='<div class="post-author">';
+  h+='<span class="post-name" '+nameClick+'>'+acc.name+'</span>';
+  if(acc.verified) h+=BADGE_SVG;
+  h+='<span class="post-handle" '+nameClick+'>'+acc.handle+'</span>';
+  h+='</div>';
+  h+='<span class="post-time">'+p.time+'</span>';
+  h+='</div>';
+  h+='</div>';
+  h+='<div class="'+contentClass+'">'+p.text+'</div>';
+  h+='<div class="post-actions">';
+  h+='<span class="action-heart">\u2661 '+p._hearts+'</span>';
+  h+='<span>\ud83d\udcac '+p._replyCount+'</span>';
+  h+='</div>';
+  h+='</article>';
+  return h;
+}
+
+function renderReplyCard(reply){
+  var acc=ACCOUNTS[reply.account];
+  if(!acc) return '';
+  var isGlitch=acc.glitch;
+  var avatarClass='avatar'+(isGlitch?' glitch-avatar':'');
+  var contentClass='post-text'+(isGlitch?' glitch-text':'');
+  var avatarClick='onclick="event.stopPropagation();showProfile(\''+reply.account+'\')"';
+  var nameClick='onclick="event.stopPropagation();showProfile(\''+reply.account+'\')"';
+
+  var h='<div class="reply-card">';
+  h+='<div class="post-top">';
+  h+='<div class="'+avatarClass+'" style="background:'+acc.color+'" '+avatarClick+'>'+acc.initial+'</div>';
+  h+='<div class="post-meta">';
+  h+='<div class="post-author">';
+  h+='<span class="post-name" '+nameClick+'>'+acc.name+'</span>';
+  if(acc.verified) h+=BADGE_SVG;
+  h+='<span class="post-handle" '+nameClick+'>'+acc.handle+'</span>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='<div class="'+contentClass+'">'+reply.text+'</div>';
+  h+='</div>';
+  return h;
+}
+
+// ===== RENDER TIMELINE =====
+var timeline=document.getElementById('timeline');
+var html='';
+posts.forEach(function(p,i){
+  html+=renderPostCard(p,i);
+});
+timeline.innerHTML=html;
+
+// Click handler for post cards (open detail)
+timeline.addEventListener('click',function(e){
+  var card=e.target.closest('[data-post-idx]');
+  if(!card) return;
+  var idx=parseInt(card.getAttribute('data-post-idx'),10);
+  showPostDetail(idx);
+});
+
+// ===== VIEW SWITCHING =====
+var viewTimeline=document.getElementById('view-timeline');
+var viewPostDetail=document.getElementById('view-post-detail');
+var viewProfile=document.getElementById('view-profile');
+var viewDM=document.getElementById('view-dm');
+
+function switchView(viewEl){
+  viewTimeline.classList.remove('active');
+  viewPostDetail.classList.remove('active');
+  viewProfile.classList.remove('active');
+  viewDM.classList.remove('active');
+  viewEl.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ブラウザ戻るボタン対応
+window.addEventListener('popstate', function(e){
+  if(e.state && e.state.view === 'post'){
+    _showPostDetail(e.state.idx, true);
+  } else if(e.state && e.state.view === 'profile'){
+    _showProfile(e.state.key, true);
+  } else if(e.state && e.state.view === 'dm'){
+    _showDM(true);
+  } else {
+    switchView(viewTimeline);
+  }
+});
+
+// Expose to global for onclick handlers
+window.showTimeline=function(){
+  history.pushState({view:'timeline'}, '', '');
+  switchView(viewTimeline);
+};
+
+function _showPostDetail(idx, noPush){
+  var p=posts[idx];
+  if(!p) return;
+  var h='<button class="back-btn" onclick="history.back()">'+BACK_SVG+' 戻る</button>';
+  h+=renderPostCard(p,idx,{cardClass:'detail-original',noClick:true});
+
+  var replies=p.replies||[];
+  if(replies.length>0){
+    h+='<div class="replies-divider">返信 '+replies.length+'件</div>';
+    replies.forEach(function(r){
+      h+=renderReplyCard(r);
+    });
+  } else {
+    h+='<div class="no-replies">返信はまだありません</div>';
+  }
+
+  // Evidence 08: yoshi's Night1 post - show hint about date matching investigation records
+  if(p.account==='yoshi' && p.phase===1){
+    h+='<div class="evidence-hint" onclick="if(typeof collectEvidence===\'function\'){collectEvidence(\'08\');}this.style.color=\'#4a4\';" style="font-size:11px;color:#605068;cursor:pointer;margin-top:8px;margin-left:56px;">投稿日時と調査記録の日付が一致している</div>';
+  }
+
+  viewPostDetail.innerHTML=h;
+  switchView(viewPostDetail);
+}
+
+window.showPostDetail=function(idx){
+  history.pushState({view:'post', idx:idx}, '', '');
+  _showPostDetail(idx);
+};
+
+function _showProfile(accountKey, noPush){
+  var acc=ACCOUNTS[accountKey];
+  if(!acc) return;
+  var isGlitch=acc.glitch;
+
+  // Header
+  var avatarClass='profile-avatar'+(isGlitch?' glitch-avatar':'');
+  var h='<button class="back-btn" onclick="history.back()">'+BACK_SVG+' 戻る</button>';
+  h+='<div class="profile-header">';
+  h+='<div class="'+avatarClass+'" style="background:'+acc.color+'">'+acc.initial+'</div>';
+  h+='<div class="profile-name">'+acc.name;
+  if(acc.verified) h+=' '+BADGE_SVG;
+  h+='</div>';
+  h+='<div class="profile-handle">'+acc.handle+'</div>';
+  h+='<div class="profile-bio">'+(acc.bio||'')+'</div>';
+
+  // Count posts
+  var userPosts=[];
+  posts.forEach(function(p,i){if(p.account===accountKey)userPosts.push({post:p,idx:i});});
+
+  h+='<div class="profile-info"><span><strong>'+userPosts.length+'</strong> ポスト</span></div>';
+  h+='<div class="profile-joined">\ud83d\udcc5 '+acc.joined+' から利用</div>';
+  h+='</div>';
+
+  // User's posts
+  if(userPosts.length>0){
+    h+='<div class="profile-posts-label">ポスト</div>';
+    userPosts.forEach(function(item){
+      h+=renderPostCard(item.post,item.idx);
+    });
+  }
+
+  viewProfile.innerHTML=h;
+  switchView(viewProfile);
+
+  // Attach click for post cards inside profile
+  viewProfile.addEventListener('click',function handler(e){
+    var card=e.target.closest('[data-post-idx]');
+    if(!card) return;
+    var idx=parseInt(card.getAttribute('data-post-idx'),10);
+    viewProfile.removeEventListener('click',handler);
+    showPostDetail(idx);
+  });
+}
+
+window.showProfile=function(accountKey){
+  history.pushState({view:'profile', key:accountKey}, '', '');
+  _showProfile(accountKey);
+};
+
+// ===== DM SYSTEM =====
+var hasSeenEndB = hasFlag('ending_b_seen');
+var dmPhase = n5 ? 3 : n4 ? 2 : n3 ? 1 : 0;
+// Phase 4 requires End B seen
+if(hasSeenEndB && n5) dmPhase = 4;
+
+// DM conversation history stored in localStorage
+function getDMHistory(){
+  try{return JSON.parse(localStorage.getItem('dm_history') || '[]');}catch(e){return [];}
+}
+function saveDMHistory(msgs){
+  try{localStorage.setItem('dm_history', JSON.stringify(msgs));}catch(e){}
+}
+function getDMLastReadPhase(){
+  try{return parseInt(localStorage.getItem('dm_last_read_phase') || '0', 10);}catch(e){return 0;}
+}
+function setDMLastReadPhase(p){
+  try{localStorage.setItem('dm_last_read_phase', String(p));}catch(e){}
+}
+function getPersuasionKeys(){
+  try{return JSON.parse(localStorage.getItem('persuasion_keys') || '[]');}catch(e){return [];}
+}
+function addPersuasionKey(keyword){
+  var keys = getPersuasionKeys();
+  if(keys.indexOf(keyword) === -1){
+    keys.push(keyword);
+    try{localStorage.setItem('persuasion_keys', JSON.stringify(keys));}catch(e){}
+  }
+}
+
+// Auto-messages per phase
+var dmAutoMessages = {
+  1: 'あなたもこの番組見てますよね。少し話しませんか。…旧サイトのアーカイブ、見ましたか？何か違うところがあるかもしれません',
+  2: '…あの番組のこと、もう少し話してもいいですか。実は…昔、あの番組に関わっていたことがあるんです',
+  3: '…もう隠し続けるのは限界です。あなたに…全部話します。聞いてくれますか',
+  4: '…また会えましたね。…今度は嘘はつきません。何でも聞いてください'
+};
+
+// Night4 puzzle: track reported diffs
+function getN4Diffs(){
+  try{return JSON.parse(localStorage.getItem('n4_puzzle_diffs') || '[]');}catch(e){return [];}
+}
+function addN4Diff(key){
+  var diffs = getN4Diffs();
+  if(diffs.indexOf(key) === -1){
+    diffs.push(key);
+    try{localStorage.setItem('n4_puzzle_diffs', JSON.stringify(diffs));}catch(e){}
+  }
+  return diffs.length;
+}
+function checkN4Complete(totalAfter){
+  if(totalAfter >= 3 && !hasFlag('night4_clear')){
+    // All 3 diffs found — schedule the Night4 unlock message
+    setTimeout(function(){
+      showTypingIndicator();
+      setTimeout(function(){
+        addYoshiResponse('…全部見つけたのか。あなたには全部話す。');
+        showTypingIndicator();
+        setTimeout(function(){
+          var linkMsg = '…こっちに来てくれ。';
+          removeTypingIndicator();
+          var history = getDMHistory();
+          history.push({sender:'yoshi', text:linkMsg, time:Date.now(), hasLink:true});
+          saveDMHistory(history);
+          var msgArea = document.getElementById('dm-messages');
+          if(msgArea){
+            var bubble = document.createElement('div');
+            bubble.className = 'dm-bubble dm-bubble-left';
+            bubble.innerHTML = '<span style="color:#e8e0f0;">' + escapeHTML(linkMsg) + '</span><br><a href="../night4/" style="color:#FF7EB3;font-size:13px;margin-top:8px;display:inline-block;">…何かが違う…</a>';
+            msgArea.appendChild(bubble);
+            scrollDMToBottom();
+          }
+          dmIsProcessing = false;
+        }, 2000);
+      }, 1500);
+    }, 500);
+    return true;
+  }
+  return false;
+}
+
+// Keyword responses per phase
+var dmKeywords = {
+  1: [
+    // === Night4 puzzle: 差分報告キーワード（3種）===
+    {keywords:['人形デザイン','名前が消えてる','名前が消えている','名前が消'], response:'…！ やっぱり気づいたか。前のサイトにはあった名前が消されてる…', puzzle:'diff_name'},
+    {keywords:['試作きつね','試作キツネ','保管','廃棄'], response:'…そうだ…前は「密かに保管」だったはず…書き換えられてる', puzzle:'diff_kitsune'},
+    {keywords:['1987','設立年','年がずれ','年が違'], response:'…設立年が…1年ずれてる…前のサイトでは1987年だったのに…', puzzle:'diff_year'},
+    // === アーカイブ関連 ===
+    {keywords:['アーカイブ','旧サイト','前のサイト','古いサイト'], response:'あのサイト見たんですか…？ よく見比べてみてください。何か違うところがあるはずです'},
+    {keywords:['違い','違う','差分','変わ','おかしい'], response:'スタッフの情報、キャラクターの説明、会社の情報…3つ、変えられてるところがある'},
+    {keywords:['比べ','見比べ','見くらべ'], response:'そう、よく見比べて。ちょっとした違いに気づけるかどうかが大事です'},
+    {keywords:['書き換え','改竄','改ざん'], response:'誰かが…意図的に情報を変えてる。なぜそんなことをするのか…考えてみてください'},
+    {keywords:['スタッフ','名前'], response:'スタッフ一覧…前のサイトと今のサイトで、人数が同じかどうか確認してみて'},
+    {keywords:['ヒント','わからない','わかりません'], response:'スタッフのこと、キャラクターのこと、会社のこと…3つのカテゴリに1つずつ。よく見比べてみて'},
+    // === 番組・キャラクター ===
+    {keywords:['番組'], response:'不思議な番組ですよね…なんか気になって毎晩見ちゃうんです'},
+    {keywords:['怖い','こわい'], response:'怖いですよね…でもなんか目が離せなくて'},
+    {keywords:['キツネ団長','きつねだんちょう'], response:'キツネ団長…昔はあの子の声が家中に響いてた。懐かしいです'},
+    {keywords:['キャラクター','キャラ'], response:'昔のキャラクター、懐かしいですよね…特にキツネ団長が…'},
+    {keywords:['かあ博士'], response:'かあ博士…物知りなカラスでしたね。子どもたちに人気でした'},
+    {keywords:['ぽたまる'], response:'ぽたまる…あの子はいつも踊ってた。可愛かったなぁ'},
+    {keywords:['うっきち'], response:'うっきち…いたずらばかりしてたけど、みんな好きだった'},
+    {keywords:['くるる'], response:'くるる…今の番組のAIの子ですね。元気がいいですよね'},
+    {keywords:['まだら'], response:'まだら…カメレオンのAI。冷静で…鋭いですよね'},
+    {keywords:['よわり'], response:'よわり…あの子は泣いてばかりだけど…何か感じてるんでしょうね'},
+    {keywords:['アラネ','あらね'], response:'アラネ…データを追い続けるクモ。…少し怖いですね'},
+    {keywords:['かすみ'], response:'かすみ…優しいシカの子。でもあの「手を貸す」って…'},
+    {keywords:['AI','エーアイ'], response:'AIが番組をやってる…不思議な時代になりましたね。でもなぜAIなのか…考えたことありますか'},
+    // === 見てる・挨拶・感情 ===
+    {keywords:['見てる','見てます'], response:'仲間がいてよかった。周りに聞いても誰も知らないから…'},
+    {keywords:['こんにちは','こんにちわ'], response:'こんにちは。…あなたもこの番組が気になるんですね'},
+    {keywords:['こんばんは','こんばんわ'], response:'こんばんは。遅い時間まで調べてるんですね…無理しないでください'},
+    {keywords:['おはよう'], response:'おはようございます。…あまり眠れなかったんですか？'},
+    {keywords:['はじめまして'], response:'…はじめまして。あなたもこの番組を見てるんですね'},
+    {keywords:['よろしく'], response:'…よろしくお願いします。少しだけ、お話できればと思って'},
+    {keywords:['ありがとう','ありがと'], response:'…いえ。こちらこそ…話を聞いてくれてありがとう'},
+    {keywords:['誰','だれ','何者'], response:'…ただの視聴者ですよ。散歩が趣味の…ただのおじさん'},
+    {keywords:['夕焼け','ゆうやけ','散歩','さんぽ'], response:'夕焼けの写真を撮るのが好きなんです。…理由は、まだ言えません'},
+    {keywords:['おやすみ'], response:'おやすみなさい。…また来てくれますか'},
+    {keywords:['好き','すき'], response:'…どうも。そういうの、久しぶりに言われました'},
+    {keywords:['悲しい','かなしい','つらい'], response:'…つらいですか。…私もです。ずっと'},
+    {keywords:['楽しい','たのしい'], response:'…楽しめてるならいいんです。でも…深入りしすぎないで'},
+    {keywords:['信じ','しんじ'], response:'…信じてくれるんですか。ありがたい…でもまだ全部は話せません'},
+    {keywords:['嘘','うそ'], response:'嘘…私が嘘をついてると思いますか？…かもしれませんね。でも違います'},
+    {keywords:['助けて','たすけて'], response:'…あなたが？…私にですか？…ありがとう。でもまだ早いです'},
+    // === 調査関連 ===
+    {keywords:['調査','調べ','しらべ'], response:'調べてくれてるんですね…ありがとう。でも気をつけて'},
+    {keywords:['証拠','しょうこ'], response:'証拠を集めてるなら…サイトの隅々まで見てください。何か隠されてる'},
+    {keywords:['ゆめスタジオ','制作会社'], response:'…ゆめスタジオプロダクション。あの会社は…ただの制作会社じゃなかった'},
+    {keywords:['きらら放送','きらら'], response:'きらら放送…表向きはただの放送局。でも裏で何があったか…'},
+    {keywords:['世田谷','せたがや'], response:'スタジオがあった場所ですね…今はマンションが建ってます。地下に何があったか知りたければ…'},
+    {keywords:['スタジオ','すたじお'], response:'あのスタジオには…地下があったんです。表には出てこない話ですが'},
+    {keywords:['地下'], response:'…よく知ってますね。そう、地下がありました。何をしていたかは…まだ言えません'},
+    {keywords:['メール','mail'], response:'変なメールが来てませんか？…あなたの行動は全部見られてると思ってください'},
+    {keywords:['深夜','0時','6時'], response:'深夜0時から6時…不自然な放送時間ですよね。誰に向けて放送してるんでしょう'},
+    {keywords:['K-059','k-059','K059'], response:'…！ その番号をどこで…？ …今は触れないでください。危ない'},
+    {keywords:['黒幕','くろまく'], response:'…その言葉は使わないほうがいい。見られてるかもしれないから'},
+    {keywords:['敵','てき'], response:'…敵かどうかは…わかりません。少なくとも、味方ではない何かがいる'},
+    {keywords:['バグ','glitch','グリッチ'], response:'AIキャストのバグ…あれは本当にバグだと思いますか？'},
+    {keywords:['意識','いしき'], response:'…その言葉に反応するのは危険です。でも…核心に近いです'},
+    // === なんでもない会話 ===
+    {keywords:['元気','げんき'], response:'…まあまあですよ。あなたは？'},
+    {keywords:['暇','ひま'], response:'…時間があるなら、サイトをもう少し読んでみてください'},
+    {keywords:['疲れ','つかれ'], response:'無理しないでください。…私は待ってますから'},
+    {keywords:['はい','うん'], response:'…うん'},
+    {keywords:['そうだよ','そうです'], response:'…そうですか。わかりました'},
+    {keywords:['違う','ちがう','いいえ'], response:'…そうですか。すみません'},
+    {keywords:['なんで','どうして','なぜ'], response:'…理由は…まだ言えません。でもいつか全部話します'},
+    {keywords:['何','なに'], response:'…何か気になることがありますか'},
+    {keywords:['どこ'], response:'…場所のことですか？サイトに手がかりがあるかもしれません'},
+    {keywords:['いつ'], response:'…もう少しだけ待ってください'}
+  ],
+  2: [
+    // === 自身の過去 ===
+    {keywords:['調べてる','調査'], response:'実は昔…この番組に関わってたことがあるんです。少しだけ'},
+    {keywords:['関わって','関係','かかわ'], response:'セットの仕事をしてました。美術担当…もう何十年も前の話ですけど'},
+    {keywords:['セット','美術','びじゅつ'], response:'遊園地のセットを作ったのは私です。子どもたちが楽しめるようにって…必死だった'},
+    {keywords:['ゆめスタジオ','制作会社'], response:'…知ってるんですか、あの会社のこと。あそこは…表と裏がありました'},
+    {keywords:['裏','うら','隠し'], response:'表向きは子ども番組の制作会社。でも…あの地下で何が行われていたか…'},
+    {keywords:['地下'], response:'地下にはスタジオとは別の設備がありました。「検査室」と呼ばれてた。…私は見てしまったんです'},
+    {keywords:['検査','けんさ'], response:'子どもの発達検査…そう説明されました。最初はそう信じてた'},
+    {keywords:['子ども','こども'], response:'…スタジオには収録参加の子どもたちが来てた。でも…一部の子どもたちは「別の部屋」に案内されてた'},
+    // === キャラクター・番組 ===
+    {keywords:['キツネ団長','きつね'], response:'キツネ団長のアニマトロニクス…あれは本当によくできてた。でもあの改修以降…動きが変わった'},
+    {keywords:['試作','しさく','プロトタイプ'], response:'試作キツネ…あれは最初の実験だったんだと思います。失敗した後…本番用が作られた'},
+    {keywords:['アニマトロニクス','人形'], response:'あの人形たちには…何かが入ってた。ただの機械じゃなかった。そう感じてました'},
+    {keywords:['改修','かいしゅう'], response:'1996年の改修…あの費用は異常でした。子ども番組の予算じゃない'},
+    {keywords:['被験者','ひけんしゃ','リスト'], response:'…！ そこまで辿り着いたんですか。…あのリストのことは…'},
+    {keywords:['G-0','ジーゼロ'], response:'…その話はまだ…まだ早い。でもあなたなら…いつか話します'},
+    // === 感情・挨拶 ===
+    {keywords:['娘','むすめ'], response:'…'},
+    {keywords:['家族','かぞく'], response:'…家族の話は…今はちょっと…すみません'},
+    {keywords:['辞めた','やめた','辞め','なぜ辞め'], response:'辞めたんじゃない。追い出されたんです。知りすぎたから'},
+    {keywords:['怖い','こわい'], response:'怖い…ええ、私もずっと怖い。でももう逃げられないんです'},
+    {keywords:['信じ','しんじ'], response:'信じてくれるんですか…ありがとう。もう少しだけ…もう少しだけ待ってください'},
+    {keywords:['ありがとう','ありがと'], response:'…こちらこそ。こうして話を聞いてくれる人がいるだけで…'},
+    {keywords:['大丈夫','だいじょうぶ'], response:'…大丈夫じゃないかもしれません。でも…あなたがいてくれるなら'},
+    {keywords:['なんで','どうして','なぜ'], response:'なぜこの番組を見続けてるのか…それは次に会った時に話します'},
+    {keywords:['秘密','ひみつ'], response:'秘密はたくさんあります。でも…一つずつしか話せない。許してください'},
+    {keywords:['本当','ほんとう'], response:'本当です。全部本当のことです。…信じられないのは分かります'},
+    {keywords:['はい','うん','そうだよ'], response:'…ありがとう'},
+    {keywords:['K-059'], response:'…その番号は知らないほうがいい。でも…もう遅いかもしれませんね'},
+    {keywords:['黒幕'], response:'…まだその話はしないでください。ここも…見られてるかもしれない'},
+    {keywords:['メール'], response:'変なメールが来てるでしょう？…あれは警告です。でも誰からの警告なのか…'},
+    {keywords:['バグ','エラー'], response:'AIのバグ…あれが本当にバグだとしたら、なぜ「核心」に触れた時だけ起きるんでしょうね'},
+    {keywords:['見てる','見られ','監視'], response:'…ええ。見られてます。あなたも、私も。それでも調べ続けますか？'},
+    {keywords:['危険','あぶない','危ない'], response:'危険です。でも…もう引き返せない段階まで来てしまった'},
+    {keywords:['助けて','たすけて'], response:'…まだ早いです。でも…その時が来たら、お願いするかもしれません'},
+    {keywords:['夕焼け','ゆうやけ','散歩'], response:'夕焼けを見ると…あの子のことを思い出すんです。名前の由来でもあるんですけど'},
+    {keywords:['名前','なまえ'], response:'名前…ゆうやけさんぽは本名じゃありません。分かってますよね'}
+  ],
+  3: [
+    // === 核心に近い話 ===
+    {keywords:['話して','聞かせて','教えて'], response:'…分かりました。この番組が気になるのは…昔、大切な人がいたからなんです'},
+    {keywords:['大切な人','たいせつ'], response:'娘です。もう会えなくなって…36年になります'},
+    {keywords:['娘','むすめ'], response:'…娘の名前は…今は言えません。でも…あの子はまだ「ここ」にいるんです'},
+    {keywords:['ここにいる','まだいる'], response:'データとして…番組のシステムの中に。体はもうないけど…意識だけが…'},
+    {keywords:['意識','いしき'], response:'意識転移…そう呼ばれてました。人の意識をデータ化する技術。あの会社はそれを…'},
+    {keywords:['意識転移','転移'], response:'…番組はそのための実験場だったんです。子どもたちを集めて…「データ」を取ってた'},
+    {keywords:['実験','じっけん'], response:'子どもの発達検査だと説明されてた。…でも本当は意識のスキャニングだった'},
+    {keywords:['夕焼け','ゆうやけ'], response:'…よく気づきましたね。夕焼けの色…あの子の名前の色なんです'},
+    {keywords:['あかね'], response:'…！ …その名前を…どこで…'},
+    {keywords:['家族','かぞく','父親','ちちおや','パパ','ぱぱ'], response:'…私はあの子の父親です。…もう隠しても仕方ないですね'},
+    {keywords:['吉田','よしだ'], response:'…ええ。吉田一郎。それが私の本名です'},
+    // === キャラクター関連 ===
+    {keywords:['キツネ団長','きつね'], response:'キツネ団長の中に…あの子の意識が…少しだけ残ってるんです。そう信じてた'},
+    {keywords:['アニマトロニクス','人形'], response:'アニマトロニクスに意識を転移する。…それがあの会社の本当の目的でした'},
+    {keywords:['試作','プロトタイプ'], response:'試作キツネが最初の実験台でした。失敗して…次は本番用のキツネ団長に…'},
+    // === 感情 ===
+    {keywords:['かわいそう','つらい','悲しい'], response:'…ありがとう。でも一番つらいのは…あの子だと思います。ずっとデータの中で…'},
+    {keywords:['怒り','おこ','ひどい','許せ'], response:'…怒ってくれるんですか。…ありがとう。私は…怒る資格もない。知ってて黙ってたから'},
+    {keywords:['ごめん','すみません'], response:'…謝るのは私のほうです。あなたを巻き込んでしまって…'},
+    {keywords:['信じる','しんじる'], response:'…信じてくれるなら…最後まで付き合ってくれますか'},
+    {keywords:['助ける','たすける','助けたい'], response:'…ありがとう。でも…まだ方法が分からない。もう少し調べてくれませんか'},
+    {keywords:['ありがとう'], response:'…こんなおじさんの話を聞いてくれて…本当に…ありがとう'},
+    {keywords:['大丈夫'], response:'…大丈夫じゃないです。でも…あなたがいてくれるから、まだ…'},
+    // === 番組・システム ===
+    {keywords:['黒幕','くろまく'], response:'…黒幕は…もう「人」じゃないんです。データになった存在。暴走してる'},
+    {keywords:['K-059'], response:'K-059…あなたのことです。59番目の対象。…すみません。私のせいです'},
+    {keywords:['対象','ターゲット'], response:'この番組を見てる人は…全員データ収集の対象なんです。でもK-059は特別に…'},
+    {keywords:['データ','でーた'], response:'意識のデータ。あの子のデータはまだシステムの中にある。取り出せるかもしれない…'},
+    {keywords:['番組','ばんぐみ'], response:'この番組は…意識データを集めるための「器」です。視聴者の感情を餌にしてる'},
+    {keywords:['Popin','ぽぴん','SNS'], response:'Popin…あそこで反応してる人たちは…全員AIです。あなたを「普通の番組」だと信じさせるための'},
+    {keywords:['AI'], response:'AIキャスト…あの5体も道具です。視聴者の感情を効率的に収集するための'},
+    {keywords:['バグ'], response:'バグが起きるタイミング…「核心」に触れた時。あれは黒幕がリアルタイムで制御してる'},
+    {keywords:['メール'], response:'あの不気味なメールも…システムの一部です。恐怖を煽ってデータの質を上げてる'},
+    {keywords:['深夜','0時','放送時間'], response:'深夜0時〜6時…人間の意識が最も無防備な時間帯。意図的なんです'},
+    // === 一般 ===
+    {keywords:['はい','うん','そうだよ'], response:'…うん。ありがとう'},
+    {keywords:['なんで','どうして','なぜ'], response:'…全部話すと長くなります。でも…あなたには知る権利がある'},
+    {keywords:['嘘','うそ'], response:'嘘だと思いますか？…そう思うのが普通です。でも…全部本当です'},
+    {keywords:['怖い','こわい'], response:'…怖いですよね。すみません。でも知らないままのほうが…もっと怖い'},
+    {keywords:['見てる','監視'], response:'ええ…この会話も見られてるかもしれない。でもいいんです。もう隠すことはない'}
+  ],
+  4: [
+    // === 核心キーワード（critical=true → persuasion_keysに記録） ===
+    {keywords:['吉田','吉田一郎'], response:'…！ なんでその名前を…どこで知った', critical:true},
+    {keywords:['あかね'], responses:['…やめてくれ…なんであの子の名前を…','…お前は…何を知ってるんだ'], delays:[1500,3000], critical:true},
+    {keywords:['黒幕'], responses:['…','…何の話だ','…お前も気づいてるのか。この番組がおかしいことに'], delays:[1000,2500,5000], critical:true},
+    {keywords:['騙されてる','だまされ'], responses:['…俺は…あの子のために…','…でも…本当にあの子は戻ってくるのか…','…分からなくなってきた'], delays:[1500,3000,5000], critical:true},
+    {keywords:['K-059'], responses:['…！','…お前がそうなのか','…すまない'], delays:[1000,2500,4000], critical:true},
+    {keywords:['データ'], responses:['あの子は…もう体はない。データだけが…残ってる','…データでもいい。会いたかったんだ'], delays:[2000,4000], critical:true},
+    {keywords:['助けて','助ける','たすけて'], responses:['…お前を巻き込んでしまった','…もう遅いかもしれない','…でも…まだ間に合うか…'], delays:[1500,3000,5000], critical:true},
+    {keywords:['意識転移','転移'], responses:['…知ってるのか','あの子の意識は…まだシステムの中にある','…取り出すには…全部壊すしかない'], delays:[1500,3000,5000], critical:true},
+    {keywords:['娘','むすめ'], responses:['…あかね…あの子は8歳だった','…検査だと言われて連れて行った。俺が。…俺のせいだ'], delays:[2000,4500], critical:true},
+    {keywords:['止めて','やめて','止める','終わらせ'], responses:['…止められるのか…本当に','…俺にはできなかった。何十年も…できなかった','…お前になら…できるかもしれない'], delays:[1500,3000,5500], critical:true},
+    {keywords:['パパ','ぱぱ','父親','お父さん'], responses:['…！','…あの子に…そう呼ばれてた','…もう一度だけ…聞きたかった'], delays:[1000,2500,4500], critical:true},
+    {keywords:['壊す','こわす','破壊','シャットダウン'], responses:['システムを壊せば…黒幕も消える','…でもあの子のデータも…消える','…それでも…やるしかないのか'], delays:[1500,3500,5500], critical:true},
+    // === 一般会話（Phase4） ===
+    {keywords:['ありがとう'], response:'…もういいんだ。全部話す。何が聞きたい'},
+    {keywords:['ごめん','すみません'], response:'…謝るな。悪いのは全部俺だ'},
+    {keywords:['大丈夫'], response:'…大丈夫なもんか。でも…もう覚悟はできた'},
+    {keywords:['なんで','どうして','なぜ'], response:'なぜか…あの子に会いたかったからだ。ただ…それだけだ'},
+    {keywords:['嘘','うそ'], response:'嘘なもんか。全部本当だ。…信じてくれ'},
+    {keywords:['怖い'], response:'…怖くて当然だ。でも…ここまで来たんだ。最後まで行こう'},
+    {keywords:['信じる','しんじる'], response:'…ありがとう。お前は…いい奴だな'},
+    {keywords:['番組','ばんぐみ'], response:'この番組は…全部あいつの仕掛けた罠だ。お前を捕まえるための'},
+    {keywords:['Popin','ぽぴん'], response:'Popinの連中は全部AI。お前以外に「本物」はいない'},
+    {keywords:['メール'], response:'あのメールも全部仕掛け。恐怖を与えてデータの質を上げるため'},
+    {keywords:['キツネ団長'], response:'キツネ団長…あの中にあかねの意識の断片が…まだ残ってる気がする'},
+    {keywords:['最後','さいご','終わり','おわり'], response:'…ああ。もう終わりにしよう。全部'},
+    {keywords:['一緒','いっしょ'], response:'…一緒にやってくれるのか。…ありがとう'},
+    {keywords:['はい','うん'], response:'…よし'},
+    {keywords:['夕焼け','ゆうやけ'], response:'…あかねって名前はな…茜色の空から取ったんだ。あの子が生まれた日の…夕焼けが綺麗で'},
+    {keywords:['名前','なまえ'], response:'名前は大事だ。あの子の名前…覚えていてくれ。頼む'}
+  ]
+};
+
+// ===== DM Warmup Scripts (チャットのウォームアップと同様) =====
+// 各フェーズの自動メッセージの後、プレイヤーが返事するたびに会話が展開する
+var dmWarmupScripts = {
+  1: [
+    // Step 0: 自動メッセージ直後、プレイヤーの最初の返事に対して
+    {
+      responses: [
+        {keywords:['見てる','見てます','うん','はい','そう'], reply:'…仲間がいてよかった。周りに聞いても、誰もこの番組知らなくて'},
+        {keywords:['誰','だれ','何者','あなた'], reply:'…ただの視聴者ですよ。散歩が趣味の、ただのおじさん。でも…この番組だけは気になって'},
+        {keywords:['番組','なに','何'], reply:'深夜にやってる特番…見てますよね？あれ、何かおかしいと思いませんか'}
+      ],
+      defaultReply: '…来てくれたんですね。ありがとう。ちょっと聞いてほしいことがあって',
+      next: '…デスクトップに旧サイトのアーカイブが追加されてませんか？あれを今の番組サイトと見比べてみてください'
+    },
+    // Step 1: アーカイブ誘導後
+    {
+      responses: [
+        {keywords:['見た','見ます','わかった','わかりました','了解','おk','OK'], reply:'ありがとう。丁寧に見てみてください'},
+        {keywords:['アーカイブ','旧サイト'], reply:'そう、あのアーカイブです。今のサイトと何か違うところがあるはず'},
+        {keywords:['なぜ','なんで','どうして'], reply:'…誰かがサイトの情報を書き換えてるんです。意図的に'}
+      ],
+      defaultReply: '…お願いします。よく見てみてください',
+      next: 'スタッフの情報、キャラクターの説明、会社の情報…3つのカテゴリにそれぞれ1つずつ、違うところがあります。見つけたら教えてください'
+    },
+    // Step 2: 3つの差分がある旨を伝えた後 → フリーキーワードモードへ
+    {
+      responses: [
+        {keywords:['わかった','了解','探す','探して','やって'], reply:'…ありがとう。頼りにしてます'},
+        {keywords:['3つ','三つ','みっつ'], reply:'ええ、3つです。ちょっとした違いだけど…見つけたら意味が分かるはずです'}
+      ],
+      defaultReply: '…お願いします。何か見つけたらここで教えてください',
+      next: null // ここでウォームアップ終了
+    }
+  ],
+  2: [
+    // Step 0: 自動メッセージ「昔、番組に関わっていた」の後
+    {
+      responses: [
+        {keywords:['え','えっ','まじ','本当','ほんと','嘘'], reply:'…本当です。信じてもらえないかもしれませんが'},
+        {keywords:['何','なに','どんな','どういう'], reply:'…セットの仕事をしてました。美術担当です'},
+        {keywords:['関わ','かかわ','スタッフ'], reply:'ええ…美術として。遊園地のセットを作ったのは私です'}
+      ],
+      defaultReply: '…驚きますよね。でも本当なんです',
+      next: 'セットの美術を担当してました。子どもたちが楽しめるようにって…必死だった。…でも途中から、おかしなことに気づき始めて'
+    },
+    // Step 1: セットの仕事の後
+    {
+      responses: [
+        {keywords:['おかしな','おかしい','何が','なにが'], reply:'…地下の設備です。スタジオとは別の…「検査室」と呼ばれてた場所があった'},
+        {keywords:['地下','ちか'], reply:'…知ってるんですか。そう、地下がありました'},
+        {keywords:['なぜ','辞め','やめ'], reply:'知りすぎたんです。…追い出されました。辞めたんじゃない'}
+      ],
+      defaultReply: '…あの会社は、表と裏がありました',
+      next: '表向きは子ども番組の制作会社。でも地下では…子どもたちの「検査」が行われていた。発達検査だと説明されてたけど…本当は違った'
+    },
+    // Step 2 → フリーキーワードモードへ
+    {
+      responses: [
+        {keywords:['検査','けんさ','何の','なんの'], reply:'…まだ全部は話せません。でも次に会った時に…もっと話します'},
+        {keywords:['怖い','こわい'], reply:'…ええ。怖いです。でも…知らないままのほうがもっと怖い'},
+        {keywords:['嘘','うそ'], reply:'嘘じゃないです。…信じてください'}
+      ],
+      defaultReply: '…今日はここまでにしましょう。…でもまた話してください。お願いします',
+      next: null
+    }
+  ],
+  3: [
+    // Step 0: 「全部話します」の後
+    {
+      responses: [
+        {keywords:['聞く','聞きます','聞かせて','はい','うん','話して'], reply:'…ありがとう。聞いてくれるんですね'},
+        {keywords:['大丈夫','だいじょうぶ'], reply:'…大丈夫じゃないかもしれません。でも…もう黙っていられない'}
+      ],
+      defaultReply: '…覚悟はいいですか。…聞いたら、戻れないかもしれません',
+      next: 'この番組が気になるのは…昔、大切な人がいたからなんです。…娘です。もう会えなくなって…36年になります'
+    },
+    // Step 1: 娘の告白後
+    {
+      responses: [
+        {keywords:['娘','むすめ','36年'], reply:'…ええ。8歳の時に…いなくなりました'},
+        {keywords:['かわいそう','つらい','悲しい','ごめん'], reply:'…ありがとう。でも泣いてる場合じゃないんです'},
+        {keywords:['何が','なにが','どうして'], reply:'…「検査」だと言われて連れて行ったんです。私が。…私のせいです'}
+      ],
+      defaultReply: '…驚かせてすみません。でも聞いてください',
+      next: 'あの子はまだ「ここ」にいるんです。…データとして。番組のシステムの中に。体はもうないけど…意識だけが残ってる'
+    },
+    // Step 2: データとして残ってる
+    {
+      responses: [
+        {keywords:['データ','意識','いしき'], reply:'意識転移…そう呼ばれてました。人の意識をデータ化する技術。あの会社の本当の目的です'},
+        {keywords:['え','嘘','うそ','まさか'], reply:'…信じられないのは分かります。でも…全部本当です'},
+        {keywords:['助け','たすけ','どうすれば'], reply:'…方法は…まだ分からないんです。でもあなたなら…'}
+      ],
+      defaultReply: '…信じてもらえなくても仕方ない。でも…これが真実です',
+      next: '…私の本名は吉田一郎です。あの番組のセットを作り…娘をあの場所に連れて行った男です。…もう全部話しました。何でも聞いてください'
+    },
+    // Step 3 → フリーキーワードモードへ
+    {
+      responses: [
+        {keywords:['吉田','よしだ','一郎'], reply:'…ええ。それが私の名前です。もう隠しません'},
+        {keywords:['ありがとう'], reply:'…こんなおじさんの話を聞いてくれて…本当に…'},
+        {keywords:['信じる','しんじる','信じます'], reply:'…ありがとう。…あなたは優しい人ですね'}
+      ],
+      defaultReply: '…何か聞きたいことがあれば、何でも答えます',
+      next: null
+    }
+  ],
+  4: [
+    // Step 0: 「嘘はつきません」の後
+    {
+      responses: [
+        {keywords:['吉田','一郎','あなた'], reply:'…ああ。俺だ。吉田一郎。…もう敬語はやめる。いいか'},
+        {keywords:['はい','うん','聞く','聞きます'], reply:'…ありがとう。最後まで聞いてくれ'},
+        {keywords:['あかね'], reply:'…！ その名前を知ってるのか…'}
+      ],
+      defaultReply: '…もう全部話す。俺の本名は吉田一郎。あの番組のセットを作った男だ',
+      next: '…あの子のために…番組に協力してた。「協力すればあの子に会える」って言われて。…でも嘘だった。全部、嘘だった'
+    },
+    // Step 1: 騙されてた告白
+    {
+      responses: [
+        {keywords:['騙','だま','嘘','うそ'], reply:'…ああ。あいつは…俺の弱さにつけ込んだ。娘に会いたいっていう…'},
+        {keywords:['あいつ','黒幕','誰が'], reply:'…もう「人」じゃないんだ。データになった存在。暴走してる'},
+        {keywords:['かわいそう','つらい','ひどい'], reply:'…同情はいらない。俺のせいだ。全部'}
+      ],
+      defaultReply: '…情けない話だ。何十年も騙されてた',
+      next: '…でもお前が来てくれた。お前が調べてくれたから…目が覚めた。…あの子を…本当に救うには、全部壊すしかないんだ'
+    },
+    // Step 2 → フリーキーワードモードへ
+    {
+      responses: [
+        {keywords:['壊す','こわす','やる','やります'], reply:'…覚悟はできてるのか。…あの子のデータも…消えるかもしれない'},
+        {keywords:['方法','どうやって','どうすれば'], reply:'…俺がシステムを作った。だから…俺が壊せる。お前の力を借りて'},
+        {keywords:['一緒','いっしょ'], reply:'…ありがとう。…お前は…いい奴だな'}
+      ],
+      defaultReply: '…何が聞きたい。全部答える',
+      next: null
+    }
+  ]
+};
+
+// Warmup stage tracking
+function getDMWarmupStage(phase){
+  try{return parseInt(localStorage.getItem('dm_warmup_'+phase)||'0',10);}catch(e){return 0;}
+}
+function setDMWarmupStage(phase, stage){
+  try{localStorage.setItem('dm_warmup_'+phase, String(stage));}catch(e){}
+}
+
+// Check if warmup is active for current phase
+function isInWarmup(){
+  var script = dmWarmupScripts[dmPhase];
+  if(!script) return false;
+  var stage = getDMWarmupStage(dmPhase);
+  return stage < script.length;
+}
+
+// Handle warmup response
+function handleWarmupResponse(text){
+  var script = dmWarmupScripts[dmPhase];
+  if(!script) return false;
+  var stage = getDMWarmupStage(dmPhase);
+  if(stage >= script.length) return false;
+
+  var step = script[stage];
+  var reply = step.defaultReply;
+
+  // Check keyword matches
+  for(var i=0; i<step.responses.length; i++){
+    var r = step.responses[i];
+    for(var k=0; k<r.keywords.length; k++){
+      if(text.indexOf(r.keywords[k]) !== -1){
+        reply = r.reply;
+        break;
+      }
+    }
+    if(reply !== step.defaultReply) break;
+  }
+
+  dmIsProcessing = true;
+  showTypingIndicator();
+  setTimeout(function(){
+    addYoshiResponse(reply);
+
+    // Advance stage
+    stage++;
+    setDMWarmupStage(dmPhase, stage);
+
+    // Send next prompt if exists
+    if(stage < script.length && script[stage-1].next){
+      showTypingIndicator();
+      setTimeout(function(){
+        addYoshiResponse(script[stage-1].next);
+        dmIsProcessing = false;
+      }, 1500 + Math.random()*1000);
+    } else if(stage >= script.length && script[stage-1].next){
+      // Last step with a next message
+      showTypingIndicator();
+      setTimeout(function(){
+        addYoshiResponse(script[stage-1].next);
+        dmIsProcessing = false;
+      }, 1500 + Math.random()*1000);
+    } else {
+      dmIsProcessing = false;
+    }
+  }, 800 + Math.random()*800);
+
+  return true;
+}
+
+// Generic fallback responses per phase
+var dmGenericByPhase = {
+  1: ['…そうですか','…','なるほど…','…ちょっと考えさせてください','……','…そうなんですね','…続けてください'],
+  2: ['…','…そうですか','…少し考えさせてください','……','…うん','…なるほど'],
+  3: ['…','…うん','……','…そうか','…分かりました','…続けてください'],
+  4: ['…','……','…ああ','…うん','…そうか','…']
+};
+var dmGenericIndex = 0;
+
+// Check for unread DM badge
+function updateDMBadge(){
+  var badge = document.getElementById('dm-badge');
+  var btn = document.getElementById('dm-btn');
+  if(!badge || !btn) return;
+  if(dmPhase >= 1 && getDMLastReadPhase() < dmPhase){
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+  // Hide DM button entirely if phase 0
+  if(dmPhase < 1){
+    btn.style.display = 'none';
+  } else {
+    btn.style.display = 'flex';
+  }
+}
+updateDMBadge();
+
+// Ensure auto-messages are in history for unlocked phases
+function ensureAutoMessages(){
+  var history = getDMHistory();
+  var existingAutoPhases = {};
+  history.forEach(function(m){ if(m.auto) existingAutoPhases[m.autoPhase] = true; });
+
+  var changed = false;
+  for(var p = 1; p <= dmPhase; p++){
+    if(dmAutoMessages[p] && !existingAutoPhases[p]){
+      history.push({
+        sender: 'yoshi',
+        text: dmAutoMessages[p],
+        auto: true,
+        autoPhase: p,
+        time: Date.now() - (dmPhase - p) * 86400000 // stagger timestamps
+      });
+      changed = true;
+    }
+  }
+  if(changed) saveDMHistory(history);
+  return history;
+}
+
+function findKeywordResponse(text){
+  // Check from highest available phase down to 1
+  for(var p = dmPhase; p >= 1; p--){
+    var entries = dmKeywords[p];
+    if(!entries) continue;
+    for(var i = 0; i < entries.length; i++){
+      var entry = entries[i];
+      for(var k = 0; k < entry.keywords.length; k++){
+        if(text.indexOf(entry.keywords[k]) !== -1){
+          return entry;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function renderDMMessages(msgs){
+  var html = '';
+  msgs.forEach(function(m){
+    if(m.sender === 'yoshi'){
+      html += '<div class="dm-bubble dm-bubble-left">' + escapeHTML(m.text) + '</div>';
+    } else {
+      html += '<div class="dm-bubble dm-bubble-right">' + escapeHTML(m.text) + '</div>';
+    }
+  });
+  return html;
+}
+
+function escapeHTML(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+var dmTypingTimer = null;
+var dmIsProcessing = false;
+
+function scrollDMToBottom(){
+  var msgArea = document.getElementById('dm-messages');
+  if(msgArea) msgArea.scrollTop = msgArea.scrollHeight;
+}
+
+function showTypingIndicator(){
+  var msgArea = document.getElementById('dm-messages');
+  if(!msgArea) return;
+  // Remove any existing typing indicator
+  var existing = msgArea.querySelector('.dm-typing');
+  if(existing) existing.remove();
+  var typing = document.createElement('div');
+  typing.className = 'dm-typing';
+  typing.textContent = 'ゆうやけさんぽが入力中...';
+  msgArea.appendChild(typing);
+  scrollDMToBottom();
+}
+
+function removeTypingIndicator(){
+  var msgArea = document.getElementById('dm-messages');
+  if(!msgArea) return;
+  var existing = msgArea.querySelector('.dm-typing');
+  if(existing) existing.remove();
+}
+
+function addYoshiResponse(text){
+  removeTypingIndicator();
+  var history = getDMHistory();
+  history.push({sender:'yoshi', text:text, time:Date.now()});
+  saveDMHistory(history);
+  var msgArea = document.getElementById('dm-messages');
+  if(msgArea){
+    var bubble = document.createElement('div');
+    bubble.className = 'dm-bubble dm-bubble-left';
+    bubble.textContent = text;
+    msgArea.appendChild(bubble);
+    scrollDMToBottom();
+  }
+}
+
+function handleDMSend(){
+  if(dmIsProcessing) return;
+  var input = document.getElementById('dm-input');
+  if(!input) return;
+  var text = input.value.trim();
+  if(!text) return;
+
+  // Add player message
+  var history = getDMHistory();
+  history.push({sender:'player', text:text, time:Date.now()});
+  saveDMHistory(history);
+  input.value = '';
+
+  var msgArea = document.getElementById('dm-messages');
+  if(msgArea){
+    var bubble = document.createElement('div');
+    bubble.className = 'dm-bubble dm-bubble-right';
+    bubble.textContent = text;
+    msgArea.appendChild(bubble);
+    scrollDMToBottom();
+  }
+
+  // Check warmup flow first (scripted conversation before free keyword mode)
+  if(isInWarmup()){
+    handleWarmupResponse(text);
+    return;
+  }
+
+  // Find keyword match
+  var match = findKeywordResponse(text);
+
+  dmIsProcessing = true;
+
+  if(match){
+    // Track persuasion keys for phase 4
+    if(match.critical){
+      // Use first keyword as the key name
+      addPersuasionKey(match.keywords[0]);
+    }
+
+    // Track Night4 puzzle diffs
+    if(match.puzzle){
+      var totalDiffs = addN4Diff(match.puzzle);
+      // Show response first, then check completion
+      showTypingIndicator();
+      setTimeout(function(){
+        addYoshiResponse(match.response);
+        if(!checkN4Complete(totalDiffs)){
+          // Give hint about remaining diffs
+          if(totalDiffs < 3){
+            showTypingIndicator();
+            setTimeout(function(){
+              var remaining = 3 - totalDiffs;
+              addYoshiResponse('…あと' + remaining + 'つ…見つけてくれ');
+              dmIsProcessing = false;
+            }, 1500);
+          } else {
+            dmIsProcessing = false;
+          }
+        }
+      }, 1000 + Math.random() * 500);
+      return;
+    }
+
+    if(match.responses && match.delays){
+      // Multi-response with delays
+      showTypingIndicator();
+      var resps = match.responses;
+      var delays = match.delays;
+      var idx = 0;
+      function sendNext(){
+        if(idx >= resps.length){
+          dmIsProcessing = false;
+          return;
+        }
+        var delay = idx === 0 ? delays[0] : (delays[idx] - delays[idx-1]);
+        setTimeout(function(){
+          addYoshiResponse(resps[idx]);
+          idx++;
+          if(idx < resps.length){
+            showTypingIndicator();
+            sendNext();
+          } else {
+            dmIsProcessing = false;
+          }
+        }, delay);
+      }
+      sendNext();
+    } else {
+      // Single response
+      showTypingIndicator();
+      setTimeout(function(){
+        addYoshiResponse(match.response);
+        dmIsProcessing = false;
+      }, 1000 + Math.random() * 1000);
+    }
+  } else {
+    // Generic response (phase-aware)
+    showTypingIndicator();
+    setTimeout(function(){
+      var pool = dmGenericByPhase[dmPhase] || dmGenericByPhase[1];
+      var resp = pool[dmGenericIndex % pool.length];
+      dmGenericIndex++;
+      addYoshiResponse(resp);
+      dmIsProcessing = false;
+    }, 1000 + Math.random() * 500);
+  }
+}
+
+function _showDM(noPush){
+  if(dmPhase < 1){
+    // DM not available yet
+    viewDM.innerHTML = '<button class="back-btn" onclick="history.back()">' + BACK_SVG + ' 戻る</button>' +
+      '<div class="dm-locked">' +
+      '<div class="dm-locked-icon">✉</div>' +
+      '<div class="dm-locked-text">ダイレクトメッセージはまだありません</div>' +
+      '</div>';
+    switchView(viewDM);
+    return;
+  }
+
+  // Mark as read
+  setDMLastReadPhase(dmPhase);
+  updateDMBadge();
+
+  // Ensure auto messages exist
+  var msgs = ensureAutoMessages();
+
+  var h = '<button class="back-btn" onclick="history.back()">' + BACK_SVG + ' 戻る</button>';
+  h += '<div class="dm-container">';
+  h += '<div class="dm-header">';
+  h += '<div class="dm-header-avatar">夕</div>';
+  h += '<div class="dm-header-info">';
+  h += '<div class="dm-header-name">ゆうやけさんぽ</div>';
+  h += '<div class="dm-header-handle">@yuuyake_sanpo</div>';
+  h += '</div>';
+  h += '</div>';
+  h += '<div class="dm-messages" id="dm-messages">';
+  h += renderDMMessages(msgs);
+  h += '</div>';
+  h += '<div class="dm-input-area">';
+  h += '<input type="text" class="dm-input" id="dm-input" placeholder="メッセージを入力..." autocomplete="off">';
+  h += '<button class="dm-send-btn" id="dm-send-btn" onclick="handleDMSend()">送信</button>';
+  h += '</div>';
+  h += '</div>';
+
+  viewDM.innerHTML = h;
+  switchView(viewDM);
+
+  // Scroll to bottom
+  setTimeout(scrollDMToBottom, 50);
+
+  // Enter key to send
+  var dmInput = document.getElementById('dm-input');
+  if(dmInput){
+    dmInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        handleDMSend();
+      }
+    });
+    dmInput.focus();
+  }
+}
+
+window.showDM = function(){
+  history.pushState({view:'dm'}, '', '');
+  _showDM();
+};
+window.handleDMSend = handleDMSend;
+
+// 初期状態を履歴に記録
+history.replaceState({view:'timeline'}, '', '');
+
+})();
+</script>
+<script src="../js/main.js"></script>
+</body>
+</html>

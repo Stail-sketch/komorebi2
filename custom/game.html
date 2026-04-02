@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Night - こもれびゆうえんち2</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; user-select: none; -webkit-user-select: none; }
+    img { -webkit-user-drag: none; pointer-events: none; }
+    button, .cam-btn, .door-btn, .cam-toggle-btn { pointer-events: auto; }
+
+    .hidden { display: none !important; }
+
+    /* ===== ゲームコンテナ ===== */
+    .game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+    /* ===== オフィスビュー ===== */
+    #office-view { position: absolute; inset: 0; }
+    #office-bg-open { width: 100%; height: 100%; object-fit: cover; }
+
+    /* 左右モニターエリア */
+    .side-area { position: absolute; overflow: hidden; }
+    .side-entity { position: absolute; inset: 0; display: none; z-index: 0; }
+    .side-entity.visible { display: block; }
+    .side-entity img { width: 100%; height: 100%; object-fit: cover; }
+    .side-light-overlay { position: absolute; inset: 0; background: rgba(180,0,0,0.35); display: none; z-index: 1; }
+    .side-light-overlay.active { display: block; }
+    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: none; z-index: 2; }
+    .door-closed-overlay.active { display: block; }
+
+    /* DOOR/LIGHTボタン */
+    .door-buttons { position: absolute; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
+    .door-btn {
+      width: 120px; height: 70px;
+      background: rgba(20,20,20,0.8); border: 2px solid #444;
+      color: #0f0; font-family: 'Courier New', monospace; font-size: 14px;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 4px; letter-spacing: 2px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .door-btn:hover { background: rgba(40,40,40,0.9); border-color: #666; }
+    .btn-door.closed { background: rgba(40,20,20,0.9); border-color: #f44; color: #f44; }
+    .btn-light { color: #fc4; }
+    .btn-light:hover { border-color: #fc4; }
+    .btn-light.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
+
+    /* HUD */
+    #hud { position: absolute; z-index: 10; top: 10px; right: 14px; text-align: right; }
+    .hud-row { font-size: 0.85rem; color: #5a8ab5; text-shadow: 0 0 6px rgba(80,140,200,0.3); line-height: 1.6; }
+    #time-display { font-size: 2.2rem; color: #8cc; font-weight: bold; letter-spacing: 2px; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    /* パワー */
+    #power-hud { position: absolute; z-index: 10; bottom: 20px; left: 20px; }
+    #power-hud .power-label { font-size: 14px; color: #5a8ab5; letter-spacing: 2px; margin-bottom: 4px; }
+    #power-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #2a3a50; }
+    #power-bar { height: 100%; background: #4c8; transition: width 0.5s; }
+    #power-bar.low { background: #e64; }
+    #power-bar.critical { background: #f22; animation: blink 0.5s infinite; }
+
+    /* カメラ開閉ボタン */
+    .cam-toggle-btn {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      padding: 12px 32px; background: #1a1a2a; border: 2px solid #446;
+      color: #8af; font-family: 'Courier New', monospace; font-size: 16px;
+      cursor: pointer; letter-spacing: 2px; z-index: 15;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .cam-toggle-btn:hover { background: #252540; border-color: #88f; }
+    #camera-close-bar { background: #2a1a1a; border-color: #644; color: #f88; }
+    #camera-close-bar:hover { background: #3a2020; border-color: #a66; }
+
+    /* ===== カメラビュー ===== */
+    #camera-view { position: absolute; inset: 0; z-index: 20; background: #000; }
+    #camera-feed { position: relative; width: 100%; height: 100%; overflow: hidden; background: #050a10; }
+    #camera-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: 50% 50%;
+      filter: brightness(0.50) contrast(1.15) saturate(0.25);
+    }
+    #camera-char {
+      position: absolute; z-index: 2; bottom: 8%; left: 50%; height: 55%;
+      transform: translateX(-50%);
+      filter: brightness(0.50) contrast(1.15) saturate(0.25);
+    }
+    #camera-scanlines {
+      position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+    }
+    #camera-scanline-sweep {
+      position: absolute; inset: 0; z-index: 4; pointer-events: none;
+      background: linear-gradient(180deg, transparent 0%, rgba(150,200,255,0.03) 48%, rgba(150,200,255,0.08) 50%, rgba(150,200,255,0.03) 52%, transparent 100%);
+      background-size: 100% 30%;
+      animation: scanline 4s linear infinite;
+    }
+    @keyframes scanline { 0%{background-position:0 -30vh} 100%{background-position:0 130vh} }
+    #camera-vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%); }
+    #camera-noise {
+      position: absolute; inset: 0; z-index: 6; pointer-events: none;
+      background: #000;
+    }
+
+    /* カメラUI */
+    #camera-label { position: absolute; top: 14px; left: 18px; font-size: 1.1rem; color: rgba(100,200,255,0.8); z-index: 10; text-shadow: 0 0 10px rgba(100,200,255,0.4); }
+    #rec-indicator { position: absolute; top: 14px; right: 18px; font-size: 0.8rem; color: #f44; z-index: 10; animation: blink 1s infinite; }
+
+    /* カメラボタン */
+    #cam-buttons { position: absolute; bottom: 16px; right: 16px; display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; z-index: 10; }
+    .cam-btn {
+      background: rgba(8,12,25,0.9); color: #5a90c0; border: 2px solid rgba(40,70,110,0.6);
+      padding: 12px 22px; font-family: 'Courier New', monospace; font-size: 16px;
+      cursor: pointer; border-radius: 2px; transition: all 0.12s; letter-spacing: 2px;
+    }
+    .cam-btn:hover { background: rgba(20,35,60,0.9); border-color: rgba(60,100,160,0.7); color: #8bc; }
+    .cam-btn.active { background: rgba(30,55,90,0.95); border-color: #4af; color: #fff; box-shadow: 0 0 8px rgba(68,170,255,0.2); }
+
+    /* DUCT入口/戻るボタン */
+    #duct-enter-btn, #duct-back-btn {
+      position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
+      z-index: 10; padding: 16px 44px;
+      font-family: 'Courier New', monospace; font-size: 18px; letter-spacing: 3px;
+      cursor: pointer; border: 2px solid; transition: all 0.15s;
+    }
+    #duct-enter-btn { background: rgba(40,20,0,0.8); border-color: #f80; color: #f80; }
+    #duct-enter-btn:hover { background: rgba(80,40,0,0.9); color: #fc4; }
+    #duct-back-btn { background: rgba(0,20,40,0.8); border-color: #4af; color: #4af; }
+    #duct-back-btn:hover { background: rgba(0,40,80,0.9); color: #8cf; }
+
+    #camera-close-bar { z-index: 50; }
+
+    /* ===== クロックゲージ（キツネ団長用） ===== */
+    #clock-hud {
+      position: absolute; z-index: 10; bottom: 90px; left: 20px;
+      display: none;
+    }
+    #clock-hud.active { display: block; }
+    .clock-label { font-size: 14px; color: #d4a030; letter-spacing: 2px; margin-bottom: 4px; }
+    #clock-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #6a5a2a; }
+    #clock-bar { height: 100%; background: #d4a030; transition: width 0.5s; }
+    #clock-bar.low { background: #e06060; }
+    #clock-bar.critical { background: #f22; animation: blink 0.5s infinite; }
+
+    /* ===== シールドUI（アラネ用） ===== */
+    #shield-hud {
+      position: absolute; z-index: 10; bottom: 50px; left: 20px;
+    }
+    .shield-label { font-size: 14px; color: #a070d0; letter-spacing: 2px; margin-bottom: 4px; }
+    #shield-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #4a2a6a; }
+    #shield-bar { height: 100%; background: #a060e0; transition: width 0.5s; }
+    #shield-bar.low { background: #e06060; }
+    #shield-bar.critical { background: #f22; animation: blink 0.5s infinite; }
+    #shield-add-btn {
+      margin-top: 6px; padding: 6px 18px;
+      background: rgba(60,30,90,0.8); border: 2px solid #6040a0;
+      color: #c090f0; font-family: 'Courier New', monospace; font-size: 12px;
+      cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
+    }
+    #shield-add-btn:hover { background: rgba(90,50,130,0.9); border-color: #a070d0; }
+
+    /* ===== よわり罪悪感インジケーター ===== */
+    #yowari-hud {
+      position: absolute; z-index: 10; top: 10px; left: 14px;
+      font-size: 14px; color: #8a8a6a; letter-spacing: 1px;
+    }
+
+    /* ===== かすみ警告 ===== */
+    #kasumi-warning {
+      position: absolute; z-index: 30; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem; color: #f44; letter-spacing: 0.3em;
+      text-shadow: 0 0 20px rgba(255,0,0,0.5);
+      display: none; pointer-events: none;
+    }
+    #kasumi-warning.active { display: block; animation: blink 0.5s infinite; }
+
+    /* かすみクリック領域 */
+    #kasumi-click-zone {
+      position: absolute; inset: 0; z-index: 25; cursor: pointer; display: none;
+    }
+    #kasumi-click-zone.active { display: block; }
+
+    /* カメラクリック領域（キツネ時計巻き用） */
+    #camera-click-zone {
+      position: absolute; inset: 0; z-index: 8; cursor: pointer; display: none;
+    }
+    #camera-click-zone.active { display: block; }
+
+    /* ===== オーバーレイ ===== */
+    .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+    .overlay-screen.active { display: flex; }
+    #jumpscare-screen { background: #000; }
+    #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: shake 0.3s infinite; }
+    @keyframes shake { 0%{transform:translate(0,0) scale(1.05)} 25%{transform:translate(-5px,3px) scale(1.08)} 50%{transform:translate(4px,-4px) scale(1.05)} 75%{transform:translate(-3px,5px) scale(1.07)} 100%{transform:translate(5px,-2px) scale(1.05)} }
+    #gameover-screen { background: #000; gap: 30px; }
+    #gameover-screen h1 { font-size: 3rem; color: #c00; letter-spacing: 0.3em; text-shadow: 0 0 30px rgba(200,0,0,0.5); }
+    .overlay-btn { background: none; border: 1px solid #666; color: #888; padding: 10px 40px; font-family: 'Courier New', monospace; font-size: 1rem; cursor: pointer; }
+    .overlay-btn:hover { border-color: #aaa; color: #fff; }
+    #clear-screen { background: #000; }
+    #clear-screen h1 { font-size: 2.5rem; color: #acd; letter-spacing: 0.5em; animation: fadeUp 2s ease; }
+    #clear-screen p { margin-top: 20px; color: #567; font-size: 0.9rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* スタート画面 */
+    #start-screen {
+      background: #000; z-index: 2000;
+      flex-direction: column; gap: 0;
+      cursor: default;
+    }
+    #start-title {
+      font-size: 4rem; letter-spacing: 0.3em; color: #4a7aaa;
+      text-shadow: 0 0 20px rgba(60,120,180,0.3);
+      margin-bottom: 12px; min-height: 3.5rem;
+    }
+    #start-title .cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: #4a7aaa; vertical-align: text-bottom;
+      margin-left: 4px; animation: cursorBlink 0.6s step-end infinite;
+    }
+    @keyframes cursorBlink { 0%,100% { border-color: #4a7aaa; } 50% { border-color: transparent; } }
+    #start-sub {
+      color: #334; font-size: 0.85rem; letter-spacing: 0.15em;
+      opacity: 0; animation: fadeIn 1s 2.8s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+    #start-btn:hover { background: #2a4a6a; color: #000; border-color: #4a7aaa; }
+    #start-screen.fade-out {
+      animation: screenFadeOut 1.5s ease forwards;
+    }
+    @keyframes screenFadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- オーバーレイ -->
+  <div id="start-screen" class="overlay-screen active">
+    <div id="start-title"><span id="title-text"></span><span class="cursor"></span></div>
+    <div id="start-sub">12:00 AM - 6:00 AM</div>
+    <button id="start-btn" style="
+      margin-top: 60px; padding: 18px 72px; background: none;
+      border: 2px solid #2a4a6a; color: #2a4a6a; font-family: 'Courier New', monospace;
+      font-size: 1.4rem; letter-spacing: 0.3em; cursor: pointer;
+      opacity: 0; animation: fadeIn 1s 3.5s forwards;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    ">START</button>
+  </div>
+  <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
+  <div id="gameover-screen" class="overlay-screen"><h1>GAME OVER</h1><button class="overlay-btn" id="retry-btn">BACK TO MENU</button></div>
+  <div id="clear-screen" class="overlay-screen"><h1>CUSTOM NIGHT CLEAR</h1><p>6:00 AM</p></div>
+
+  <!-- ===== ゲーム本体 ===== -->
+  <div class="game-container">
+
+    <!-- オフィスビュー -->
+    <div id="office-view">
+      <img id="office-bg-open" src="../image/camera/desk_on.png.png" alt="">
+
+      <div id="left-area" class="side-area">
+        <div class="side-light-overlay" id="left-light"></div>
+        <div class="door-closed-overlay" id="left-door"></div>
+        <div class="side-entity" id="left-entity"><img id="left-entity-img" src="../image/character/kururu door.png" alt=""></div>
+      </div>
+      <div id="right-area" class="side-area">
+        <div class="side-light-overlay" id="right-light"></div>
+        <div class="door-closed-overlay" id="right-door"></div>
+        <div class="side-entity" id="right-entity"><img id="right-entity-img" src="../image/character/kururu door.png" alt=""></div>
+      </div>
+
+      <div class="door-buttons" id="left-buttons">
+        <button class="door-btn btn-door" data-side="left">DOOR (Q)</button>
+        <button class="door-btn btn-light" data-side="left">LIGHT (A)</button>
+      </div>
+      <div class="door-buttons" id="right-buttons">
+        <button class="door-btn btn-door" data-side="right">DOOR (E)</button>
+        <button class="door-btn btn-light" data-side="right">LIGHT (D)</button>
+      </div>
+
+      <div id="hud">
+        <div id="time-display">12:00 AM</div>
+        <div class="hud-row" id="night-label">Custom Night</div>
+      </div>
+
+      <!-- よわり罪悪感インジケーター -->
+      <div id="yowari-hud">罪悪感: <span id="yowari-guilt">●○○○</span></div>
+
+      <!-- かすみ警告 -->
+      <div id="kasumi-warning">CLICK!</div>
+      <div id="kasumi-click-zone"></div>
+
+      <button id="cam-toggle-area" class="cam-toggle-btn">OPEN CAMERA (SPACE)</button>
+    </div>
+
+    <!-- カメラビュー -->
+    <div id="camera-view" class="hidden">
+      <div id="camera-feed">
+        <img id="camera-bg" src="../image/camera/CAM1.png" alt="">
+        <img id="camera-char" class="hidden" src="" alt="">
+        <div id="camera-scanlines"></div>
+        <div id="camera-scanline-sweep"></div>
+        <div id="camera-vignette"></div>
+        <div id="camera-noise" class="hidden"></div>
+        <!-- カメラクリック領域（キツネ時計巻き用） -->
+        <div id="camera-click-zone"></div>
+        <!-- DUCT入口ボタン（CAM6の時だけ表示） -->
+        <button id="duct-enter-btn" class="hidden">▼ DUCT CAMERA</button>
+        <!-- DUCT→CAM6に戻るボタン -->
+        <button id="duct-back-btn" class="hidden">▲ BACK TO CAM6</button>
+        <!-- UI -->
+        <span id="camera-label">CAM 1</span>
+        <span id="rec-indicator">● REC</span>
+        <div id="cam-buttons">
+          <button class="cam-btn active" data-cam="1">CAM1</button>
+          <button class="cam-btn" data-cam="2">CAM2</button>
+          <button class="cam-btn" data-cam="3">CAM3</button>
+          <button class="cam-btn" data-cam="4">CAM4</button>
+          <button class="cam-btn" data-cam="5">CAM5</button>
+          <button class="cam-btn" data-cam="6">CAM6</button>
+          <button class="cam-btn" data-cam="7">CAM7</button>
+          <button class="cam-btn" data-cam="8">CAM8</button>
+        </div>
+        <div id="power-hud">
+          <div class="power-label">POWER: <span id="power-display">100</span>%</div>
+          <div id="power-bar-wrap"><div id="power-bar" style="width:100%"></div></div>
+        </div>
+        <!-- クロックゲージ（キツネ団長用） -->
+        <div id="clock-hud">
+          <div class="clock-label">CLOCK: <span id="clock-display">100</span>%</div>
+          <div id="clock-bar-wrap"><div id="clock-bar" style="width:100%"></div></div>
+        </div>
+        <!-- シールドUI（アラネ用） -->
+        <div id="shield-hud">
+          <div class="shield-label">SHIELD: <span id="shield-display">100</span>%</div>
+          <div id="shield-bar-wrap"><div id="shield-bar" style="width:100%"></div></div>
+          <button id="shield-add-btn">+ REPAIR (R)</button>
+        </div>
+        <button id="camera-close-bar" class="cam-toggle-btn">CLOSE CAMERA (SPACE)</button>
+      </div>
+    </div>
+
+  </div>
+
+<script src="../js/main.js"></script>
+<script>
+// ============================================================
+// Custom Night ゲームエンジン
+// Based on Night6 engine - all 9 characters with custom levels
+// ============================================================
+
+var $ = function(id) { return document.getElementById(id); };
+
+// --- アクセスチェック ---
+if (localStorage.getItem('custom_night') !== 'true') {
+  window.location.href = 'index.html';
+}
+
+// --- カスタムレベル読み込み ---
+var customLevels = JSON.parse(localStorage.getItem('custom_levels') || '{}');
+var CHARS = ['kururu','madara','kasumi','arane','yowari','kitsune','kaa','ukkichi','potamaru'];
+CHARS.forEach(function(c) { if (!customLevels[c]) customLevels[c] = 0; });
+
+// --- プリセット名 ---
+var presetName = localStorage.getItem('custom_current_preset') || 'CUSTOM NIGHT';
+
+// --- レベルから移動間隔を計算 ---
+function getMoveInterval(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~15350ms, Level 20: ~3000ms
+  return Math.max(3000, 16000 - (level * 650));
+}
+
+// --- レベルからドア待機時間を計算 ---
+function getDoorWait(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~8000ms, Level 20: ~2500ms
+  return Math.max(2500, 8500 - (level * 300));
+}
+
+// --- レベルからクロックドレインレートを計算 ---
+function getClockDrain(level) {
+  if (level === 0) return 0;
+  // Level 1: 0.2/sec, Level 20: 1.5/sec
+  return 0.2 + (level - 1) * (1.3 / 19);
+}
+
+// --- レベルからシールドデケイ間隔を計算 ---
+function getShieldDecayInterval(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~30sec, Level 20: ~8sec
+  return Math.max(8000, 31000 - (level * 1150));
+}
+
+// --- レベルからかすみ攻撃間隔を計算 ---
+function getKasumiInterval(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~25sec, Level 20: ~8sec
+  var base = Math.max(8000, 26000 - (level * 900));
+  var variance = base * 0.3;
+  return base + (Math.random() * variance - variance / 2);
+}
+
+// --- レベルからかすみ反応時間を計算 ---
+function getKasumiReactTime(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~5sec, Level 20: ~1.5sec
+  return Math.max(1500, 5500 - (level * 200));
+}
+
+// --- レベルからぽたまる攻撃間隔を計算 ---
+function getPotamaruInterval(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~35sec, Level 20: ~10sec
+  var base = Math.max(10000, 36000 - (level * 1300));
+  var variance = base * 0.4;
+  return base + (Math.random() * variance);
+}
+
+// --- レベルからぽたまる反応時間を計算 ---
+function getPotamaruReactTime(level) {
+  if (level === 0) return Infinity;
+  // Level 1: ~6sec, Level 20: ~2sec
+  return Math.max(2000, 6500 - (level * 230));
+}
+
+// --- ブラウザの戻る・リロードを無効化 ---
+history.pushState(null, '', location.href);
+window.addEventListener('popstate', function() { history.pushState(null, '', location.href); });
+function _blockUnload(e) { e.preventDefault(); }
+window.addEventListener('beforeunload', _blockUnload);
+function allowNavigation() { window.removeEventListener('beforeunload', _blockUnload); }
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'F5') e.preventDefault();
+  if ((e.ctrlKey || e.metaKey) && e.key === 'r') e.preventDefault();
+  if (e.altKey && e.key === 'ArrowLeft') e.preventDefault();
+});
+
+var IMG_W = 1536, IMG_H = 1024;
+
+// --- カメラごとのキャラ表示位置 ---
+var CAM_CHAR_POS = {
+  1: { bottom: '8%',  left: '50%', height: '55%' },
+  2: { bottom: '10%', left: '45%', height: '50%' },
+  3: { bottom: '5%',  left: '55%', height: '50%' },
+  4: { bottom: '8%',  left: '50%', height: '55%' },
+  5: { bottom: '8%',  left: '50%', height: '50%' },
+  6: { bottom: '10%', left: '50%', height: '55%' },
+  7: { bottom: '20%', left: '48%', height: '35%' },
+  8: { bottom: '15%', left: '50%', height: '35%' },
+  9: { bottom: '10%', left: '50%', height: '60%' }
+};
+
+// --- cover計算 ---
+function getCoverTransform() {
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var imgR = IMG_W / IMG_H, vpR = vw / vh;
+  var rW, rH, oX, oY;
+  if (vpR > imgR) { rW = vw; rH = vw / imgR; oX = 0; oY = (vh - rH) / 2; }
+  else { rH = vh; rW = vh * imgR; oX = (vw - rW) / 2; oY = 0; }
+  return { rW: rW, rH: rH, oX: oX, oY: oY, vw: vw, vh: vh };
+}
+
+// --- 左右モニターエリア ---
+var sideShapes = {
+  left: [{x:9.45,y:5.70},{x:25.80,y:11.85},{x:25.70,y:58.85},{x:9.30,y:60.90}],
+  right: [{x:74.30,y:11.85},{x:90.75,y:5.60},{x:90.85,y:60.90},{x:74.30,y:59.15}]
+};
+
+function applySideAreas() {
+  var ct = getCoverTransform();
+  ['left','right'].forEach(function(side) {
+    var pts = sideShapes[side].map(function(p) {
+      var sx = ct.oX + ct.rW * p.x / 100;
+      var sy = ct.oY + ct.rH * p.y / 100;
+      return { x: sx / ct.vw * 100, y: sy / ct.vh * 100 };
+    });
+    var minX = Math.min.apply(null, pts.map(function(p){return p.x;}));
+    var maxX = Math.max.apply(null, pts.map(function(p){return p.x;}));
+    var minY = Math.min.apply(null, pts.map(function(p){return p.y;}));
+    var maxY = Math.max.apply(null, pts.map(function(p){return p.y;}));
+    var el = $(side + '-area');
+    el.style.left = minX + 'vw'; el.style.top = minY + 'vh';
+    el.style.width = (maxX-minX) + 'vw'; el.style.height = (maxY-minY) + 'vh';
+    var clip = pts.map(function(p) {
+      var rx = (maxX-minX)>0 ? (p.x-minX)/(maxX-minX)*100 : 0;
+      var ry = (maxY-minY)>0 ? (p.y-minY)/(maxY-minY)*100 : 0;
+      return rx.toFixed(1)+'% '+ry.toFixed(1)+'%';
+    });
+    el.style.clipPath = 'polygon('+clip.join(', ')+')';
+  });
+  var lbP = ct.oX + ct.rW * 9.4 / 100;
+  var rbP = ct.oX + ct.rW * 82 / 100;
+  var btnY = ct.oY + ct.rH * 62 / 100;
+  $('left-buttons').style.left = lbP + 'px'; $('left-buttons').style.top = btnY + 'px';
+  $('right-buttons').style.left = rbP + 'px'; $('right-buttons').style.top = btnY + 'px';
+}
+
+// --- サウンド ---
+var sndBGM = new Audio('../sound/BGM.wav');
+sndBGM.loop = true; sndBGM.volume = 0.15;
+var sndClock = new Audio('../sound/clock_tick.flac');
+sndClock.loop = true; sndClock.volume = 0.15;
+var sndCamSwitch = new Audio('../sound/camera switch.mp3');
+sndCamSwitch.volume = 0.1;
+var sndCamNoise = new Audio('../sound/camera noize.wav');
+sndCamNoise.loop = true; sndCamNoise.volume = 0.08;
+var sndMonitorOff = new Audio('../sound/monitor off.mp3');
+sndMonitorOff.volume = 0.1;
+var sndMonitorOn = new Audio('../sound/monitor on.mp3');
+sndMonitorOn.volume = 0.1;
+var sndLight = new Audio('../sound/light.mp3');
+sndLight.volume = 0.1;
+var sndClearChime = new Audio('../sound/clear_chime.mp3');
+sndClearChime.volume = 0.15;
+var sndClearYay = new Audio('../sound/clear_yay.mp3');
+sndClearYay.volume = 0.15;
+
+// F1 クロックティック音
+var sndF1ClockTick = new Audio('../sound/f1/clock_tick.flac');
+sndF1ClockTick.loop = true; sndF1ClockTick.volume = 0.15;
+
+// F1 ぽたまる音楽
+var sndPotamaruA = new Audio('../sound/f1/potamaru_dance_a.mp3');
+sndPotamaruA.volume = 0.2;
+var sndPotamaruB = new Audio('../sound/f1/potamaru_dance_b.mp3');
+sndPotamaruB.volume = 0.2;
+
+// ジャンプスケア音
+var sndJump = {
+  kururu:  new Audio('../sound/587354__breviceps__jumpscare-scream.wav'),
+  madara:  new Audio('../sound/623065__jollyfunway__tiger-jumpscare.mp3'),
+  kasumi:  new Audio('../sound/623437__jollyfunway__stone-age-like-jumpscare.mp3'),
+  araane:  new Audio('../sound/676232__werdkind0m__jumpscare-sound-v2.wav'),
+  yowari:  new Audio('../sound/812134__aksiny_soundeditor__jumpscare-1.wav'),
+  kitsune: new Audio('../sound/f1/kitsune_jumpscare.mp3')
+};
+Object.keys(sndJump).forEach(function(k) { sndJump[k].volume = 0.075; });
+
+function playS(s) { s.currentTime = 0; s.play().catch(function(){}); }
+function stopAllSounds() {
+  [sndBGM, sndClock, sndCamNoise, sndF1ClockTick, sndPotamaruA, sndPotamaruB].forEach(function(s) { s.pause(); s.currentTime = 0; });
+}
+
+// ============================================================
+// ゲーム状態
+// ============================================================
+var NIGHT_DURATION = 360; // 6 minutes (12AM to 6AM)
+var DRAIN_BASE = 0.09, DRAIN_CAM = 0.15, DRAIN_DOOR = 0.5, DRAIN_LIGHT = 0.3;
+
+// --- Active character count for power drain scaling ---
+var activeCharCount = 0;
+CHARS.forEach(function(c) { if (customLevels[c] > 0) activeCharCount++; });
+// Extra drain based on active characters (more characters = faster drain)
+var DRAIN_ACTIVE_BONUS = Math.max(0, (activeCharCount - 3) * 0.008);
+
+// ============================================================
+// キャラクター状態変数
+// ============================================================
+
+// --- くるる ---
+var PATH_L = [1,2,4,7,'left_door'], PATH_R = [1,3,5,8,'right_door'];
+var kururuCam = 1, kururuPath = null, kururuIdx = 0, kururuDoor = null, kururuSpd = 'normal';
+var kururuMT = null, kururuDT = null, kururuWT = null;
+
+// --- まだら ---
+var MADARA_PATH_L = [6,3,4,7,'left_door'], MADARA_PATH_R = [6,2,5,8,'right_door'];
+var madaraCam = 6, madaraPath = null, madaraIdx = 0, madaraDoor = null;
+var madaraMT = null, madaraDT = null;
+
+// --- かすみ ---
+var kasumiActive = false, kasumiTimer = null, kasumiClickTimer = null;
+var kasumiLightOff = false;
+
+// --- アラネ ---
+var shield = 100, araneDecayTimer = null;
+
+// --- よわり ---
+var YOWARI_PATH_OPTIONS = [
+  [5, 6, 7, 'left_door'],
+  [5, 6, 8, 'right_door']
+];
+var yowariCam = 5, yowariPath = null, yowariIdx = 0, yowariDoor = null;
+var yowariSpeedStage = 0, yowariMT = null, yowariDT = null;
+
+// --- キツネ団長 ---
+var clockGauge = 100;
+var clockDrainId = null;
+
+// --- かあ博士 ---
+var KAA_PATH_L = [4, 6, 7, 'left_door'];
+var KAA_PATH_R = [4, 6, 8, 'right_door'];
+var kaaCam = 4, kaaPath = null, kaaIdx = 0, kaaDoor = null;
+var kaaMT = null, kaaDT = null;
+
+// --- うっきち ---
+var UKKICHI_PATH_L = [5, 6, 7, 'right_door'];
+var UKKICHI_PATH_R = [5, 6, 8, 'left_door'];
+var ukkichiCam = 5, ukkichiPath = null, ukkichiIdx = 0, ukkichiDoor = null;
+var ukkichiMT = null, ukkichiDT = null;
+
+// --- ぽたまる ---
+var potaActive = false, potaSide = null;
+var potaTimer = null, potaReactTimer = null;
+
+// --- 共通状態 ---
+var running = false, elapsed = 0, power = 100;
+var camOpen = false, curCam = 1;
+var doorL = false, doorR = false, lightL = false, lightR = false;
+var tickId = null, pwrId = null, clockTickId = null;
+
+// ============================================================
+// カメラ操作
+// ============================================================
+function openCamera() {
+  if (!running) return;
+  camOpen = true;
+  $('camera-view').classList.remove('hidden');
+  triggerNoise();
+  playS(sndCamSwitch);
+  updateCameraView();
+  updateCamButtons();
+  sndCamNoise.play().catch(function(){});
+  sndClock.pause();
+  updateClockHudVisibility();
+  updateShieldHudVisibility();
+  if (customLevels.yowari > 0) incrementYowariGuilt();
+}
+
+function closeCamera() {
+  camOpen = false;
+  $('camera-view').classList.add('hidden');
+  playS(sndCamSwitch);
+  sndCamNoise.pause();
+  sndF1ClockTick.pause();
+  if (running) sndClock.play().catch(function(){});
+  $('clock-hud').classList.remove('active');
+  $('camera-click-zone').classList.remove('active');
+}
+
+function switchCam(id) {
+  if (curCam === id) return;
+  curCam = id;
+  triggerNoise();
+  playS(sndCamSwitch);
+  updateCameraView();
+  updateCamButtons();
+  updateClockHudVisibility();
+  updateShieldHudVisibility();
+  if (customLevels.kururu > 0) checkKururuWatch();
+  if (customLevels.yowari > 0) incrementYowariGuilt();
+}
+
+function updateCamButtons() {
+  document.querySelectorAll('.cam-btn').forEach(function(b) { b.classList.toggle('active', +b.dataset.cam === curCam); });
+}
+
+function triggerNoise() {
+  var n = $('camera-noise');
+  n.classList.remove('hidden');
+  setTimeout(function() { n.classList.add('hidden'); }, 100);
+}
+
+function updateCameraView() {
+  if (curCam === 9) {
+    $('camera-bg').src = '../image/camera/duct cam.png';
+    $('camera-label').textContent = 'DUCT CAM';
+  } else {
+    $('camera-bg').src = '../image/camera/CAM' + curCam + '.png';
+    $('camera-label').textContent = 'CAM ' + curCam;
+  }
+  $('duct-enter-btn').classList.toggle('hidden', curCam !== 6);
+  $('duct-back-btn').classList.toggle('hidden', curCam !== 9);
+  updateCameraChar();
+  updateClockTickSound();
+}
+
+// --- クロックティック音管理 ---
+function updateClockTickSound() {
+  if (camOpen && curCam === 2 && customLevels.kitsune > 0) {
+    sndF1ClockTick.play().catch(function(){});
+  } else {
+    sndF1ClockTick.pause();
+  }
+}
+
+// --- クロックHUD表示制御 ---
+function updateClockHudVisibility() {
+  var show = camOpen && curCam === 2 && customLevels.kitsune > 0;
+  $('clock-hud').classList.toggle('active', show);
+  $('camera-click-zone').classList.toggle('active', show);
+}
+
+// --- シールドHUD表示制御 ---
+function updateShieldHudVisibility() {
+  var showShield = camOpen && customLevels.arane > 0;
+  $('shield-hud').style.display = showShield ? 'block' : 'none';
+  $('shield-add-btn').style.display = (camOpen && curCam === 9 && customLevels.arane > 0) ? 'block' : 'none';
+}
+
+// --- カメラ内キャラ表示 ---
+function updateCameraChar() {
+  var charEl = $('camera-char');
+  var enemies = [];
+
+  // Door-approach characters on camera
+  if (customLevels.kururu > 0 && kururuCam === curCam && kururuCam > 0) {
+    enemies.push({ name: 'kururu', img: '../image/character/kururu nomal.png', priority: kururuIdx || 0 });
+  }
+  if (customLevels.madara > 0 && madaraCam === curCam && madaraCam > 0) {
+    enemies.push({ name: 'madara', img: '../image/character/madara nomal.png', priority: madaraIdx || 0 });
+  }
+  if (customLevels.yowari > 0 && yowariCam === curCam && yowariCam > 0) {
+    enemies.push({ name: 'yowari', img: '../image/character/yowari nomal.png', priority: yowariIdx || 0 });
+  }
+  if (customLevels.kaa > 0 && kaaCam === curCam && kaaCam > 0) {
+    enemies.push({ name: 'kaa', img: '../image/charas_f1/kaa_normal.png', priority: kaaIdx || 0 });
+  }
+  if (customLevels.ukkichi > 0 && ukkichiCam === curCam && ukkichiCam > 0) {
+    enemies.push({ name: 'ukkichi', img: '../image/charas_f1/ukkichi_normal.png', priority: ukkichiIdx || 0 });
+  }
+  // キツネはCAM2で時計として表示
+  if (customLevels.kitsune > 0 && curCam === 2) {
+    enemies.push({ name: 'kitsune', img: '../image/charas_f1/kitsune_normal.png', priority: 0 });
+  }
+  // アラネはDUCT CAM (9)で表示
+  if (customLevels.arane > 0 && curCam === 9) {
+    enemies.push({ name: 'araane', img: '../image/character/araane nomal.png', priority: 0 });
+  }
+  // ぽたまるはカメラには表示しない
+
+  if (enemies.length > 0) {
+    enemies.sort(function(a, b) { return b.priority - a.priority; });
+    var show = enemies[0];
+    charEl.src = show.img;
+    charEl.classList.remove('hidden');
+    var pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
+    charEl.style.bottom = pos.bottom;
+    charEl.style.left = pos.left;
+    charEl.style.height = pos.height;
+    charEl.style.transform = 'translateX(-50%)';
+  } else {
+    charEl.classList.add('hidden');
+  }
+}
+
+// ============================================================
+// ドア操作
+// ============================================================
+function toggleDoor(side) {
+  if (!running) return;
+  if (customLevels.yowari > 0) incrementYowariGuilt();
+  if (side === 'left') {
+    doorL = !doorL;
+    $('left-door').classList.toggle('active', doorL);
+    document.querySelector('#left-buttons .btn-door').classList.toggle('closed', doorL);
+    playS(doorL ? sndMonitorOff : sndMonitorOn);
+    if (doorL) {
+      if (kururuDoor === 'left') defeatKururu();
+      if (madaraDoor === 'left') defeatMadara();
+      if (yowariDoor === 'left') defeatYowari();
+      if (kaaDoor === 'left') defeatKaa();
+      if (ukkichiDoor === 'left') defeatUkkichi();
+      if (potaActive && potaSide === 'left') defeatPotamaru();
+    }
+  } else {
+    doorR = !doorR;
+    $('right-door').classList.toggle('active', doorR);
+    document.querySelector('#right-buttons .btn-door').classList.toggle('closed', doorR);
+    playS(doorR ? sndMonitorOff : sndMonitorOn);
+    if (doorR) {
+      if (kururuDoor === 'right') defeatKururu();
+      if (madaraDoor === 'right') defeatMadara();
+      if (yowariDoor === 'right') defeatYowari();
+      if (kaaDoor === 'right') defeatKaa();
+      if (ukkichiDoor === 'right') defeatUkkichi();
+      if (potaActive && potaSide === 'right') defeatPotamaru();
+    }
+  }
+}
+
+// ============================================================
+// ライト操作
+// ============================================================
+function setLight(side, on) {
+  if (on) {
+    playS(sndLight);
+    if (customLevels.yowari > 0) incrementYowariGuilt();
+  }
+  if (side === 'left') {
+    lightL = on;
+    document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
+    $('left-light').classList.toggle('active', on);
+  } else {
+    lightR = on;
+    document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
+    $('right-light').classList.toggle('active', on);
+  }
+  updateSideEntity();
+}
+
+// --- ドア前キャラ表示 ---
+var DOOR_IMAGES = {
+  kururu: '../image/character/kururu door.png',
+  madara: '../image/character/madara door.png',
+  kasumi: '../image/character/kasumi door.png',
+  yowari: '../image/character/yowari door.png',
+  kaa: '../image/charas_f1/kaa_door.png',
+  ukkichi: '../image/charas_f1/ukkichi_door.png'
+};
+
+function updateSideEntity() {
+  var leftEnemy = null;
+  if (kururuDoor === 'left') leftEnemy = 'kururu';
+  if (madaraDoor === 'left') leftEnemy = 'madara';
+  if (yowariDoor === 'left') leftEnemy = 'yowari';
+  if (kaaDoor === 'left') leftEnemy = 'kaa';
+  if (ukkichiDoor === 'left') leftEnemy = 'ukkichi';
+
+  var rightEnemy = null;
+  if (kururuDoor === 'right') rightEnemy = 'kururu';
+  if (madaraDoor === 'right') rightEnemy = 'madara';
+  if (yowariDoor === 'right') rightEnemy = 'yowari';
+  if (kaaDoor === 'right') rightEnemy = 'kaa';
+  if (ukkichiDoor === 'right') rightEnemy = 'ukkichi';
+
+  var showL = leftEnemy && lightL && !doorL;
+  var showR = rightEnemy && lightR && !doorR;
+
+  if (showL) $('left-entity-img').src = DOOR_IMAGES[leftEnemy];
+  if (showR) $('right-entity-img').src = DOOR_IMAGES[rightEnemy];
+
+  $('left-entity').classList.toggle('visible', !!showL);
+  $('right-entity').classList.toggle('visible', !!showR);
+}
+
+// ============================================================
+// くるるAI（リス） - Door approach, camera slows
+// ============================================================
+function scheduleKururuMove() {
+  if (customLevels.kururu === 0) return;
+  clearTimeout(kururuMT);
+  var interval = kururuSpd === 'slow'
+    ? getMoveInterval(customLevels.kururu) * 2
+    : getMoveInterval(customLevels.kururu);
+  kururuMT = setTimeout(moveKururu, interval);
+}
+
+function moveKururu() {
+  if (!running || kururuDoor || customLevels.kururu === 0) return;
+  if (!kururuPath || kururuCam === 1) {
+    kururuPath = Math.random() < 0.5 ? PATH_L : PATH_R;
+    kururuIdx = 0;
+  }
+  kururuIdx++;
+  if (kururuIdx >= kururuPath.length) {
+    kururuArriveAtDoor(kururuPath === PATH_L ? 'left' : 'right');
+    return;
+  }
+  var n = kururuPath[kururuIdx];
+  if (typeof n === 'number') kururuCam = n;
+  if (camOpen) updateCameraChar();
+  checkKururuWatch();
+  scheduleKururuMove();
+}
+
+function kururuArriveAtDoor(side) {
+  kururuDoor = side; kururuCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatKururu(); return; }
+  kururuDT = setTimeout(function() {
+    if (!running || kururuDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('kururu');
+  }, getDoorWait(customLevels.kururu));
+}
+
+function defeatKururu() {
+  clearTimeout(kururuDT);
+  kururuDoor = null; kururuCam = 1; kururuPath = null; kururuIdx = 0;
+  updateSideEntity();
+  if (camOpen) updateCameraChar();
+  scheduleKururuMove();
+}
+
+function checkKururuWatch() {
+  clearTimeout(kururuWT);
+  if (camOpen && curCam === kururuCam && kururuCam > 0) {
+    kururuWT = setTimeout(function() {
+      if (kururuSpd !== 'slow') { kururuSpd = 'slow'; scheduleKururuMove(); }
+    }, 2000);
+  } else {
+    kururuSpd = 'normal';
+  }
+}
+
+// ============================================================
+// まだらAI（カメレオン） - Door approach
+// ============================================================
+function scheduleMadaraMove() {
+  if (customLevels.madara === 0) return;
+  clearTimeout(madaraMT);
+  madaraMT = setTimeout(moveMadara, getMoveInterval(customLevels.madara));
+}
+
+function moveMadara() {
+  if (!running || madaraDoor || customLevels.madara === 0) return;
+  if (!madaraPath || madaraCam === 6) {
+    madaraPath = Math.random() < 0.5 ? MADARA_PATH_L : MADARA_PATH_R;
+    madaraIdx = 0;
+  }
+  madaraIdx++;
+  if (madaraIdx >= madaraPath.length) {
+    madaraArriveAtDoor(madaraPath === MADARA_PATH_L ? 'left' : 'right');
+    return;
+  }
+  var n = madaraPath[madaraIdx];
+  if (typeof n === 'number') madaraCam = n;
+  if (camOpen) updateCameraChar();
+  scheduleMadaraMove();
+}
+
+function madaraArriveAtDoor(side) {
+  madaraDoor = side; madaraCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatMadara(); return; }
+  madaraDT = setTimeout(function() {
+    if (!running || madaraDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('madara');
+  }, getDoorWait(customLevels.madara));
+}
+
+function defeatMadara() {
+  clearTimeout(madaraDT);
+  madaraDoor = null; madaraCam = 6; madaraPath = null; madaraIdx = 0;
+  updateSideEntity();
+  if (camOpen) updateCameraChar();
+  scheduleMadaraMove();
+}
+
+// ============================================================
+// かすみAI（ホタル） - Screen blackout, click to survive
+// ============================================================
+function scheduleKasumiAttack() {
+  if (customLevels.kasumi === 0) return;
+  clearTimeout(kasumiTimer);
+  kasumiTimer = setTimeout(kasumiLightOffAttack, getKasumiInterval(customLevels.kasumi));
+}
+
+function kasumiLightOffAttack() {
+  if (!running || customLevels.kasumi === 0) return;
+  kasumiLightOff = true;
+  $('kasumi-warning').classList.add('active');
+  $('kasumi-click-zone').classList.add('active');
+  document.body.style.filter = 'brightness(0.15)';
+  kasumiClickTimer = setTimeout(function() {
+    if (!running || !kasumiLightOff) return;
+    gameOver('kasumi');
+  }, getKasumiReactTime(customLevels.kasumi));
+}
+
+function kasumiClick() {
+  if (!kasumiLightOff || !running) return;
+  kasumiLightOff = false;
+  clearTimeout(kasumiClickTimer);
+  $('kasumi-warning').classList.remove('active');
+  $('kasumi-click-zone').classList.remove('active');
+  document.body.style.filter = '';
+  if (customLevels.yowari > 0) incrementYowariGuilt();
+  scheduleKasumiAttack();
+}
+
+// ============================================================
+// アラネAI（クモ） - Shield decay, repair via duct cam
+// ============================================================
+function startAraneDecay() {
+  if (customLevels.arane === 0) return;
+  clearInterval(araneDecayTimer);
+  var decayInterval = getShieldDecayInterval(customLevels.arane);
+  // Decay amount scales with level too
+  var decayAmount = Math.min(30, 10 + customLevels.arane);
+  araneDecayTimer = setInterval(function() {
+    if (!running) return;
+    shield = Math.max(0, shield - decayAmount);
+    updateShieldDisplay();
+    if (shield <= 0) {
+      gameOver('araane');
+    }
+  }, decayInterval);
+}
+
+function repairShield() {
+  if (!running) return;
+  shield = Math.min(100, shield + 25);
+  updateShieldDisplay();
+  if (customLevels.yowari > 0) incrementYowariGuilt();
+}
+
+function updateShieldDisplay() {
+  var s = Math.round(shield);
+  $('shield-display').textContent = s;
+  $('shield-bar').style.width = s + '%';
+  $('shield-bar').classList.toggle('low', s <= 30 && s > 15);
+  $('shield-bar').classList.toggle('critical', s <= 15);
+}
+
+// ============================================================
+// よわりAI（ヒツジ） - Gets faster with player actions
+// ============================================================
+function scheduleYowariMove() {
+  if (customLevels.yowari === 0) return;
+  clearTimeout(yowariMT);
+  // Base speed from level, further modified by guilt stage
+  var baseInterval = getMoveInterval(customLevels.yowari);
+  var speedMultipliers = [1.0, 0.8, 0.6, 0.4];
+  var interval = baseInterval * (speedMultipliers[yowariSpeedStage] || 0.4);
+  yowariMT = setTimeout(moveYowari, interval);
+}
+
+function moveYowari() {
+  if (!running || yowariDoor || customLevels.yowari === 0) return;
+  if (!yowariPath || yowariCam === 5) {
+    yowariPath = YOWARI_PATH_OPTIONS[Math.random() < 0.5 ? 0 : 1];
+    yowariIdx = 0;
+  }
+  yowariIdx++;
+  if (yowariIdx >= yowariPath.length) {
+    var lastStep = yowariPath[yowariPath.length - 1];
+    yowariArriveAtDoor(lastStep === 'left_door' ? 'left' : 'right');
+    return;
+  }
+  var n = yowariPath[yowariIdx];
+  if (typeof n === 'number') yowariCam = n;
+  if (camOpen) updateCameraChar();
+  scheduleYowariMove();
+}
+
+function yowariArriveAtDoor(side) {
+  yowariDoor = side; yowariCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatYowari(); return; }
+  yowariDT = setTimeout(function() {
+    if (!running || yowariDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('yowari');
+  }, getDoorWait(customLevels.yowari));
+}
+
+function defeatYowari() {
+  clearTimeout(yowariDT);
+  yowariDoor = null; yowariCam = 5; yowariPath = null; yowariIdx = 0;
+  yowariSpeedStage = 0;
+  updateYowariGuiltDisplay();
+  updateSideEntity();
+  if (camOpen) updateCameraChar();
+  scheduleYowariMove();
+}
+
+function incrementYowariGuilt() {
+  if (customLevels.yowari === 0) return;
+  if (yowariSpeedStage < 3) {
+    yowariSpeedStage++;
+    updateYowariGuiltDisplay();
+    if (!yowariDoor) scheduleYowariMove();
+  }
+}
+
+function updateYowariGuiltDisplay() {
+  var symbols = [];
+  for (var i = 0; i < 4; i++) {
+    symbols.push(i < yowariSpeedStage ? '●' : '○');
+  }
+  $('yowari-guilt').textContent = symbols.join('');
+}
+
+// ============================================================
+// キツネ団長AI - Clock gauge (drain, click to wind)
+// ============================================================
+function startClockDrain() {
+  if (customLevels.kitsune === 0) return;
+  clearInterval(clockDrainId);
+  var drainRate = getClockDrain(customLevels.kitsune);
+  clockDrainId = setInterval(function() {
+    if (!running) return;
+    clockGauge = Math.max(0, clockGauge - drainRate);
+    updateClockDisplay();
+    if (clockGauge <= 0) {
+      gameOver('kitsune');
+    }
+  }, 1000);
+}
+
+function windClock() {
+  if (!running || !camOpen || curCam !== 2 || customLevels.kitsune === 0) return;
+  clockGauge = Math.min(100, clockGauge + 1);
+  updateClockDisplay();
+}
+
+function updateClockDisplay() {
+  var c = Math.round(clockGauge);
+  $('clock-display').textContent = c;
+  $('clock-bar').style.width = c + '%';
+  $('clock-bar').classList.toggle('low', c <= 30 && c > 15);
+  $('clock-bar').classList.toggle('critical', c <= 15);
+}
+
+// ============================================================
+// かあ博士AI - Door approach (normal side)
+// ============================================================
+function scheduleKaaMove() {
+  if (customLevels.kaa === 0) return;
+  clearTimeout(kaaMT);
+  kaaMT = setTimeout(moveKaa, getMoveInterval(customLevels.kaa));
+}
+
+function moveKaa() {
+  if (!running || kaaDoor || customLevels.kaa === 0) return;
+  if (!kaaPath || kaaCam === 4) {
+    kaaPath = Math.random() < 0.5 ? KAA_PATH_L : KAA_PATH_R;
+    kaaIdx = 0;
+  }
+  kaaIdx++;
+  if (kaaIdx >= kaaPath.length) {
+    var lastStep = kaaPath[kaaPath.length - 1];
+    kaaArriveAtDoor(lastStep === 'left_door' ? 'left' : 'right');
+    return;
+  }
+  var n = kaaPath[kaaIdx];
+  if (typeof n === 'number') kaaCam = n;
+  if (camOpen) updateCameraChar();
+  scheduleKaaMove();
+}
+
+function kaaArriveAtDoor(side) {
+  kaaDoor = side; kaaCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatKaa(); return; }
+  kaaDT = setTimeout(function() {
+    if (!running || kaaDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('kaa');
+  }, getDoorWait(customLevels.kaa));
+}
+
+function defeatKaa() {
+  clearTimeout(kaaDT);
+  kaaDoor = null; kaaCam = 4; kaaPath = null; kaaIdx = 0;
+  updateSideEntity();
+  if (camOpen) updateCameraChar();
+  scheduleKaaMove();
+}
+
+// ============================================================
+// うっきちAI - Door approach (reverse side attack)
+// ============================================================
+function scheduleUkkichiMove() {
+  if (customLevels.ukkichi === 0) return;
+  clearTimeout(ukkichiMT);
+  ukkichiMT = setTimeout(moveUkkichi, getMoveInterval(customLevels.ukkichi));
+}
+
+function moveUkkichi() {
+  if (!running || ukkichiDoor || customLevels.ukkichi === 0) return;
+  if (!ukkichiPath || ukkichiCam === 5) {
+    ukkichiPath = Math.random() < 0.5 ? UKKICHI_PATH_L : UKKICHI_PATH_R;
+    ukkichiIdx = 0;
+  }
+  ukkichiIdx++;
+  if (ukkichiIdx >= ukkichiPath.length) {
+    var lastStep = ukkichiPath[ukkichiPath.length - 1];
+    ukkichiArriveAtDoor(lastStep === 'left_door' ? 'left' : 'right');
+    return;
+  }
+  var n = ukkichiPath[ukkichiIdx];
+  if (typeof n === 'number') ukkichiCam = n;
+  if (camOpen) updateCameraChar();
+  scheduleUkkichiMove();
+}
+
+function ukkichiArriveAtDoor(side) {
+  ukkichiDoor = side; ukkichiCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatUkkichi(); return; }
+  ukkichiDT = setTimeout(function() {
+    if (!running || ukkichiDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('ukkichi');
+  }, getDoorWait(customLevels.ukkichi));
+}
+
+function defeatUkkichi() {
+  clearTimeout(ukkichiDT);
+  ukkichiDoor = null; ukkichiCam = 5; ukkichiPath = null; ukkichiIdx = 0;
+  updateSideEntity();
+  if (camOpen) updateCameraChar();
+  scheduleUkkichiMove();
+}
+
+// ============================================================
+// ぽたまるAI - Sound-based music rush
+// ============================================================
+function schedulePotamaru() {
+  if (customLevels.potamaru === 0) return;
+  clearTimeout(potaTimer);
+  potaTimer = setTimeout(potamaruAttack, getPotamaruInterval(customLevels.potamaru));
+}
+
+function potamaruAttack() {
+  if (!running || customLevels.potamaru === 0) return;
+  potaActive = true;
+  var isA = Math.random() < 0.5;
+  if (isA) {
+    potaSide = 'right';
+    playS(sndPotamaruA);
+  } else {
+    potaSide = 'left';
+    playS(sndPotamaruB);
+  }
+
+  potaReactTimer = setTimeout(function() {
+    if (!running || !potaActive) return;
+    if (potaSide === 'left' && !doorL) gameOver('potamaru');
+    else if (potaSide === 'right' && !doorR) gameOver('potamaru');
+    else defeatPotamaru();
+  }, getPotamaruReactTime(customLevels.potamaru));
+}
+
+function defeatPotamaru() {
+  clearTimeout(potaReactTimer);
+  potaActive = false;
+  potaSide = null;
+  schedulePotamaru();
+}
+
+// ============================================================
+// ゲーム進行
+// ============================================================
+function startGame() {
+  $('start-screen').classList.add('fade-out');
+  setTimeout(function() {
+    $('start-screen').classList.remove('active');
+    running = true; elapsed = 0; power = 100; shield = 100; clockGauge = 100;
+    sndBGM.play().catch(function(){});
+    sndClock.play().catch(function(){});
+    tickId = setInterval(gameTick, 1000);
+    pwrId = setInterval(powerTick, 500);
+
+    // Start only active characters
+    if (customLevels.kitsune > 0) startClockDrain();
+    if (customLevels.kaa > 0) scheduleKaaMove();
+    if (customLevels.ukkichi > 0) scheduleUkkichiMove();
+    if (customLevels.potamaru > 0) schedulePotamaru();
+    if (customLevels.kururu > 0) scheduleKururuMove();
+    if (customLevels.madara > 0) scheduleMadaraMove();
+    if (customLevels.kasumi > 0) scheduleKasumiAttack();
+    if (customLevels.arane > 0) startAraneDecay();
+    if (customLevels.yowari > 0) scheduleYowariMove();
+
+    updateShieldDisplay();
+    updateClockDisplay();
+    updateYowariGuiltDisplay();
+    updateShieldHudVisibility();
+  }, 1500);
+}
+
+function gameTick() {
+  if (!running) return;
+  elapsed++;
+  // 12AM -> 6AM in 6 minutes (360 seconds)
+  var progress = Math.min(elapsed / NIGHT_DURATION, 1);
+  var totalMinutes = progress * 360; // 6 hours = 360 minutes
+  var hour = Math.floor(totalMinutes / 60);
+  var displayHour = hour === 0 ? 12 : hour;
+  var suffix = 'AM';
+  $('time-display').textContent = displayHour + ':00 ' + suffix;
+  if (elapsed >= NIGHT_DURATION) nightClear();
+}
+
+function powerTick() {
+  if (!running) return;
+  var d = DRAIN_BASE + DRAIN_ACTIVE_BONUS;
+  if (camOpen) d += DRAIN_CAM;
+  if (doorL) d += DRAIN_DOOR;
+  if (doorR) d += DRAIN_DOOR;
+  if (lightL) d += DRAIN_LIGHT;
+  if (lightR) d += DRAIN_LIGHT;
+  power = Math.max(0, power - d);
+  var p = Math.round(power);
+  $('power-display').textContent = p;
+  $('power-bar').style.width = p + '%';
+  $('power-bar').classList.toggle('low', p <= 25 && p > 10);
+  $('power-bar').classList.toggle('critical', p <= 10);
+  if (power <= 0) powerOut();
+}
+
+// ============================================================
+// 電力切れ / ゲームオーバー / クリア
+// ============================================================
+function powerOut() {
+  running = false; clearAllTimers(); stopAllSounds();
+  setTimeout(function() { gameOver('kururu'); }, 2000);
+}
+
+function gameOver(killer) {
+  running = false; clearAllTimers(); stopAllSounds();
+  // かすみエフェクト解除
+  kasumiLightOff = false;
+  $('kasumi-warning').classList.remove('active');
+  $('kasumi-click-zone').classList.remove('active');
+  document.body.style.filter = '';
+
+  killer = killer || 'kururu';
+  var jumpImg = {
+    kururu: '../image/character/kururu jumpscare.png',
+    madara: '../image/character/madara jumpscare.png',
+    kasumi: '../image/character/kasumi jumpscare.png',
+    araane: '../image/character/arane jumpscare.png',
+    yowari: '../image/character/yowari jumpscare.png',
+    kitsune: '../image/charas_f1/kitsune_jumpscare.png',
+    kaa: '../image/character/kururu jumpscare.png',
+    ukkichi: '../image/character/kururu jumpscare.png',
+    potamaru: '../image/character/kururu jumpscare.png'
+  };
+  $('jumpscare-screen').querySelector('img').src = jumpImg[killer] || jumpImg.kururu;
+  if (sndJump[killer]) playS(sndJump[killer]);
+  $('jumpscare-screen').classList.add('active');
+  setTimeout(function() {
+    $('jumpscare-screen').classList.remove('active');
+    $('gameover-screen').classList.add('active');
+    // Clean up custom night flag
+    localStorage.removeItem('custom_night');
+  }, 1000);
+}
+
+function nightClear() {
+  running = false; clearAllTimers(); stopAllSounds();
+  // かすみエフェクト解除
+  kasumiLightOff = false;
+  $('kasumi-warning').classList.remove('active');
+  $('kasumi-click-zone').classList.remove('active');
+  document.body.style.filter = '';
+
+  playS(sndClearChime);
+  $('clear-screen').classList.add('active');
+  setTimeout(function() { playS(sndClearYay); }, 500);
+
+  // Save clear status for preset
+  var preset = localStorage.getItem('custom_current_preset');
+  if (preset && preset !== 'custom') {
+    localStorage.setItem('cn_cleared_' + preset, 'true');
+  }
+
+  // Clean up
+  localStorage.removeItem('custom_night');
+  localStorage.removeItem('custom_levels');
+  localStorage.removeItem('custom_current_preset');
+
+  // Return to custom night selector after 3 seconds
+  setTimeout(function() {
+    allowNavigation();
+    window.location.href = 'index.html';
+  }, 3000);
+}
+
+function clearAllTimers() {
+  clearInterval(tickId); clearInterval(pwrId);
+  // キツネ
+  clearInterval(clockDrainId);
+  // かあ
+  clearTimeout(kaaMT); clearTimeout(kaaDT);
+  // うっきち
+  clearTimeout(ukkichiMT); clearTimeout(ukkichiDT);
+  // ぽたまる
+  clearTimeout(potaTimer); clearTimeout(potaReactTimer);
+  // くるる
+  clearTimeout(kururuMT); clearTimeout(kururuDT); clearTimeout(kururuWT);
+  // まだら
+  clearTimeout(madaraMT); clearTimeout(madaraDT);
+  // かすみ
+  clearTimeout(kasumiTimer); clearTimeout(kasumiClickTimer);
+  // アラネ
+  clearInterval(araneDecayTimer);
+  // よわり
+  clearTimeout(yowariMT); clearTimeout(yowariDT);
+}
+
+// ============================================================
+// イベント
+// ============================================================
+
+// タイプライター演出
+(function() {
+  var text = presetName.toUpperCase();
+  var el = $('title-text');
+  var i = 0;
+  setTimeout(function type() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+      setTimeout(type, 100);
+    }
+  }, 500);
+})();
+
+// HUDにプリセット名表示
+$('night-label').textContent = presetName;
+
+$('start-btn').addEventListener('click', function() {
+  if ($('start-screen').classList.contains('fade-out')) return;
+  startGame();
+});
+
+// Retry -> back to selector
+$('retry-btn').addEventListener('click', function() {
+  allowNavigation();
+  window.location.href = 'index.html';
+});
+
+$('cam-toggle-area').addEventListener('click', function() { if (running) openCamera(); });
+$('duct-enter-btn').addEventListener('click', function() { if (running && camOpen) switchCam(9); });
+$('duct-back-btn').addEventListener('click', function() { if (running && camOpen) switchCam(6); });
+$('camera-close-bar').addEventListener('click', function() { if (running) closeCamera(); });
+
+// カメラボタン
+document.querySelectorAll('.cam-btn').forEach(function(b) {
+  b.addEventListener('click', function() {
+    if (running && camOpen) {
+      var camId = +b.dataset.cam;
+      if (camId >= 1 && camId <= 8) switchCam(camId);
+    }
+  });
+});
+
+// ドア・ライトボタン
+document.querySelectorAll('.btn-door').forEach(function(b) {
+  b.addEventListener('click', function() { if (running) toggleDoor(b.dataset.side); });
+});
+document.querySelectorAll('.btn-light').forEach(function(b) {
+  b.addEventListener('mousedown', function() { if (running) setLight(b.dataset.side, true); });
+  b.addEventListener('mouseup', function() { setLight(b.dataset.side, false); });
+  b.addEventListener('mouseleave', function() { setLight(b.dataset.side, false); });
+});
+
+// かすみクリック
+$('kasumi-click-zone').addEventListener('click', kasumiClick);
+
+// シールド修復
+$('shield-add-btn').addEventListener('click', function() { if (running && camOpen) repairShield(); });
+
+// カメラクリック領域（キツネ時計巻き）
+$('camera-click-zone').addEventListener('click', windClock);
+
+// キーボード操作
+document.addEventListener('keydown', function(e) {
+  if (!running) return;
+  var key = e.key.toLowerCase();
+  switch(key) {
+    case 'q': toggleDoor('left'); break;
+    case 'e': toggleDoor('right'); break;
+    case 'a': setLight('left', true); break;
+    case 'd': setLight('right', true); break;
+    case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
+    case 'r': if (camOpen) repairShield(); break;
+  }
+  // 数字キーでカメラ切替
+  if (camOpen) {
+    var num = parseInt(key);
+    if (num >= 1 && num <= 8) switchCam(num);
+  }
+});
+document.addEventListener('keyup', function(e) {
+  switch(e.key.toLowerCase()) {
+    case 'a': setLight('left', false); break;
+    case 'd': setLight('right', false); break;
+  }
+});
+
+// Hide HUDs for disabled characters
+if (customLevels.yowari === 0) {
+  $('yowari-hud').style.display = 'none';
+}
+if (customLevels.kasumi === 0) {
+  $('kasumi-warning').style.display = 'none';
+}
+
+// 初期化
+applySideAreas();
+window.addEventListener('resize', applySideAreas);
+// 初期状態でシールドHUD非表示
+$('shield-hud').style.display = 'none';
+</script>
+</body>
+</html>

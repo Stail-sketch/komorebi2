@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: "游明朝", "Yu Mincho", "Hiragino Mincho Pro", serif;
+    }
+    .message {
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 1.5s ease-in forwards;
+    }
+    .message p {
+      font-size: 1.4rem;
+      letter-spacing: 0.3em;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="message">
+    <p>...見つけた...</p>
+  </div>
+
+  <script>
+    // Night4クリアチェック
+    if (localStorage.getItem('night4_clear') !== 'true') {
+      window.location.href = '../../index.html';
+    } else {
+      // Night5アンロック
+      localStorage.setItem('night5_unlocked', 'true');
+
+      // 2秒後にNight5本体へリダイレクト
+      setTimeout(function() {
+        window.location.href = '../../night5/';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

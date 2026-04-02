@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>サーバーアクセスログ - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title><link rel="stylesheet" href="../css/style.css"></head>
+<body>
+  <header class="site-header"><div class="header-inner"><div class="site-logo"><a href="index.html">あの番組を覚えていますか<span class="logo-sub">〜木漏れ日遊園地編〜</span></a></div><nav class="site-nav"><ul><li><a href="index.html">トップ</a></li><li><a href="gaiyou.html">番組概要</a></li><li><a href="schedule.html">放送情報</a></li><li><a href="staff.html">スタッフ</a></li><li><a href="contact.html">お問い合わせ</a></li></ul></nav></div></header>
+  <section class="page-hero"><h1>サーバーアクセスログ</h1><p class="hero-subtitle">不正アクセスの技術的詳細</p></section>
+  <main class="main-content">
+    <section class="section">
+      <h2 class="section-title">概要</h2>
+      <div class="card">
+        <p>本サイトのサーバーに対して、2026年2月の開設以降、複数回の「不正書き込み」が発生しています。アラネがサーバーのアクセスログを詳細に分析した結果を報告します。</p>
+        <p style="margin-top: 12px;">結論を先に述べます：<strong>これらの書き込みは、既知のネットワークプロトコルを経由していません。</strong></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">不正書き込みの一覧</h2>
+      <div class="card" style="font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 2; background: #111; color: #0f0; padding: 24px; overflow-x: auto;">
+        <p>[INCIDENT LOG - UNAUTHORIZED WRITE EVENTS]</p>
+        <p>=========================================</p>
+        <p>&nbsp;</p>
+        <p>#001 | 2026/02/20 03:00:00 | otayori_03.html | "みつけてくれて ありがとう"</p>
+        <p>#002 | 2026/02/27 03:00:00 | otayori_05.html | ひらがなのメッセージ</p>
+        <p>#003 | 2026/03/06 03:00:00 | otayori_08.html | あかねの記憶の断片</p>
+        <p>#004 | 2026/03/13 03:00:00 | otayori_10.html | パパを探している旨</p>
+        <p>#005 | 2026/03/20 03:00:00 | otayori_12.html | 他のキャラクターへの言及</p>
+        <p>#006 | 2026/03/30 03:00:00 | otayori_14.html | 署名入りの長文（「あかね」）</p>
+        <p>#007 | 2026/03/31 03:00:00 | otayori_16.html | 脅迫メールへの反応</p>
+        <p>&nbsp;</p>
+        <p>COMMON CHARACTERISTICS:</p>
+        <p>  - Timestamp: ALWAYS 03:00:00 JST (±0 sec)</p>
+        <p>  - Source IP: NONE</p>
+        <p>  - HTTP method: NONE</p>
+        <p>  - Session ID: NONE</p>
+        <p>  - Authentication: NONE</p>
+        <p>  - File modification detected by filesystem watcher</p>
+        <p>  - No corresponding network packet in any log</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">技術的分析</h2>
+
+      <div class="card">
+        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">ネットワーク層の分析</h3>
+        <p>アラネはサーバーのネットワークインターフェースにパケットキャプチャ（tcpdump）を常時稼働させている。不正書き込みが発生した午前3:00:00前後の30分間のパケットログを精査した結果：</p>
+        <ul style="padding-left: 24px; margin-top: 8px; line-height: 2;">
+          <li>午前2:30〜3:30の間に、サーバーへのHTTP/HTTPS接続は<strong>ゼロ</strong></li>
+          <li>SSH接続もゼロ。FTP接続もゼロ</li>
+          <li>DNS問い合わせもゼロ</li>
+          <li>いかなるプロトコルによるインバウンドパケットも記録されていない</li>
+          <li>しかし、ファイルシステム上ではHTMLファイルが<strong>変更されている</strong></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">ファイルシステム層の分析</h3>
+        <p>inotify（ファイルシステム監視）のログ：</p>
+        <div style="margin-top: 12px; font-family: 'Courier New', monospace; font-size: 0.85rem; background: #111; color: #0f0; padding: 16px;">
+          <p>[2026/03/30 03:00:00.000] IN_MODIFY /var/www/html/official/otayori_14.html</p>
+          <p>[2026/03/30 03:00:00.000] IN_CLOSE_WRITE /var/www/html/official/otayori_14.html</p>
+        </div>
+        <p style="margin-top: 12px;">ファイルの変更イベントは記録されている。しかし、変更を行った<strong>プロセスID（PID）が存在しない</strong>。通常、ファイルの書き込みはOSのプロセスが行う。テキストエディタ、Webサーバー、スクリプト——何らかのプロセスが必ず介在する。しかし、これらの書き込みにはプロセスが介在していない。ファイルが「自然に」変わっている。</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">ディスク層の分析</h3>
+        <p>アラネはさらに深い層——ディスクのブロックデバイスレベルでのI/Oトレースを実施。</p>
+        <div style="margin-top: 12px; font-family: 'Courier New', monospace; font-size: 0.85rem; background: #111; color: #0f0; padding: 16px;">
+          <p>[blktrace analysis]</p>
+          <p>03:00:00.000 - Write operation detected on block 0x<span class="redacted">████████</span></p>
+          <p>  Initiating process: UNKNOWN</p>
+          <p>  IO scheduler queue: NOT QUEUED</p>
+          <p>  DMA transfer: NOT INITIATED BY CPU</p>
+          <p>  Status: WRITE COMPLETED SUCCESSFULLY</p>
+          <p>  Note: Block write occurred WITHOUT corresponding CPU instruction</p>
+        </div>
+        <p style="margin-top: 12px;">ディスクへの書き込みが、CPUの命令なしに発生している。これはハードウェアの誤動作ではない（同じブロックに意味のあるHTML文字列が書き込まれている）。しかし、CPUがこの書き込みを命令していない。</p>
+      </div>
+
+      <div class="card" style="border-left: 3px solid #dc2626;">
+        <h3 style="margin-bottom: 8px; font-size: 1rem; color: #dc2626;">メール書き込みの分析</h3>
+        <p>otayori_16.htmlで報告した匿名メール#3（「おねがい」と題されたメール）についても、同様の分析を行った。</p>
+        <ul style="padding-left: 24px; margin-top: 8px; line-height: 2;">
+          <li>メールサーバー（Postfix）のログにreceivedの記録なし</li>
+          <li>SMTPセッションの痕跡なし</li>
+          <li>メールヘッダーが完全に空白（From、To、Date、Message-IDの全てが空）</li>
+          <li>メールボックスのmbox形式ファイルに、直接テキストが「出現」した</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">アラネの所見</h2>
+      <div class="card">
+        <p>「私はエンジニアです。25年間、サーバーの管理とネットワークセキュリティに携わってきました。その経験の全てをもって言います——これは不正アクセスではありません。不正アクセスには必ず経路がある。ポート、プロトコル、セッション。全ての通信には痕跡が残る。しかし、これらの書き込みには経路が存在しない。」</p>
+        <p style="margin-top: 12px;">「私が考え得る技術的説明は全て排除しました。ルートキット、カーネルモジュール、ファームウェアレベルの改竄——全て調査しました。サーバーのハードウェアも交換しました。OSもクリーンインストールしました。それでも午前3時に書き込みは発生しました。」</p>
+        <p style="margin-top: 12px;">「残る説明は一つだけです。誰かが——ネットワークを経由せずに、OSを経由せずに、CPUを経由せずに——直接ディスクにデータを書き込んでいる。それが可能な存在を、私は知りません。でも、あの書き込みを読むと——8歳の女の子が助けを求めている。技術的に説明不可能でも、無視することはできません。」</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">セキュリティ対策の経過</h2>
+      <div class="card">
+        <table class="info-table">
+          <tr><th>2/21</th><td>ファイアウォールルール強化。全ポートの監視開始。→ 効果なし</td></tr>
+          <tr><th>2/28</th><td>サーバーOSのクリーンインストール。→ 効果なし</td></tr>
+          <tr><th>3/7</th><td>サーバーハードウェアを物理的に交換。→ 効果なし</td></tr>
+          <tr><th>3/14</th><td>ネットワークケーブルを物理的に切断した状態でテスト。→ <strong>書き込みが発生</strong></td></tr>
+          <tr><th>3/21</th><td>サーバーの電源を切った状態（完全シャットダウン）で監視。→ 電源オフ中は書き込みなし。ただし、翌日電源を入れた時点で、午前3時の書き込み分が「遡って」存在していた</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <div style="margin-top: 40px; text-align: center;">
+      <a href="investigation.html" class="btn btn-primary">調査記録に戻る</a>
+    </div>
+  </main>
+  <footer class="site-footer"><p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p></footer>
+  <script src="../js/main.js"></script>
+</body>
+</html>

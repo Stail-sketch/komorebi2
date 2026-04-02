@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大量の情報提供 - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .flood-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flood-entry {
+      padding: 8px 14px;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      border-left: 2px solid var(--color-gray-200);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .flood-entry .flood-id {
+      font-size: 0.7rem;
+      color: var(--color-gray-400);
+      margin-bottom: 2px;
+    }
+
+    .flood-entry .flood-text {
+      color: var(--color-gray-700);
+    }
+
+    /* 文字化け・ノイズ系 */
+    .garbled {
+      color: var(--color-gray-300);
+      font-family: monospace;
+      letter-spacing: -0.05em;
+    }
+
+    .spam-entry {
+      color: var(--color-gray-300);
+      font-size: 0.8rem;
+    }
+
+    .duplicate-entry {
+      opacity: 0.4;
+    }
+
+    /* 重なり演出 */
+    .overlap-group {
+      position: relative;
+      margin: 16px 0;
+      min-height: 100px;
+    }
+    .overlap-group .flood-entry {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: 4px;
+      padding: 10px 14px;
+    }
+    .overlap-group .flood-entry:nth-child(1) { top: 0; z-index: 3; transform: rotate(-0.5deg); }
+    .overlap-group .flood-entry:nth-child(2) { top: 8px; left: 6px; z-index: 2; transform: rotate(0.3deg); opacity: 0.7; }
+    .overlap-group .flood-entry:nth-child(3) { top: 16px; left: 12px; z-index: 1; transform: rotate(-0.2deg); opacity: 0.4; }
+
+    /* 重要な情報（埋もれている） */
+    .hidden-important {
+      border-left-color: var(--color-gray-200);
+    }
+
+    .evidence-clickable {
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-left-color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      background-color: rgba(180, 180, 255, 0.05);
+      border-left-color: rgba(180, 180, 255, 0.5);
+    }
+
+    .flood-counter {
+      text-align: center;
+      padding: 12px;
+      font-size: 0.8rem;
+      color: var(--color-gray-400);
+      border-bottom: 1px solid var(--color-gray-200);
+      margin-bottom: 16px;
+    }
+
+    .flood-scroll-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--color-gray-400);
+      padding: 8px;
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>情報提供一覧</h1>
+    <p class="hero-subtitle">視聴者から寄せられた大量の情報</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <div class="card">
+        <div class="flood-counter">
+          情報提供件数：<strong>2,847件</strong>（うち有効：推定 12件）
+        </div>
+        <p style="font-size: 0.85rem; color: var(--color-gray-500);">番組放送後、短時間のうちに大量の情報提供が寄せられました。その大半は無関係な内容や文字化けしたデータですが、中に重要な情報が含まれている可能性があります。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">受信データ（新着順）</h2>
+      <div class="card flood-container">
+
+        <div class="flood-entry spam-entry">
+          <p class="flood-id">#2847 - 2026/03/30 03:42:18</p>
+          <p class="flood-text">asdfjkl;asdfjkl;asdfjkl;</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#2846 - 2026/03/30 03:41:55</p>
+          <p class="flood-text">木漏れ日遊園地、懐かしいですね。毎週見てました。</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#2845 - 2026/03/30 03:41:30</p>
+          <p class="flood-text">繧ｭ繝?繝阪え繧ｵ繝ｳ繧貞ｸ上∪繧後◆繝??繝?繝?繝??繝?繝代?繝?</p>
+        </div>
+
+        <div class="flood-entry spam-entry duplicate-entry">
+          <p class="flood-id">#2844 - 2026/03/30 03:41:28</p>
+          <p class="flood-text">木漏れ日遊園地、懐かしいですね。毎週見てました。</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#2843 - 2026/03/30 03:40:57</p>
+          <p class="flood-text">キツネの着ぐるみが怖かった記憶があります</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#2842 - 2026/03/30 03:40:33</p>
+          <p class="flood-text">&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</p>
+        </div>
+
+        <div class="flood-entry spam-entry">
+          <p class="flood-id">#2841 - 2026/03/30 03:40:12</p>
+          <p class="flood-text">この番組知りません</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#2840 - 2026/03/30 03:39:48</p>
+          <p class="flood-text">うちの子が出たことがあります。オーディションに受かって。普通の収録でした。</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#2839 - 2026/03/30 03:39:21</p>
+          <p class="flood-text">0xE3 0x82 0xAD 0xE3 0x83 0x84 0xE3 0x83 ERROR BUFFER OVERFLOW</p>
+        </div>
+
+        <div class="flood-entry spam-entry duplicate-entry">
+          <p class="flood-id">#2838 - 2026/03/30 03:39:18</p>
+          <p class="flood-text">asdfjkl;asdfjkl;asdfjkl;</p>
+        </div>
+
+        <div class="flood-scroll-hint">-- 大量のデータを省略 --</div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#2214 - 2026/03/30 03:15:03</p>
+          <p class="flood-text">ゆめスタジオの近くに住んでました。夜中に子どもの泣き声が聞こえることがあった。</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#2213 - 2026/03/30 03:14:44</p>
+          <p class="flood-text">NULL NULL NULL NULL NULL NULL NULL</p>
+        </div>
+
+        <div class="flood-entry spam-entry">
+          <p class="flood-id">#2212 - 2026/03/30 03:14:22</p>
+          <p class="flood-text">怖い話やめてくださいｗｗｗ</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#2211 - 2026/03/30 03:14:01</p>
+          <p class="flood-text">1996年の放送で、背景に知らない子どもが映り込んでいるのを見た気がする</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#2210 - 2026/03/30 03:13:38</p>
+          <p class="flood-text">jdg8a2p0fj SEGFAULT at 0x0000 k2l4m5n6</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 重なり演出セクション -->
+    <section class="section">
+      <h2 class="section-title">同時刻の重複投稿</h2>
+      <div class="card">
+        <p style="font-size: 0.8rem; color: var(--color-gray-500); margin-bottom: 16px;">03:00:00 前後に集中した投稿群（同一秒内に複数件受信）</p>
+
+        <div class="overlap-group">
+          <div class="flood-entry">
+            <p class="flood-id">#1822 - 2026/03/30 03:00:01</p>
+            <p class="flood-text">見てた見てた。なつかしい</p>
+          </div>
+          <div class="flood-entry">
+            <p class="flood-id">#1821 - 2026/03/30 03:00:01</p>
+            <p class="flood-text garbled">&#x2588;&#x2588;を&#x2588;&#x2588;てください&#x2588;&#x2588;&#x2588;が&#x2588;&#x2588;</p>
+          </div>
+          <div class="flood-entry">
+            <p class="flood-id">#1820 - 2026/03/30 03:00:01</p>
+            <p class="flood-text garbled">tasuket</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card flood-container">
+
+        <div class="flood-scroll-hint">-- 大量のデータを省略 --</div>
+
+        <div class="flood-entry spam-entry">
+          <p class="flood-id">#1104 - 2026/03/30 02:33:58</p>
+          <p class="flood-text">番組の情報ないです。すみません。</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#1103 - 2026/03/30 02:33:41</p>
+          <p class="flood-text">最終回の映像持ってる人いませんか？</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#1102 - 2026/03/30 02:33:19</p>
+          <p class="flood-text">dGhlIGNoaWxkcmVuIGFyZSBzdGlsbCB0aGVyZQ==</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#1101 - 2026/03/30 02:33:02</p>
+          <p class="flood-text">DVDとか出てないんですかね？探してるんですけど</p>
+        </div>
+
+        <div class="flood-entry spam-entry duplicate-entry">
+          <p class="flood-id">#1100 - 2026/03/30 02:32:55</p>
+          <p class="flood-text">DVDとか出てないんですかね？探してるんですけど</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#1099 - 2026/03/30 02:32:30</p>
+          <p class="flood-text">ERROR: connection reset by peer</p>
+        </div>
+
+        <!-- 埋もれた重要情報 -->
+        <div class="flood-entry hidden-important evidence-clickable" onclick="collectEvidence('19')">
+          <p class="flood-id">#1098 - 2026/03/30 02:32:17</p>
+          <p class="flood-text">あかねちゃんを知っています。あの子は本名じゃないです。番組では別の名前で呼ばれていました。今も元気かどうか分かりません。ごめんなさい。もっと早く言うべきでした。</p>
+        </div>
+
+        <div class="flood-entry spam-entry">
+          <p class="flood-id">#1097 - 2026/03/30 02:32:01</p>
+          <p class="flood-text">こわいこわいこわい</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#1096 - 2026/03/30 02:31:44</p>
+          <p class="flood-text">&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#1095 - 2026/03/30 02:31:22</p>
+          <p class="flood-text">うちの近所にもゆめスタジオの車が来てたことがある。白いワゴン車。</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#1094 - 2026/03/30 02:31:05</p>
+          <p class="flood-text">011010000110010101101100011100000</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#1093.5 - 2026/03/30 02:30:52</p>
+          <p class="flood-text">ref::709::ERR_CANNOT_RESOLVE pid=0x2C5 -- &#x2588;&#x2588;&#x2588;</p>
+        </div>
+
+        <div class="flood-entry spam-entry">
+          <p class="flood-id">#1093 - 2026/03/30 02:30:48</p>
+          <p class="flood-text">全然わからないけど見てます</p>
+        </div>
+
+        <div class="flood-entry">
+          <p class="flood-id">#1092 - 2026/03/30 02:30:30</p>
+          <p class="flood-text">制作会社の社長って逮捕されたりしてないんですか？</p>
+        </div>
+
+        <div class="flood-entry garbled">
+          <p class="flood-id">#1091 - 2026/03/30 02:30:11</p>
+          <p class="flood-text">WARN: duplicate key 'subject_G0' -- RECORD LOCKED</p>
+        </div>
+
+        <div class="flood-scroll-hint">-- 残り 1,090件 --</div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card" style="text-align: center; font-size: 0.85rem; color: var(--color-gray-500);">
+        <p>情報提供の受付は継続中です。有効な情報の精査には時間がかかります。</p>
+        <p style="margin-top: 8px;">重要な情報をお持ちの方は<a href="contact.html">お問い合わせフォーム</a>より直接ご連絡ください。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Night5クリアチェック
+    if (localStorage.getItem('night5_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

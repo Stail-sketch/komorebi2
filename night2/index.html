@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Night 2 - こもれびゆうえんち2</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; user-select: none; -webkit-user-select: none; }
+    img { -webkit-user-drag: none; pointer-events: none; }
+    button, .cam-btn, .door-btn, .cam-toggle-btn { pointer-events: auto; }
+
+    .hidden { display: none !important; }
+
+    /* ===== ゲームコンテナ ===== */
+    .game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+    /* ===== オフィスビュー ===== */
+    #office-view { position: absolute; inset: 0; }
+    #office-bg-open { width: 100%; height: 100%; object-fit: cover; }
+
+    /* 左右モニターエリア（JSでclip-path設定） */
+    .side-area { position: absolute; overflow: hidden; }
+    /* キャラ画像（ライトの下） */
+    .side-entity { position: absolute; inset: 0; display: none; z-index: 0; }
+    .side-entity.visible { display: block; }
+    .side-entity img { width: 100%; height: 100%; object-fit: cover; }
+    /* ライト（キャラの上に赤く被さる） */
+    .side-light-overlay { position: absolute; inset: 0; background: rgba(180,0,0,0.35); display: none; z-index: 1; }
+    .side-light-overlay.active { display: block; }
+    /* ドア閉鎖（最前面） */
+    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: none; z-index: 2; }
+    .door-closed-overlay.active { display: block; }
+
+    /* DOOR/LIGHTボタン */
+    /* DOOR/LIGHTボタン（前作準拠） */
+    .door-buttons { position: absolute; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
+    .door-btn {
+      width: 120px; height: 70px;
+      background: rgba(20,20,20,0.8); border: 2px solid #444;
+      color: #0f0; font-family: 'Courier New', monospace; font-size: 14px;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 4px; letter-spacing: 2px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .door-btn:hover { background: rgba(40,40,40,0.9); border-color: #666; }
+    .btn-door.closed { background: rgba(40,20,20,0.9); border-color: #f44; color: #f44; }
+    .btn-light { color: #fc4; }
+    .btn-light:hover { border-color: #fc4; }
+    .btn-light.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
+
+    /* HUD（オフィスビュー右上：時刻＋Night） */
+    #hud { position: absolute; z-index: 10; top: 10px; right: 14px; text-align: right; }
+    .hud-row { font-size: 0.85rem; color: #5a8ab5; text-shadow: 0 0 6px rgba(80,140,200,0.3); line-height: 1.6; }
+    #time-display { font-size: 2.2rem; color: #8cc; font-weight: bold; letter-spacing: 2px; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    /* パワー（カメラビュー左下） */
+    #power-hud { position: absolute; z-index: 100; bottom: 20px; left: 20px; pointer-events: none; }
+    #power-hud .power-label { font-size: 14px; color: #5a8ab5; letter-spacing: 2px; margin-bottom: 4px; }
+    #power-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #2a3a50; }
+    #power-bar { height: 100%; background: #4c8; transition: width 0.5s; }
+    #power-bar.low { background: #e64; }
+    #power-bar.critical { background: #f22; animation: blink 0.5s infinite; }
+
+    /* カメラ開閉ボタン（前作準拠） */
+    .cam-toggle-btn {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      padding: 12px 32px; background: #1a1a2a; border: 2px solid #446;
+      color: #8af; font-family: 'Courier New', monospace; font-size: 16px;
+      cursor: pointer; letter-spacing: 2px; z-index: 15;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .cam-toggle-btn:hover { background: #252540; border-color: #88f; }
+    /* CLOSE側 */
+    #camera-close-bar { background: #2a1a1a; border-color: #644; color: #f88; }
+    #camera-close-bar:hover { background: #3a2020; border-color: #a66; }
+
+    /* ===== カメラビュー（前作準拠） ===== */
+    #camera-view { position: absolute; inset: 0; z-index: 20; background: #000; }
+
+    #camera-feed { position: relative; width: 100%; height: 100%; overflow: hidden; background: #050a10; }
+
+    /* 背景画像（これだけパンする） */
+    #camera-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: 50% 50%;
+      filter: brightness(0.50) contrast(1.15) saturate(0.25);
+    }
+
+    /* カメラ内キャラ（背景の上に固定配置、パンしない） */
+    #camera-char {
+      position: absolute; z-index: 2; bottom: 8%; left: 50%; height: 55%;
+      transform: translateX(-50%);
+      filter: brightness(0.50) contrast(1.15) saturate(0.25);
+    }
+
+    /* まだら用（うっすら見える「あれ、なんかいる？」レベル） */
+    #camera-char-madara {
+      position: absolute; z-index: 2; bottom: 8%; left: 50%; height: 55%;
+      transform: translateX(-50%);
+      opacity: 0.25;
+      filter: blur(1px) brightness(0.5) contrast(1.15) saturate(0.3);
+    }
+
+    /* 静的キャラ（雰囲気用） */
+    .camera-static-char {
+      position: absolute; z-index: 1; bottom: 8%; left: 50%; height: 45%;
+      transform: translateX(-50%);
+      opacity: 0.5;
+      filter: brightness(0.50) contrast(1.15) saturate(0.25);
+    }
+
+    /* スキャンライン */
+    #camera-scanlines {
+      position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+    }
+    /* 走査線アニメ */
+    #camera-scanline-sweep {
+      position: absolute; inset: 0; z-index: 4; pointer-events: none;
+      background: linear-gradient(180deg, transparent 0%, rgba(150,200,255,0.03) 48%, rgba(150,200,255,0.08) 50%, rgba(150,200,255,0.03) 52%, transparent 100%);
+      background-size: 100% 30%;
+      animation: scanline 4s linear infinite;
+    }
+    @keyframes scanline { 0%{background-position:0 -30vh} 100%{background-position:0 130vh} }
+    /* ビネット */
+    #camera-vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%); }
+    /* ノイズ（切替時に一瞬暗転） */
+    #camera-noise {
+      position: absolute; inset: 0; z-index: 6; pointer-events: none;
+      background: #000;
+    }
+
+    /* カメラUI */
+    #camera-label { position: absolute; top: 14px; left: 18px; font-size: 1.1rem; color: rgba(100,200,255,0.8); z-index: 10; text-shadow: 0 0 10px rgba(100,200,255,0.4); }
+    #rec-indicator { position: absolute; top: 14px; right: 18px; font-size: 0.8rem; color: #f44; z-index: 10; animation: blink 1s infinite; }
+
+    /* カメラボタン */
+    #cam-buttons { position: absolute; bottom: 16px; right: 16px; display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; z-index: 10; }
+    .cam-btn {
+      background: rgba(8,12,25,0.9); color: #5a90c0; border: 2px solid rgba(40,70,110,0.6);
+      padding: 12px 22px; font-family: 'Courier New', monospace; font-size: 16px;
+      cursor: pointer; border-radius: 2px; transition: all 0.12s; letter-spacing: 2px;
+    }
+    .cam-btn:hover { background: rgba(20,35,60,0.9); border-color: rgba(60,100,160,0.7); color: #8bc; }
+    .cam-btn.active { background: rgba(30,55,90,0.95); border-color: #4af; color: #fff; box-shadow: 0 0 8px rgba(68,170,255,0.2); }
+    /* DUCT入口/戻るボタン（カメラ映像上部） */
+    #duct-enter-btn, #duct-back-btn {
+      position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
+      z-index: 10; padding: 16px 44px;
+      font-family: 'Courier New', monospace; font-size: 18px; letter-spacing: 3px;
+      cursor: pointer; border: 2px solid; transition: all 0.15s;
+    }
+    #duct-enter-btn {
+      background: rgba(40,20,0,0.8); border-color: #f80; color: #f80;
+    }
+    #duct-enter-btn:hover { background: rgba(80,40,0,0.9); color: #fc4; }
+    #duct-back-btn {
+      background: rgba(0,20,40,0.8); border-color: #4af; color: #4af;
+    }
+    #duct-back-btn:hover { background: rgba(0,40,80,0.9); color: #8cf; }
+
+    #camera-close-bar { z-index: 50; }
+
+    /* ===== オーバーレイ ===== */
+    .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+    .overlay-screen.active { display: flex; }
+    #jumpscare-screen { background: #000; }
+    #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: shake 0.3s infinite; }
+    @keyframes shake { 0%{transform:translate(0,0) scale(1.05)} 25%{transform:translate(-5px,3px) scale(1.08)} 50%{transform:translate(4px,-4px) scale(1.05)} 75%{transform:translate(-3px,5px) scale(1.07)} 100%{transform:translate(5px,-2px) scale(1.05)} }
+    #gameover-screen { background: #000; gap: 30px; }
+    #gameover-screen h1 { font-size: 3rem; color: #c00; letter-spacing: 0.3em; text-shadow: 0 0 30px rgba(200,0,0,0.5); }
+    .overlay-btn { background: none; border: 1px solid #666; color: #888; padding: 10px 40px; font-family: 'Courier New', monospace; font-size: 1rem; cursor: pointer; }
+    .overlay-btn:hover { border-color: #aaa; color: #fff; }
+    #clear-screen { background: #000; }
+    #clear-screen h1 { font-size: 2.5rem; color: #acd; letter-spacing: 0.5em; animation: fadeUp 2s ease; }
+    #clear-screen p { margin-top: 20px; color: #567; font-size: 0.9rem; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    /* スタート画面 */
+    #start-screen {
+      background: #000; z-index: 2000;
+      flex-direction: column; gap: 0;
+      cursor: default;
+    }
+    #start-title {
+      font-size: 5rem; letter-spacing: 0.4em; color: #4a7aaa;
+      text-shadow: 0 0 20px rgba(60,120,180,0.3);
+      margin-bottom: 12px; min-height: 3.5rem;
+    }
+    #start-title .cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: #4a7aaa; vertical-align: text-bottom;
+      margin-left: 4px; animation: cursorBlink 0.6s step-end infinite;
+    }
+    @keyframes cursorBlink { 0%,100% { border-color: #4a7aaa; } 50% { border-color: transparent; } }
+    #start-sub {
+      color: #334; font-size: 0.85rem; letter-spacing: 0.15em;
+      opacity: 0; animation: fadeIn 1s 2.8s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+    #start-btn:hover { background: #2a4a6a; color: #000; border-color: #4a7aaa; }
+    /* フェードアウト */
+    #start-screen.fade-out {
+      animation: screenFadeOut 1.5s ease forwards;
+    }
+    @keyframes screenFadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- オーバーレイ -->
+  <div id="start-screen" class="overlay-screen">
+    <div id="start-title"><span id="title-text"></span><span class="cursor"></span></div>
+    <div id="start-sub">1:00 AM - 2:00 AM</div>
+  </div>
+  <!-- ブリーフィング画面 -->
+  <div id="briefing-screen" class="overlay-screen active" style="background:#000;justify-content:flex-start;padding:8vh 10vw;">
+    <div id="briefing-log" style="font-family:'Courier New',monospace;font-size:15px;line-height:2.2;max-width:700px;overflow-y:auto;max-height:75vh;"></div>
+    <button id="briefing-start-btn" style="
+      margin-top:30px;padding:14px 56px;background:none;
+      border:1px solid #1a3a1a;color:#1a3a1a;font-family:'Courier New',monospace;
+      font-size:1.1rem;letter-spacing:0.3em;cursor:pointer;
+      opacity:0;transition:opacity 0.8s,background 0.2s,color 0.2s,border-color 0.2s;
+    ">▶ broadcast_start</button>
+  </div>
+
+  <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
+  <div id="gameover-screen" class="overlay-screen"><h1>GAME OVER</h1><button class="overlay-btn" id="retry-btn">RETRY</button></div>
+  <div id="clear-screen" class="overlay-screen"><h1>NIGHT 2 CLEAR</h1><p>2:00 AM</p></div>
+
+  <!-- ===== ゲーム本体 ===== -->
+  <div class="game-container">
+
+    <!-- オフィスビュー -->
+    <div id="office-view">
+      <img id="office-bg-open" src="../image/camera/desk_on.png.png" alt="">
+
+      <div id="left-area" class="side-area">
+        <div class="side-light-overlay" id="left-light"></div>
+        <div class="door-closed-overlay" id="left-door"></div>
+        <div class="side-entity" id="left-entity"><img id="left-entity-img" src="../image/character/kururu door.png" alt=""></div>
+      </div>
+      <div id="right-area" class="side-area">
+        <div class="side-light-overlay" id="right-light"></div>
+        <div class="door-closed-overlay" id="right-door"></div>
+        <div class="side-entity" id="right-entity"><img id="right-entity-img" src="../image/character/kururu door.png" alt=""></div>
+      </div>
+
+      <div class="door-buttons" id="left-buttons">
+        <button class="door-btn btn-door" data-side="left">DOOR (Q)</button>
+        <button class="door-btn btn-light" data-side="left">LIGHT (A)</button>
+      </div>
+      <div class="door-buttons" id="right-buttons">
+        <button class="door-btn btn-door" data-side="right">DOOR (E)</button>
+        <button class="door-btn btn-light" data-side="right">LIGHT (D)</button>
+      </div>
+
+      <div id="hud">
+        <div id="time-display">1:00 AM</div>
+        <div class="hud-row">Night 2</div>
+      </div>
+
+      <button id="cam-toggle-area" class="cam-toggle-btn">OPEN CAMERA (SPACE)</button>
+    </div>
+
+    <!-- カメラビュー（前作と同じ構造） -->
+    <div id="camera-view" class="hidden">
+      <div id="camera-feed">
+        <!-- 背景（これだけobject-positionでパンする） -->
+        <img id="camera-bg" src="../image/camera/CAM1.png" alt="">
+        <!-- キャラ（背景と独立、feedの子だがobject-positionの影響を受けない） -->
+        <img id="camera-char" class="hidden" src="" alt="">
+        <!-- まだら用（非常に薄い表示） -->
+        <img id="camera-char-madara" class="hidden" src="" alt="">
+        <!-- 静的キャラ（雰囲気用） -->
+        <img id="camera-static-char" class="hidden camera-static-char" src="" alt="">
+        <!-- エフェクト -->
+        <div id="camera-scanlines"></div>
+        <div id="camera-scanline-sweep"></div>
+        <div id="camera-vignette"></div>
+        <div id="camera-noise" class="hidden"></div>
+        <!-- DUCT入口ボタン（CAM6の時だけ表示） -->
+        <button id="duct-enter-btn" class="hidden">&#9660; DUCT CAMERA [W]</button>
+        <!-- DUCT→元のCAMに戻るボタン -->
+        <button id="duct-back-btn" class="hidden">&#9650; BACK TO CAM [W]</button>
+        <!-- UI -->
+        <span id="camera-label">CAM 1</span>
+        <span id="rec-indicator">● REC</span>
+        <div id="cam-buttons">
+          <button class="cam-btn active" data-cam="1">CAM1</button>
+          <button class="cam-btn" data-cam="2">CAM2</button>
+          <button class="cam-btn" data-cam="3">CAM3</button>
+          <button class="cam-btn" data-cam="4">CAM4</button>
+          <button class="cam-btn" data-cam="5">CAM5</button>
+          <button class="cam-btn" data-cam="6">CAM6</button>
+          <button class="cam-btn" data-cam="7">CAM7</button>
+          <button class="cam-btn" data-cam="8">CAM8</button>
+        </div>
+        <button id="camera-close-bar" class="cam-toggle-btn">CLOSE CAMERA (SPACE)</button>
+      </div>
+    </div>
+
+    <div id="power-hud">
+      <div class="power-label">POWER: <span id="power-display">100</span>%</div>
+      <div id="power-bar-wrap"><div id="power-bar" style="width:100%"></div></div>
+    </div>
+
+  </div>
+
+<script>
+// ============================================================
+// Night2 ゲームエンジン（Night1ベースで拡張）
+// ============================================================
+
+// --- アクセス制御：Night1クリア済みチェック ---
+if (!localStorage.getItem('night1_clear')) {
+  window.location.href = '../index.html';
+}
+
+const $ = id => document.getElementById(id);
+
+// --- ブラウザの戻る・リロードを無効化（前作準拠） ---
+history.pushState(null, '', location.href);
+window.addEventListener('popstate', () => { history.pushState(null, '', location.href); });
+function _blockUnload(e) { e.preventDefault(); }
+window.addEventListener('beforeunload', _blockUnload);
+function allowNavigation() { window.removeEventListener('beforeunload', _blockUnload); }
+window.addEventListener('keydown', e => {
+  if (e.key === 'F5') e.preventDefault();
+  if ((e.ctrlKey || e.metaKey) && e.key === 'r') e.preventDefault();
+  if (e.altKey && e.key === 'ArrowLeft') e.preventDefault();
+});
+const IMG_W = 1536, IMG_H = 1024;
+
+// --- カメラごとのキャラ表示位置（前作と同じ方式） ---
+const CAM_CHAR_POS = {
+  1: { bottom: '8%',  left: '50%', height: '55%' },
+  2: { bottom: '10%', left: '45%', height: '50%' },
+  3: { bottom: '5%',  left: '55%', height: '50%' },
+  4: { bottom: '8%',  left: '50%', height: '55%' },
+  5: { bottom: '8%',  left: '50%', height: '50%' },
+  6: { bottom: '10%', left: '50%', height: '55%' },
+  7: { bottom: '20%', left: '48%', height: '35%' },
+  8: { bottom: '15%', left: '50%', height: '35%' },
+  9: { bottom: '10%', left: '50%', height: '60%' },  // DUCT CAM（アラネの巣）
+};
+
+// --- cover計算 ---
+function getCoverTransform() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const imgR = IMG_W / IMG_H, vpR = vw / vh;
+  let rW, rH, oX, oY;
+  if (vpR > imgR) { rW = vw; rH = vw / imgR; oX = 0; oY = (vh - rH) / 2; }
+  else { rH = vh; rW = vh * imgR; oX = (vw - rW) / 2; oY = 0; }
+  return { rW, rH, oX, oY, vw, vh };
+}
+
+// --- 左右モニターエリア（確定済みの頂点座標） ---
+const sideShapes = {
+  left: [{x:9.45,y:5.70},{x:25.80,y:11.85},{x:25.70,y:58.85},{x:9.30,y:60.90}],
+  right: [{x:74.30,y:11.85},{x:90.75,y:5.60},{x:90.85,y:60.90},{x:74.30,y:59.15}]
+};
+
+function applySideAreas() {
+  const ct = getCoverTransform();
+  ['left','right'].forEach(side => {
+    const pts = sideShapes[side].map(p => {
+      const sx = ct.oX + ct.rW * p.x / 100;
+      const sy = ct.oY + ct.rH * p.y / 100;
+      return { x: sx / ct.vw * 100, y: sy / ct.vh * 100 };
+    });
+    const minX = Math.min(...pts.map(p=>p.x)), maxX = Math.max(...pts.map(p=>p.x));
+    const minY = Math.min(...pts.map(p=>p.y)), maxY = Math.max(...pts.map(p=>p.y));
+    const el = $(side + '-area');
+    el.style.left = minX + 'vw'; el.style.top = minY + 'vh';
+    el.style.width = (maxX-minX) + 'vw'; el.style.height = (maxY-minY) + 'vh';
+    const clip = pts.map(p => {
+      const rx = (maxX-minX)>0 ? (p.x-minX)/(maxX-minX)*100 : 0;
+      const ry = (maxY-minY)>0 ? (p.y-minY)/(maxY-minY)*100 : 0;
+      return rx.toFixed(1)+'% '+ry.toFixed(1)+'%';
+    });
+    el.style.clipPath = 'polygon('+clip.join(', ')+')';
+  });
+  // ボタン位置
+  const lbP = ct.oX + ct.rW * 9.4 / 100;
+  const rbP = ct.oX + ct.rW * 82 / 100;
+  const btnY = ct.oY + ct.rH * 62 / 100;
+  $('left-buttons').style.left = lbP + 'px'; $('left-buttons').style.top = btnY + 'px';
+  $('right-buttons').style.left = rbP + 'px'; $('right-buttons').style.top = btnY + 'px';
+}
+
+// --- サウンド ---
+const sndBGM = new Audio('../sound/BGM.wav');
+sndBGM.loop = true; sndBGM.volume = 0.15;
+const sndClock = new Audio('../sound/clock_tick.flac');
+sndClock.loop = true; sndClock.volume = 0.15;
+const sndCamSwitch = new Audio('../sound/camera switch.mp3');
+sndCamSwitch.volume = 0.1;
+const sndCamNoise = new Audio('../sound/camera noize.wav');
+sndCamNoise.loop = true; sndCamNoise.volume = 0.08;
+const sndMonitorOff = new Audio('../sound/monitor off.mp3');
+sndMonitorOff.volume = 0.1;
+const sndMonitorOn = new Audio('../sound/monitor on.mp3');
+sndMonitorOn.volume = 0.1;
+const sndLight = new Audio('../sound/light.mp3');
+sndLight.volume = 0.1;
+const sndClearChime = new Audio('../sound/clear_chime.mp3');
+sndClearChime.volume = 0.15;
+const sndClearYay = new Audio('../sound/clear_yay.mp3');
+sndClearYay.volume = 0.15;
+
+// ジャンプスケア音（キャラごとに割り当て）
+const sndJump = {
+  kururu:  new Audio('../sound/587354__breviceps__jumpscare-scream.wav'),
+  madara:  new Audio('../sound/623065__jollyfunway__tiger-jumpscare.mp3'),
+  kasumi:  new Audio('../sound/623437__jollyfunway__stone-age-like-jumpscare.mp3'),
+  araane:  new Audio('../sound/676232__werdkind0m__jumpscare-sound-v2.wav'),
+  yowari:  new Audio('../sound/812134__aksiny_soundeditor__jumpscare-1.wav'),
+};
+Object.values(sndJump).forEach(s => s.volume = 0.075);
+
+function playS(s) { s.currentTime = 0; s.play().catch(()=>{}); }
+function stopAllSounds() {
+  [sndBGM, sndClock, sndCamNoise].forEach(s => { s.pause(); s.currentTime = 0; });
+}
+
+// --- ゲーム状態 ---
+const NIGHT_DURATION = 180, HOUR_DUR = 180; // 3分で1AM→2AM
+
+// パワードレイン（Night2は少し高い）
+const DRAIN_BASE = 0.06, DRAIN_CAM = 0.15, DRAIN_DOOR = 0.5, DRAIN_LIGHT = 0.3;
+
+// くるる（リス）パラメータ - Night1より速い
+const SQ_NORMAL = 5000, SQ_SLOW = 10000, SQ_WATCH = 2000, SQ_DOOR_WAIT = 5000;
+const PATH_L = [1,2,4,7,'left_door'], PATH_R = [1,3,5,8,'right_door'];
+
+// まだら（カメレオン）パラメータ
+const MD_MOVE_INTERVAL = 8000, MD_DOOR_WAIT = 6000;
+const MD_PATH_OPTIONS = [
+  [4, 6, 7, 'left_door'],
+  [4, 6, 8, 'right_door'],
+];
+
+// 静的キャラ（雰囲気用）
+const STATICS = {};
+
+let running=false, elapsed=0, power=100;
+let camOpen=false, curCam=1, prevCam=1;
+let doorL=false, doorR=false, lightL=false, lightR=false;
+
+// くるる状態
+let sqCam=1, sqPath=null, sqIdx=0, sqDoor=null, sqSpd='normal';
+let sqMT=null, sqDT=null, sqWT=null;
+
+// まだら状態
+let mdCam=4, mdPath=null, mdIdx=0, mdDoor=null;
+let mdMT=null, mdDT=null;
+
+let tickId=null, pwrId=null;
+
+// --- カメラ操作（前作と同じパターン） ---
+function openCamera() {
+  if (!running) return;
+  camOpen = true;
+  $('camera-view').classList.remove('hidden');
+  triggerNoise();
+  playS(sndCamSwitch);
+  updateCameraView();
+  sndCamNoise.play().catch(()=>{});
+  sndClock.pause();
+}
+
+function closeCamera() {
+  camOpen = false;
+  $('camera-view').classList.add('hidden');
+  playS(sndCamSwitch);
+  sndCamNoise.pause();
+  if (running) sndClock.play().catch(()=>{});
+}
+
+function switchCam(id) {
+  if (curCam === id) return;
+  prevCam = curCam;
+  curCam = id;
+  triggerNoise();
+  playS(sndCamSwitch);
+  updateCameraView();
+  document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', +b.dataset.cam === id));
+  checkWatch();
+}
+
+function triggerNoise() {
+  const n = $('camera-noise');
+  n.classList.remove('hidden');
+  setTimeout(() => n.classList.add('hidden'), 100);
+}
+
+function updateCameraView() {
+  if (curCam === 9) {
+    $('camera-bg').src = '../image/camera/duct cam.png';
+    $('camera-label').textContent = 'DUCT CAM';
+  } else {
+    $('camera-bg').src = `../image/camera/CAM${curCam}.png`;
+    $('camera-label').textContent = `CAM ${curCam}`;
+  }
+  // DUCTボタン表示制御
+  $('duct-enter-btn').classList.toggle('hidden', curCam === 9);
+  $('duct-back-btn').classList.toggle('hidden', curCam !== 9);
+  updateCameraChar();
+}
+
+function updateCameraChar() {
+  const charEl = $('camera-char');
+  const mdaraEl = $('camera-char-madara');
+  const staticEl = $('camera-static-char');
+
+  // くるるがこのカメラにいるか
+  if (sqCam === curCam && sqCam > 0) {
+    charEl.src = '../image/character/kururu nomal.png';
+    charEl.classList.remove('hidden');
+    const pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
+    charEl.style.bottom = pos.bottom;
+    charEl.style.left = pos.left;
+    charEl.style.height = pos.height;
+    charEl.style.transform = 'translateX(-50%)';
+    charEl.style.opacity = '1';
+    charEl.style.filter = 'brightness(0.50) contrast(1.15) saturate(0.25)';
+  } else {
+    charEl.classList.add('hidden');
+  }
+
+  // まだらがこのカメラにいるか（非常に薄い表示）
+  if (mdCam === curCam && mdCam > 0) {
+    mdaraEl.src = '../image/character/madara nomal.png';
+    mdaraEl.classList.remove('hidden');
+    const pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
+    mdaraEl.style.bottom = pos.bottom;
+    mdaraEl.style.left = pos.left;
+    mdaraEl.style.height = pos.height;
+    mdaraEl.style.transform = 'translateX(-50%)';
+    // ランダムに微妙な不透明度（0.2-0.35）- 「あれ、なんかいるくね？」レベル
+    mdaraEl.style.opacity = (0.20 + Math.random() * 0.15).toFixed(2);
+  } else {
+    mdaraEl.classList.add('hidden');
+  }
+
+  // 静的キャラ表示（雰囲気用、非常に薄い）
+  let staticShown = false;
+  for (const [name, info] of Object.entries(STATICS)) {
+    if (info.cam === curCam && sqCam !== curCam && mdCam !== curCam) {
+      staticEl.src = info.img;
+      staticEl.classList.remove('hidden');
+      const pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
+      staticEl.style.bottom = pos.bottom;
+      staticEl.style.left = pos.left;
+      staticEl.style.height = pos.height;
+      staticShown = true;
+      break;
+    }
+  }
+  if (!staticShown) {
+    staticEl.classList.add('hidden');
+  }
+}
+
+// --- ドア ---
+function toggleDoor(side) {
+  if (!running) return;
+  if (camOpen) return; // カメラ中はドア・ライト操作不可
+  if (side === 'left') {
+    doorL = !doorL;
+    $('left-door').classList.toggle('active', doorL);
+    document.querySelector('#left-buttons .btn-door').classList.toggle('closed', doorL);
+    playS(doorL ? sndMonitorOff : sndMonitorOn);
+    if (doorL && sqDoor === 'left') defeatSq();
+    if (doorL && mdDoor === 'left') defeatMd();
+  } else {
+    doorR = !doorR;
+    $('right-door').classList.toggle('active', doorR);
+    document.querySelector('#right-buttons .btn-door').classList.toggle('closed', doorR);
+    playS(doorR ? sndMonitorOff : sndMonitorOn);
+    if (doorR && sqDoor === 'right') defeatSq();
+    if (doorR && mdDoor === 'right') defeatMd();
+  }
+}
+
+// --- ライト ---
+function setLight(side, on) {
+  if (camOpen) return; // カメラ中はドア・ライト操作不可
+  if (on) playS(sndLight);
+  if (side === 'left') {
+    lightL = on;
+    document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
+    $('left-light').classList.toggle('active', on);
+  } else {
+    lightR = on;
+    document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
+    $('right-light').classList.toggle('active', on);
+  }
+  updateSideEntity();
+}
+
+// キャラ別ドア前画像
+const DOOR_IMAGES = {
+  kururu: '../image/character/kururu door.png',
+  madara: '../image/character/madara door.png',
+  kasumi: '../image/character/kasumi door.png',
+  yowari: '../image/character/yowari door.png',
+};
+
+function updateSideEntity() {
+  // 左ドアにいるキャラを判定
+  const leftChar = (sqDoor === 'left') ? 'kururu' : (mdDoor === 'left') ? 'madara' : null;
+  const rightChar = (sqDoor === 'right') ? 'kururu' : (mdDoor === 'right') ? 'madara' : null;
+
+  const showL = leftChar && lightL && !doorL;
+  const showR = rightChar && lightR && !doorR;
+
+  if (showL) $('left-entity-img').src = DOOR_IMAGES[leftChar];
+  if (showR) $('right-entity-img').src = DOOR_IMAGES[rightChar];
+
+  $('left-entity').classList.toggle('visible', !!showL);
+  $('right-entity').classList.toggle('visible', !!showR);
+}
+
+// --- ゲーム進行 ---
+function startGame() {
+  // フェードアウト開始
+  $('start-screen').classList.add('fade-out');
+  // フェードアウト完了後にゲーム開始
+  setTimeout(() => {
+    $('start-screen').classList.remove('active');
+    running = true; elapsed = 0; power = 100;
+    sndBGM.play().catch(()=>{});
+    sndClock.play().catch(()=>{});
+    tickId = setInterval(gameTick, 1000);
+    pwrId = setInterval(powerTick, 500);
+    scheduleMoveSq();
+    scheduleMoveMd();
+  }, 1500);
+}
+
+function gameTick() {
+  if (!running) return;
+  elapsed++;
+  // 1AM → 2AM を3分間で
+  const progress = Math.min(elapsed / NIGHT_DURATION, 1);
+  const minutes = Math.floor(progress * 6) * 10; // 10分単位（0,10,20,30,40,50）
+  $('time-display').textContent = `1:${String(minutes).padStart(2,'0')} AM`;
+  if (elapsed >= NIGHT_DURATION) nightClear();
+}
+
+function powerTick() {
+  if (!running) return;
+  let d = DRAIN_BASE;
+  if (camOpen) d += DRAIN_CAM;
+  if (doorL) d += DRAIN_DOOR;
+  if (doorR) d += DRAIN_DOOR;
+  if (lightL) d += DRAIN_LIGHT;
+  if (lightR) d += DRAIN_LIGHT;
+  power = Math.max(0, power - d);
+  const p = Math.round(power);
+  $('power-display').textContent = p;
+  $('power-bar').style.width = p + '%';
+  $('power-bar').classList.toggle('low', p <= 25 && p > 10);
+  $('power-bar').classList.toggle('critical', p <= 10);
+  if (power <= 0) powerOut();
+}
+
+// --- くるるAI（リス） ---
+function scheduleMoveSq() { clearTimeout(sqMT); sqMT = setTimeout(moveSq, sqSpd === 'slow' ? SQ_SLOW : SQ_NORMAL); }
+function moveSq() {
+  if (!running || sqDoor) return;
+  if (!sqPath || sqCam === 1) { sqPath = Math.random() < 0.5 ? PATH_L : PATH_R; sqIdx = 0; }
+  sqIdx++;
+  if (sqIdx >= sqPath.length) { arriveAtDoorSq(sqPath === PATH_L ? 'left' : 'right'); return; }
+  const n = sqPath[sqIdx]; if (typeof n === 'number') sqCam = n;
+  if (camOpen) updateCameraChar();
+  checkWatch(); scheduleMoveSq();
+}
+function arriveAtDoorSq(side) {
+  sqDoor = side; sqCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatSq(); return; }
+  sqDT = setTimeout(() => {
+    if (!running || sqDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('kururu');
+  }, SQ_DOOR_WAIT);
+}
+function defeatSq() {
+  clearTimeout(sqDT);
+  $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
+  sqDoor = null; sqCam = 1; sqPath = null; sqIdx = 0;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  scheduleMoveSq();
+}
+function checkWatch() {
+  clearTimeout(sqWT);
+  if (camOpen && curCam === sqCam && sqCam > 0) {
+    sqWT = setTimeout(() => { if (sqSpd !== 'slow') { sqSpd = 'slow'; scheduleMoveSq(); } }, SQ_WATCH);
+  } else sqSpd = 'normal';
+}
+
+// --- まだらAI（カメレオン） ---
+function scheduleMoveMd() { clearTimeout(mdMT); mdMT = setTimeout(moveMd, MD_MOVE_INTERVAL); }
+function moveMd() {
+  if (!running || mdDoor) return;
+  // パスを選択（まだ未選択 or 開始位置にいる場合）
+  if (!mdPath || mdIdx === 0) {
+    mdPath = MD_PATH_OPTIONS[Math.floor(Math.random() * MD_PATH_OPTIONS.length)];
+    mdIdx = 0;
+  }
+  mdIdx++;
+  if (mdIdx >= mdPath.length) {
+    arriveAtDoorMd(mdPath[mdPath.length - 1] === 'left_door' ? 'left' : 'right');
+    return;
+  }
+  const n = mdPath[mdIdx];
+  if (typeof n === 'number') mdCam = n;
+  if (camOpen) updateCameraChar();
+  scheduleMoveMd();
+}
+function arriveAtDoorMd(side) {
+  mdDoor = side; mdCam = -1;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatMd(); return; }
+  mdDT = setTimeout(() => {
+    if (!running || mdDoor !== side) return;
+    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('madara');
+  }, MD_DOOR_WAIT);
+}
+function defeatMd() {
+  clearTimeout(mdDT);
+  mdDoor = null; mdCam = 4; mdPath = null; mdIdx = 0;
+  if (camOpen) updateCameraChar();
+  updateSideEntity();
+  scheduleMoveMd();
+}
+
+// --- 電力切れ / ゲームオーバー / クリア ---
+function powerOut() {
+  running = false; clearTimers(); stopAllSounds();
+  // 電力切れ時はくるるかまだらのどちらかがキルする
+  const killer = (sqDoor || mdDoor) ? (sqDoor ? 'kururu' : 'madara') : 'kururu';
+  setTimeout(() => gameOver(killer), 2000);
+}
+function gameOver(killer) {
+  running = false; clearTimers(); stopAllSounds();
+  killer = killer || 'kururu';
+  // ジャンプスケア画像
+  const jumpImg = {
+    kururu: '../image/character/kururu jumpscare.png',
+    madara: '../image/character/madara jumpscare.png',
+    kasumi: '../image/character/kasumi jumpscare.png',
+    araane: '../image/character/arane jumpscare.png',
+    yowari: '../image/character/yowari jumpscare.png',
+  };
+  $('jumpscare-screen').querySelector('img').src = jumpImg[killer] || jumpImg.kururu;
+  if (sndJump[killer]) playS(sndJump[killer]);
+  $('jumpscare-screen').classList.add('active');
+  setTimeout(() => { $('jumpscare-screen').classList.remove('active'); $('gameover-screen').classList.add('active'); }, 1000);
+}
+function nightClear() {
+  running = false; clearTimers(); stopAllSounds();
+  localStorage.setItem('night2_clear', 'true'); localStorage.setItem('night2_pages_unlocked', 'true');
+  playS(sndClearChime);
+  $('clear-screen').classList.add('active');
+  setTimeout(() => playS(sndClearYay), 500);
+  setTimeout(() => {
+    allowNavigation();
+    var btn = document.createElement('button');
+    btn.textContent = '次へ進む';
+    btn.style.cssText = 'display:block;margin:30px auto;padding:14px 48px;background:transparent;border:2px solid #8cc;color:#8cc;font-size:18px;font-family:inherit;cursor:pointer;letter-spacing:3px;transition:all 0.3s;';
+    btn.onmouseover = function(){ this.style.background='#8cc'; this.style.color='#000'; };
+    btn.onmouseout = function(){ this.style.background='transparent'; this.style.color='#8cc'; };
+    btn.onclick = function(){ window.location.href = '../index.html'; };
+    document.getElementById('clear-screen').appendChild(btn);
+  }, 2000);
+}
+function clearTimers() {
+  clearInterval(tickId); clearInterval(pwrId);
+  clearTimeout(sqMT); clearTimeout(sqDT); clearTimeout(sqWT);
+  clearTimeout(mdMT); clearTimeout(mdDT);
+}
+
+function retryGame() {
+  // 全画面非表示
+  $('gameover-screen').classList.remove('active');
+  $('jumpscare-screen').classList.remove('active');
+  $('clear-screen').classList.remove('active');
+  $('camera-view').classList.add('hidden');
+
+  // タイトル表示→自動でゲーム開始（リトライ時はブリーフィング省略）
+  $('title-text').textContent = 'NIGHT 2';
+  $('start-sub').style.animation = 'none'; $('start-sub').style.opacity = '1';
+  $('start-screen').classList.remove('fade-out','hidden');
+  $('start-screen').classList.add('active');
+  setTimeout(function(){
+    $('start-screen').classList.remove('active');
+    $('start-screen').classList.add('hidden');
+    startGame();
+  }, 2000);
+
+  // 状態リセット
+  stopAllSounds();
+  elapsed = 0; power = 100; camOpen = false; curCam = 1; prevCam = 1;
+  doorL = false; doorR = false; lightL = false; lightR = false;
+  // くるるリセット
+  sqCam = 1; sqPath = null; sqIdx = 0; sqDoor = null; sqSpd = 'normal';
+  // まだらリセット
+  mdCam = 4; mdPath = null; mdIdx = 0; mdDoor = null;
+  $('left-door').classList.remove('active'); $('right-door').classList.remove('active');
+  $('left-light').classList.remove('active'); $('right-light').classList.remove('active');
+  $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
+  document.querySelector('#left-buttons .btn-door').classList.remove('closed');
+  document.querySelector('#right-buttons .btn-door').classList.remove('closed');
+  $('time-display').textContent = '1:00 AM';
+  $('power-display').textContent = '100';
+  $('power-bar').style.width = '100%';
+  $('power-bar').classList.remove('low', 'critical');
+}
+
+// --- イベント ---
+// ===== ブリーフィング（ページ読み込み直後に自動開始） =====
+(function(){
+  setTimeout(showBriefing, 600);
+})();
+
+function showBriefing(){
+  var lines = [
+    {type:'sys', text:'── broadcast_night_02.exe ──'},
+    {type:'sys', text:'cast_loaded: kururu.dll'},
+    {type:'sys', text:'cast_loaded: madara.dll'},
+    {type:'sys', text:'initiating...'},
+    {type:'gap'},
+    {type:'char', name:'くるる', text:'また来てくれたんだ！今日はぼくの友達も来てるよ！', color:'#5cb85c'},
+    {type:'gap'},
+    {type:'char', name:'まだら', text:'…本当にそうかな。ぼくのこと、見つけられる？', color:'#7b68ee'},
+    {type:'char', name:'まだら', text:'…よく見てね。ぼくはうまく隠れるから。', color:'#7b68ee'},
+    {type:'gap'},
+    {type:'char', name:'くるる', text:'まだらはちょっと見えにくいけど、カメラにうっすら映ってるよ！', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'見つけたら、同じようにド\u0336ア\u0337を\u0334…', color:'#5cb85c', glitch:true},
+    {type:'sys', text:'character_error: recovered', warn:true},
+    {type:'gap'},
+    {type:'sys', text:'broadcast ready.'}
+  ];
+  runBriefing(lines);
+}
+
+function runBriefing(lines){
+  var log = $('briefing-log');
+  log.innerHTML = '';
+  var idx = 0;
+  function next(){
+    if(idx >= lines.length){
+      var btn = $('briefing-start-btn');
+      btn.style.opacity = '1';
+      btn.style.borderColor = '#2a6a2a';
+      btn.style.color = '#2a6a2a';
+      return;
+    }
+    var line = lines[idx]; idx++;
+    if(line.type === 'gap'){ setTimeout(next, 400); return; }
+    var div = document.createElement('div');
+    if(line.type === 'sys'){
+      div.style.cssText = 'color:'+(line.warn?'#a44':'#335')+';font-size:13px;';
+      typeText(div, '[SYSTEM] '+line.text, 20, function(){ setTimeout(next, 300); });
+    } else {
+      div.style.cssText = 'color:'+line.color+';';
+      if(line.glitch) div.style.textShadow = '2px 0 #f00, -2px 0 #0ff';
+      typeText(div, '['+line.name+'] '+line.text, 25, function(){
+        if(line.glitch) setTimeout(function(){ div.style.textShadow='none'; }, 300);
+        setTimeout(next, line.glitch ? 600 : 350);
+      });
+    }
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+  setTimeout(next, 800);
+}
+
+function typeText(el, text, speed, cb){
+  var i = 0; el.textContent = '';
+  function t(){ if(i < text.length){ el.textContent += text[i]; i++; if(el.parentElement) el.parentElement.scrollTop = el.parentElement.scrollHeight; setTimeout(t, speed); } else if(cb) cb(); }
+  t();
+}
+
+$('briefing-start-btn').addEventListener('click', () => {
+  $('briefing-screen').classList.remove('active');
+  $('briefing-screen').classList.add('hidden');
+  $('start-screen').classList.add('active');
+  var titleEl = $('title-text');
+  var text = 'NIGHT 2';
+  var i = 0;
+  setTimeout(function typeTitle(){
+    if(i < text.length){ titleEl.textContent += text[i]; i++; setTimeout(typeTitle, 150); }
+    else { setTimeout(function(){ $('start-screen').classList.remove('active'); $('start-screen').classList.add('hidden'); startGame(); }, 1500); }
+  }, 400);
+});
+$('retry-btn').addEventListener('click', retryGame);
+$('cam-toggle-area').addEventListener('click', () => { if (running) openCamera(); });
+$('duct-enter-btn').addEventListener('click', () => { if (running && camOpen) switchCam(9); });
+$('duct-back-btn').addEventListener('click', () => { if (running && camOpen) switchCam(prevCam || 1); });
+$('camera-close-bar').addEventListener('click', () => { if (running) closeCamera(); });
+document.querySelectorAll('.cam-btn').forEach(b => b.addEventListener('click', () => running && camOpen && switchCam(+b.dataset.cam)));
+document.querySelectorAll('.btn-door').forEach(b => b.addEventListener('click', () => running && toggleDoor(b.dataset.side)));
+document.querySelectorAll('.btn-light').forEach(b => {
+  b.addEventListener('mousedown', () => running && setLight(b.dataset.side, true));
+  b.addEventListener('mouseup', () => setLight(b.dataset.side, false));
+  b.addEventListener('mouseleave', () => setLight(b.dataset.side, false));
+});
+
+// --- キーボード操作 ---
+// Q=左ドア A=左ライト E=右ドア D=右ライト S=カメラ開閉
+document.addEventListener('keydown', e => {
+  if (!running) return;
+  switch(e.key.toLowerCase()) {
+    case 'q': if (!camOpen) toggleDoor('left'); break;
+    case 'e': if (!camOpen) toggleDoor('right'); break;
+    case 'a': if (!camOpen) setLight('left', true); break;
+    case 'd': if (!camOpen) setLight('right', true); break;
+    case 'w': if (camOpen) { curCam === 9 ? switchCam(prevCam || 1) : switchCam(9); } break;
+    case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
+  }
+});
+document.addEventListener('keyup', e => {
+  switch(e.key.toLowerCase()) {
+    case 'a': setLight('left', false); break;
+    case 'd': setLight('right', false); break;
+  }
+});
+
+// --- 初期化 ---
+applySideAreas();
+window.addEventListener('resize', applySideAreas);
+</script>
+</body>
+</html>

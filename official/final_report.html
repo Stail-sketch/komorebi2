@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>最終調査結果 - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .report-entry {
+      border-left: 3px solid var(--color-gray-300);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      position: relative;
+    }
+    .report-entry:last-child {
+      margin-bottom: 0;
+    }
+    .report-label {
+      font-size: 0.75rem;
+      color: var(--color-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .report-critical {
+      border-left-color: rgba(200, 80, 80, 0.6);
+    }
+
+    /* 削除予定スタンプ */
+    .deletion-stamp {
+      display: inline-block;
+      color: #cc0000;
+      border: 2px solid #cc0000;
+      padding: 2px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      transform: rotate(-3deg);
+      opacity: 0.85;
+      margin-left: 12px;
+      vertical-align: middle;
+    }
+
+    /* リアルタイム削除演出 */
+    .being-deleted {
+      text-decoration: line-through;
+      color: var(--color-gray-300);
+      transition: color 2s ease, text-decoration-color 2s ease;
+    }
+    .being-deleted .deletion-line {
+      position: relative;
+    }
+    .being-deleted .deletion-line::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 2px;
+      background: rgba(200, 80, 80, 0.6);
+    }
+
+    /* 段階的に消えていくテキスト */
+    .fading-text {
+      animation: fadingDelete 8s ease-in forwards;
+    }
+    @keyframes fadingDelete {
+      0% { opacity: 1; }
+      60% { opacity: 1; }
+      80% { opacity: 0.4; }
+      100% { opacity: 0.15; }
+    }
+
+    /* 削除中のちらつき */
+    .deleting-flicker {
+      animation: deleteFlicker 3s infinite;
+    }
+    @keyframes deleteFlicker {
+      0%, 100% { opacity: 1; }
+      30% { opacity: 0.6; }
+      50% { opacity: 0.9; }
+      70% { opacity: 0.3; }
+      85% { opacity: 0.8; }
+    }
+
+    .evidence-clickable {
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .evidence-clickable:hover {
+      background-color: rgba(180, 180, 255, 0.05);
+      border-left-color: rgba(180, 180, 255, 0.5);
+    }
+
+    .deleted-notice {
+      text-align: center;
+      padding: 20px;
+      color: var(--color-gray-400);
+      font-size: 0.85rem;
+      border: 1px dashed var(--color-gray-300);
+      margin-bottom: 20px;
+    }
+
+    .warning-banner {
+      background: rgba(200, 40, 40, 0.08);
+      border: 1px solid rgba(200, 40, 40, 0.3);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a href="index.html">
+          あの番組を覚えていますか
+          <span class="logo-sub">〜木漏れ日遊園地編〜</span>
+        </a>
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">トップ</a></li>
+          <li><a href="gaiyou.html">番組概要</a></li>
+          <li><a href="schedule.html">放送情報</a></li>
+          <li><a href="staff.html">スタッフ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>最終調査結果</h1>
+    <p class="hero-subtitle">「木漏れ日遊園地」に関する最終調査報告書</p>
+  </section>
+
+  <main class="main-content">
+
+    <section class="section">
+      <div class="warning-banner">
+        <strong>注意：</strong>本ページの一部の情報は、権利者からの要請により削除手続き中です。表示が不安定になる場合があります。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">調査結論</h2>
+      <div class="card">
+
+        <div class="report-entry">
+          <p class="report-label">結論 1</p>
+          <p>「木漏れ日遊園地」は単なる子ども番組ではなく、制作会社「ゆめスタジオプロダクション」による<span class="being-deleted">長期的な児童観察プロジェクトのカバーストーリー</span>であった可能性が高い。</p>
+        </div>
+
+        <div class="report-entry">
+          <p class="report-label">結論 2</p>
+          <p class="fading-text">番組終了の真の理由は視聴率低下ではなく、1997年に<span class="being-deleted">内部告発が行われかけたことによる証拠隠滅</span>であった。</p>
+        </div>
+
+        <div class="report-entry report-critical">
+          <p class="report-label">結論 3 <span class="deletion-stamp">削除予定</span></p>
+          <p class="deleting-flicker">被験者番号リストに記載された子どもたちの一部は、現在も<span class="being-deleted">行方が確認されていない</span>。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">掲示板書き込み主の特定</h2>
+      <div class="card">
+
+        <div class="deleted-notice">
+          このセクションの一部は削除要請により非公開となりました
+        </div>
+
+        <div class="report-entry report-critical evidence-clickable" onclick="collectEvidence('17')">
+          <p class="report-label">調査結果 #BBS-006 <span class="deletion-stamp">削除予定</span></p>
+          <p class="being-deleted" style="font-size: 1.05rem;">スレ6の書き込み主の正体：<strong>G-0</strong></p>
+          <p style="margin-top: 8px; font-size: 0.8rem; color: var(--color-gray-500);" class="fading-text">※IPアドレスの追跡調査、文体解析、投稿時間帯の分析により特定。被験者番号G-0に該当する人物と断定。</p>
+        </div>
+
+        <div class="report-entry">
+          <p class="report-label">調査結果 #BBS-007</p>
+          <p class="fading-text">書き込み内容の信憑性：極めて高い。番組内部でしか知りえない情報が複数含まれている。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">被験者記録断片</h2>
+      <div class="card">
+
+        <div class="deleted-notice">
+          以下のデータはサーバーから削除処理が進行中です
+        </div>
+
+        <div class="report-entry report-critical evidence-clickable" onclick="collectEvidence('18')">
+          <p class="report-label">被験者レコード（復元断片） <span class="deletion-stamp">削除予定</span></p>
+          <p class="deleting-flicker" style="font-family: monospace; font-size: 0.95rem; line-height: 2;">
+            被験者番号：<strong>G-0</strong><br>
+            性別：<span class="being-deleted">女児</span><br>
+            生年：<span class="being-deleted">1987年</span><br>
+            姓：<span class="being-deleted">吉田</span><br>
+            備考：<span class="redacted">████████████</span>
+          </p>
+          <p style="margin-top: 12px; font-size: 0.75rem; color: var(--color-gray-400);">※破損したデータベースから部分的に復元。完全な記録は既に削除済み。</p>
+          <span style="position: absolute; bottom: 4px; right: 8px; font-size: 0.55rem; color: var(--color-gray-200); font-family: monospace; user-select: all;">doc-ref:199</span>
+        </div>
+
+        <div class="report-entry">
+          <p class="report-label">関連レコード</p>
+          <p class="being-deleted">G-0は1993年〜1997年の期間、番組に断続的に出演していた記録あり。</p>
+          <p style="margin-top: 8px;" class="fading-text">最後の出演記録は1997年9月。番組終了の2ヶ月前。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">その他の調査結果</h2>
+      <div class="card">
+
+        <div class="report-entry">
+          <p class="report-label">財務記録</p>
+          <p>ゆめスタジオの収支報告に記載された「特別研究費」の使途は<span class="being-deleted">最後まで解明されなかった</span>。</p>
+        </div>
+
+        <div class="report-entry">
+          <p class="report-label">関係者の現在 <span class="deletion-stamp">削除予定</span></p>
+          <p class="fading-text">当時のスタッフのうち、連絡が取れたのは3名のみ。いずれも詳細な証言を<span class="being-deleted">拒否している</span>。</p>
+        </div>
+
+        <div class="report-entry">
+          <p class="report-label">代表者の所在</p>
+          <p class="being-deleted">ゆめスタジオ代表 <span class="redacted">██████</span> の所在は現在も不明。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card" style="text-align: center; font-size: 0.85rem; color: var(--color-gray-400);">
+        <p>本報告書の内容は現在も検証・更新中です。</p>
+        <p style="margin-top: 8px;">一部の情報は権利者からの要請により、予告なく削除される場合があります。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Night5クリアチェック
+    if (localStorage.getItem('night5_clear') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    // リアルタイム削除演出：ページ表示後に段階的にテキストが消えていく
+    document.addEventListener('DOMContentLoaded', () => {
+      // 数秒後に一部のテキストをさらに薄くする
+      setTimeout(() => {
+        document.querySelectorAll('.being-deleted').forEach(el => {
+          el.style.color = 'var(--color-gray-200)';
+        });
+      }, 5000);
+
+      // さらに数秒後、削除予定のエントリを半透明にする
+      setTimeout(() => {
+        document.querySelectorAll('.fading-text').forEach(el => {
+          el.style.opacity = '0.1';
+        });
+      }, 12000);
+    });
+  </script>
+</body>
+</html>

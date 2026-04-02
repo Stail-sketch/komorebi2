@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #1a1a2e;
+  font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', system-ui, sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  user-select: none;
+}
+
+/* 壁紙 */
+.desktop {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 40%, #24243e 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* アイコンエリア */
+.icon-area {
+  flex: 1;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-content: flex-start;
+}
+
+/* アイコン */
+.desktop-icon {
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+.desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.desktop-icon:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.icon-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.icon-label {
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  line-height: 1.3;
+  word-break: break-all;
+}
+
+/* 各アイコンの色 */
+.icon-browser { background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335); }
+.icon-popin { background: linear-gradient(135deg, #FF6B6B, #FF7EB3); }
+.icon-mail { background: linear-gradient(135deg, #2a2a4a, #3a3a6a); }
+.icon-chat { background: linear-gradient(135deg, #43b581, #3ca374); }
+
+/* タスクバー */
+.taskbar {
+  height: 48px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.taskbar-time {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.taskbar-start {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.taskbar-start:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.taskbar-start svg {
+  width: 20px;
+  height: 20px;
+  fill: rgba(255, 255, 255, 0.8);
+}
+
+.taskbar-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* タスクバーピン留めアイコン */
+.taskbar-pin {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 18px;
+}
+.taskbar-pin:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+</style>
+</head>
+<body>
+
+<div class="desktop">
+  <!-- アイコンエリア -->
+  <div class="icon-area">
+
+    <!-- ブラウザ → 特番公式サイト -->
+    <a class="desktop-icon" href="#" onclick="window.open('official/index.html','_blank');return false;">
+      <div class="icon-img icon-browser">🌐</div>
+      <span class="icon-label">ブラウザ</span>
+    </a>
+
+    <!-- Popin（SNS） -->
+    <a class="desktop-icon" href="#" onclick="window.open('twitter/index.html','_blank');return false;">
+      <div class="icon-img icon-popin">💬</div>
+      <span class="icon-label">Popin</span>
+    </a>
+
+    <!-- メール -->
+    <a class="desktop-icon" href="#" onclick="window.open('mail/index.html','_blank');return false;">
+      <div class="icon-img icon-mail">✉️</div>
+      <span class="icon-label">メール</span>
+    </a>
+
+    <!-- 旧サイトアーカイブ（night3_clearフラグで表示） -->
+    <a class="desktop-icon" id="archive-icon" href="#" onclick="window.open('archive/index.html','_blank');return false;" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#8B6914,#D4A843);font-size:24px;">📁</div>
+      <span class="icon-label">旧サイト<br>(アーカイブ)</span>
+    </a>
+
+    <!-- チャット（chat_unlockedフラグで表示） -->
+    <a class="desktop-icon" id="chat-icon" href="#" onclick="window.open('chat/index.html','_blank');return false;" style="display:none;">
+      <div class="icon-img icon-chat">💭</div>
+      <span class="icon-label">チャット</span>
+    </a>
+
+  </div>
+
+  <!-- タスクバー -->
+  <div class="taskbar">
+    <div class="taskbar-start">
+      <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+    </div>
+    <div class="taskbar-divider"></div>
+    <div class="taskbar-pin" onclick="window.open('official/index.html','_blank')">🌐</div>
+    <div class="taskbar-pin" onclick="window.open('twitter/index.html','_blank')">💬</div>
+    <div class="taskbar-pin" onclick="window.open('mail/index.html','_blank')">✉️</div>
+    <div class="taskbar-pin" id="archive-pin" onclick="window.open('archive/index.html','_blank')" style="display:none;">📁</div>
+    <div class="taskbar-pin" id="chat-pin" onclick="window.open('chat/index.html','_blank')" style="display:none;">💭</div>
+  </div>
+</div>
+
+<script>
+
+// 画像ドラッグ防止
+document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+// アーカイブアイコンの表示制御（Night3クリア後）
+if(localStorage.getItem('night3_clear') === 'true'){
+  document.getElementById('archive-icon').style.display = '';
+  document.getElementById('archive-pin').style.display = '';
+}
+
+// チャットアイコンの表示制御
+if(localStorage.getItem('chat_unlocked') === 'true'){
+  document.getElementById('chat-icon').style.display = '';
+  document.getElementById('chat-pin').style.display = '';
+}
+</script>
+</body>
+</html>
