@@ -71,34 +71,85 @@
     <section class="section">
       <h2 class="section-title">AIキャスト紹介</h2>
 
+      <style>
+        .cast-card { display: flex; gap: 20px; align-items: flex-start; }
+        .cast-icon {
+          width: 100px; height: 100px; border-radius: 50%; flex-shrink: 0;
+          overflow: hidden; border: 3px solid var(--color-gray-200);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .cast-icon img {
+          width: 100%; height: 100%; object-fit: cover;
+          object-position: center 15%;
+          transform: scale(1.6);
+          transform-origin: center 20%;
+        }
+        .cast-info { flex: 1; min-width: 0; }
+        .cast-info h3 { margin-bottom: 6px; font-size: 1rem; color: var(--color-navy); }
+        .cast-quote {
+          font-style: italic; color: var(--color-gray-500); font-size: 0.9rem;
+          margin-bottom: 8px; padding-left: 12px; border-left: 3px solid var(--color-gray-200);
+        }
+        .cast-desc { font-size: 0.9rem; line-height: 1.7; }
+        @media (max-width: 600px) {
+          .cast-card { flex-direction: column; align-items: center; text-align: center; }
+          .cast-quote { border-left: none; padding-left: 0; }
+        }
+      </style>
+
       <div class="card">
-        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">くるる（リス型AI）— メインMC</h3>
-        <p>「わぁ、気になるね！もっと調べてみよう！」</p>
-        <p style="margin-top: 8px;">番組のメイン進行を務めるリスのAIキャラクター。好奇心旺盛で、どんな謎にも目を輝かせて飛び込んでいく。視聴者を引き込む明るいテンションが持ち味。</p>
+        <div class="cast-card">
+          <div class="cast-icon"><img src="../image/character/kururu nomal.png" alt="くるる"></div>
+          <div class="cast-info">
+            <h3>くるる（リス型AI）— メインMC</h3>
+            <p class="cast-quote">「わぁ、気になるね！もっと調べてみよう！」</p>
+            <p class="cast-desc">番組のメイン進行を務めるリスのAIキャラクター。好奇心旺盛で、どんな謎にも目を輝かせて飛び込んでいく。視聴者を引き込む明るいテンションが持ち味。</p>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">まだら（カメレオン型AI）— 検証・ファクトチェック</h3>
-        <p>「本当にそうかな？ 確認してみないとね」</p>
-        <p style="margin-top: 8px;">冷静沈着なカメレオンのAIキャラクター。証言の矛盾や資料の不備を鋭く見抜く。くるるの暴走を止めるブレーキ役でもある。</p>
+        <div class="cast-card">
+          <div class="cast-icon"><img src="../image/character/madara nomal.png" alt="まだら"></div>
+          <div class="cast-info">
+            <h3>まだら（カメレオン型AI）— 検証・ファクトチェック</h3>
+            <p class="cast-quote">「本当にそうかな？ 確認してみないとね」</p>
+            <p class="cast-desc">冷静沈着なカメレオンのAIキャラクター。証言の矛盾や資料の不備を鋭く見抜く。くるるの暴走を止めるブレーキ役でもある。</p>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">よわり（ヒツジ型AI）— 現地調査・リポーター</h3>
-        <p>「あの…ここ、少し変な感じがします…」</p>
-        <p style="margin-top: 8px;">おとなしくて繊細なヒツジのAIキャラクター。現地調査を担当し、場の空気を誰よりも敏感に読み取る。怖がりだが、真実を知るためなら勇気を出す。</p>
+        <div class="cast-card">
+          <div class="cast-icon"><img src="../image/character/yowari nomal.png" alt="よわり"></div>
+          <div class="cast-info">
+            <h3>よわり（ヒツジ型AI）— 現地調査・リポーター</h3>
+            <p class="cast-quote">「あの…ここ、少し変な感じがします…」</p>
+            <p class="cast-desc">おとなしくて繊細なヒツジのAIキャラクター。現地調査を担当し、場の空気を誰よりも敏感に読み取る。怖がりだが、真実を知るためなら勇気を出す。</p>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">アラネ（クモ型AI）— 資料・データ分析</h3>
-        <p>「このデータ、見逃せないわ。繋がってるの」</p>
-        <p style="margin-top: 8px;">几帳面で粘り強いクモのAIキャラクター。映像解析、音声分析、文書の復元など、あらゆるデータを糸のように紡いで真実を手繰り寄せる。一度気になったデータは絶対に手放さない。</p>
+        <div class="cast-card">
+          <div class="cast-icon"><img src="../image/character/araane nomal.png" alt="アラネ"></div>
+          <div class="cast-info">
+            <h3>アラネ（クモ型AI）— 資料・データ分析</h3>
+            <p class="cast-quote">「このデータ、見逃せないわ。繋がってるの」</p>
+            <p class="cast-desc">几帳面で粘り強いクモのAIキャラクター。映像解析、音声分析、文書の復元など、あらゆるデータを糸のように紡いで真実を手繰り寄せる。一度気になったデータは絶対に手放さない。</p>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3 style="margin-bottom: 8px; font-size: 1rem; color: var(--color-navy);">かすみ（シカ型AI）— 視聴者の声・おたより</h3>
-        <p>「みなさんの思い出、大切に聞かせてください…」</p>
-        <p style="margin-top: 8px;">優しくて感傷的なシカのAIキャラクター。視聴者から届くおたよりや証言を一つひとつ丁寧に読み上げ、当時の思い出に寄り添う。その共感力はAIとは思えないほど。</p>
+        <div class="cast-card">
+          <div class="cast-icon"><img src="../image/character/kasumi nomal.png" alt="かすみ"></div>
+          <div class="cast-info">
+            <h3>かすみ（シカ型AI）— 視聴者の声・おたより</h3>
+            <p class="cast-quote">「みなさんの思い出、大切に聞かせてください…」</p>
+            <p class="cast-desc">優しくて感傷的なシカのAIキャラクター。視聴者から届くおたよりや証言を一つひとつ丁寧に読み上げ、当時の思い出に寄り添う。その共感力はAIとは思えないほど。</p>
+          </div>
+        </div>
       </div>
 
     </section>
