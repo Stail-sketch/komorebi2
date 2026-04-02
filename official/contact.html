@@ -91,6 +91,36 @@
   <script src="../js/main.js"></script>
   <script>
 (function(){
+  // ===== 断片ルート: 3つの記憶の断片が揃っていたら特別パネル表示 =====
+  var frags = JSON.parse(localStorage.getItem('memory_fragments') || '[]');
+  var hasAllFrags = ['ki','oku','kioku'].every(function(f){ return frags.indexOf(f) !== -1; });
+  var n2done = localStorage.getItem('night2_clear') === 'true';
+
+  if(hasAllFrags && !n2done){
+    var formCard = document.querySelector('#contact-form').closest('.card');
+    // フォームをぼかす
+    formCard.style.filter = 'blur(3px)';
+    formCard.style.pointerEvents = 'none';
+    formCard.style.opacity = '0.4';
+
+    // パネル挿入
+    var panel = document.createElement('div');
+    panel.style.cssText = 'margin-bottom:24px;padding:32px;background:#0a0a14;border:1px solid #2a2a4a;border-radius:8px;text-align:center;position:relative;overflow:hidden;';
+    panel.innerHTML =
+      '<div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(100,100,200,0.03) 2px,rgba(100,100,200,0.03) 4px);pointer-events:none;"></div>' +
+      '<p style="color:#6666aa;font-family:\'Courier New\',monospace;font-size:13px;letter-spacing:2px;margin-bottom:8px;">memory_fragments: 3/3</p>' +
+      '<p style="color:#aaaacc;font-size:18px;font-weight:bold;margin-bottom:6px;">記憶の断片が揃いました</p>' +
+      '<p style="color:#666680;font-size:13px;margin-bottom:24px;">…き…おく…の…さきへ…</p>' +
+      '<a href="../night2/" style="display:inline-block;padding:12px 40px;border:1px solid #6666aa;color:#6666aa;font-family:\'Courier New\',monospace;font-size:15px;letter-spacing:3px;text-decoration:none;transition:all 0.3s;" onmouseover="this.style.background=\'#6666aa\';this.style.color=\'#000\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'#6666aa\'">記憶の先へ</a>';
+    formCard.parentNode.insertBefore(panel, formCard);
+
+    // グリッチ演出（軽く）
+    setInterval(function(){
+      panel.style.transform = 'translateX(' + (Math.random()*4-2) + 'px)';
+      setTimeout(function(){ panel.style.transform = 'none'; }, 80);
+    }, 3000 + Math.random()*4000);
+  }
+
   var category = document.getElementById('contact-category');
   var errorGroup = document.getElementById('error-detail-group');
   var normalGroup = document.getElementById('normal-body-group');
