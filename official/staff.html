@@ -203,33 +203,10 @@
 
   <script src="../js/main.js"></script>
   <style>
-    /* 吉田一郎だけ微妙に違う */
     #yoshida-name {
-      font-weight: 700; /* 他は通常の600 */
+      font-weight: 700;
       cursor: default;
-      position: relative;
-      transition: text-shadow 0.3s;
     }
-    /* ホバーで微妙に揺れる */
-    #yoshida-name:hover {
-      animation: yoshidaTremor 0.15s infinite;
-    }
-    @keyframes yoshidaTremor {
-      0%   { transform: translate(0, 0); }
-      25%  { transform: translate(0.3px, -0.3px); }
-      50%  { transform: translate(-0.3px, 0.2px); }
-      75%  { transform: translate(0.2px, 0.3px); }
-      100% { transform: translate(-0.2px, -0.2px); }
-    }
-    /* 30秒ごとの一瞬消え */
-    @keyframes yoshidaBlink {
-      0%, 98%, 100% { opacity: 1; }
-      99% { opacity: 0; }
-    }
-    #yoshida-name.blinking {
-      animation: yoshidaBlink 30s infinite;
-    }
-    /* 長押し中の画面暗転 */
     #yoshida-darken {
       position: fixed;
       inset: 0;
@@ -242,57 +219,20 @@
     #yoshida-darken.active {
       opacity: 1;
     }
-    /* 吉田の行だけ行間広め */
-    #yoshida-row {
-      padding-top: 14px !important;
-      padding-bottom: 14px !important;
-    }
   </style>
 
-  <!-- 長押し中の暗転オーバーレイ -->
   <div id="yoshida-darken"></div>
 
   <script>
     (function() {
-      const yoshida = document.getElementById('yoshida-name');
-      const darken = document.getElementById('yoshida-darken');
-      let pressTimer;
-      let darkTimer;
+      var yoshida = document.getElementById('yoshida-name');
+      var darken = document.getElementById('yoshida-darken');
+      var pressTimer;
 
-      // 吉田の行にID付与（行間用）
-      yoshida.closest('li').id = 'yoshida-row';
-
-      // ページ読み込み0.1秒後に吉田だけ一瞬チカッと光る
-      setTimeout(function() {
-        yoshida.style.textShadow = '0 0 8px rgba(255,255,255,0.6)';
-        setTimeout(function() {
-          yoshida.style.textShadow = 'none';
-        }, 100);
-      }, 100);
-
-      // 遅延表示（他より0.1秒遅れて表示）
-      yoshida.style.opacity = '0';
-      setTimeout(function() {
-        yoshida.style.opacity = '1';
-        yoshida.style.transition = 'opacity 0.15s';
-        // 30秒ごとの一瞬消えアニメ開始
-        setTimeout(function() {
-          yoshida.classList.add('blinking');
-        }, 1000);
-      }, 100);
-
-      // 長押し開始
       function onPressStart(e) {
         e.preventDefault();
-
-        // 画面じわじわ暗く
         darken.classList.add('active');
-
-        // 吉田の文字を震えさせる（ホバー時より強め）
-        yoshida.style.animation = 'yoshidaTremor 0.08s infinite';
-
         pressTimer = setTimeout(function() {
-          // 10秒後：完全暗転 → 遷移
           window.location.href = '../night1/';
         }, 10000);
       }
@@ -300,15 +240,11 @@
       function onPressEnd() {
         clearTimeout(pressTimer);
         darken.classList.remove('active');
-        yoshida.style.animation = '';
       }
 
-      // マウス
       yoshida.addEventListener('mousedown', onPressStart);
       yoshida.addEventListener('mouseup', onPressEnd);
       yoshida.addEventListener('mouseleave', onPressEnd);
-
-      // タッチ
       yoshida.addEventListener('touchstart', onPressStart);
       yoshida.addEventListener('touchend', onPressEnd);
     })();
