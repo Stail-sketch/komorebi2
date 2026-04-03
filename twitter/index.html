@@ -287,6 +287,7 @@ function removeFlag(key){try{localStorage.removeItem(key);}catch(e){}}
 var n1=hasFlag('night1_clear'), n2=hasFlag('night2_clear'), n3=hasFlag('night3_clear'), n4=hasFlag('night4_clear'), n5=hasFlag('night5_clear');
 var night6=hasFlag('night6_started');
 var ukki_takeover=hasFlag('ukki_takeover');
+var endBseen=hasFlag('ending_b_seen');
 
 // Determine highest cleared night (0-5)
 var highestCleared = n5?5 : n4?4 : n3?3 : n2?2 : n1?1 : 0;
@@ -327,6 +328,40 @@ function getTimeText(phase, indexInPhase, totalInPhase){
 
 // Build posts array (newest first)
 var posts = [];
+
+// EndB後 posts
+if(endBseen){
+  posts.push({account:'official', text:'本番組は予定通り進行しています。ご安心ください。', phase:6, replies:[
+    {account:'viewer3', text:'何が予定通りなんだよ…'},
+    {account:'viewer5', text:'もう安心できないんだけど'},
+    {account:'viewer8', text:'ご安心くださいって…何を？'},
+    {account:'viewer6', text:'公式がこれ言う時が一番やばい'}
+  ]});
+  posts.push({account:'yoshi', text:'…間違えた。全部間違えてた。でもまだ間に合う。間に合わせる。', phase:6, replies:[
+    {account:'viewer5', text:'ゆうやけさん…？'},
+    {account:'viewer2', text:'何があったんですか？'},
+    {account:'viewer7', text:'大丈夫ですか？急にどうしたの'},
+    {account:'viewer1', text:'何が間違ってたの…'},
+    {account:'viewer8', text:'ゆうやけさんの投稿、今までと全然違う'}
+  ]});
+  posts.push({account:'viewer4', text:'なんか番組の雰囲気マジで変わった。前は怖かったけど今はなんか…悲しい', phase:6, replies:[
+    {account:'viewer5', text:'わかる…悲しい'},
+    {account:'viewer8', text:'最初から悲しい話だったのかもな'},
+    {account:'viewer10', text:'涙出てきた…'}
+  ]});
+  posts.push({account:'viewer11', text:'業界にいるから言うけど、この番組はもう制作側がコントロールできてない。リアルタイムで何かが起きてる', phase:6, replies:[
+    {account:'viewer6', text:'マジで？'},
+    {account:'viewer3', text:'どういう意味…'},
+    {account:'viewer8', text:'やっぱそうだよな…'},
+    {account:'viewer5', text:'怖い…でも見届けたい'}
+  ]});
+  posts.push({account:'viewer9', text:'え、もう一回見れるの？なんか最初と違うところがいっぱいあるんだけど', phase:6, replies:[
+    {account:'viewer12', text:'黒塗りが外れてるよね🐤'},
+    {account:'viewer5', text:'名前が…見える…'},
+    {account:'viewer6', text:'これ2周目やらないとダメなやつだ'},
+    {account:'viewer1', text:'マジだ、前なかったやつがある'}
+  ]});
+}
 
 // Night5 posts
 if(n5){

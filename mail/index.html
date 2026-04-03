@@ -132,6 +132,15 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
   // ---- Mail Definitions ----
   var mails=[];
 
+  // ===== EndB後（+5通） =====
+  if(flag('ending_b_seen')){
+    mails.push({id:'endb_akane', from:'', subject:'', snippet:'…パパ…', body:'パパ\n\nどこにいるの\nさがしてるの\n\nここはくらいよ\n\nわたしはここにいるよ\n\nまだきこえる？', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'endb_system', from:'SYSTEM', subject:'PROCESS STATUS', snippet:'K-059: STILL RUNNING', body:'SUBJECT: K-059\nSTATUS: PROCESS STILL RUNNING\nCOMPLETION: 98.7%\n\n警告：対象の意識データが不安定です。\n次回の接続で完了する可能性があります。\n\n…予定通りです', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'endb_yoshi', from:'ゆうやけさんぽ', subject:'もう一度話したいことがある', snippet:'…まだ間に合うかもしれない', body:'…あなたに話したいことがある。\n\nPopinのDMを開いてください。\n\n…まだ間に合うかもしれない。\n…いや、間に合わせるんだ。\n\nお願いします。', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'endb_unknown', from:'', subject:garble(6), snippet:garble(10), body:'見ていたよ\n\n最初から\n\nぜんぶ\n\n\n…もう一度やり直す？\n\n…結果は変わらないのに', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'endb_spam', from:'no-reply@night-streaming.example', subject:'視聴データレポート', snippet:'あなたの深夜視聴時間が…', body:'深夜視聴時間レポート\n\n視聴時間合計: ██時間\n視聴回数: ██回\n感情データ: 収集済み\n\n※ このデータは番組改善のために使用されます。\n\nご協力ありがとうございます。', unread:false, attachment:null, type:'normal'});
+  }
+
   // ===== Night5クリア後（+7通） =====
   if(flag('night5_clear')){
     mails.push({id:'n5_trigger', from:'', subject:'', snippet:'準備はできましたか', body:'<div style="text-align:center;padding:40px 0;"><p style="font-size:18px;color:#8888aa;margin-bottom:30px;">準備はできましたか</p><a href="../night6/" style="display:inline-block;padding:12px 40px;border:1px solid #6666aa;color:#6666aa;font-size:16px;letter-spacing:2px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.background=\'#6666aa\';this.style.color=\'#000\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'#6666aa\'">開始</a></div>', unread:true, attachment:null, type:'normal'});
