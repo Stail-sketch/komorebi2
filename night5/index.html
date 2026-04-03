@@ -26,8 +26,9 @@
     .side-entity img { width: 100%; height: 100%; object-fit: cover; }
     .side-light-overlay { position: absolute; inset: 0; background: rgba(180,0,0,0.35); display: none; z-index: 1; }
     .side-light-overlay.active { display: block; }
-    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: block; z-index: 2; }
-    .door-closed-overlay.powered { display: none; }
+    .door-closed-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 2; transition: background 0.15s; }
+    .door-closed-overlay.powered { background: transparent; }
+    .door-closed-overlay.lit { background: rgba(120,0,0,0.55); }
 
     /* POWERボタン */
     .door-buttons { position: absolute; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
@@ -655,6 +656,7 @@ function togglePower(side) {
   if (side === 'left') {
     doorL = !doorL;
     $('left-door').classList.toggle('powered', doorL);
+    if (doorL) $('left-door').classList.remove('lit');
     document.querySelector('#left-buttons .btn-power').classList.toggle('on', doorL);
     playS(doorL ? sndMonitorOn : sndMonitorOff);
     if (doorL && kururuDoor === 'left') defeatKururu();
@@ -662,6 +664,7 @@ function togglePower(side) {
   } else {
     doorR = !doorR;
     $('right-door').classList.toggle('powered', doorR);
+    if (doorR) $('right-door').classList.remove('lit');
     document.querySelector('#right-buttons .btn-power').classList.toggle('on', doorR);
     playS(doorR ? sndMonitorOn : sndMonitorOff);
     if (doorR && kururuDoor === 'right') defeatKururu();
@@ -677,11 +680,11 @@ function setLight(side, on) {
   if (side === 'left') {
     lightL = on;
     document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
-    $('left-light').classList.toggle('active', on);
+    if (!doorL) $('left-door').classList.toggle('lit', on);
   } else {
     lightR = on;
     document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
-    $('right-light').classList.toggle('active', on);
+    if (!doorR) $('right-door').classList.toggle('lit', on);
   }
   updateSideEntity();
 }
@@ -706,8 +709,8 @@ function updateSideEntity() {
   if (leftEnemy) $('left-entity-img').src = DOOR_IMAGES[leftEnemy];
   if (rightEnemy) $('right-entity-img').src = DOOR_IMAGES[rightEnemy];
 
-  $('left-entity').classList.toggle('visible', !!leftEnemy && lightL && !doorL);
-  $('right-entity').classList.toggle('visible', !!rightEnemy && lightR && !doorR);
+  $('left-entity').classList.toggle('visible', !!leftEnemy && (lightL || doorL));
+  $('right-entity').classList.toggle('visible', !!rightEnemy && (lightR || doorR));
 }
 
 // ============================================================
@@ -1169,7 +1172,7 @@ function retryGame() {
   if (window.yowariCrySound) { window.yowariCrySound.pause(); window.yowariCrySound.currentTime = 0; }
   var _yw3 = document.getElementById('camera-yowari'); if(_yw3) _yw3.classList.add('hidden');
 
-  $('left-door').classList.remove('powered'); $('right-door').classList.remove('powered');
+  $('left-door').classList.remove('powered','lit'); $('right-door').classList.remove('powered','lit');
   $('left-light').classList.remove('active'); $('right-light').classList.remove('active');
   $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
   document.querySelector('#left-buttons .btn-power').classList.remove('on');
