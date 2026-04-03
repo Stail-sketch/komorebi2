@@ -574,6 +574,35 @@ function initSiteErrors(){
 
 window.fixError = fixError;
 
+// --- 既読ページ管理 ---
+(function(){
+  // 現在のページを既読として記録
+  var currentPage = location.pathname.split('/').pop() || 'index.html';
+  var visited = JSON.parse(localStorage.getItem('visited_pages') || '[]');
+  if(visited.indexOf(currentPage) === -1){
+    visited.push(currentPage);
+    localStorage.setItem('visited_pages', JSON.stringify(visited));
+  }
+
+  // CSSで既読リンクの色を変える
+  var style = document.createElement('style');
+  style.textContent = 'a.visited-link{color:var(--color-gray-500) !important;opacity:0.7;}';
+  document.head.appendChild(style);
+
+  // ページ内の全リンクを走査して既読マーク
+  document.addEventListener('DOMContentLoaded', function(){
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      var href = a.getAttribute('href');
+      if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('..')) return;
+      var pageName = href.split('/').pop().split('?')[0].split('#')[0];
+      if(pageName && visited.indexOf(pageName) !== -1){
+        a.classList.add('visited-link');
+      }
+    });
+  });
+})();
+
 // --- あかね名前の黒塗り制御（EndBまで非表示） ---
 // --- EndB後のサイト演出 ---
 (function(){
