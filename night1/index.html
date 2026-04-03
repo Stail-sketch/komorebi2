@@ -299,6 +299,8 @@
           <button class="cam-btn" data-cam="7">CAM7</button>
           <button class="cam-btn" data-cam="8">CAM8</button>
         </div>
+        <!-- バグアイコン（電力回復用） -->
+        <div id="bug-icon" style="display:none;position:absolute;z-index:50;cursor:pointer;font-family:'Courier New',monospace;font-size:13px;color:#ff3333;text-shadow:0 0 6px rgba(255,0,0,0.5);background:rgba(0,0,0,0.6);padding:3px 8px;border:1px solid rgba(255,0,0,0.3);border-radius:2px;user-select:none;pointer-events:auto;transition:opacity 0.3s;" onclick="collectBugIcon()"></div>
         <button id="camera-close-bar" class="cam-toggle-btn">CLOSE CAMERA (SPACE)</button>
       </div>
     </div>
@@ -486,6 +488,13 @@ function updateCameraView() {
   // DUCTボタン表示制御
   $('duct-enter-btn').classList.toggle('hidden', curCam === 9);
   $('duct-back-btn').classList.toggle('hidden', curCam !== 9);
+  // バグアイコン表示制御
+  var bugEl = $('bug-icon');
+  if(bugActiveCam === curCam && bugActiveCam > 0){
+    bugEl.style.display = 'block'; bugEl.style.opacity = '1';
+  } else {
+    bugEl.style.display = 'none';
+  }
   updateCameraChar();
 }
 
@@ -592,6 +601,7 @@ function startGame() {
     tickId = setInterval(gameTick, 1000);
     pwrId = setInterval(powerTick, 500);
     scheduleMove();
+    scheduleBugIcon();
   }, 1500);
 }
 
@@ -695,7 +705,58 @@ function nightClear() {
     document.getElementById('clear-screen').appendChild(btn);
   }, 2000);
 }
-function clearTimers() { clearInterval(tickId); clearInterval(pwrId); clearTimeout(sqMT); clearTimeout(sqDT); clearTimeout(sqWT); }
+function clearTimers() { clearInterval(tickId); clearInterval(pwrId); clearTimeout(sqMT); clearTimeout(sqDT); clearTimeout(sqWT); clearTimeout(bugSpawnTimer); clearTimeout(bugDespawnTimer); }
+
+// ===== バグアイコン（カメラ電力回復） =====
+var bugSpawnTimer, bugDespawnTimer;
+var bugActiveCam = -1; // バグアイコンが出てるカメラ番号（-1=なし）
+var BUG_CODES = ['ERR_0x4F','SYS_NULL','0xDEAD','NaN','#REF!','FAULT','??:??','0x0000','ERR_K059','VOID','SEGFAULT','OVERFLOW','_NULL_','0xFFFF','ERR_MEM'];
+
+function scheduleBugIcon(){
+  if(!running) return;
+  var delay = 15000 + Math.random() * 20000; // 15〜35秒のランダム間隔
+  bugSpawnTimer = setTimeout(spawnBugIcon, delay);
+}
+
+function spawnBugIcon(){
+  if(!running) return;
+  var el = $('bug-icon');
+  // ランダムなカメラに出現（1〜8、ダクト9は除外）
+  bugActiveCam = Math.floor(Math.random() * 8) + 1;
+  // ランダムな位置（カメラフィード内）
+  el.style.top = (15 + Math.random() * 60) + '%';
+  el.style.left = (10 + Math.random() * 70) + '%';
+  // ランダムなエラーコード
+  el.textContent = BUG_CODES[Math.floor(Math.random() * BUG_CODES.length)];
+  // 今見てるカメラなら表示
+  if(camOpen && curCam === bugActiveCam){
+    el.style.display = 'block';
+    el.style.opacity = '1';
+  }
+  // 20秒で消える
+  bugDespawnTimer = setTimeout(function(){
+    el.style.display = 'none';
+    bugActiveCam = -1;
+    scheduleBugIcon();
+  }, 20000);
+}
+
+function collectBugIcon(){
+  var el = $('bug-icon');
+  el.style.opacity = '0';
+  setTimeout(function(){ el.style.display = 'none'; }, 300);
+  bugActiveCam = -1;
+  clearTimeout(bugDespawnTimer);
+  // 電力回復 +2〜3%
+  var recover = 2 + Math.random();
+  power = Math.min(100, power + recover);
+  var p = Math.round(power);
+  $('power-display').textContent = p;
+  $('power-bar').style.width = p + '%';
+  $('power-bar').classList.toggle('low', p <= 25 && p > 10);
+  $('power-bar').classList.toggle('critical', p <= 10);
+  scheduleBugIcon();
+}
 
 function retryGame() {
   // 全画面非表示
