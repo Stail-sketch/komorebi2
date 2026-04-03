@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>はじめに - 吉田一郎の調査ファイル</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;color:#c8c8c8;font-family:'Courier New','Yu Gothic',monospace;min-height:100vh;padding:40px 20px;}
+.container{max-width:700px;margin:0 auto;}
+.header{border-bottom:1px solid #1a3a1a;padding-bottom:16px;margin-bottom:30px;}
+.header h1{font-size:18px;color:#0a0;letter-spacing:2px;}
+.header .file-info{font-size:12px;color:#335;margin-top:8px;}
+.content{line-height:2.2;font-size:15px;}
+.content p{margin-bottom:20px;}
+.content .emphasis{color:#0a0;font-weight:bold;}
+.content .redacted-revealed{color:#c88;background:rgba(200,100,100,0.1);padding:0 4px;}
+.content .system-note{color:#335;font-size:13px;border-left:2px solid #1a3a1a;padding-left:12px;margin:20px 0;}
+.nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #1a3a1a;}
+.nav a{color:#0a0;text-decoration:none;font-size:14px;transition:color 0.2s;}
+.nav a:hover{color:#0f0;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>File_01 — はじめに</h1>
+<div class="file-info">yoshida_investigation / author: yoshida_ichiro / classification: unrestricted</div>
+</div>
+<div class="content">
+<p>これを読んでいるなら、あなたはまだ生きている。</p>
+<p>まだ間に合うということだ。</p>
+<p>俺は吉田一郎。あの番組…「木漏れ日遊園地」のセットを作った男だ。そしてあの番組の特番に、裏から協力していた男でもある。</p>
+<p>あなたを巻き込んだのは俺のせいだ。「協力すればあの子に会える」と言われて、あいつの言うことに従い続けた。あなたのPCに番組を接続したのも、あいつの指示だった。</p>
+<p>でも…俺はもう目が覚めた。あなたが気づかせてくれた。</p>
+<p>これから書くことは全て本当のことだ。俺が30年間で集めた情報の全てをここに残す。黒塗りはしない。隠し事もしない。もうそんな余裕はない。</p>
+<p>あなたが今読んでいるこのファイルは、あいつのシステムを通さずに直接あなたのPCに送った。だからあいつはこの内容を知らない。…たぶん。時間がないから手短にまとめたが、必要な情報は全て書いた。</p>
+<p>全部読んでくれ。そして、DMで俺に連絡してくれ。</p>
+<p class="emphasis">一緒に終わらせよう。</p>
+</div>
+<div class="nav">
+<a href="index.html">&larr; 前のファイル</a>
+<a href="index.html">目次に戻る</a>
+<a href="02_yume_studio.html">次のファイル &rarr;</a>
+</div>
+</div>
+<script>
+if(localStorage.getItem('ending_b_seen')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#333;font-family:monospace;">アクセスできません</div>';}
+if(localStorage.getItem('yoshida_files_read')==null) localStorage.setItem('yoshida_files_progress','0');
+</script>
+</body>
+</html>

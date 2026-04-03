@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地下施設 - 吉田一郎の調査ファイル</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;color:#c8c8c8;font-family:'Courier New','Yu Gothic',monospace;min-height:100vh;padding:40px 20px;}
+.container{max-width:700px;margin:0 auto;}
+.header{border-bottom:1px solid #1a3a1a;padding-bottom:16px;margin-bottom:30px;}
+.header h1{font-size:18px;color:#0a0;letter-spacing:2px;}
+.header .file-info{font-size:12px;color:#335;margin-top:8px;}
+.content{line-height:2.2;font-size:15px;}
+.content p{margin-bottom:20px;}
+.content .emphasis{color:#0a0;font-weight:bold;}
+.content .redacted-revealed{color:#c88;background:rgba(200,100,100,0.1);padding:0 4px;}
+.content .system-note{color:#335;font-size:13px;border-left:2px solid #1a3a1a;padding-left:12px;margin:20px 0;}
+.nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #1a3a1a;}
+.nav a{color:#0a0;text-decoration:none;font-size:14px;transition:color 0.2s;}
+.nav a:hover{color:#0f0;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>File_03 — 地下施設</h1>
+<div class="file-info">yoshida_investigation / author: yoshida_ichiro / classification: unrestricted</div>
+</div>
+<div class="content">
+<p>1993年の夏、深夜にスタジオで作業していた時、地下から物音がした。</p>
+<p>機械室だと聞いていたが、あの音は機械の音じゃなかった。子どもの泣き声のような…いや、泣き声を機械で再生したような、不自然な音だった。</p>
+<p>翌朝、何気なく地下への階段を見に行った。鍵がかかっていた。でもその日、たまたま清掃業者が出入りしていて、扉が開いていた。</p>
+<p>地下には3つの部屋があった。</p>
+<p><span class="emphasis">「検査室A」</span> — 小さな椅子と、頭にかぶせるヘルメットのような装置。壁には脳波のグラフがモニターに映っていた。子どもの脳波だと思う。サイズ的に。</p>
+<p><span class="emphasis">「検査室B」</span> — 大型のサーバーラックと、中央に金属製の台。台の上にケーブルが何十本も伸びていて、壁のコネクタに繋がっていた。台の表面には革製のベルトが付いていた。固定用の。</p>
+<p><span class="emphasis">「保管室」</span> — 常時冷房が効いていた。サーバーが並んでいて、緑色のランプが点滅していた。サーバーにはラベルが貼ってあった。「G-0」「G-1」「G-2」…番号が6まであった。</p>
+<p>俺はそこに5分もいなかった。怖くなって逃げた。翌日から地下への扉には新しい鍵が付けられて、二度と開かなかった。</p>
+<p>あの保管室のサーバーが何を保管していたのか、俺が理解したのはもっとずっと後のことだ。</p>
+<p class="system-note">※ スタジオ跡地は1998年にマンションに建て替えられた。地下施設は解体されたとされるが、近隣住民の証言では「解体時に通常の建物にはない深さの基礎が出てきた」とのこと。</p>
+</div>
+<div class="nav">
+<a href="02_yume_studio.html">&larr; 前のファイル</a>
+<a href="index.html">目次に戻る</a>
+<a href="04_ishiki_tenni.html">次のファイル &rarr;</a>
+</div>
+</div>
+<script>
+if(localStorage.getItem('ending_b_seen')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#333;font-family:monospace;">アクセスできません</div>';}
+if(localStorage.getItem('yoshida_files_read')==null) localStorage.setItem('yoshida_files_progress','0');
+</script>
+</body>
+</html>

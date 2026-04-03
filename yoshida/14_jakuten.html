@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>システムの弱点 - 吉田一郎の調査ファイル</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;color:#c8c8c8;font-family:'Courier New','Yu Gothic',monospace;min-height:100vh;padding:40px 20px;}
+.container{max-width:700px;margin:0 auto;}
+.header{border-bottom:1px solid #1a3a1a;padding-bottom:16px;margin-bottom:30px;}
+.header h1{font-size:18px;color:#0a0;letter-spacing:2px;}
+.header .file-info{font-size:12px;color:#335;margin-top:8px;}
+.content{line-height:2.2;font-size:15px;}
+.content p{margin-bottom:20px;}
+.content .emphasis{color:#0a0;font-weight:bold;}
+.content .redacted-revealed{color:#c88;background:rgba(200,100,100,0.1);padding:0 4px;}
+.content .system-note{color:#335;font-size:13px;border-left:2px solid #1a3a1a;padding-left:12px;margin:20px 0;}
+.nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid #1a3a1a;}
+.nav a{color:#0a0;text-decoration:none;font-size:14px;transition:color 0.2s;}
+.nav a:hover{color:#0f0;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>File_14 — システムの弱点</h1>
+<div class="file-info">yoshida_investigation / author: yoshida_ichiro / classification: unrestricted</div>
+</div>
+<div class="content">
+<p>あのシステムは、黒幕と俺が一緒に作った。物理的なインフラ部分は俺の設計だ。</p>
+<p>つまり、<span class="emphasis">俺には管理者権限がある</span>。俺が作ったものだから、どこにキルスイッチがあるか知っている。</p>
+<p>シャットダウンシーケンスは、システムの内側から手動で実行する必要がある。外からは止められない。中に入って、直接コマンドを叩くしかない。</p>
+<p class="emphasis">俺にはそれができる。俺が作ったんだ。止め方は知っている。</p>
+<p>だが、一つだけ問題がある。</p>
+<p>システムを停止するということは、<span class="redacted-revealed">全てのデータが消えるということだ</span>。あかねも。他の子供たちも。30年分の意識データが、全て消滅する。</p>
+<p>あかねが死ぬ。今度こそ本当に。データもなくなり、意識もなくなり、何も残らない。</p>
+<p>30年間、俺はそれができなかった。自分の娘を殺すことができなかった。だから協力し続けた。</p>
+<p>だが…あの子はもう36年もあの箱の中にいる。</p>
+<p><span class="emphasis">あれは生きているとは言わない。拷問だ。</span></p>
+<div class="system-note">1990年から2026年。36年間。あかねはずっとあの中にいた。</div>
+<p>あなたの力が必要だ。一人ではできない。</p>
+<p>その時が来たら、そこにいてほしい。</p>
+</div>
+<div class="nav">
+<a href="13_kirara.html">&larr; 前のファイル</a>
+<a href="index.html">目次に戻る</a>
+<a href="15_akane_e.html">次のファイル &rarr;</a>
+</div>
+</div>
+<script>
+if(localStorage.getItem('ending_b_seen')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#333;font-family:monospace;">アクセスできません</div>';}
+</script>
+</body>
+</html>
