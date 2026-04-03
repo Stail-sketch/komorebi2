@@ -212,6 +212,54 @@ if(localStorage.getItem('chat_unlocked') === 'true'){
   document.getElementById('chat-icon').style.display = '';
   document.getElementById('chat-pin').style.display = '';
 }
+
+// ===== デスクトップ通知 =====
+(function(){
+  var notifications = {
+    night1: ['📧 新しいメールが届いています', '🌐 サイトが更新されました'],
+    night2: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります'],
+    night3: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '📁 旧サイトアーカイブが追加されました'],
+    night4: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります'],
+    night5: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります']
+  };
+
+  // 通知スタイル注入
+  var style = document.createElement('style');
+  style.textContent = '.desktop-toast{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}.desktop-toast-item{background:rgba(20,20,40,0.92);backdrop-filter:blur(12px);border:1px solid rgba(100,100,200,0.2);border-radius:10px;padding:14px 20px;color:#c8c8e0;font-size:14px;font-family:"Segoe UI","Hiragino Kaku Gothic ProN",system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.4);opacity:0;transform:translateX(60px);transition:all 0.5s ease;pointer-events:auto;cursor:default;}.desktop-toast-item.show{opacity:1;transform:translateX(0);}';
+  document.head.appendChild(style);
+
+  for(var n = 1; n <= 5; n++){
+    var key = 'night' + n + '_just_cleared';
+    if(localStorage.getItem(key) === 'true'){
+      localStorage.removeItem(key);
+      var msgs = notifications['night' + n];
+      if(!msgs) continue;
+
+      // 通知コンテナ
+      var container = document.createElement('div');
+      container.className = 'desktop-toast';
+      document.body.appendChild(container);
+
+      // 通知を順番にポップアップ
+      msgs.forEach(function(msg, i){
+        setTimeout(function(){
+          var toast = document.createElement('div');
+          toast.className = 'desktop-toast-item';
+          toast.textContent = msg;
+          container.appendChild(toast);
+          setTimeout(function(){ toast.classList.add('show'); }, 50);
+          // 5秒後にフェードアウト
+          setTimeout(function(){
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(60px)';
+            setTimeout(function(){ toast.remove(); }, 500);
+          }, 5000);
+        }, i * 800);
+      });
+      break; // 1つのNightだけ処理
+    }
+  }
+})();
 </script>
 </body>
 </html>

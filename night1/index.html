@@ -691,6 +691,7 @@ function gameOver(killer) {
 function nightClear() {
   running = false; clearTimers(); stopAllSounds();
   localStorage.setItem('night1_clear', 'true'); localStorage.setItem('night1_pages_unlocked', 'true');
+  localStorage.setItem('night1_just_cleared', 'true');
   playS(sndClearChime);
   $('clear-screen').classList.add('active');
   setTimeout(() => playS(sndClearYay), 500);

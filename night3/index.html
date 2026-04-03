@@ -897,6 +897,7 @@ function nightClear() {
   running = false; clearTimers(); stopAllSounds();
   localStorage.setItem('night3_clear', 'true');
   localStorage.setItem('night3_pages_unlocked', 'true');
+  localStorage.setItem('night3_just_cleared', 'true');
   playS(sndClearChime);
   $('clear-screen').classList.add('active');
   setTimeout(() => playS(sndClearYay), 500);
