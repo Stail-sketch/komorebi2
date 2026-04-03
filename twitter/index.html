@@ -1210,7 +1210,13 @@ function renderReplyCard(reply){
 // ===== RENDER TIMELINE =====
 var timeline=document.getElementById('timeline');
 var html='';
+var lastPhase = -1;
 posts.forEach(function(p,i){
+  var ph = p.phase !== undefined ? p.phase : 0;
+  if(ph !== lastPhase && lastPhase !== -1 && highestCleared > 0){
+    html+='<div style="display:flex;align-items:center;gap:12px;padding:14px 0;color:#8070a0;font-size:13px;font-weight:600;"><span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#2a2035,transparent);"></span>NEW<span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#2a2035,transparent);"></span></div>';
+  }
+  lastPhase = ph;
   html+=renderPostCard(p,i);
 });
 timeline.innerHTML=html;

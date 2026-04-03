@@ -305,6 +305,8 @@
   </div>
 
 <script>
+// クリア済みならデスクトップに戻す
+if(localStorage.getItem('night1_clear')==='true'){window.location.href='../index.html';}
 // ============================================================
 // Night1 ゲームエンジン（前作ベースで再構築）
 // ============================================================
@@ -730,6 +732,9 @@ function showBriefing(){
     {type:'char', name:'くるる', text:'ぼく、気になるところがあると遊びに行っちゃうんだ。', color:'#5cb85c'},
     {type:'char', name:'くるる', text:'カメラで見ててくれると、ちょっと恥ずかしくて遅くなっちゃう。', color:'#5cb85c'},
     {type:'char', name:'くるる', text:'でも近くまで来ちゃったら…ドアを閉めてね？', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'あと、左右にモニターがあるでしょ？', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'ライトで照らすと、すぐそこにいるかどうか分かるよ。', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'…あ、電力がなくなったら全部消えちゃうから気をつけてね！', color:'#5cb85c'},
     {type:'char', name:'くるる', text:'閉めないと\u0337\u0336…\u0334\u0335 \u2588\u2588\u2588\u2588\u2588\u2588\u2588', color:'#5cb85c', glitch:true},
     {type:'sys', text:'character_error: recovered', warn:true},
     {type:'gap'},
