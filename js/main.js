@@ -662,9 +662,9 @@ function initSiteErrors(){
     }
   });
 
-  // CSSスタイル注入
+  // CSSスタイル注入（見た目は完全に周囲と同じ、バレない）
   var style = document.createElement('style');
-  style.textContent = '.site-error{cursor:pointer;transition:color 0.2s;}.site-error:hover{color:#cc0000;text-decoration:underline wavy #cc0000;}';
+  style.textContent = '.site-error{cursor:inherit;color:inherit;text-decoration:none;-webkit-user-select:text;user-select:text;}';
   document.head.appendChild(style);
 }
 
