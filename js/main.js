@@ -636,27 +636,15 @@ function triggerNight2Transition(){
       }, line.delay);
     });
 
-    // 7秒後：完全に埋め尽くされた→ボタン表示
+    // 7秒後：完全に埋め尽くされた→自動遷移
     setTimeout(function(){
       clearInterval(growInterval);
-      // 背景を完全に緑バグで埋める
       overlay.style.color = 'rgba(0,200,0,0.9)';
       overlay.style.background = '#000';
-
-      // 遷移ボタン
-      msgLayer.style.pointerEvents = 'auto';
-      var btn = document.createElement('a');
-      btn.href = '../night2/';
-      btn.style.cssText = 'display:inline-block;margin-top:40px;padding:14px 50px;border:1px solid #003300;color:#003300;font-family:"Courier New",monospace;font-size:15px;letter-spacing:3px;text-decoration:none;transition:all 0.5s;opacity:0;';
-      btn.textContent = '\u25b6 proceed';
-      msgLayer.appendChild(btn);
+      // 2秒後に自動でNight2へ
       setTimeout(function(){
-        btn.style.opacity = '1';
-        btn.style.borderColor = '#0a0';
-        btn.style.color = '#0a0';
-      }, 500);
-      btn.onmouseover = function(){ btn.style.background='#0a0'; btn.style.color='#000'; };
-      btn.onmouseout = function(){ btn.style.background='transparent'; btn.style.color='#0a0'; };
+        window.location.href = '../night2/';
+      }, 2000);
     }, 5000);
   }, 3000);
 
