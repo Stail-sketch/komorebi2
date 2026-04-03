@@ -536,9 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- サイト内の間違いクリック（Night2入口） ---
 var ERROR_CORRECTIONS = {
-  year: {wrong:'1998年', right:'1997年'},
-  count: {wrong:'320', right:'315'},
-  song: {wrong:'ぽたまるソング♪', right:'ぽたまるダンス♪'}
+  corner: {wrong:'キツネ団長のなぜなぜ教室', right:'キツネ団長の冒険タイム'},
+  song: {wrong:'ぽたまるソング♪', right:'ぽたまるダンス♪'},
+  day: {wrong:'毎週日曜日に', right:'毎週土曜日に'}
 };
 
 function getFoundErrors(){

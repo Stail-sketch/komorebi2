@@ -93,7 +93,7 @@
 (function(){
   // ===== 間違い発見ルート: 3つの間違いを見つけたら画面が変異 =====
   var siteErrors = JSON.parse(localStorage.getItem('site_errors_found') || '[]');
-  var hasAllErrors = ['year','count','song'].every(function(e){ return siteErrors.indexOf(e) !== -1; });
+  var hasAllErrors = ['corner','song','day'].every(function(e){ return siteErrors.indexOf(e) !== -1; });
   var n2done = localStorage.getItem('night2_clear') === 'true';
 
   if(hasAllErrors && !n2done){
@@ -213,9 +213,9 @@
 
   // 誤りキーワード定義
   var errorKeywords = [
-    { id: 'year', keywords: ['1998'], response: null },
-    { id: 'count', keywords: ['320'], response: null },
-    { id: 'song', keywords: ['ソング'], response: null }
+    { id: 'corner', keywords: ['なぜなぜ','冒険タイム'], response: null },
+    { id: 'song', keywords: ['ソング','ダンス'], response: null },
+    { id: 'day', keywords: ['日曜','土曜'], response: null }
   ];
 
   form.addEventListener('submit', function(e){
