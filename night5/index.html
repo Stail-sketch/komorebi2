@@ -539,6 +539,11 @@ function openCamera() {
   if (!running) return;
   camOpen = true;
   $('camera-view').classList.remove('hidden');
+  // カメラ開いたらかすみオファーを強制非表示（pending化）
+  if($('kasumi-offer').style.display !== 'none'){
+    $('kasumi-offer').style.display = 'none';
+    kasumiPending = true;
+  }
   triggerNoise();
   playS(sndCamSwitch);
   updateCameraView();
