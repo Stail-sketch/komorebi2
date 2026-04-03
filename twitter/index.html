@@ -1752,7 +1752,44 @@ var dmWarmupScripts = {
         {keywords:['ひどい','許せない'], reply:'…ええ。でも当時の俺は何もできなかった'}
       ],
       defaultReply: '…本当は違ったんです。でもまだ…全部は話せません',
-      next: '…すみません、一気に話しすぎました。…でも、何か気になることがあったらいつでも聞いてください'
+      next: '…すみません、一気に話しすぎました。…でも、もう少しだけ聞いてくれますか'
+    },
+    {
+      choices: ['もちろん','聞くよ','…うん'],
+      responses: [
+        {keywords:['もちろん','聞く','うん','はい'], reply:'…ありがとう'}
+      ],
+      defaultReply: '…ありがとう',
+      next: '…あの検査室で何が行われていたか…俺はまだ全部を理解したわけじゃない。でも…あの子どもたちが…'
+    },
+    {
+      choices: ['子どもたちが…？','何があったの？','…大丈夫？'],
+      responses: [
+        {keywords:['子ども','何が','あった'], reply:'…消えたんです。検査を受けた子どもたちが。1人、また1人と'},
+        {keywords:['大丈夫'], reply:'…大丈夫じゃないです。でも…言わなきゃいけない'}
+      ],
+      defaultReply: '…消えたんです。検査を受けた子どもたちが',
+      next: '…俺の知ってる限り、少なくとも4人。全員、番組の収録に参加してた子どもたちで…'
+    },
+    {
+      choices: ['4人も…','それって…','怖い…'],
+      responses: [
+        {keywords:['4人','よにん'], reply:'…ええ。4人。もしかしたらもっと'},
+        {keywords:['それ','まさか'], reply:'…ええ。あなたが想像してる通りかもしれない'},
+        {keywords:['怖い','こわい'], reply:'…怖いですよね。でも…これが現実です'}
+      ],
+      defaultReply: '…ええ。4人の子どもが消えた。そして…',
+      next: '…そして、あの番組のキャラクターたちの動きが…変わった。まるで…中に誰かが'
+    },
+    {
+      choices: ['まさか…','中に誰かが…？','嘘でしょ…'],
+      responses: [
+        {keywords:['まさか','嘘','うそ'], reply:'…嘘だと思いたい。俺だって30年間そう思おうとした'},
+        {keywords:['中に','誰か'], reply:'…ええ。あのアニマトロニクスの中に…子どもたちの…'}
+      ],
+      defaultReply: '…ええ。あの人形たちの中に…',
+      next: null,
+      onComplete: 'triggerNight5Collapse'
     }
   ],
   3: [
@@ -1954,8 +1991,13 @@ function handleWarmupResponse(text){
         setTimeout(renderDMChoices, 500);
       }, 1500 + Math.random()*1000);
     } else {
-      dmIsProcessing = false;
-      setTimeout(renderDMChoices, 500);
+      // onCompleteコールバック（nextがnullの最終ステップ）
+      if(script[stage-1].onComplete === 'triggerNight5Collapse'){
+        setTimeout(triggerNight5Collapse, 1500);
+      } else {
+        dmIsProcessing = false;
+        setTimeout(renderDMChoices, 500);
+      }
     }
   }, 800 + Math.random()*800);
 
@@ -2342,6 +2384,54 @@ function sendDMChoice(text){
   setTimeout(function(){ renderDMChoices(); }, 100);
 }
 window.sendDMChoice = sendDMChoice;
+
+// Night5崩壊遷移（Phase2ウォームアップ最後）
+function triggerNight5Collapse(){
+  var container = document.getElementById('dm-choices');
+  if(container) container.innerHTML = '';
+  var msgArea = document.getElementById('dm-messages');
+
+  // 吉田のメッセージが壊れ始める
+  showTypingIndicator();
+  setTimeout(function(){
+    addYoshiResponse('…おかしい…見られて');
+    showTypingIndicator();
+    setTimeout(function(){
+      addYoshiResponse('\u0336\u0337\u3084\u0334\u3081\u0335\u308d\u0336…\u0337\u4ffa\u0334\u306f\u0335\u307e\u0336\u3060\u0337');
+      // DM画面グリッチ
+      var dmContainer = document.querySelector('.dm-container');
+      if(dmContainer){
+        dmContainer.style.animation = 'bfShake 0.08s infinite';
+        // シェイクアニメ追加
+        var ss = document.createElement('style');
+        ss.textContent = '@keyframes bfShake{0%{transform:translate(0,0)}25%{transform:translate(-6px,4px)}50%{transform:translate(5px,-5px)}75%{transform:translate(-4px,-3px)}100%{transform:translate(6px,5px)}}';
+        document.head.appendChild(ss);
+      }
+      setTimeout(function(){
+        // 画面全体が赤く点滅
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;opacity:0;transition:opacity 1s;';
+        document.body.appendChild(overlay);
+        var fc = 0;
+        var fi = setInterval(function(){
+          overlay.style.background = fc % 2 === 0 ? 'rgba(80,0,0,0.8)' : '#000';
+          overlay.style.opacity = '1';
+          fc++;
+          if(fc >= 6){
+            clearInterval(fi);
+            overlay.style.background = '#000';
+            overlay.style.opacity = '1';
+            // Night5へ遷移
+            setTimeout(function(){
+              window.location.href = '../night5/';
+            }, 1500);
+          }
+        }, 150);
+      }, 2000);
+    }, 1500);
+  }, 1000);
+}
+window.triggerNight5Collapse = triggerNight5Collapse;
 
 // 最終会話→Night6遷移
 function triggerFinalConversation(){
