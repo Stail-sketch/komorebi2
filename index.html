@@ -16,14 +16,38 @@ body {
   user-select: none;
 }
 
-/* 壁紙 */
+/* 壁紙（通常：Windows風ブルー） */
 .desktop {
   width: 100%;
   height: 100%;
   position: relative;
-  background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 40%, #24243e 100%);
+  background: linear-gradient(160deg, #1a6fc4 0%, #1e88d0 25%, #4da6e8 50%, #2980c4 75%, #1565a8 100%);
   display: flex;
   flex-direction: column;
+}
+
+/* EndB後：壊れた壁紙 */
+.desktop.endb-wallpaper {
+  background: #0a0a0f;
+  overflow: hidden;
+}
+.desktop.endb-wallpaper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,0,0.015) 2px, rgba(0,255,0,0.015) 4px),
+    radial-gradient(ellipse at 30% 50%, rgba(0,40,0,0.3) 0%, transparent 70%),
+    radial-gradient(ellipse at 70% 30%, rgba(40,0,0,0.2) 0%, transparent 60%);
+  z-index: 0;
+  pointer-events: none;
+  animation: wallpaperGlitch 8s infinite;
+}
+@keyframes wallpaperGlitch {
+  0%,95%,100% { opacity: 1; transform: none; }
+  96% { opacity: 0.7; transform: translateX(-2px); }
+  97% { opacity: 1; transform: translateX(3px); }
+  98% { opacity: 0.5; transform: none; }
 }
 
 /* アイコンエリア */
@@ -258,6 +282,11 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
     }, 1500);
   }, 10000);
 })();
+
+// EndB後の壁紙変更
+if(localStorage.getItem('ending_b_seen') === 'true'){
+  document.getElementById('desktop-main').classList.add('endb-wallpaper');
+}
 
 // アーカイブアイコンの表示制御（Night3クリア後）
 if(localStorage.getItem('night3_clear') === 'true'){
