@@ -883,11 +883,10 @@ function acceptKasumiOffer() {
   hideKasumiOffer();
   startCameraNoise();
   startKasumiDebuff();
-  if(doorL){ doorL=false; $('left-door').classList.remove('powered'); document.querySelector('#left-buttons .btn-power').classList.remove('on'); }
-  if(doorR){ doorR=false; $('right-door').classList.remove('powered'); document.querySelector('#right-buttons .btn-power').classList.remove('on'); }
-  var _origTogglePower5 = togglePower;
-  togglePower = function(){};
-  setTimeout(function(){ togglePower = _origTogglePower5; }, 3000);
+  // LIGHT封印（3秒間確認不能）
+  var _origSetLight5 = setLight;
+  setLight = function(){};
+  setTimeout(function(){ setLight = _origSetLight5; }, 3000);
 }
 
 function startKasumiDebuff() {
