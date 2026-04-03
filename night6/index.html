@@ -1444,10 +1444,11 @@ function nightClear() {
   localStorage.setItem('custom_night_unlocked', 'true');
   setTimeout(() => {
     allowNavigation();
-    var persuasionKeys = JSON.parse(localStorage.getItem('persuasion_keys') || '[]');
     var hasSeenEndB = localStorage.getItem('ending_b_seen') === 'true';
-    if (hasSeenEndB && persuasionKeys.length >= 3) {
-      // True End - enough persuasion + seen End B
+    var hasReadFiles = localStorage.getItem('yoshida_files_read') === 'true';
+    var hasFinalConv = localStorage.getItem('final_conversation_done') === 'true';
+    if (hasSeenEndB && hasReadFiles && hasFinalConv) {
+      // True End - EndB seen + files read + final conversation
       window.location.href = '../ending_a/';
     } else {
       // Bad End

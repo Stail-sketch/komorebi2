@@ -215,6 +215,12 @@ body {
       <span class="icon-label">sys_log.txt</span>
     </a>
 
+    <!-- 吉田の調査ファイル（DM Phase4ウォームアップ後に出現） -->
+    <a class="desktop-icon" id="yoshida-folder" href="#" onclick="window.open('yoshida/index.html','_blank');return false;" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#2a1a0a,#4a3a1a);font-size:22px;">📂</div>
+      <span class="icon-label">吉田の<br>調査ファイル</span>
+    </a>
+
   </div>
 
   <!-- タスクバー -->
@@ -293,6 +299,11 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
 if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('endb-wallpaper');
   document.getElementById('syslog-icon').style.display = '';
+}
+
+// 吉田ファイル送信後にフォルダアイコン表示
+if(localStorage.getItem('yoshida_files_sent') === 'true'){
+  document.getElementById('yoshida-folder').style.display = '';
 }
 
 // syslogウィンドウ

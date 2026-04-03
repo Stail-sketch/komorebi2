@@ -1870,7 +1870,16 @@ var dmWarmupScripts = {
         {keywords:['どうする','これから'], reply:'…あの子を救う方法が…1つだけある'}
       ],
       defaultReply: '…あの子を…本当に救うには',
-      next: '全部壊すしかないんだ。…何が聞きたい。全部答える'
+      next: '全部壊すしかないんだ。…でもその前に、お前に全部知ってほしい'
+    },
+    {
+      choices: ['わかった','全部教えてくれ'],
+      responses: [
+        {keywords:['わかった','教えて','知りたい','うん','はい'], reply:'…ありがとう'}
+      ],
+      defaultReply: '…ありがとう',
+      next: '俺が30年間で集めた情報を全部まとめた。…今、お前のPCにファイルを送った。あいつのシステムを通さずに直接送った。全部読んでくれ。読み終わったら…またここで話そう',
+      onComplete: 'sendYoshidaFiles'
     }
   ]
 };
@@ -1935,6 +1944,10 @@ function handleWarmupResponse(text){
       showTypingIndicator();
       setTimeout(function(){
         addYoshiResponse(script[stage-1].next);
+        // onCompleteコールバック（ファイル送信等）
+        if(script[stage-1].onComplete === 'sendYoshidaFiles'){
+          localStorage.setItem('yoshida_files_sent', 'true');
+        }
         dmIsProcessing = false;
         setTimeout(renderDMChoices, 500);
       }, 1500 + Math.random()*1000);
@@ -2266,6 +2279,34 @@ function renderDMChoices(){
       choices = script[stage].choices;
     }
     showInput = false;
+  } else if(dmPhase === 4 && localStorage.getItem('yoshida_files_read') === 'true' && !localStorage.getItem('final_conversation_done')){
+    // ファイル読了後：最終会話
+    choices = null;
+    showInput = false;
+    // 自動で最終会話を開始
+    if(!document.getElementById('final-conv-started')){
+      var marker = document.createElement('span');
+      marker.id = 'final-conv-started';
+      marker.style.display = 'none';
+      container.appendChild(marker);
+      setTimeout(function(){
+        showTypingIndicator();
+        setTimeout(function(){
+          addYoshiResponse('…全部読んだか');
+          showTypingIndicator();
+          setTimeout(function(){
+            addYoshiResponse('…ありがとう。全部知った上で、まだここにいてくれるんだな');
+            showTypingIndicator();
+            setTimeout(function(){
+              addYoshiResponse('…覚悟はいいか');
+              // 最終選択肢を表示
+              container.innerHTML = '<button style="padding:10px 24px;background:#1a1520;border:1px solid #FF7EB3;border-radius:20px;color:#FF7EB3;font-size:15px;cursor:pointer;font-family:inherit;transition:all 0.3s;letter-spacing:2px;" onmouseover="this.style.background=\'#FF7EB3\';this.style.color=\'#000\'" onmouseout="this.style.background=\'#1a1520\';this.style.color=\'#FF7EB3\'" onclick="triggerFinalConversation()">一緒に終わらせよう</button>';
+            }, 2000);
+          }, 2500);
+        }, 2000);
+      }, 1000);
+    }
+    return;
   } else if(dmPhase === 1){
     // Phase1フリーモード：テキスト入力のみ（差分報告待ち）
     choices = null;
@@ -2299,6 +2340,44 @@ function sendDMChoice(text){
   setTimeout(function(){ renderDMChoices(); }, 100);
 }
 window.sendDMChoice = sendDMChoice;
+
+// 最終会話→Night6遷移
+function triggerFinalConversation(){
+  localStorage.setItem('final_conversation_done', 'true');
+  var container = document.getElementById('dm-choices');
+  if(container) container.innerHTML = '';
+
+  // プレイヤーのメッセージ表示
+  var msgArea = document.getElementById('dm-messages');
+  if(msgArea){
+    var bubble = document.createElement('div');
+    bubble.className = 'dm-bubble dm-bubble-right';
+    bubble.textContent = '一緒に終わらせよう';
+    msgArea.appendChild(bubble);
+    scrollDMToBottom();
+  }
+
+  // 吉田の最後の返事→Night6遷移
+  showTypingIndicator();
+  setTimeout(function(){
+    addYoshiResponse('…ああ');
+    showTypingIndicator();
+    setTimeout(function(){
+      addYoshiResponse('…行こう');
+      // 画面フェードアウト→Night6
+      setTimeout(function(){
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;opacity:0;transition:opacity 2s;';
+        document.body.appendChild(overlay);
+        setTimeout(function(){ overlay.style.opacity = '1'; }, 50);
+        setTimeout(function(){
+          window.location.href = '../night6/';
+        }, 2500);
+      }, 1500);
+    }, 2000);
+  }, 1500);
+}
+window.triggerFinalConversation = triggerFinalConversation;
 
 window.showDM = function(){
   history.pushState({view:'dm'}, '', '');
