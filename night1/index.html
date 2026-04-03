@@ -760,9 +760,18 @@ function showBriefing(){
     {type:'char', name:'くるる', text:'いなくなったらOFFにして、節約してね！', color:'#5cb85c'},
     {type:'gap'},
     {type:'char', name:'くるる', text:'電力がゼロになったら…全部消えちゃって…', color:'#5cb85c'},
-    {type:'char', name:'く\u0336\u0337る\u0334\u0335る', text:'\u0336\u0337つ\u0334け\u0335ら\u0336れ\u0337な\u0334く\u0335な\u0336っ\u0337た\u0334ら\u0335\u3000\u0336\u0337ぼ\u0334く\u0335が\u3000\u0336\u0337き\u0334ち\u0335ゃ\u0336う\u0337よ', color:'#ff0033', glitch:true},
-    {type:'sys', text:'character_error: recovered', warn:true},
+    {type:'char', name:'く\u0336\u0337る\u0334\u0335る', text:'\u0336\u0337つ\u0334け\u0335ら\u0336れ\u0337な\u0334く\u0335な\u0336っ\u0337た\u0334ら\u0335', color:'#ff0033', glitch:true},
+    {type:'char', name:'\u2588\u2588\u2588', text:'\u0336\u0337ぼ\u0334く\u0335が\u3000\u0336\u0337き\u0334ち\u0335ゃ\u0336う\u0337よ', color:'#ff0033', glitch:true},
+    {type:'sys', text:'character_error: overflow', warn:true},
+    {type:'char', name:'\u2588\u2588\u2588', text:'\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0', color:'#ff0033', glitch:true},
+    {type:'sys', text:'ERROR: unexpected_output in kururu.dll', warn:true},
+    {type:'sys', text:'ERROR: emotional_boundary exceeded', warn:true},
+    {type:'char', name:'\u2588\u2588\u2588', text:'\u305f\u0336\u0337\u306e\u0334\u0335\u3057\u0336\u0337\u307f\u0334\u0335\u3060\u0336\u0337\u3088\u0334\u3000\u0336\u0337\u305a\u0334\u0335\u3063\u0336\u0337\u3068\u0334\u0335\u3000\u0336\u0337\u307e\u0334\u0335\u3063\u0336\u0337\u3066\u0334\u0335\u305f\u0336\u0337\u306e\u0334\u0335\u306b', color:'#ff0033', glitch:true},
+    {type:'sys', text:'CRITICAL: force_restart initiated', warn:true},
     {type:'gap'},
+    {type:'gap'},
+    {type:'sys', text:'...'},
+    {type:'sys', text:'character_state: reset to default'},
     {type:'sys', text:'broadcast ready.'}
   ];
   runBriefing(lines);
