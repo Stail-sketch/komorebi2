@@ -591,63 +591,83 @@ function fixError(id, el){
 }
 
 function triggerNight2Transition(){
-  // 画面全体を暗転
+  var ch = '\u2588\u2591\u2592\u2593\u25a0\u25a1\u2502\u2500\u253c\u00a7';
   var overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;opacity:0;transition:opacity 1.5s;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:"Courier New",monospace;';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;pointer-events:none;font-family:monospace;font-size:14px;line-height:1.1;color:rgba(0,200,0,0.4);overflow:hidden;word-break:break-all;';
   document.body.appendChild(overlay);
-  setTimeout(function(){ overlay.style.opacity = '1'; }, 50);
 
-  // シェイクCSS
-  var ss = document.createElement('style');
-  ss.textContent = '@keyframes n2Shake{0%{transform:translate(0,0)}25%{transform:translate(-8px,5px)}50%{transform:translate(6px,-6px)}75%{transform:translate(-5px,-4px)}100%{transform:translate(7px,6px)}}';
-  document.head.appendChild(ss);
+  // 緑のバグ文字が徐々に画面を埋め尽くす
+  var density = 0;
+  var maxChars = 10000;
+  var growInterval = setInterval(function(){
+    density += 200;
+    if(density > maxChars) density = maxChars;
+    var s = '';
+    for(var i = 0; i < density; i++) s += ch[Math.floor(Math.random()*ch.length)];
+    overlay.textContent = s;
+    // 徐々に濃く
+    var opacity = Math.min(0.9, 0.2 + (density / maxChars) * 0.7);
+    overlay.style.color = 'rgba(0,200,0,' + opacity + ')';
+  }, 100);
 
-  // タイプライター表示
-  var lines = [
-    {text:'[SYSTEM] site_integrity_check: 3 errors corrected', color:'#335', delay:2000},
-    {text:'[SYSTEM] unauthorized_modification detected', color:'#a44', delay:3000},
-    {text:'[SYSTEM] restoring original data...', color:'#335', delay:4000},
-    {text:'…見つけてくれたんだ', color:'#6666aa', delay:5500},
-    {text:'…ありがとう', color:'#6666aa', delay:6500},
-    {text:'[SYSTEM] WARNING: unknown_process intercepted', color:'#a44', delay:8000},
-  ];
-
-  lines.forEach(function(line){
-    setTimeout(function(){
-      var p = document.createElement('p');
-      p.style.cssText = 'color:'+line.color+';font-size:14px;letter-spacing:1px;margin:4px 0;opacity:0;transition:opacity 0.3s;';
-      p.textContent = line.text;
-      overlay.appendChild(p);
-      setTimeout(function(){ p.style.opacity = '1'; }, 50);
-    }, line.delay);
-  });
-
-  // シェイク+フリッカー
+  // 3秒後：文字が画面を埋め尽くし始めたらテキスト表示
   setTimeout(function(){
-    overlay.style.animation = 'n2Shake 0.08s infinite';
-    var fc = 0;
-    var fi = setInterval(function(){
-      overlay.style.background = fc % 2 === 0 ? '#1a0000' : '#000';
-      fc++;
-      if(fc >= 8){ clearInterval(fi); overlay.style.background = '#000'; overlay.style.animation = ''; }
-    }, 60);
-  }, 9000);
+    // 中央にメッセージ用レイヤー
+    var msgLayer = document.createElement('div');
+    msgLayer.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:100000;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:"Courier New",monospace;pointer-events:none;';
+    document.body.appendChild(msgLayer);
 
-  // Night2遷移ボタン
-  setTimeout(function(){
-    var btn = document.createElement('a');
-    btn.href = '../night2/';
-    btn.style.cssText = 'display:inline-block;margin-top:40px;padding:14px 50px;border:1px solid #440000;color:#440000;font-family:"Courier New",monospace;font-size:15px;letter-spacing:3px;text-decoration:none;transition:all 0.5s;opacity:0;';
-    btn.textContent = '\u25b6 proceed';
-    overlay.appendChild(btn);
+    var lines = [
+      {text:'[SYSTEM] 3 errors corrected', color:'#0f0', delay:0},
+      {text:'[SYSTEM] unauthorized_modification detected', color:'#0a0', delay:1000},
+      {text:'', delay:1800},
+      {text:'…見つけてくれたんだ', color:'#4f4', delay:2500},
+      {text:'…ありがとう', color:'#4f4', delay:3500},
+    ];
+
+    lines.forEach(function(line){
+      setTimeout(function(){
+        if(!line.text) return;
+        var p = document.createElement('p');
+        p.style.cssText = 'color:'+line.color+';font-size:16px;letter-spacing:2px;margin:6px 0;opacity:0;transition:opacity 0.5s;text-shadow:0 0 10px rgba(0,255,0,0.5);';
+        p.textContent = line.text;
+        msgLayer.appendChild(p);
+        setTimeout(function(){ p.style.opacity = '1'; }, 50);
+      }, line.delay);
+    });
+
+    // 7秒後：完全に埋め尽くされた→ボタン表示
     setTimeout(function(){
-      btn.style.opacity = '1';
-      btn.style.borderColor = '#aa2222';
-      btn.style.color = '#aa2222';
-    }, 500);
-    btn.onmouseover = function(){ btn.style.background='#aa2222'; btn.style.color='#000'; };
-    btn.onmouseout = function(){ btn.style.background='transparent'; btn.style.color='#aa2222'; };
-  }, 10000);
+      clearInterval(growInterval);
+      // 背景を完全に緑バグで埋める
+      overlay.style.color = 'rgba(0,200,0,0.9)';
+      overlay.style.background = '#000';
+
+      // 遷移ボタン
+      msgLayer.style.pointerEvents = 'auto';
+      var btn = document.createElement('a');
+      btn.href = '../night2/';
+      btn.style.cssText = 'display:inline-block;margin-top:40px;padding:14px 50px;border:1px solid #003300;color:#003300;font-family:"Courier New",monospace;font-size:15px;letter-spacing:3px;text-decoration:none;transition:all 0.5s;opacity:0;';
+      btn.textContent = '\u25b6 proceed';
+      msgLayer.appendChild(btn);
+      setTimeout(function(){
+        btn.style.opacity = '1';
+        btn.style.borderColor = '#0a0';
+        btn.style.color = '#0a0';
+      }, 500);
+      btn.onmouseover = function(){ btn.style.background='#0a0'; btn.style.color='#000'; };
+      btn.onmouseout = function(){ btn.style.background='transparent'; btn.style.color='#0a0'; };
+    }, 5000);
+  }, 3000);
+
+  // バグ文字の更新を続ける（ランダムに書き換わり続ける）
+  setInterval(function(){
+    if(density >= maxChars){
+      var s = '';
+      for(var i = 0; i < maxChars; i++) s += ch[Math.floor(Math.random()*ch.length)];
+      overlay.textContent = s;
+    }
+  }, 150);
 }
 
 function initSiteErrors(){
