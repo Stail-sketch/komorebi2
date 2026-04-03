@@ -326,7 +326,7 @@
           <button class="cam-btn" data-cam="8">CAM8</button>
         </div>
         <!-- バグアイコン（電力回復用） -->
-        <div id="bug-icon" style="display:none;position:absolute;z-index:50;cursor:pointer;font-family:'Courier New',monospace;font-size:13px;color:#ff3333;text-shadow:0 0 6px rgba(255,0,0,0.5);background:rgba(0,0,0,0.6);padding:3px 8px;border:1px solid rgba(255,0,0,0.3);border-radius:2px;user-select:none;pointer-events:auto;transition:opacity 0.3s;" onclick="collectBugIcon()"></div>
+        <div id="bug-icon" style="display:none;position:absolute;z-index:50;cursor:pointer;font-family:'Courier New',monospace;font-size:16px;color:#00ff41;text-shadow:0 0 8px rgba(0,255,65,0.6),0 0 20px rgba(0,255,65,0.2);background:none;padding:0;border:none;user-select:none;pointer-events:auto;transition:opacity 0.3s;" onclick="collectBugIcon()"></div>
         <button id="camera-close-bar" class="cam-toggle-btn">CLOSE CAMERA (SPACE)</button>
       </div>
     </div>
@@ -484,7 +484,8 @@ const KS_OFFER_MIN = 20000, KS_OFFER_MAX = 30000;
 const KS_OFFER_TIMEOUT = 8000;
 const KS_NOISE_DURATION = 15000;
 const KS_DEBUFF_DURATION = 15000;
-const KS_SPEED_MULT = 1.5;
+const KS_SPEED_MULT = 2.0;
+const KS_WEB_DRAIN_MULT = 1.5;
 var kasumiDebuffActive = false;
 
 // アラネ（蜘蛛の巣ゲージ）設定
@@ -901,6 +902,11 @@ function acceptKasumiOffer() {
   hideKasumiOffer();
   startCameraNoise();
   startKasumiDebuff();
+  if(doorL){ doorL=false; $('left-door').classList.remove('powered'); document.querySelector('#left-buttons .btn-power').classList.remove('on'); }
+  if(doorR){ doorR=false; $('right-door').classList.remove('powered'); document.querySelector('#right-buttons .btn-power').classList.remove('on'); }
+  var _origTogglePower4 = togglePower;
+  togglePower = function(){};
+  setTimeout(function(){ togglePower = _origTogglePower4; }, 3000);
 }
 
 function startKasumiDebuff() {
@@ -955,7 +961,7 @@ function webGaugeTick() {
   } else {
     // 常時減少
     var drain = WEB_DRAIN_RATE;
-    if(kasumiDebuffActive) drain *= KS_SPEED_MULT;
+    if(kasumiDebuffActive) drain *= KS_WEB_DRAIN_MULT;
     webGauge = Math.max(0, webGauge - drain);
   }
   updateWebGaugeUI();
