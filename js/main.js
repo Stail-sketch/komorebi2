@@ -575,12 +575,38 @@ function initSiteErrors(){
 window.fixError = fixError;
 
 // --- あかね名前の黒塗り制御（EndBまで非表示） ---
+// --- EndB後のサイト演出 ---
 (function(){
+  var endBseen = localStorage.getItem('ending_b_seen') === 'true';
+
+  // あかね黒塗り
   var style = document.createElement('style');
   style.textContent = '.akane-name{background:#1a1a1a;color:#1a1a1a;padding:0 2px;border-radius:2px;user-select:none;-webkit-user-select:none;cursor:default;}.akane-revealed .akane-name{background:transparent;color:inherit;padding:0;user-select:text;-webkit-user-select:text;cursor:inherit;}';
   document.head.appendChild(style);
 
-  if(localStorage.getItem('ending_b_seen') === 'true'){
+  if(endBseen){
     document.body.classList.add('akane-revealed');
+
+    // ヘッダーグリッチ（ランダムに発生）
+    var header = document.querySelector('.site-header');
+    if(header){
+      var glitchStyle = document.createElement('style');
+      glitchStyle.textContent = '@keyframes headerGlitch{0%,92%,100%{transform:none;filter:none;}93%{transform:translateX(-3px);filter:hue-rotate(90deg);}95%{transform:translateX(4px) skewX(-2deg);filter:hue-rotate(180deg) brightness(1.5);}97%{transform:translateX(-2px);filter:hue-rotate(270deg);}99%{transform:none;filter:brightness(0.5);}}';
+      document.head.appendChild(glitchStyle);
+      // 15〜30秒ごとにグリッチ
+      setInterval(function(){
+        header.style.animation = 'headerGlitch 0.5s';
+        setTimeout(function(){ header.style.animation = ''; }, 500);
+      }, 15000 + Math.random() * 15000);
+    }
+
+    // ページ下部に2周目限定テキスト（EndB後のみ）
+    var footer = document.querySelector('.site-footer');
+    if(footer){
+      var msg = document.createElement('div');
+      msg.style.cssText = 'text-align:center;padding:8px;font-size:11px;color:rgba(100,0,0,0.15);font-family:"Courier New",monospace;letter-spacing:2px;';
+      msg.textContent = 'PROCESS STILL RUNNING';
+      footer.parentNode.insertBefore(msg, footer);
+    }
   }
 })();
