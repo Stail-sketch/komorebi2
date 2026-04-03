@@ -160,6 +160,7 @@
     #camera-close-bar { z-index: 50; }
 
     /* ===== オーバーレイ ===== */
+    @keyframes bfShake { 0%{transform:translate(0,0)} 25%{transform:translate(-6px,4px)} 50%{transform:translate(5px,-5px)} 75%{transform:translate(-4px,-3px)} 100%{transform:translate(6px,5px)} }
     .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 1s ease; }
     .overlay-screen.active { display: flex; opacity: 1; }
     .overlay-screen.fade-out { opacity: 0; }
@@ -218,6 +219,8 @@
       font-size:1.1rem;letter-spacing:0.3em;cursor:pointer;
       opacity:0;transition:opacity 0.8s,background 0.2s,color 0.2s,border-color 0.2s;
     ">▶ broadcast_start</button>
+    <!-- グリッチ演出用 -->
+    <div id="glitch-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.1s;"></div>
   </div>
 
   <!-- Nightタイトル（ブリーフィング後に一瞬表示） -->
@@ -760,25 +763,34 @@ function showBriefing(){
     {type:'char', name:'くるる', text:'いなくなったらOFFにして、節約してね！', color:'#5cb85c'},
     {type:'gap'},
     {type:'char', name:'くるる', text:'電力がゼロになったら…全部消えちゃって…', color:'#5cb85c'},
+    {type:'fx', fx:'shake', duration:400},
     {type:'char', name:'く\u0336\u0337る\u0334\u0335る', text:'\u0336\u0337つ\u0334け\u0335ら\u0336れ\u0337な\u0334く\u0335な\u0336っ\u0337た\u0334ら\u0335', color:'#ff0033', glitch:true},
+    {type:'fx', fx:'flash', color:'#ff0033', duration:100},
     {type:'char', name:'\u2588\u2588\u2588', text:'\u0336\u0337ぼ\u0334く\u0335が\u3000\u0336\u0337き\u0334ち\u0335ゃ\u0336う\u0337よ', color:'#ff0033', glitch:true},
     {type:'sys', text:'character_error: overflow', warn:true},
+    {type:'fx', fx:'flicker', duration:600},
     {type:'sys', text:'ERROR: unexpected_output in kururu.dll', warn:true},
     {type:'char', name:'\u2588\u2588\u2588', text:'\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0\u25a0', color:'#ff0033', glitch:true},
     {type:'sys', text:'ERROR: emotional_boundary exceeded', warn:true},
     {type:'sys', text:'ERROR: unknown_process intercepted', warn:true},
+    {type:'fx', fx:'shake', duration:800},
+    {type:'fx', fx:'noise', duration:1200},
     {type:'gap'},
     {type:'char', name:'???', text:'\u0336\u0337\u307f\u0334\u0335\u3064\u0336\u0337\u3051\u0334\u0335\u305f', color:'#660000', glitch:true},
+    {type:'fx', fx:'flash', color:'#220000', duration:200},
     {type:'char', name:'???', text:'\u0336\u0337\u3084\u0334\u0335\u3063\u0336\u0337\u3068\u0334\u0335\u3000\u0336\u0337\u307f\u0334\u0335\u3064\u0336\u0337\u3051\u0334\u0335\u305f', color:'#660000', glitch:true},
     {type:'sys', text:'WARNING: unregistered_voice detected in stream', warn:true},
+    {type:'fx', fx:'shake', duration:300},
     {type:'char', name:'???', text:'\u0336\u0337\u306b\u0334\u0335\u3052\u0336\u0337\u306a\u0334\u0335\u3044\u0336\u0337\u3067\u0334\u0335\u306d', color:'#660000', glitch:true},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:80},
     {type:'sys', text:'CRITICAL: broadcast_integrity compromised', warn:true},
+    {type:'fx', fx:'flicker', duration:400},
     {type:'char', name:'\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', text:'K\u0336-\u03370\u03345\u03359', color:'#330000', glitch:true},
+    {type:'fx', fx:'shake', duration:1500},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:150},
     {type:'sys', text:'CRITICAL: force_shutdown initiated', warn:true},
     {type:'sys', text:'purging unauthorized data...', warn:true},
-    {type:'gap'},
-    {type:'gap'},
-    {type:'gap'},
+    {type:'fx', fx:'blackout', duration:3000},
     {type:'sys', text:'...'},
     {type:'sys', text:'...'},
     {type:'sys', text:'system restored.'},
@@ -791,11 +803,52 @@ function showBriefing(){
 
 function runBriefing(lines){
   var log = $('briefing-log');
+  var ov = $('glitch-overlay');
+  var screen = $('briefing-screen');
   log.innerHTML = '';
   var idx = 0;
+
+  // エフェクト関数群
+  function fxShake(dur){
+    screen.style.animation = 'bfShake '+(dur < 500 ? '0.05' : '0.08')+'s infinite';
+    setTimeout(function(){ screen.style.animation = ''; }, dur);
+  }
+  function fxFlash(color, dur){
+    ov.style.background = color || '#ff0000';
+    ov.style.opacity = '0.6';
+    setTimeout(function(){ ov.style.opacity = '0'; ov.style.background = ''; }, dur);
+  }
+  function fxFlicker(dur){
+    var end = Date.now() + dur;
+    var iv = setInterval(function(){
+      if(Date.now() > end){ clearInterval(iv); ov.style.opacity='0'; return; }
+      ov.style.background = Math.random()>0.5 ? '#ff0033' : '#000';
+      ov.style.opacity = String(Math.random()*0.7);
+    }, 50);
+  }
+  function fxNoise(dur){
+    var noiseEl = document.createElement('div');
+    noiseEl.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;font-family:monospace;font-size:10px;color:rgba(255,0,0,0.15);overflow:hidden;line-height:1;white-space:pre;';
+    var chars = '\u2588\u2591\u2592\u2593\u2502\u2500\u253c\u2524\u251c\u00a4\u00b6\u00a7';
+    var rows = '';
+    for(var r=0;r<80;r++){var row='';for(var c=0;c<120;c++) row+=chars[Math.floor(Math.random()*chars.length)];rows+=row+'\n';}
+    noiseEl.textContent = rows;
+    document.body.appendChild(noiseEl);
+    var niv = setInterval(function(){
+      var nr='';for(var r=0;r<80;r++){var row='';for(var c=0;c<120;c++) row+=chars[Math.floor(Math.random()*chars.length)];nr+=row+'\n';}
+      noiseEl.textContent = nr;
+    }, 80);
+    setTimeout(function(){ clearInterval(niv); noiseEl.remove(); }, dur);
+  }
+  function fxBlackout(dur){
+    ov.style.background = '#000';
+    ov.style.opacity = '1';
+    log.style.visibility = 'hidden';
+    setTimeout(function(){ ov.style.opacity = '0'; log.style.visibility = ''; }, dur);
+  }
+
   function next(){
     if(idx >= lines.length){
-      // Show start button
       var btn = $('briefing-start-btn');
       btn.style.opacity = '1';
       btn.style.borderColor = '#2a6a2a';
@@ -803,6 +856,17 @@ function runBriefing(lines){
       return;
     }
     var line = lines[idx]; idx++;
+    // エフェクト行
+    if(line.type === 'fx'){
+      var d = line.duration || 500;
+      if(line.fx === 'shake') fxShake(d);
+      else if(line.fx === 'flash') fxFlash(line.color, d);
+      else if(line.fx === 'flicker') fxFlicker(d);
+      else if(line.fx === 'noise') fxNoise(d);
+      else if(line.fx === 'blackout') fxBlackout(d);
+      setTimeout(next, d + 100);
+      return;
+    }
     if(line.type === 'gap'){
       setTimeout(next, 400);
       return;
