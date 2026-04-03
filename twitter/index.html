@@ -1279,9 +1279,9 @@ function _showPostDetail(idx, noPush){
     h+='<div class="no-replies">返信はまだありません</div>';
   }
 
-  // Evidence 08: yoshi's Night1 post - show hint about date matching investigation records
+  // Hint about date matching investigation records
   if(p.account==='yoshi' && p.phase===1){
-    h+='<div class="evidence-hint" onclick="if(typeof collectEvidence===\'function\'){collectEvidence(\'08\');}this.style.color=\'#4a4\';" style="font-size:11px;color:#605068;cursor:pointer;margin-top:8px;margin-left:56px;">投稿日時と調査記録の日付が一致している</div>';
+    h+='<div class="evidence-hint" style="font-size:11px;color:#605068;margin-top:8px;margin-left:56px;">投稿日時と調査記録の日付が一致している</div>';
   }
 
   viewPostDetail.innerHTML=h;

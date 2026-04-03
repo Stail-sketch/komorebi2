@@ -19,25 +19,6 @@ const GameState = {
     localStorage.setItem(`night${n}_pages_unlocked`, 'true');
   },
 
-  // 証拠収集
-  collectEvidence(id) {
-    localStorage.setItem(`evidence_${id}`, 'true');
-  },
-
-  isEvidenceCollected(id) {
-    return localStorage.getItem(`evidence_${id}`) === 'true';
-  },
-
-  // 収集済み証拠数
-  getEvidenceCount() {
-    let count = 0;
-    for (let i = 1; i <= 20; i++) {
-      const key = `evidence_${String(i).padStart(2, '0')}`;
-      if (localStorage.getItem(key) === 'true') count++;
-    }
-    return count;
-  },
-
   // ページアンロック確認
   isPagesUnlocked(n) {
     return localStorage.getItem(`night${n}_pages_unlocked`) === 'true';
@@ -63,7 +44,7 @@ const GameState = {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key.startsWith('night') || key.startsWith('evidence_') || key === 'first_visit_done') {
+      if (key.startsWith('night') || key === 'first_visit_done') {
         keys.push(key);
       }
     }
@@ -425,106 +406,6 @@ function showKuromakuMessage() {
     localStorage.setItem('night6_started', 'true');
   }, 20000);
 }
-
-// --- 証拠収集システム ---
-
-// CSS注入（証拠発見通知用）
-(function injectEvidenceStyles() {
-  if (document.getElementById('evidence-notification-styles')) return;
-  const style = document.createElement('style');
-  style.id = 'evidence-notification-styles';
-  style.textContent = `
-    #evidence-notification {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    #evidence-notification.active {
-      opacity: 1;
-    }
-    #evidence-notification.fade-out {
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-    #evidence-notification .evidence-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-    #evidence-notification .evidence-text {
-      position: relative;
-      z-index: 1;
-      color: #fff;
-      font-size: 1.4em;
-      letter-spacing: 0.15em;
-      padding: 14px 36px;
-      background: rgba(10, 10, 10, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
-      box-shadow: 0 0 20px rgba(180, 180, 255, 0.25), 0 0 60px rgba(100, 100, 200, 0.1);
-      text-shadow: 0 0 8px rgba(200, 200, 255, 0.6);
-      font-family: "Yu Gothic", "Meiryo", sans-serif;
-    }
-  `;
-  document.head.appendChild(style);
-})();
-
-// 証拠発見エフェクト表示
-function showEvidenceEffect() {
-  let el = document.getElementById('evidence-notification');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'evidence-notification';
-    el.innerHTML = '<div class="evidence-overlay"></div><div class="evidence-text">証拠を発見</div>';
-    document.body.appendChild(el);
-  }
-
-  // リセット
-  el.classList.remove('active', 'fade-out');
-  void el.offsetWidth; // reflow
-
-  el.classList.add('active');
-
-  setTimeout(() => {
-    el.classList.add('fade-out');
-    el.classList.remove('active');
-  }, 1200);
-
-  setTimeout(() => {
-    el.classList.remove('fade-out');
-  }, 2000);
-}
-
-// 証拠収集（重複防止・エフェクト付き）
-function collectEvidence(id) {
-  if (localStorage.getItem('evidence_' + id) === 'true') return; // already collected
-  localStorage.setItem('evidence_' + id, 'true');
-  showEvidenceEffect();
-}
-
-// 収集済み証拠カウント
-function getEvidenceCount() {
-  let count = 0;
-  for (let i = 1; i <= 20; i++) {
-    const key = 'evidence_' + String(i).padStart(2, '0');
-    if (localStorage.getItem(key) === 'true') count++;
-  }
-  return count;
-}
-
-// グローバル公開
-window.collectEvidence = collectEvidence;
-window.getEvidenceCount = getEvidenceCount;
 
 // --- ページ読み込み時の共通初期化 ---
 document.addEventListener('DOMContentLoaded', () => {

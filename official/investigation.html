@@ -33,14 +33,6 @@
       border: 1px dashed var(--color-gray-600);
       text-align: center;
     }
-    .evidence-clickable {
-      cursor: pointer;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-    .evidence-clickable:hover {
-      background-color: rgba(180, 180, 255, 0.05);
-      border-left-color: rgba(180, 180, 255, 0.5);
-    }
   </style>
 </head>
 <body>
@@ -158,7 +150,7 @@
 
     <section class="section">
       <div class="card">
-        <div class="note-intentional evidence-clickable" onclick="collectEvidence('06')">
+        <div class="note-intentional">
           <p>意図的に？</p>
           <p style="margin-top: 4px; font-size: 0.75rem;">これだけの矛盾が偶然に生じるとは考えにくい。</p>
         </div>
@@ -205,16 +197,13 @@
       window.location.href = 'index.html';
     }
 
-    // Evidence 16: auto-collect when user scrolls to site differences section
+    // (evidence collection removed)
     (function(){
       var diffSection = document.getElementById('site-diff-section');
       if (diffSection) {
         var observer = new IntersectionObserver(function(entries) {
           entries.forEach(function(entry) {
             if (entry.isIntersecting) {
-              if (typeof collectEvidence === 'function') {
-                collectEvidence('16');
-              }
               observer.disconnect();
             }
           });

@@ -49,13 +49,6 @@
     .deleted-reveal.revealed {
       color: #a03030;
     }
-    .evidence-clickable {
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .evidence-clickable:hover {
-      background-color: rgba(180, 180, 255, 0.05);
-    }
   </style>
 </head>
 <body>
@@ -112,7 +105,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="row-deleted evidence-clickable" onclick="revealDeleted(this)">
+            <tr class="row-deleted" onclick="revealDeleted(this)">
               <td>G-0</td>
               <td id="g0-name">&nbsp;</td>
               <td id="g0-note"><span class="deleted-reveal" id="g0-text">削除済み</span></td>
@@ -198,7 +191,6 @@
       var text = document.getElementById('g0-text');
       if (!text.classList.contains('revealed')) {
         text.classList.add('revealed');
-        collectEvidence('09');
       }
     }
   </script>

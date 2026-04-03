@@ -84,15 +84,6 @@
       85% { opacity: 0.8; }
     }
 
-    .evidence-clickable {
-      cursor: pointer;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-    .evidence-clickable:hover {
-      background-color: rgba(180, 180, 255, 0.05);
-      border-left-color: rgba(180, 180, 255, 0.5);
-    }
-
     .deleted-notice {
       text-align: center;
       padding: 20px;
@@ -178,7 +169,7 @@
           このセクションの一部は削除要請により非公開となりました
         </div>
 
-        <div class="report-entry report-critical evidence-clickable" onclick="collectEvidence('17')">
+        <div class="report-entry report-critical">
           <p class="report-label">調査結果 #BBS-006 <span class="deletion-stamp">削除予定</span></p>
           <p class="being-deleted" style="font-size: 1.05rem;">スレ6の書き込み主の正体：<strong>G-0</strong></p>
           <p style="margin-top: 8px; font-size: 0.8rem; color: var(--color-gray-500);" class="fading-text">※IPアドレスの追跡調査、文体解析、投稿時間帯の分析により特定。被験者番号G-0に該当する人物と断定。</p>
@@ -200,7 +191,7 @@
           以下のデータはサーバーから削除処理が進行中です
         </div>
 
-        <div class="report-entry report-critical evidence-clickable" onclick="collectEvidence('18')">
+        <div class="report-entry report-critical">
           <p class="report-label">被験者レコード（復元断片） <span class="deletion-stamp">削除予定</span></p>
           <p class="deleting-flicker" style="font-family: monospace; font-size: 0.95rem; line-height: 2;">
             被験者番号：<strong>G-0</strong><br>

@@ -138,7 +138,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
     mails.push({id:'n5_creepy3', from:'0x00000000', subject:'K-059', snippet:'PROCESS COMPLETING...', body:'SUBJECT: K-059\nSTATUS: PROCESS COMPLETING\nESTIMATED COMPLETION: IMMINENT\n\n予定通りです', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5_creepy2', from:'', subject:'', snippet:'35.6812° N, 139.7671° E', body:'35.6812° N, 139.7671° E\n\n...', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5b', from:garbleSender(), subject:garbleSubject(), snippet:'…もう…時間がない…', body:'「…もう…時間がない……急いで……全てが…消える前に…」', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n5', from:'キツネ団長', subject:garbleSubject(), snippet:'…もうすぐ…終わる…', body:'「…もうすぐ…終わる……全部……ありがとう…」\n\n<span onclick="if(typeof collectEvidence===\'function\'){collectEvidence(\'20\');}this.style.color=\'#6a6\';this.style.textShadow=\'0 0 8px rgba(100,200,100,0.3)\';" style="font-size:14px;color:#555570;cursor:pointer;letter-spacing:1px;transition:color 0.3s;">…忘れないで…あの子のことを…</span>', unread:true, attachment:null, type:'n5'});
+    mails.push({id:'n5', from:'キツネ団長', subject:garbleSubject(), snippet:'…もうすぐ…終わる…', body:'「…もうすぐ…終わる……全部……ありがとう…」\n\n<span onclick="this.style.color=\'#6a6\';this.style.textShadow=\'0 0 8px rgba(100,200,100,0.3)\';" style="font-size:14px;color:#555570;cursor:pointer;letter-spacing:1px;transition:color 0.3s;">…忘れないで…あの子のことを…</span>', unread:true, attachment:null, type:'n5'});
     mails.push({id:'n5_spam1', from:'no-reply@electric-bill.example', subject:'4月分電気料金のお知らせ', snippet:'今月のご利用金額', body:'4月分電気料金のお知らせ\n\nご利用金額: ¥6,842\nお支払い期限: 4月25日\n\n口座振替をご利用の場合、自動で引き落とされます。', unread:false, attachment:null, type:'normal'});
     mails.push({id:'n5_spam2', from:'news@weather-app.example', subject:'明日の天気：曇りのち雨', snippet:'傘を忘れずに', body:'明日の天気予報\n\n東京: 曇りのち雨 最高18℃/最低12℃\n降水確率: 70%\n\n傘を忘れずにお出かけください。', unread:false, attachment:null, type:'normal'});
   }
@@ -298,7 +298,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
       document.getElementById('dSubject').style.cssText='color:#1a1a2a;background:#1a1a2a;';
     } else {
       bodyEl.className='detail-body';
-      // Allow HTML for chat link and evidence items
+      // Allow HTML for chat link and special items
       if(m.id==='n3' || m.id==='n2_chat' || m.type==='n5'){
         bodyEl.innerHTML=m.body;
       } else {
