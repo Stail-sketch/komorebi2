@@ -184,7 +184,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
   // ===== Night1クリア後（+6通） =====
   if(flag('night1_clear')){
     mails.push({id:'potamaru', from:'ぽ■た■る', subject:'▓▒░'+garble(2), snippet:'…ｺﾚ…ｷｲﾃ…', body:'「…ｺﾚ…ｷｲﾃ…」', unread:true, attachment:{name:'voice_???.wav', type:'potamaru'}, type:'potamaru'});
-    mails.push({id:'n1b', from:'キ■ネ団■', subject:garbleSubject(), snippet:'…間違ってる…ところがある…', body:'「…このサイト…よく読んで…\n…間違ってる…ところがある…\n…ひとつじゃない…\n…見つけたら…教えて…」', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n1b', from:'キ■ネ団■', subject:garbleSubject(), snippet:'…書き換えられてる…', body:'「…サイトをよく見て…\n…情報が…書き換えられてる…\n…3つ…正しくないところがある…\n…触れてみて…」', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n1', from:garbleSender(), subject:garbleSubject(), snippet:'…来てくれた…', body:'「…来てくれた……でも…まだ……気をつけて…」', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n1_spam_sub', from:'newsletter@retro-tv.example', subject:'懐かしの90年代テレビ特集', snippet:'今週のピックアップ番組は…', body:'懐かしの90年代テレビ特集\n\n今週のピックアップ：\n■ 忘れられた子ども番組たち\n■ 90年代のアニメ主題歌ランキング\n■ あの頃のCMを振り返る\n\n※ 配信停止はこちらから', unread:false, attachment:null, type:'normal'});
     mails.push({id:'n1_spam1', from:'no-reply@point-card.example', subject:'ポイント有効期限のお知らせ', snippet:'1,200ポイントが失効します', body:'ポイント有効期限のお知らせ\n\n1,200ポイントが4月末に失効します。\n\nお早めにご利用ください。\nポイント交換はマイページから。', unread:false, attachment:null, type:'normal'});
