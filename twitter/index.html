@@ -2217,21 +2217,34 @@ var dmChoices = {
 
 function renderDMChoices(){
   var container = document.getElementById('dm-choices');
+  var inputArea = document.querySelector('.dm-input-area');
   if(!container) return;
-  var choices = null;
 
-  // ウォームアップ中：そのステップのchoicesを表示
+  var choices = null;
+  var showInput = false;
+
   if(isInWarmup()){
+    // ウォームアップ中：選択肢のみ、テキスト入力非表示
     var script = dmWarmupScripts[dmPhase];
     var stage = getDMWarmupStage(dmPhase);
     if(script && stage < script.length && script[stage].choices){
       choices = script[stage].choices;
     }
+    showInput = false;
+  } else if(dmPhase === 1){
+    // Phase1フリーモード：テキスト入力のみ（差分報告待ち）
+    choices = null;
+    showInput = true;
   } else {
-    // フリーキーワードモード：フェーズ別の選択肢
+    // Phase2-4フリーモード：選択肢のみ
     choices = dmChoices[dmPhase];
+    showInput = false;
   }
 
+  // テキスト入力の表示/非表示
+  if(inputArea) inputArea.style.display = showInput ? '' : 'none';
+
+  // 選択肢ボタンの表示
   if(!choices || choices.length === 0){
     container.innerHTML = '';
     return;
