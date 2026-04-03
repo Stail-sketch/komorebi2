@@ -40,9 +40,12 @@
       transition: background 0.15s, border-color 0.15s;
     }
     .door-btn:hover { background: rgba(40,40,40,0.9); border-color: #666; }
-    .btn-power { color: #fc4; }
-    .btn-power:hover { border-color: #fc4; }
-    .btn-power.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
+    .btn-power { color: #0f0; }
+    .btn-power:hover { border-color: #0f0; }
+    .btn-power.on { background: rgba(10,40,10,0.9); border-color: #0f0; color: #fff; }
+    .btn-light { color: #fc4; }
+    .btn-light:hover { border-color: #fc4; }
+    .btn-light.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
 
     /* HUD */
     #hud { position: absolute; z-index: 10; top: 10px; right: 14px; text-align: right; }
@@ -255,9 +258,11 @@
 
       <div class="door-buttons" id="left-buttons">
         <button class="door-btn btn-power" data-side="left">POWER (Q)</button>
+        <button class="door-btn btn-light" data-side="left">LIGHT (A)</button>
       </div>
       <div class="door-buttons" id="right-buttons">
         <button class="door-btn btn-power" data-side="right">POWER (E)</button>
+        <button class="door-btn btn-light" data-side="right">LIGHT (D)</button>
       </div>
 
       <div id="hud">
@@ -484,7 +489,8 @@ const STATICS = {};
 // --- ゲーム状態 ---
 let running = false, elapsed = 0, power = 100;
 let camOpen = false, curCam = 1, prevCam = 1;
-let doorL = false, doorR = false; // doorL/doorR = POWER ON状態（true=点灯中）
+let doorL = false, doorR = false; // doorL/doorR = POWER ON状態（true=点灯中・防御中）
+let lightL = false, lightR = false; // LIGHT長押しで敵を確認
 
 // くるる state
 let kururuCam = 1, kururuPath = null, kururuIdx = 0, kururuDoor = null, kururuSpd = 'normal';
@@ -625,25 +631,40 @@ function updateCameraChar() {
   }
 }
 
-// --- POWER ON（長押しでモニター点灯・撃退） ---
-function setPower(side, on) {
+// --- POWER ON/OFF（トグル・モニター点灯=防御） ---
+function togglePower(side) {
+  if (!running) return;
+  if (camOpen) return;
+  if (side === 'left') {
+    doorL = !doorL;
+    $('left-door').classList.toggle('powered', doorL);
+    document.querySelector('#left-buttons .btn-power').classList.toggle('on', doorL);
+    playS(doorL ? sndMonitorOn : sndMonitorOff);
+    if (doorL && kururuDoor === 'left') defeatKururu();
+    if (doorL && madaraDoor === 'left') defeatMadara();
+  } else {
+    doorR = !doorR;
+    $('right-door').classList.toggle('powered', doorR);
+    document.querySelector('#right-buttons .btn-power').classList.toggle('on', doorR);
+    playS(doorR ? sndMonitorOn : sndMonitorOff);
+    if (doorR && kururuDoor === 'right') defeatKururu();
+    if (doorR && madaraDoor === 'right') defeatMadara();
+  }
+}
+
+// --- LIGHT（長押しで確認） ---
+function setLight(side, on) {
   if (!running) return;
   if (camOpen) return;
   if (on) playS(sndLight);
   if (side === 'left') {
-    doorL = on;
-    $('left-door').classList.toggle('powered', on);
+    lightL = on;
+    document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
     $('left-light').classList.toggle('active', on);
-    document.querySelector('#left-buttons .btn-power').classList.toggle('active', on);
-    if (on && kururuDoor === 'left') defeatKururu();
-    if (on && madaraDoor === 'left') defeatMadara();
   } else {
-    doorR = on;
-    $('right-door').classList.toggle('powered', on);
+    lightR = on;
+    document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
     $('right-light').classList.toggle('active', on);
-    document.querySelector('#right-buttons .btn-power').classList.toggle('active', on);
-    if (on && kururuDoor === 'right') defeatKururu();
-    if (on && madaraDoor === 'right') defeatMadara();
   }
   updateSideEntity();
 }
@@ -665,8 +686,8 @@ function updateSideEntity() {
 
   if (leftChar) $('left-entity-img').src = DOOR_IMAGES[leftChar];
   if (rightChar) $('right-entity-img').src = DOOR_IMAGES[rightChar];
-  $('left-entity').classList.toggle('visible', !!leftChar);
-  $('right-entity').classList.toggle('visible', !!rightChar);
+  $('left-entity').classList.toggle('visible', !!leftChar && lightL && !doorL);
+  $('right-entity').classList.toggle('visible', !!rightChar && lightR && !doorR);
 }
 
 // --- ゲーム進行 ---
@@ -705,8 +726,10 @@ function powerTick() {
   if (!running) return;
   let d = DRAIN_BASE;
   if (camOpen) d += DRAIN_CAM;
-  if (doorL) d += DRAIN_DOOR + DRAIN_LIGHT;
-  if (doorR) d += DRAIN_DOOR + DRAIN_LIGHT;
+  if (doorL) d += DRAIN_DOOR;
+  if (doorR) d += DRAIN_DOOR;
+  if (lightL) d += DRAIN_LIGHT;
+  if (lightR) d += DRAIN_LIGHT;
   power = Math.max(0, power - d);
   const p = Math.round(power);
   $('power-display').textContent = p;
@@ -1010,6 +1033,7 @@ function retryGame() {
   stopAllSounds();
   elapsed = 0; power = 100; camOpen = false; curCam = 1;
   doorL = false; doorR = false;
+  lightL = false; lightR = false;
   // kururu reset
   kururuCam = 1; kururuPath = null; kururuIdx = 0; kururuDoor = null; kururuSpd = 'normal';
   // madara reset
@@ -1025,8 +1049,10 @@ function retryGame() {
   $('left-door').classList.remove('powered'); $('right-door').classList.remove('powered');
   $('left-light').classList.remove('active'); $('right-light').classList.remove('active');
   $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
-  document.querySelector('#left-buttons .btn-power').classList.remove('active');
-  document.querySelector('#right-buttons .btn-power').classList.remove('active');
+  document.querySelector('#left-buttons .btn-power').classList.remove('on');
+  document.querySelector('#right-buttons .btn-power').classList.remove('on');
+  document.querySelector('#left-buttons .btn-light').classList.remove('active');
+  document.querySelector('#right-buttons .btn-light').classList.remove('active');
   $('time-display').textContent = '3:00 AM';
   $('power-display').textContent = '100';
   $('power-bar').style.width = '100%';
@@ -1128,26 +1154,29 @@ $('camera-feed').addEventListener('mouseup', stopWebReplenish);
 $('camera-feed').addEventListener('mouseleave', stopWebReplenish);
 
 document.querySelectorAll('.cam-btn').forEach(b => b.addEventListener('click', () => running && camOpen && switchCam(+b.dataset.cam)));
-document.querySelectorAll('.btn-power').forEach(b => {
-  b.addEventListener('mousedown', () => running && setPower(b.dataset.side, true));
-  b.addEventListener('mouseup', () => setPower(b.dataset.side, false));
-  b.addEventListener('mouseleave', () => setPower(b.dataset.side, false));
+document.querySelectorAll('.btn-power').forEach(b => b.addEventListener('click', () => running && togglePower(b.dataset.side)));
+document.querySelectorAll('.btn-light').forEach(b => {
+  b.addEventListener('mousedown', () => running && setLight(b.dataset.side, true));
+  b.addEventListener('mouseup', () => setLight(b.dataset.side, false));
+  b.addEventListener('mouseleave', () => setLight(b.dataset.side, false));
 });
 
 // --- キーボード操作 ---
 document.addEventListener('keydown', e => {
   if (!running) return;
   switch(e.key.toLowerCase()) {
-    case 'q': if (!camOpen) setPower('left', true); break;
-    case 'e': if (!camOpen) setPower('right', true); break;
+    case 'q': if (!camOpen) togglePower('left'); break;
+    case 'e': if (!camOpen) togglePower('right'); break;
+    case 'a': if (!camOpen) setLight('left', true); break;
+    case 'd': if (!camOpen) setLight('right', true); break;
     case 'w': if (camOpen) { curCam === 9 ? switchCam(prevCam || 1) : switchCam(9); } break;
     case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
   }
 });
 document.addEventListener('keyup', e => {
   switch(e.key.toLowerCase()) {
-    case 'q': setPower('left', false); break;
-    case 'e': setPower('right', false); break;
+    case 'a': setLight('left', false); break;
+    case 'd': setLight('right', false); break;
   }
 });
 
