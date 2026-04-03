@@ -28,9 +28,9 @@
     /* ライト（キャラの上に赤く被さる） */
     .side-light-overlay { position: absolute; inset: 0; background: rgba(180,0,0,0.35); display: none; z-index: 1; }
     .side-light-overlay.active { display: block; }
-    /* ドア閉鎖（最前面） */
-    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: none; z-index: 2; }
-    .door-closed-overlay.active { display: block; }
+    /* モニターOFF（デフォルト暗い・最前面） */
+    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: block; z-index: 2; }
+    .door-closed-overlay.powered { display: none; }
 
     /* DOOR/LIGHTボタン */
     /* DOOR/LIGHTボタン（前作準拠） */
@@ -44,10 +44,9 @@
       transition: background 0.15s, border-color 0.15s;
     }
     .door-btn:hover { background: rgba(40,40,40,0.9); border-color: #666; }
-    .btn-door.closed { background: rgba(40,20,20,0.9); border-color: #f44; color: #f44; }
-    .btn-light { color: #fc4; }
-    .btn-light:hover { border-color: #fc4; }
-    .btn-light.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
+    .btn-power { color: #fc4; }
+    .btn-power:hover { border-color: #fc4; }
+    .btn-power.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
 
     /* HUD（オフィスビュー右上：時刻＋Night） */
     #hud { position: absolute; z-index: 10; top: 10px; right: 14px; text-align: right; }
@@ -246,12 +245,10 @@
       </div>
 
       <div class="door-buttons" id="left-buttons">
-        <button class="door-btn btn-door" data-side="left">DOOR (Q)</button>
-        <button class="door-btn btn-light" data-side="left">LIGHT (A)</button>
+        <button class="door-btn btn-power" data-side="left">POWER (Q)</button>
       </div>
       <div class="door-buttons" id="right-buttons">
-        <button class="door-btn btn-door" data-side="right">DOOR (E)</button>
-        <button class="door-btn btn-light" data-side="right">LIGHT (D)</button>
+        <button class="door-btn btn-power" data-side="right">POWER (E)</button>
       </div>
 
       <div id="hud">
@@ -427,7 +424,7 @@ const STATICS = {};
 
 let running=false, elapsed=0, power=100;
 let camOpen=false, curCam=1, prevCam=1;
-let doorL=false, doorR=false, lightL=false, lightR=false;
+let doorL=false, doorR=false; // doorL/doorR = POWER ON状態（true=点灯中）
 let sqCam=1, sqPath=null, sqIdx=0, sqDoor=null, sqSpd='normal';
 let sqMT=null, sqDT=null, sqWT=null, tickId=null, pwrId=null;
 
@@ -516,37 +513,23 @@ function updateCameraChar() {
 // パンなし
 
 
-// --- ドア ---
-function toggleDoor(side) {
+// --- POWER ON（長押しでモニター点灯・撃退） ---
+function setPower(side, on) {
   if (!running) return;
-  if (camOpen) return; // カメラ中はドア・ライト操作不可
-  if (side === 'left') {
-    doorL = !doorL;
-    $('left-door').classList.toggle('active', doorL);
-    document.querySelector('#left-buttons .btn-door').classList.toggle('closed', doorL);
-    playS(doorL ? sndMonitorOff : sndMonitorOn);
-    if (doorL && sqDoor === 'left') defeatSq();
-  } else {
-    doorR = !doorR;
-    $('right-door').classList.toggle('active', doorR);
-    document.querySelector('#right-buttons .btn-door').classList.toggle('closed', doorR);
-    playS(doorR ? sndMonitorOff : sndMonitorOn);
-    if (doorR && sqDoor === 'right') defeatSq();
-  }
-}
-
-// --- ライト ---
-function setLight(side, on) {
-  if (camOpen) return; // カメラ中はドア・ライト操作不可
+  if (camOpen) return;
   if (on) playS(sndLight);
   if (side === 'left') {
-    lightL = on;
-    document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
+    doorL = on; // doorL=true → powered ON（明るい）
+    $('left-door').classList.toggle('powered', on);
     $('left-light').classList.toggle('active', on);
+    document.querySelector('#left-buttons .btn-power').classList.toggle('active', on);
+    if (on && sqDoor === 'left') defeatSq();
   } else {
-    lightR = on;
-    document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
+    doorR = on;
+    $('right-door').classList.toggle('powered', on);
     $('right-light').classList.toggle('active', on);
+    document.querySelector('#right-buttons .btn-power').classList.toggle('active', on);
+    if (on && sqDoor === 'right') defeatSq();
   }
   updateSideEntity();
 }
@@ -559,12 +542,13 @@ const DOOR_IMAGES = {
 };
 
 function updateSideEntity() {
-  const showL = sqDoor === 'left' && lightL && !doorL;
-  const showR = sqDoor === 'right' && lightR && !doorR;
-  if (showL) $('left-entity-img').src = DOOR_IMAGES.kururu; // Night1はkururuのみ
-  if (showR) $('right-entity-img').src = DOOR_IMAGES.kururu;
-  $('left-entity').classList.toggle('visible', showL);
-  $('right-entity').classList.toggle('visible', showR);
+  // 敵がドアにいる時：暗闘でもうっすら見える（POWER ONで撃退済みならvisible=false）
+  const enemyL = sqDoor === 'left';
+  const enemyR = sqDoor === 'right';
+  if (enemyL) $('left-entity-img').src = DOOR_IMAGES.kururu;
+  if (enemyR) $('right-entity-img').src = DOOR_IMAGES.kururu;
+  $('left-entity').classList.toggle('visible', enemyL);
+  $('right-entity').classList.toggle('visible', enemyR);
 }
 
 // --- ゲーム進行 ---
@@ -597,10 +581,8 @@ function powerTick() {
   if (!running) return;
   let d = DRAIN_BASE;
   if (camOpen) d += DRAIN_CAM;
-  if (doorL) d += DRAIN_DOOR;
-  if (doorR) d += DRAIN_DOOR;
-  if (lightL) d += DRAIN_LIGHT;
-  if (lightR) d += DRAIN_LIGHT;
+  if (doorL) d += DRAIN_DOOR + DRAIN_LIGHT; // POWER ON = door + light分の消費
+  if (doorR) d += DRAIN_DOOR + DRAIN_LIGHT;
   power = Math.max(0, power - d);
   const p = Math.round(power);
   $('power-display').textContent = p;
@@ -625,9 +607,12 @@ function arriveAtDoor(side) {
   sqDoor = side; sqCam = -1;
   if (camOpen) updateCameraChar();
   updateSideEntity();
+  // POWER ON中（doorL/doorR=true）なら即撃退
   if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatSq(); return; }
+  // POWER OFF中 → 待機後に攻撃
   sqDT = setTimeout(() => {
     if (!running || sqDoor !== side) return;
+    // まだPOWER OFFなら攻撃
     if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('kururu');
   }, SQ_DOOR_WAIT);
 }
@@ -708,8 +693,10 @@ function retryGame() {
   $('left-door').classList.remove('active'); $('right-door').classList.remove('active');
   $('left-light').classList.remove('active'); $('right-light').classList.remove('active');
   $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
-  document.querySelector('#left-buttons .btn-door').classList.remove('closed');
-  document.querySelector('#right-buttons .btn-door').classList.remove('closed');
+  document.querySelector('#left-buttons .btn-power').classList.remove('active');
+  document.querySelector('#right-buttons .btn-power').classList.remove('active');
+  $('left-door').classList.remove('powered');
+  $('right-door').classList.remove('powered');
   $('time-display').textContent = '0:00 AM';
   $('power-display').textContent = '100';
   $('power-bar').style.width = '100%';
@@ -731,11 +718,11 @@ function showBriefing(){
     {type:'char', name:'くるる', text:'わぁ、新しいお客さん！', color:'#5cb85c'},
     {type:'char', name:'くるる', text:'ぼく、気になるところがあると遊びに行っちゃうんだ。', color:'#5cb85c'},
     {type:'char', name:'くるる', text:'カメラで見ててくれると、ちょっと恥ずかしくて遅くなっちゃう。', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'でも近くまで来ちゃったら…ドアを閉めてね？', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'あと、左右にモニターがあるでしょ？', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'ライトで照らすと、すぐそこにいるかどうか分かるよ。', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'左右にモニターがあるでしょ？普段は暗いけど…', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'近くまで来ちゃったら、暗闇にうっすら見えるから…', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'そしたらモニターの電源を入れて！光が当たると逃げちゃうんだ。', color:'#5cb85c'},
     {type:'char', name:'くるる', text:'…あ、電力がなくなったら全部消えちゃうから気をつけてね！', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'閉めないと\u0337\u0336…\u0334\u0335 \u2588\u2588\u2588\u2588\u2588\u2588\u2588', color:'#5cb85c', glitch:true},
+    {type:'char', name:'くるる', text:'つけないと\u0337\u0336…\u0334\u0335 \u2588\u2588\u2588\u2588\u2588\u2588\u2588', color:'#5cb85c', glitch:true},
     {type:'sys', text:'character_error: recovered', warn:true},
     {type:'gap'},
     {type:'sys', text:'broadcast ready.'}
@@ -811,11 +798,10 @@ $('duct-enter-btn').addEventListener('click', () => { if (running && camOpen) sw
 $('duct-back-btn').addEventListener('click', () => { if (running && camOpen) switchCam(prevCam || 1); });
 $('camera-close-bar').addEventListener('click', () => { if (running) closeCamera(); });
 document.querySelectorAll('.cam-btn').forEach(b => b.addEventListener('click', () => running && camOpen && switchCam(+b.dataset.cam)));
-document.querySelectorAll('.btn-door').forEach(b => b.addEventListener('click', () => running && toggleDoor(b.dataset.side)));
-document.querySelectorAll('.btn-light').forEach(b => {
-  b.addEventListener('mousedown', () => running && setLight(b.dataset.side, true));
-  b.addEventListener('mouseup', () => setLight(b.dataset.side, false));
-  b.addEventListener('mouseleave', () => setLight(b.dataset.side, false));
+document.querySelectorAll('.btn-power').forEach(b => {
+  b.addEventListener('mousedown', () => running && setPower(b.dataset.side, true));
+  b.addEventListener('mouseup', () => setPower(b.dataset.side, false));
+  b.addEventListener('mouseleave', () => setPower(b.dataset.side, false));
 });
 
 // --- キーボード操作 ---
@@ -823,18 +809,16 @@ document.querySelectorAll('.btn-light').forEach(b => {
 document.addEventListener('keydown', e => {
   if (!running) return;
   switch(e.key.toLowerCase()) {
-    case 'q': if (!camOpen) toggleDoor('left'); break;
-    case 'e': if (!camOpen) toggleDoor('right'); break;
-    case 'a': if (!camOpen) setLight('left', true); break;
-    case 'd': if (!camOpen) setLight('right', true); break;
+    case 'q': if (!camOpen) setPower('left', true); break;
+    case 'e': if (!camOpen) setPower('right', true); break;
     case 'w': if (camOpen) { curCam === 9 ? switchCam(prevCam || 1) : switchCam(9); } break;
     case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
   }
 });
 document.addEventListener('keyup', e => {
   switch(e.key.toLowerCase()) {
-    case 'a': setLight('left', false); break;
-    case 'd': setLight('right', false); break;
+    case 'q': setPower('left', false); break;
+    case 'e': setPower('right', false); break;
   }
 });
 
