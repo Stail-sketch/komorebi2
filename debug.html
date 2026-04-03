@@ -86,6 +86,14 @@ button.blue:hover{background:#48f;color:#000;}
   </div>
 </div>
 
+<!-- 初回起動演出 -->
+<div class="section">
+  <h2>初回起動演出</h2>
+  <div style="margin-top:8px;">
+    <button onclick="localStorage.removeItem('first_boot_done');window.open('index.html','_blank');addLog('起動演出リセット→テスト')">起動演出テスト</button>
+  </div>
+</div>
+
 <!-- 通知テスト -->
 <div class="section">
   <h2>デスクトップ通知テスト</h2>

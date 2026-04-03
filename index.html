@@ -146,7 +146,12 @@ body {
 </head>
 <body>
 
-<div class="desktop">
+<!-- 初回起動演出 -->
+<div id="boot-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#000;font-family:'Courier New',monospace;font-size:14px;color:#0a0;padding:40px;overflow:hidden;line-height:2;">
+  <div id="boot-log"></div>
+</div>
+
+<div class="desktop" id="desktop-main">
   <!-- アイコンエリア -->
   <div class="icon-area">
 
@@ -200,6 +205,59 @@ body {
 
 // 画像ドラッグ防止
 document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+// ===== 初回起動演出 =====
+(function(){
+  if(localStorage.getItem('first_boot_done') === 'true') return;
+  localStorage.setItem('first_boot_done', 'true');
+
+  var desktop = document.getElementById('desktop-main');
+  var boot = document.getElementById('boot-screen');
+  var log = document.getElementById('boot-log');
+
+  desktop.style.display = 'none';
+  boot.style.display = 'block';
+
+  var lines = [
+    {text:'BIOS v2.04 ... OK', delay:0},
+    {text:'Memory check: 640K ... OK', delay:400},
+    {text:'Loading system ...', delay:800},
+    {text:'', delay:1400},
+    {text:'[SYSTEM] initializing desktop environment ...', delay:1800},
+    {text:'[SYSTEM] network adapter: connected', delay:2400},
+    {text:'[SYSTEM] checking broadcast signal ...', delay:3200},
+    {text:'', delay:3800},
+    {text:'[WARNING] unknown signal detected on port 0:00-6:00', color:'#a44', delay:4200},
+    {text:'[WARNING] source: unresolved', color:'#a44', delay:4800},
+    {text:'', delay:5200},
+    {text:'[SYSTEM] incoming connection ...', delay:5600},
+    {text:'[SYSTEM] accept? ... auto_accepted', delay:6200},
+    {text:'', delay:6800},
+    {text:'「あの番組を覚えていますか」', color:'#4a4a8a', delay:7500},
+    {text:'', delay:8200},
+    {text:'[SYSTEM] desktop ready.', delay:8800},
+  ];
+
+  lines.forEach(function(line){
+    setTimeout(function(){
+      var p = document.createElement('div');
+      p.style.color = line.color || '#0a0';
+      p.textContent = line.text || '\u00a0';
+      log.appendChild(p);
+      log.scrollTop = log.scrollHeight;
+    }, line.delay);
+  });
+
+  // 演出終了→デスクトップ表示
+  setTimeout(function(){
+    boot.style.transition = 'opacity 1.5s';
+    boot.style.opacity = '0';
+    setTimeout(function(){
+      boot.style.display = 'none';
+      desktop.style.display = '';
+    }, 1500);
+  }, 10000);
+})();
 
 // アーカイブアイコンの表示制御（Night3クリア後）
 if(localStorage.getItem('night3_clear') === 'true'){
