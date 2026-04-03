@@ -485,13 +485,13 @@ function applySideAreas() {
 }
 
 // --- サウンド ---
-const sndBGM = new Audio('../sound/BGM.wav');
+const sndBGM = new Audio('../sound/BGM.mp3');
 sndBGM.loop = true; sndBGM.volume = 0.15;
-const sndClock = new Audio('../sound/clock_tick.flac');
+const sndClock = new Audio('../sound/clock_tick.mp3');
 sndClock.loop = true; sndClock.volume = 0.15;
 const sndCamSwitch = new Audio('../sound/camera switch.mp3');
 sndCamSwitch.volume = 0.1;
-const sndCamNoise = new Audio('../sound/camera noize.wav');
+const sndCamNoise = new Audio('../sound/camera noize.mp3');
 sndCamNoise.loop = true; sndCamNoise.volume = 0.08;
 const sndMonitorOff = new Audio('../sound/monitor off.mp3');
 sndMonitorOff.volume = 0.1;
@@ -505,7 +505,7 @@ const sndClearYay = new Audio('../sound/clear_yay.mp3');
 sndClearYay.volume = 0.15;
 
 // F1 クロックティック音
-const sndF1ClockTick = new Audio('../sound/f1/clock_tick.flac');
+const sndF1ClockTick = new Audio('../sound/f1/clock_tick.mp3');
 sndF1ClockTick.loop = true; sndF1ClockTick.volume = 0.15;
 
 // F1 ぽたまる音楽
@@ -516,11 +516,11 @@ sndPotamaruB.volume = 0.2;
 
 // F2 ジャンプスケア音
 const sndJump = {
-  kururu:  new Audio('../sound/587354__breviceps__jumpscare-scream.wav'),
+  kururu:  new Audio('../sound/587354__breviceps__jumpscare-scream.mp3'),
   madara:  new Audio('../sound/623065__jollyfunway__tiger-jumpscare.mp3'),
   kasumi:  new Audio('../sound/623437__jollyfunway__stone-age-like-jumpscare.mp3'),
-  araane:  new Audio('../sound/676232__werdkind0m__jumpscare-sound-v2.wav'),
-  yowari:  new Audio('../sound/812134__aksiny_soundeditor__jumpscare-1.wav'),
+  araane:  new Audio('../sound/676232__werdkind0m__jumpscare-sound-v2.mp3'),
+  yowari:  new Audio('../sound/812134__aksiny_soundeditor__jumpscare-1.mp3'),
   kitsune: new Audio('../sound/f1/kitsune_jumpscare.mp3'),
 };
 Object.values(sndJump).forEach(s => s.volume = 0.075);
