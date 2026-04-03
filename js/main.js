@@ -619,33 +619,48 @@ function triggerNight2Transition(){
 
     var lines = [
       {text:'[SYSTEM] 3 errors corrected', color:'#0f0', delay:0},
-      {text:'[SYSTEM] unauthorized_modification detected', color:'#0a0', delay:1000},
-      {text:'', delay:1800},
-      {text:'…見つけてくれたんだ', color:'#4f4', delay:2500},
-      {text:'…ありがとう', color:'#4f4', delay:3500},
+      {text:'[SYSTEM] unauthorized_modification detected', color:'#0a0', delay:1200},
+      {text:'', delay:2500},
+      {text:'…見つけてくれたんだ', color:'#4f4', delay:3500},
+      {text:'…ありがとう', color:'#4f4', delay:5500},
     ];
 
     lines.forEach(function(line){
       setTimeout(function(){
         if(!line.text) return;
         var p = document.createElement('p');
-        p.style.cssText = 'color:'+line.color+';font-size:16px;letter-spacing:2px;margin:6px 0;opacity:0;transition:opacity 0.5s;text-shadow:0 0 10px rgba(0,255,0,0.5);';
+        p.style.cssText = 'color:'+line.color+';font-size:16px;letter-spacing:2px;margin:6px 0;opacity:0;transition:opacity 1s;text-shadow:0 0 10px rgba(0,255,0,0.5);';
         p.textContent = line.text;
         msgLayer.appendChild(p);
         setTimeout(function(){ p.style.opacity = '1'; }, 50);
       }, line.delay);
     });
 
-    // 7秒後：完全に埋め尽くされた→自動遷移
+    // 10秒後：完全に埋め尽くされた
     setTimeout(function(){
       clearInterval(growInterval);
       overlay.style.color = 'rgba(0,200,0,0.9)';
       overlay.style.background = '#000';
-      // 2秒後に自動でNight2へ
+    }, 8000);
+
+    // メッセージがフェードアウト→画面が白くフェード→遷移
+    setTimeout(function(){
+      msgLayer.style.transition = 'opacity 2s';
+      msgLayer.style.opacity = '0';
+    }, 10000);
+
+    setTimeout(function(){
+      overlay.style.transition = 'opacity 2s';
+      overlay.style.opacity = '0';
+      // 白フラッシュ
+      var white = document.createElement('div');
+      white.style.cssText = 'position:fixed;inset:0;z-index:100001;background:#000;opacity:0;transition:opacity 1.5s;';
+      document.body.appendChild(white);
+      setTimeout(function(){ white.style.opacity = '1'; }, 50);
       setTimeout(function(){
         window.location.href = '../night2/';
       }, 2000);
-    }, 5000);
+    }, 12000);
   }, 3000);
 
   // バグ文字の更新を続ける（ランダムに書き換わり続ける）
