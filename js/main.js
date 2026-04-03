@@ -531,4 +531,79 @@ document.addEventListener('DOMContentLoaded', () => {
   playDetectGlitch();
   updateUnlockedContent();
   checkNight5Collapse();
+  initSiteErrors();
 });
+
+// --- サイト内の間違いクリック（Night2入口） ---
+var ERROR_CORRECTIONS = {
+  year: {wrong:'1998年', right:'1997年'},
+  count: {wrong:'320', right:'315'},
+  song: {wrong:'ぽたまるソング♪', right:'ぽたまるダンス♪'}
+};
+
+function getFoundErrors(){
+  try{return JSON.parse(localStorage.getItem('site_errors_found')||'[]');}catch(e){return [];}
+}
+
+function fixError(id, el){
+  if(!el) return;
+  var n1 = localStorage.getItem('night1_clear') === 'true';
+  var n2 = localStorage.getItem('night2_clear') === 'true';
+  if(!n1 || n2) return; // Night1クリア後〜Night2クリア前のみ有効
+
+  var found = getFoundErrors();
+  if(found.indexOf(id) !== -1) return;
+  found.push(id);
+  localStorage.setItem('site_errors_found', JSON.stringify(found));
+
+  // グリッチ演出：テキストが壊れて正しい値に変わる
+  var correction = ERROR_CORRECTIONS[id];
+  if(!correction) return;
+
+  el.style.transition = 'none';
+  el.style.color = '#ff0033';
+  el.style.textShadow = '2px 0 #f00, -2px 0 #0ff';
+  el.style.cursor = 'default';
+
+  // テキストをグリッチさせてから修正
+  var glitchChars = '\u2588\u2591\u2592\u2593\u25a0\u25a1';
+  var steps = 0;
+  var glitchInterval = setInterval(function(){
+    var t = '';
+    for(var i=0; i<correction.right.length; i++){
+      t += Math.random() > 0.4 ? glitchChars[Math.floor(Math.random()*glitchChars.length)] : correction.right[i];
+    }
+    el.textContent = t;
+    steps++;
+    if(steps > 8){
+      clearInterval(glitchInterval);
+      el.textContent = correction.right;
+      el.style.color = '#33aa33';
+      el.style.textShadow = '0 0 8px rgba(50,200,50,0.5)';
+      setTimeout(function(){
+        el.style.textShadow = 'none';
+        el.style.color = '';
+      }, 1500);
+    }
+  }, 60);
+}
+
+function initSiteErrors(){
+  // 既に見つけた間違いを修正済み表示にする
+  var found = getFoundErrors();
+  found.forEach(function(id){
+    var el = document.getElementById('error-'+id);
+    if(el && ERROR_CORRECTIONS[id]){
+      el.textContent = ERROR_CORRECTIONS[id].right;
+      el.style.cursor = 'default';
+      el.onclick = null;
+    }
+  });
+
+  // CSSスタイル注入
+  var style = document.createElement('style');
+  style.textContent = '.site-error{cursor:pointer;transition:color 0.2s;}.site-error:hover{color:#cc0000;text-decoration:underline wavy #cc0000;}';
+  document.head.appendChild(style);
+}
+
+window.fixError = fixError;
