@@ -366,7 +366,7 @@
 
     var prompt = document.createElement('div');
     prompt.id = 'return-prompt';
-    prompt.innerHTML = '<p>「Night5クリア地点に戻りますか？」</p><a href="#" id="return-btn">戻る</a>';
+    prompt.innerHTML = '<p>「デスクトップに戻りますか？」</p><a href="#" id="return-btn">戻る</a>';
     screen.appendChild(prompt);
 
     await wait(500);
@@ -374,8 +374,7 @@
 
     document.getElementById('return-btn').addEventListener('click', function(e){
       e.preventDefault();
-      // Navigate to night5 save point
-      window.location.href = '../night5/';
+      window.location.href = '../index.html';
     });
 
     // --- Set localStorage flags ---
