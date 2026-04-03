@@ -335,8 +335,6 @@
       {text:'> K-059 STATUS CHECK', delay:0},
       {text:'> 完了率: 98.7%', delay:1500},
       {text:'> 感情データ: 不足', delay:3000},
-      {text:'', delay:4500},
-      {text:'> 再接続します', delay:5500},
     ];
 
     for(var li=0; li<lines.length; li++){
@@ -349,9 +347,9 @@
       requestAnimationFrame(function(el){ return function(){ requestAnimationFrame(function(){ el.classList.add('visible'); }); }; }(line));
     }
 
-    await wait(3000);
+    await wait(4000);
 
-    // --- STAGE 7: 予定通りです（最後に来ることで意味が変わる） ---
+    // --- STAGE 7: 予定通りです（不足なのに予定通り＝最初から2周の計画） ---
     clearScreen();
     await wait(2000);
 
@@ -382,7 +380,21 @@
     yotei.style.opacity = '0';
     await wait(3000);
 
-    // --- STAGE 8: Return prompt ---
+    // --- STAGE 8: 再接続 ---
+    clearScreen();
+    await wait(2000);
+
+    var reconnect = document.createElement('div');
+    reconnect.className = 'terminal-line';
+    reconnect.textContent = '> 再接続します';
+    screen.appendChild(reconnect);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ reconnect.classList.add('visible'); }); });
+
+    await wait(3000);
+    await fadeOutEl(reconnect, 2000);
+    reconnect.remove();
+
+    // --- STAGE 9: Return prompt ---
     clearScreen();
     await wait(2000);
 
