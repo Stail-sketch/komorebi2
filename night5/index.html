@@ -486,7 +486,10 @@ const MADARA_PATH_L = [6,3,4,7,'left_door'], MADARA_PATH_R = [6,2,5,8,'right_doo
 // --- かすみ（オファーシステム）設定 ---
 const KS_OFFER_MIN = 20000, KS_OFFER_MAX = 30000;
 const KS_OFFER_TIMEOUT = 8000;
-const KS_NOISE_DURATION = 10000;
+const KS_NOISE_DURATION = 15000;
+const KS_DEBUFF_DURATION = 15000;
+const KS_SPEED_MULT = 1.5;
+var kasumiDebuffActive = false;
 
 // --- アラネ（蜘蛛の巣ゲージ）設定 ---
 const WEB_DRAIN_RATE = 0.4;   // ~2% per second at 5 ticks/sec
@@ -735,6 +738,7 @@ function updateSideEntity() {
 function scheduleKururuMove() {
   clearTimeout(kururuMT);
   var kururuDelay = (kururuSpd === 'slow' ? KURURU_SLOW : KURURU_FAST) / getYowariSpeedMult();
+  if(kasumiDebuffActive) kururuDelay /= KS_SPEED_MULT;
   kururuMT = setTimeout(moveKururu, kururuDelay);
 }
 
@@ -791,7 +795,9 @@ function checkKururuWatch() {
 // ============================================================
 function scheduleMadaraMove() {
   clearTimeout(madaraMT);
-  madaraMT = setTimeout(moveMadara, MADARA_MOVE / getYowariSpeedMult());
+  var delay = MADARA_MOVE / getYowariSpeedMult();
+  if(kasumiDebuffActive) delay /= KS_SPEED_MULT;
+  madaraMT = setTimeout(moveMadara, delay);
 }
 
 function moveMadara() {
@@ -866,13 +872,25 @@ function hideKasumiOffer() {
 
 function acceptKasumiOffer() {
   if (!running) return;
-  power = Math.min(100, power + 10);
+  power = Math.min(100, power + 20);
   var p = Math.round(power);
   $('power-display').textContent = p;
   $('power-bar').style.width = p + '%';
+  $('power-bar').classList.toggle('low', p <= 25 && p > 10);
+  $('power-bar').classList.toggle('critical', p <= 10);
   hideKasumiOffer();
   startCameraNoise();
+  startKasumiDebuff();
 }
+
+function startKasumiDebuff() {
+  kasumiDebuffActive = true;
+  if(kasumiDebuffTimer) clearTimeout(kasumiDebuffTimer);
+  kasumiDebuffTimer = setTimeout(function() {
+    kasumiDebuffActive = false;
+  }, KS_DEBUFF_DURATION);
+}
+var kasumiDebuffTimer;
 
 function declineKasumiOffer() {
   hideKasumiOffer();
@@ -911,7 +929,9 @@ function webGaugeTick() {
   if (webHolding) {
     webGauge = Math.min(100, webGauge + WEB_REPLENISH_RATE);
   } else {
-    webGauge = Math.max(0, webGauge - WEB_DRAIN_RATE * getYowariWebDrainMult());
+    var drain = WEB_DRAIN_RATE * getYowariWebDrainMult();
+    if(kasumiDebuffActive) drain *= KS_SPEED_MULT;
+    webGauge = Math.max(0, webGauge - drain);
   }
   updateWebGaugeUI();
   if (camOpen && curCam === 9) updateCameraChar();
