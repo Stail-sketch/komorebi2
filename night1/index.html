@@ -29,8 +29,9 @@
     .side-light-overlay { position: absolute; inset: 0; background: rgba(180,0,0,0.35); display: none; z-index: 1; }
     .side-light-overlay.active { display: block; }
     /* モニターOFF（デフォルト暗い・最前面） */
-    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: block; z-index: 2; }
-    .door-closed-overlay.powered { display: none; }
+    .door-closed-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 2; transition: background 0.15s; }
+    .door-closed-overlay.powered { background: transparent; }
+    .door-closed-overlay.lit { background: rgba(120,0,0,0.55); }
 
     /* DOOR/LIGHTボタン */
     /* DOOR/LIGHTボタン（前作準拠） */
@@ -526,19 +527,21 @@ function togglePower(side) {
   if (side === 'left') {
     doorL = !doorL;
     $('left-door').classList.toggle('powered', doorL);
+    if (doorL) $('left-door').classList.remove('lit'); // POWER ONならlit解除
     document.querySelector('#left-buttons .btn-power').classList.toggle('on', doorL);
     playS(doorL ? sndMonitorOn : sndMonitorOff);
     if (doorL && sqDoor === 'left') defeatSq();
   } else {
     doorR = !doorR;
     $('right-door').classList.toggle('powered', doorR);
+    if (doorR) $('right-door').classList.remove('lit');
     document.querySelector('#right-buttons .btn-power').classList.toggle('on', doorR);
     playS(doorR ? sndMonitorOn : sndMonitorOff);
     if (doorR && sqDoor === 'right') defeatSq();
   }
 }
 
-// --- LIGHT（長押しで確認） ---
+// --- LIGHT（長押しで確認・暗闇に赤い光） ---
 function setLight(side, on) {
   if (!running) return;
   if (camOpen) return;
@@ -546,11 +549,12 @@ function setLight(side, on) {
   if (side === 'left') {
     lightL = on;
     document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
-    $('left-light').classList.toggle('active', on);
+    // POWER OFF時のみ赤ライト効果
+    if (!doorL) $('left-door').classList.toggle('lit', on);
   } else {
     lightR = on;
     document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
-    $('right-light').classList.toggle('active', on);
+    if (!doorR) $('right-door').classList.toggle('lit', on);
   }
   updateSideEntity();
 }
@@ -563,9 +567,9 @@ const DOOR_IMAGES = {
 };
 
 function updateSideEntity() {
-  // LIGHT長押し中かつPOWER OFF時に敵が見える（POWER ON中は防御済み）
-  const showL = sqDoor === 'left' && lightL && !doorL;
-  const showR = sqDoor === 'right' && lightR && !doorR;
+  // LIGHT中（赤く透けて見える）またはPOWER ON中（明るく見える）に敵表示
+  const showL = sqDoor === 'left' && (lightL || doorL);
+  const showR = sqDoor === 'right' && (lightR || doorR);
   if (showL) $('left-entity-img').src = DOOR_IMAGES.kururu;
   if (showR) $('right-entity-img').src = DOOR_IMAGES.kururu;
   $('left-entity').classList.toggle('visible', showL);
@@ -718,8 +722,8 @@ function retryGame() {
   $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
   document.querySelector('#left-buttons .btn-power').classList.remove('on');
   document.querySelector('#right-buttons .btn-power').classList.remove('on');
-  $('left-door').classList.remove('powered');
-  $('right-door').classList.remove('powered');
+  $('left-door').classList.remove('powered','lit');
+  $('right-door').classList.remove('powered','lit');
   lightL=false; lightR=false;
   $('time-display').textContent = '0:00 AM';
   $('power-display').textContent = '100';
