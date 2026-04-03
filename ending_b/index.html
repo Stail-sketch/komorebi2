@@ -310,7 +310,7 @@
     await fadeOutEl(y3, 1500);
     y3.remove();
 
-    // --- STAGE 5: Long silence, then PROCESS STILL RUNNING ---
+    // --- STAGE 5: PROCESS STILL RUNNING ---
     await wait(4000);
 
     var proc = document.createElement('div');
@@ -327,16 +327,39 @@
     await fadeOutEl(proc, 2000);
     proc.remove();
 
-    // --- STAGE 6: Longer silence, then 予定通りです ---
-    await wait(5000);
-
+    // --- STAGE 6: データ不足 → 再接続 ---
+    await wait(3000);
     clearScreen();
+
+    var lines = [
+      {text:'> K-059 STATUS CHECK', delay:0},
+      {text:'> 完了率: 98.7%', delay:1500},
+      {text:'> 感情データ: 不足', delay:3000},
+      {text:'', delay:4500},
+      {text:'> 再接続します', delay:5500},
+    ];
+
+    for(var li=0; li<lines.length; li++){
+      await wait(li === 0 ? 0 : lines[li].delay - lines[li-1].delay);
+      if(!lines[li].text) continue;
+      var line = document.createElement('div');
+      line.className = 'terminal-line';
+      line.textContent = lines[li].text;
+      screen.appendChild(line);
+      requestAnimationFrame(function(el){ return function(){ requestAnimationFrame(function(){ el.classList.add('visible'); }); }; }(line));
+    }
+
+    await wait(3000);
+
+    // --- STAGE 7: 予定通りです（最後に来ることで意味が変わる） ---
+    clearScreen();
+    await wait(2000);
+
     var yotei = document.createElement('div');
     yotei.id = 'yotei';
     yotei.textContent = '予定通りです';
     screen.appendChild(yotei);
 
-    // Very slow fade in
     var opacity = 0;
     await new Promise(function(resolve){
       var fadeIn = setInterval(function(){
@@ -352,17 +375,16 @@
       }, 30);
     });
 
-    await wait(6000);
+    await wait(5000);
 
-    // Fade out 予定通りです
     yotei.classList.remove('pulsing');
     yotei.style.transition = 'opacity 3s ease';
     yotei.style.opacity = '0';
     await wait(3000);
 
-    // --- STAGE 7: Return prompt ---
+    // --- STAGE 8: Return prompt ---
     clearScreen();
-    await wait(3000);
+    await wait(2000);
 
     var prompt = document.createElement('div');
     prompt.id = 'return-prompt';
