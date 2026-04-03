@@ -166,7 +166,8 @@
       </div>
     </div>
 
-    <div class="input-area">
+    <div id="chatChoices" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid #ddd0b8;"></div>
+    <div class="input-area" id="chatInputArea">
       <div class="input-row">
         <input type="text" id="messageInput" placeholder="メッセージを入力..." autofocus>
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">▶</button>
@@ -687,6 +688,71 @@
 
     // Update last activity
     document.getElementById('lastActivity').textContent = '最終更新: ' + getTimeString();
+
+    // ===== 選択肢ボタンシステム =====
+    var warmupChoices = [
+      ['うん、調べてるよ','あなた誰？','気になって'],
+      ['キツネ団長！','かあ博士','ぽたまる','うっきち','くるる','みんな好き！'],
+      ['読んだよ！','まだちょっと…','読んでない']
+    ];
+    var freeChoices = ['キツネ団長のこと','かあ博士のこと','ぽたまるのこと','うっきちのこと','番組のこと','怖い…','ありがとう','スタジオのこと'];
+
+    function renderChatChoices(){
+      var container = document.getElementById('chatChoices');
+      var inputArea = document.getElementById('chatInputArea');
+      if(!container) return;
+
+      var choices = null;
+      var showInput = false;
+      var puzzleStarted = localStorage.getItem('chat_puzzle_started') === 'true';
+      var allClear = allPuzzlesClear();
+
+      if(!puzzleStarted){
+        // ウォームアップ中
+        var stage = parseInt(localStorage.getItem('chat_warmup_stage') || '0');
+        if(stage < warmupChoices.length){
+          choices = warmupChoices[stage];
+        }
+        showInput = false;
+      } else if(!allClear){
+        // パズルモード：テキスト入力のみ
+        choices = null;
+        showInput = true;
+      } else {
+        // クリア後フリー会話：選択肢のみ
+        choices = freeChoices;
+        showInput = false;
+      }
+
+      if(inputArea) inputArea.style.display = showInput ? '' : 'none';
+
+      if(!choices || choices.length === 0){
+        container.innerHTML = '';
+        return;
+      }
+      var html = '';
+      choices.forEach(function(c){
+        html += '<button style="padding:6px 14px;background:#fff8e7;border:2px solid #ddd0b8;border-radius:16px;color:#5d4220;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#c8a96e\';this.style.background=\'#f5edd8\'" onmouseout="this.style.borderColor=\'#ddd0b8\';this.style.background=\'#fff8e7\'" onclick="sendChatChoice(this.textContent)">' + c + '</button>';
+      });
+      container.innerHTML = html;
+    }
+
+    function sendChatChoice(text){
+      messageInput.value = text;
+      sendMessage();
+      setTimeout(renderChatChoices, 100);
+    }
+    window.sendChatChoice = sendChatChoice;
+
+    // 初回描画
+    setTimeout(renderChatChoices, 2000);
+
+    // sendMessage後に選択肢更新
+    var _origSendMessage = sendMessage;
+    // パッチ：sendMessage完了後にrenderChatChoicesを呼ぶ
+    var _checkChoicesInterval = setInterval(function(){
+      if(!isProcessing) renderChatChoices();
+    }, 500);
   </script>
 </body>
 </html>
