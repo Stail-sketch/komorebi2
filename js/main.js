@@ -573,3 +573,14 @@ function initSiteErrors(){
 }
 
 window.fixError = fixError;
+
+// --- あかね名前の黒塗り制御（EndBまで非表示） ---
+(function(){
+  var style = document.createElement('style');
+  style.textContent = '.akane-name{background:#1a1a1a;color:#1a1a1a;padding:0 2px;border-radius:2px;user-select:none;-webkit-user-select:none;cursor:default;}.akane-revealed .akane-name{background:transparent;color:inherit;padding:0;user-select:text;-webkit-user-select:text;cursor:inherit;}';
+  document.head.appendChild(style);
+
+  if(localStorage.getItem('ending_b_seen') === 'true'){
+    document.body.classList.add('akane-revealed');
+  }
+})();
