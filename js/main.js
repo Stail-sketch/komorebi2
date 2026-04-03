@@ -583,9 +583,71 @@ function fixError(id, el){
       setTimeout(function(){
         el.style.textShadow = 'none';
         el.style.color = '';
-      }, 1500);
+        // 3つ揃ったらその場で演出→Night2遷移
+        if(found.length >= 3) triggerNight2Transition();
+      }, 800);
     }
   }, 60);
+}
+
+function triggerNight2Transition(){
+  // 画面全体を暗転
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;opacity:0;transition:opacity 1.5s;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:"Courier New",monospace;';
+  document.body.appendChild(overlay);
+  setTimeout(function(){ overlay.style.opacity = '1'; }, 50);
+
+  // シェイクCSS
+  var ss = document.createElement('style');
+  ss.textContent = '@keyframes n2Shake{0%{transform:translate(0,0)}25%{transform:translate(-8px,5px)}50%{transform:translate(6px,-6px)}75%{transform:translate(-5px,-4px)}100%{transform:translate(7px,6px)}}';
+  document.head.appendChild(ss);
+
+  // タイプライター表示
+  var lines = [
+    {text:'[SYSTEM] site_integrity_check: 3 errors corrected', color:'#335', delay:2000},
+    {text:'[SYSTEM] unauthorized_modification detected', color:'#a44', delay:3000},
+    {text:'[SYSTEM] restoring original data...', color:'#335', delay:4000},
+    {text:'…見つけてくれたんだ', color:'#6666aa', delay:5500},
+    {text:'…ありがとう', color:'#6666aa', delay:6500},
+    {text:'[SYSTEM] WARNING: unknown_process intercepted', color:'#a44', delay:8000},
+  ];
+
+  lines.forEach(function(line){
+    setTimeout(function(){
+      var p = document.createElement('p');
+      p.style.cssText = 'color:'+line.color+';font-size:14px;letter-spacing:1px;margin:4px 0;opacity:0;transition:opacity 0.3s;';
+      p.textContent = line.text;
+      overlay.appendChild(p);
+      setTimeout(function(){ p.style.opacity = '1'; }, 50);
+    }, line.delay);
+  });
+
+  // シェイク+フリッカー
+  setTimeout(function(){
+    overlay.style.animation = 'n2Shake 0.08s infinite';
+    var fc = 0;
+    var fi = setInterval(function(){
+      overlay.style.background = fc % 2 === 0 ? '#1a0000' : '#000';
+      fc++;
+      if(fc >= 8){ clearInterval(fi); overlay.style.background = '#000'; overlay.style.animation = ''; }
+    }, 60);
+  }, 9000);
+
+  // Night2遷移ボタン
+  setTimeout(function(){
+    var btn = document.createElement('a');
+    btn.href = '../night2/';
+    btn.style.cssText = 'display:inline-block;margin-top:40px;padding:14px 50px;border:1px solid #440000;color:#440000;font-family:"Courier New",monospace;font-size:15px;letter-spacing:3px;text-decoration:none;transition:all 0.5s;opacity:0;';
+    btn.textContent = '\u25b6 proceed';
+    overlay.appendChild(btn);
+    setTimeout(function(){
+      btn.style.opacity = '1';
+      btn.style.borderColor = '#aa2222';
+      btn.style.color = '#aa2222';
+    }, 500);
+    btn.onmouseover = function(){ btn.style.background='#aa2222'; btn.style.color='#000'; };
+    btn.onmouseout = function(){ btn.style.background='transparent'; btn.style.color='#aa2222'; };
+  }, 10000);
 }
 
 function initSiteErrors(){
