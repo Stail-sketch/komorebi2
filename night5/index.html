@@ -1350,7 +1350,7 @@ function runBriefing(lines){
     if(line.type==='gap'){ setTimeout(next,400); return; }
     var div=document.createElement('div');
     if(line.type==='sys'){ div.style.cssText='color:'+(line.warn?'#a44':'#335')+';font-size:13px;'; typeText(div,'[SYSTEM] '+line.text,20,function(){setTimeout(next,300);}); }
-    else { div.style.cssText='color:'+line.color+';'; if(line.glitch)div.style.textShadow='2px 0 #f00, -2px 0 #0ff'; typeText(div,'['+line.name+'] '+line.text,25,function(){if(line.glitch)setTimeout(function(){div.style.textShadow='none';},300);setTimeout(next,line.glitch?600:350);}); }
+    else { div.style.cssText='color:'+line.color+';'; if(line.glitch)div.style.textShadow='2px 0 #f00, -2px 0 #0ff'; typeText(div,'['+line.name+'] '+line.text,25,function(){setTimeout(next,line.glitch?600:350);}); }
     log.appendChild(div); log.scrollTop=log.scrollHeight;
   }
   setTimeout(next,800);

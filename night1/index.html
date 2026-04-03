@@ -915,7 +915,6 @@ function runBriefing(lines){
       div.style.cssText = 'color:'+line.color+';';
       if(line.glitch) div.style.textShadow = '2px 0 #f00, -2px 0 #0ff';
       typeText(div, '['+line.name+'] '+line.text, 25, function(){
-        if(line.glitch) setTimeout(function(){ div.style.textShadow='none'; }, 300);
         setTimeout(next, line.glitch ? 600 : 350);
       });
     }
