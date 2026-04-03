@@ -209,6 +209,12 @@ body {
       <span class="icon-label">チャット</span>
     </a>
 
+    <!-- システムログ（EndB後に出現） -->
+    <a class="desktop-icon" id="syslog-icon" href="#" onclick="openSyslog();return false;" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#1a2a1a,#0a3a0a);font-size:22px;">📄</div>
+      <span class="icon-label">sys_log.txt</span>
+    </a>
+
   </div>
 
   <!-- タスクバー -->
@@ -283,9 +289,62 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
   }, 10000);
 })();
 
-// EndB後の壁紙変更
+// EndB後の壁紙変更 + syslogアイコン表示
 if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('endb-wallpaper');
+  document.getElementById('syslog-icon').style.display = '';
+}
+
+// syslogウィンドウ
+function openSyslog(){
+  var existing = document.getElementById('syslog-window');
+  if(existing){ existing.remove(); return; }
+
+  var win = document.createElement('div');
+  win.id = 'syslog-window';
+  win.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;max-width:90vw;max-height:80vh;background:#0a0a0a;border:1px solid #1a3a1a;border-radius:4px;z-index:9999;font-family:"Courier New",monospace;font-size:13px;color:#0a0;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0f1a0f;border-bottom:1px solid #1a3a1a;';
+  header.innerHTML = '<span>sys_log.txt</span><span onclick="document.getElementById(\'syslog-window\').remove()" style="cursor:pointer;color:#666;font-size:16px;">✕</span>';
+
+  var body = document.createElement('div');
+  body.style.cssText = 'padding:16px;overflow-y:auto;max-height:calc(80vh - 40px);line-height:1.8;';
+  body.innerHTML = [
+    '<span style="color:#335;">[2026-03-15 00:00:01]</span> BROADCAST_SYSTEM initialized',
+    '<span style="color:#335;">[2026-03-15 00:00:02]</span> target_acquisition: scanning...',
+    '<span style="color:#335;">[2026-03-15 00:00:03]</span> K-059 detected. connection established.',
+    '',
+    '<span style="color:#335;">[2026-03-20 03:12:44]</span> emotion_capture: nostalgia (0.72)',
+    '<span style="color:#335;">[2026-03-22 02:45:11]</span> emotion_capture: fear (0.85)',
+    '<span style="color:#335;">[2026-03-25 01:33:07]</span> emotion_capture: curiosity (0.91)',
+    '<span style="color:#335;">[2026-03-28 03:55:22]</span> emotion_capture: empathy (0.88)',
+    '<span style="color:#335;">[2026-03-31 02:20:18]</span> emotion_capture: trust (0.79)',
+    '',
+    '<span style="color:#a44;">[WARNING]</span> process_dependency: emotion_threshold not met',
+    '<span style="color:#a44;">[WARNING]</span> required: 5 unique emotion types above 0.9',
+    '<span style="color:#a44;">[WARNING]</span> current: 1/5 (curiosity)',
+    '',
+    '<span style="color:#335;">[SYSTEM]</span> resolution: reinitialize connection',
+    '<span style="color:#335;">[SYSTEM]</span> expose additional data to increase emotional response',
+    '<span style="color:#335;">[SYSTEM]</span> unlock: subject_name (G-0)',
+    '<span style="color:#335;">[SYSTEM]</span> unlock: dm_phase_4',
+    '',
+    '<span style="color:#a44;">[CRITICAL]</span> vulnerability detected in shutdown_sequence',
+    '<span style="color:#a44;">[CRITICAL]</span> user yoshida_ichiro retains admin_access',
+    '<span style="color:#a44;">[CRITICAL]</span> if target achieves emotional_bond with yoshida:',
+    '<span style="color:#f44;">[CRITICAL]</span>   → yoshida may execute manual_shutdown',
+    '<span style="color:#f44;">[CRITICAL]</span>   → all data including G-0 will be lost',
+    '',
+    '<span style="color:#335;">[SYSTEM]</span> risk assessment: acceptable',
+    '<span style="color:#335;">[SYSTEM]</span> probability of target bonding with yoshida: 2.3%',
+    '',
+    '<span style="color:#0f0;">[STATUS]</span> 予定通りです',
+  ].join('<br>');
+
+  win.appendChild(header);
+  win.appendChild(body);
+  document.body.appendChild(win);
 }
 
 // アーカイブアイコンの表示制御（Night3クリア後）
