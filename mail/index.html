@@ -154,10 +154,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
 
   // ===== Night4クリア後（+7通） =====
   if(flag('night4_clear')){
-    mails.push({id:'n4_daughter', from:'', subject:'パパ', snippet:'パパ…', body:'パパ\n\nどこにいるの\nさがしてるの\n\nわたしはここにいるよ', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n4_creepy', from:'no-reply@████████.██', subject:'自動通知：異常なアクセスを検知しました', snippet:'あなたのアクセスログに異常が…', body:'あなたのアクセスログに異常なパターンが検出されました。\n\n対象: あなた\n行動: 全て記録済み\n\n※ このメールに心当たりがない場合は無視してください。', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n4b', from:garbleSender(), subject:garbleSubject(), snippet:'…あの子の…名前を…', body:'「…あの子の…名前を……覚えていて……お願い…」', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n4', from:garbleSender(), subject:garbleSubject(), snippet:'…古い場所を…見た…か…', body:'「…古い場所を…見た…か……あそこに…答えが……でも…気をつけて…見られている…」', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n4_binary', from:'00000000@null', subject:'01001011', snippet:'010010110010110100110101...', body:'01001011 00101101 00110000 00110101 00111001\n01010000 01010010 01001111 01000011 01000101 01010011 01010011\n01010011 01010100 01001001 01001100 01001100\n01010010 01010101 01001110 01001110 01001001 01001110 01000111', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n4_spam1', from:'update@app-store.example', subject:'アプリのアップデートがあります', snippet:'3件のアップデート', body:'以下のアプリのアップデートが利用可能です:\n\n・Popin v4.2.1 - バグ修正\n・カメラアプリ v2.0 - 新フィルター追加\n・天気予報 v3.1 - UI改善', unread:false, attachment:null, type:'normal'});
     mails.push({id:'n4_spam2', from:'no-reply@delivery.example', subject:'お届け完了のお知らせ', snippet:'ご注文の商品をお届けしました', body:'ご注文の商品をお届けしました。\n\n注文番号: #D-85723\n商品: ワイヤレスイヤホン\n\nご不在の場合は宅配ボックスに投函しております。', unread:false, attachment:null, type:'normal'});
@@ -166,8 +163,6 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
   // ===== Night3クリア後（+7通） =====
   if(flag('night3_clear')){
     mails.push({id:'n3_self', from:'（あなたのメールアドレス）', subject:'（件名なし）', snippet:'覚えていないけど…', body:'このメールはあなた自身から送信されました。\n\n…覚えていますか？\n\n送信日時: 2026年3月31日 03:47', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n3_kitsune', from:garbleSender(), subject:garbleSubject(), snippet:'…嘘が…混じっている…', body:'「…調査記録に……嘘が…混じっている……見つけて…」', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n3b', from:garbleSender(), subject:garbleSubject(), snippet:'…矛盾に…気づいた…か…', body:'「…矛盾に…気づいた…か……三つ…ある……全部…見つけて…伝えて…」', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n3', from:'キツネ団長', subject:'クイズの準備ができたよ！', snippet:'ぼくとチャットで話そう！', body:'やあ！\n\nサイトのこと、いっぱい調べてくれてるみたいだね！\n\nぼくからキミにクイズを出したいんだ。\nチャットで待ってるから、来てね！\n\nキツネ団長より', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n3_spam1', from:'no-reply@video-tube.example', subject:'あなたへのおすすめ動画', snippet:'話題の動画をチェック', body:'あなたへのおすすめ\n\n▶ 90年代の子ども番組まとめ【懐かしすぎる】- 再生回数 234万回\n▶ 【閲覧注意】放送事故になった子ども番組5選 - 再生回数 89万回\n▶ 都市伝説！あの番組の裏側とは - 再生回数 156万回', unread:false, attachment:null, type:'normal'});
     mails.push({id:'n3_spam2', from:'campaign@shopping-mall.example', subject:'【期間限定】春の大セール開催中！', snippet:'最大50%OFF', body:'春の大セール開催中！\n\n対象商品が最大50%OFF！\n期間: 3月25日〜4月7日\n\nお見逃しなく！', unread:false, attachment:null, type:'normal'});
