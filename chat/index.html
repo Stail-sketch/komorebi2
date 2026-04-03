@@ -374,7 +374,26 @@
       // Show initial greeting or resume
       setTimeout(function () {
         showTyping(function () {
-          if(allPuzzlesClear()){
+          if(allPuzzlesClear() && localStorage.getItem('night3_unlocked')){
+            addMessage(partnerName, 'やあ！また来てくれたんだね！', true);
+            // Night3リンクを再表示
+            if(!localStorage.getItem('night3_clear')){
+              setTimeout(function(){
+                showTyping(function(){
+                  addMessage(partnerName, 'ここから先に行けるよ。準備はいい？', true);
+                  setTimeout(function(){
+                    var linkDiv = document.createElement('div');
+                    linkDiv.className = 'message partner';
+                    linkDiv.innerHTML = '<span class="sender" style="color:#c00;">' + escapeHtml(partnerName) + ':</span>' +
+                      '<span class="time">' + getTimeString() + '</span>' +
+                      '<span class="text"> <a href="../night3/" style="color:#0054e3; text-decoration:underline; cursor:pointer; font-weight:bold;">▶ 行く</a></span>';
+                    chatArea.insertBefore(linkDiv, typingIndicator);
+                    scrollToBottom();
+                  }, 500);
+                });
+              }, 1500);
+            }
+          } else if(allPuzzlesClear()){
             addMessage(partnerName, 'やあ！また来てくれたんだね！嬉しいなぁ！', true);
           } else if(puzzleStarted){
             addMessage(partnerName, 'おかえり！続きからいこう！', true);
