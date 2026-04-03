@@ -519,8 +519,7 @@
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           el.classList.add('visible');
-          // 表示されたら震わせる
-          setTimeout(function(){ el.classList.add('trembling'); }, 800);
+          el.classList.add('trembling');
         });
       });
       setTimeout(function(){ resolve(el); }, 300);

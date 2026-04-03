@@ -19,6 +19,30 @@
     z-index:1;
   }
 
+  /* ===== CRT常駐レイヤー ===== */
+  #crt-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:20;
+    opacity:0.3;
+    transition:opacity 4s ease;
+  }
+  #crt-overlay::before{
+    content:'';
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    background:repeating-linear-gradient(0deg,
+      rgba(0,255,65,0.03) 0px, rgba(0,255,65,0.03) 1px,
+      transparent 1px, transparent 3px);
+    animation:crt-scroll 4s linear infinite;
+  }
+  #crt-overlay::after{
+    content:'';
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    animation:vignette-breathe 6s ease-in-out infinite;
+  }
+  @keyframes crt-scroll{0%{background-position:0 0;}100%{background-position:0 100vh;}}
+  @keyframes vignette-breathe{0%,100%{opacity:0.7;}50%{opacity:1;}}
+
   /* Terminal log (黒幕) */
   .terminal-line{
     color:#00ff41;
@@ -62,24 +86,38 @@
     position:absolute;
     letter-spacing:0.15em;
     line-height:2.2;
-    transition:opacity 1.5s ease;
+    transition:opacity 0.4s ease;
   }
   .yoshida-text.visible{opacity:1;}
+  .yoshida-text.trembling{
+    animation:text-tremble 0.08s linear infinite;
+  }
+  @keyframes text-tremble{
+    0%{transform:translate(0,0);}
+    25%{transform:translate(0.5px,-0.3px);}
+    50%{transform:translate(-0.3px,0.5px);}
+    75%{transform:translate(-0.5px,-0.5px);}
+    100%{transform:translate(0.3px,0.3px);}
+  }
 
-  /* あかね text - fragile, transparent */
+  /* あかね text */
   .akane-text{
     color:#e8d0d8;
     font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN',serif;
-    font-size:clamp(14px,2.2vw,22px);
+    font-size:clamp(10px,1.5vw,14px);
     text-align:center;
     opacity:0;
     position:absolute;
-    letter-spacing:0.2em;
+    letter-spacing:0.3em;
     line-height:2;
-    transition:opacity 2s ease;
+    transition:opacity 4s ease, font-size 4s ease, letter-spacing 4s ease;
     filter:blur(0.3px);
   }
-  .akane-text.visible{opacity:0.6;}
+  .akane-text.visible{
+    opacity:0.5;
+    font-size:clamp(16px,2.5vw,24px);
+    letter-spacing:0.2em;
+  }
 
   /* Glitch effects */
   @keyframes glitch-skew{
@@ -90,106 +128,117 @@
     80%{transform:skew(3deg);}
     100%{transform:skew(0deg);}
   }
-  @keyframes scanline{
-    0%{background-position:0 0;}
-    100%{background-position:0 100vh;}
-  }
-  .screen-corrupt{
-    animation:glitch-skew 0.1s linear infinite;
-  }
+  @keyframes scanline{0%{background-position:0 0;}100%{background-position:0 100vh;}}
+  .screen-corrupt{animation:glitch-skew 0.1s linear infinite;}
   .screen-corrupt::after{
-    content:'';
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:repeating-linear-gradient(
-      0deg,
-      rgba(0,255,65,0.03) 0px,
-      rgba(0,255,65,0.03) 1px,
-      transparent 1px,
-      transparent 3px
-    );
+    content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+    background:repeating-linear-gradient(0deg,
+      rgba(0,255,65,0.03) 0px, rgba(0,255,65,0.03) 1px,
+      transparent 1px, transparent 3px);
     animation:scanline 0.5s linear infinite;
-    pointer-events:none;
-    z-index:5;
+    pointer-events:none;z-index:5;
   }
   @keyframes hard-glitch{
-    0%{opacity:0;}
-    5%{opacity:1;background:#fff;}
-    10%{opacity:0;}
-    15%{opacity:0.8;background:#0f0;}
-    20%{opacity:0;}
-    30%{opacity:0.5;background:#f00;}
-    35%{opacity:0;}
-    100%{opacity:0;}
+    0%{opacity:0;}5%{opacity:1;background:#fff;}10%{opacity:0;}
+    15%{opacity:0.8;background:#0f0;}20%{opacity:0;}
+    30%{opacity:0.5;background:#f00;}35%{opacity:0;}100%{opacity:0;}
   }
   .hard-glitch{
     position:fixed;top:0;left:0;width:100%;height:100%;
-    z-index:15;
-    pointer-events:none;
+    z-index:15;pointer-events:none;
     animation:hard-glitch 0.3s linear forwards;
   }
 
-  /* White overlay for true ending */
-  #white-overlay{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:#fff;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 5s ease;
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
+  /* RGB色収差 */
+  @keyframes rgb-split{
+    0%{text-shadow:0 0 8px rgba(0,255,65,0.4);}
+    25%{text-shadow:-3px 0 0 rgba(255,0,0,0.7), 3px 0 0 rgba(0,255,255,0.7), 0 0 8px rgba(0,255,65,0.4);}
+    50%{text-shadow:2px 1px 0 rgba(255,0,0,0.5), -2px -1px 0 rgba(0,255,255,0.5), 0 0 8px rgba(0,255,65,0.4);}
+    75%{text-shadow:-4px 0 0 rgba(255,0,0,0.8), 4px 0 0 rgba(0,100,255,0.8), 0 0 8px rgba(0,255,65,0.4);}
+    100%{text-shadow:0 0 8px rgba(0,255,65,0.4);}
   }
-  #white-overlay.active{
-    opacity:1;
-    pointer-events:auto;
+  .rgb-split{animation:rgb-split 0.2s linear infinite;}
+
+  /* ブロックノイズ */
+  .block-noise{
+    position:fixed;z-index:14;pointer-events:none;
+    animation:block-pop 0.15s linear forwards;
   }
-  #owari{
-    font-size:clamp(28px,5vw,48px);
-    color:#222;
-    letter-spacing:0.5em;
-    opacity:0;
-    transition:opacity 2s ease;
+  @keyframes block-pop{0%{opacity:1;}70%{opacity:1;}100%{opacity:0;}}
+
+  /* 黒幕テキスト崩壊 */
+  @keyframes text-corrupt{
+    0%{filter:none;transform:none;}
+    30%{filter:blur(1px);transform:translateX(2px);}
+    60%{filter:blur(3px);transform:translateX(-4px) skewX(5deg);}
+    100%{filter:blur(8px);transform:translateX(10px) skewX(15deg);opacity:0;}
   }
-  #owari.visible{opacity:1;}
-  #epilogue-text{
-    margin-top:3rem;
-    font-size:clamp(12px,1.8vw,16px);
-    color:#888;
-    letter-spacing:0.15em;
-    opacity:0;
-    transition:opacity 2s ease;
-  }
-  #epilogue-text.visible{opacity:1;}
+  .text-dying{animation:text-corrupt 1.5s ease-in forwards;}
 
   /* Deletion log style */
   .delete-line{
     color:#ff5555;
     font-family:'Courier New',Consolas,monospace;
     font-size:clamp(12px,1.8vw,18px);
-    text-align:left;
-    opacity:0;
-    white-space:pre;
+    text-align:left;opacity:0;white-space:pre;
     text-shadow:0 0 6px rgba(255,85,85,0.4);
-    letter-spacing:0.08em;
-    line-height:1.8;
+    letter-spacing:0.08em;line-height:1.8;
     transition:opacity 0.3s ease;
   }
   .delete-line.visible{opacity:1;}
+
+  /* ブラウン管消え演出 */
+  #crt-off-line{
+    position:fixed;
+    left:0;width:100%;
+    background:#fff;
+    z-index:110;
+    pointer-events:none;
+    opacity:0;
+  }
+
+  /* エピローグ用ターミナル */
+  #epilogue-container{
+    width:80%;max-width:600px;
+    display:flex;flex-direction:column;
+    gap:0.4em;
+    align-items:center;
+  }
+  .epilogue-line{
+    color:rgba(100,100,90,0.5);
+    font-family:'Courier New',Consolas,monospace;
+    font-size:clamp(11px,1.6vw,15px);
+    text-align:center;
+    white-space:pre;
+    letter-spacing:0.1em;
+    line-height:1.8;
+  }
+
+  /* ランダム緑線ノイズ */
+  #noise-layer{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:18;overflow:hidden;
+  }
+  .noise-line{
+    position:absolute;height:1px;
+    background:rgba(0,255,65,0.15);
+    animation:noise-flash 0.15s linear forwards;
+  }
+  @keyframes noise-flash{0%{opacity:1;}100%{opacity:0;}}
 </style>
 </head>
 <body>
 <div id="screen"></div>
 <div id="glitch-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;opacity:0;"></div>
-<div id="white-overlay">
-  <div id="owari">おわり</div>
-  <div id="epilogue-text">木漏れ日遊園地の物語はここで終わります</div>
-</div>
+<div id="crt-overlay"></div>
+<div id="noise-layer"></div>
+<div id="crt-off-line"></div>
 
 <script>
 (function(){
   var screen = document.getElementById('screen');
+  var crtOverlay = document.getElementById('crt-overlay');
+  var noiseLayer = document.getElementById('noise-layer');
 
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
@@ -201,6 +250,31 @@
     screen.style.flexDirection = 'column';
   }
 
+  function setCrtIntensity(level){
+    crtOverlay.style.opacity = String(0.2 + level * 0.8);
+  }
+
+  /* ノイズ */
+  var noiseInterval = null;
+  function startNoise(intensity){
+    if(noiseInterval) clearInterval(noiseInterval);
+    noiseInterval = setInterval(function(){
+      if(Math.random() > intensity) return;
+      var line = document.createElement('div');
+      line.className = 'noise-line';
+      line.style.top = (Math.random()*100)+'%';
+      line.style.left = '0';
+      line.style.width = (20+Math.random()*80)+'%';
+      if(Math.random()>0.5){line.style.left='auto';line.style.right='0';}
+      noiseLayer.appendChild(line);
+      setTimeout(function(){line.remove();},200);
+    },80);
+  }
+  function stopNoise(){
+    if(noiseInterval){clearInterval(noiseInterval);noiseInterval=null;}
+    noiseLayer.innerHTML='';
+  }
+
   function flashGlitch(){
     var g = document.createElement('div');
     g.className = 'hard-glitch';
@@ -208,7 +282,33 @@
     setTimeout(function(){ g.remove(); }, 400);
   }
 
-  /* Typewriter for terminal lines */
+  function spawnBlockNoise(count){
+    for(var i=0;i<(count||5);i++){
+      (function(delay){
+        setTimeout(function(){
+          var block=document.createElement('div');
+          block.className='block-noise';
+          block.style.width=(30+Math.random()*200)+'px';
+          block.style.height=(5+Math.random()*40)+'px';
+          block.style.top=(Math.random()*100)+'%';
+          block.style.left=(Math.random()*100)+'%';
+          var colors=['#000','#000','#0f0','#001a00','#0a0a0a'];
+          block.style.background=colors[Math.floor(Math.random()*colors.length)];
+          document.body.appendChild(block);
+          setTimeout(function(){block.remove();},180);
+        },delay);
+      })(i*60);
+    }
+  }
+
+  function screenBlink(duration){
+    var blink = document.createElement('div');
+    blink.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:25;pointer-events:none;';
+    document.body.appendChild(blink);
+    return wait(duration||500).then(function(){blink.remove();});
+  }
+
+  /* Typewriter */
   function typewriterLine(container, text, speed, cls){
     return new Promise(function(resolve){
       var line = document.createElement('div');
@@ -217,18 +317,12 @@
       container.appendChild(line);
       var i = 0;
       var iv = setInterval(function(){
-        if(i < text.length){
-          line.textContent += text[i];
-          i++;
-        } else {
-          clearInterval(iv);
-          resolve(line);
-        }
+        if(i < text.length){ line.textContent += text[i]; i++; }
+        else { clearInterval(iv); resolve(line); }
       }, speed || 40);
     });
   }
 
-  /* Typewriter that gets cut off mid-character */
   function typewriterCutoff(container, text, cutAt, speed){
     return new Promise(function(resolve){
       var line = document.createElement('div');
@@ -237,18 +331,12 @@
       container.appendChild(line);
       var i = 0;
       var iv = setInterval(function(){
-        if(i < cutAt){
-          line.textContent += text[i];
-          i++;
-        } else {
-          clearInterval(iv);
-          resolve(line);
-        }
+        if(i < cutAt){ line.textContent += text[i]; i++; }
+        else { clearInterval(iv); resolve(line); }
       }, speed || 40);
     });
   }
 
-  /* Show yoshida text centered */
   function showYoshidaLine(text){
     return new Promise(function(resolve){
       var el = document.createElement('div');
@@ -258,13 +346,13 @@
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           el.classList.add('visible');
+          el.classList.add('trembling');
         });
       });
       setTimeout(function(){ resolve(el); }, 300);
     });
   }
 
-  /* Show akane text centered */
   function showAkaneLine(text){
     return new Promise(function(resolve){
       var el = document.createElement('div');
@@ -281,223 +369,304 @@
   }
 
   function fadeOutEl(el, ms){
-    el.style.transition = 'opacity ' + (ms || 1500) + 'ms ease';
+    el.style.transition = 'opacity '+(ms||1500)+'ms ease';
     el.style.opacity = '0';
-    return wait(ms || 1500);
-  }
-
-  function fadeOutAllChildren(ms){
-    var children = screen.querySelectorAll('*');
-    children.forEach(function(c){
-      c.style.transition = 'opacity ' + (ms || 1500) + 'ms ease';
-      c.style.opacity = '0';
-    });
-    return wait(ms || 1500);
+    return wait(ms||1500);
   }
 
   /* ===== MAIN SEQUENCE ===== */
   async function main(){
+    setCrtIntensity(0.1);
+    startNoise(0.1);
     await wait(1000);
 
-    // --- STAGE 1: 黒幕's log (same as End B) ---
+    // --- STAGE 1: 黒幕のログ（短縮版 — EndBで全文見てるので途中で割り込む） ---
     var termContainer = document.createElement('div');
     termContainer.id = 'terminal-container';
     screen.appendChild(termContainer);
 
     var logLines = [
-      '> 接続確認　完了',
-      '> 対象：K-059',
-      '> …知っていた　お前が来ることは　最初から',
-      '> 感情データ収集率：98.7%',
-      '> 恐怖　　…取得済',
-      '> 悲しみ　…取得済',
-      '> 好奇心　…取得済',
-      '> 罪悪感　…取得済',
-      '> 執着　　…取得済',
-      '> 同情　　…取得済',
-      '> 全パラメータ　基準値を超過',
-      '> 全部　お前のために作った',
-      '> …うまくいった',
-      '> お前は優しいな　だから選んだ',
-      '> 協力者：吉田一郎',
-      '> 担当：K-059の感情誘導・信頼構築',
-      '> 手段：Popin偽装接触→DM移行→情報提供による感情増幅',
-      '> 状況：予定通り'
+      { text:'> 接続確認　完了', pause:800 },
+      { text:'> 対象：K-059', pause:800 },
+      { text:'> …知っていた　お前が来ることは　最初から', pause:1500 },
+      { text:'> 感情データ収集率：98.7%', pause:800 },
+      { text:'> 恐怖　　…取得済', pause:400 },
+      { text:'> 悲しみ　…取得済', pause:400 },
     ];
 
     for(var i = 0; i < logLines.length; i++){
-      await typewriterLine(termContainer, logLines[i], 35);
-      if(i === 2 || i === 12 || i === 13) await wait(1500);
-      else if(i >= 4 && i <= 9) await wait(400);
-      else await wait(800);
+      setCrtIntensity(0.1 + (i/logLines.length)*0.2);
+      await typewriterLine(termContainer, logLines[i].text, 35);
+      await wait(logLines[i].pause);
     }
 
-    await wait(2000);
+    // --- STAGE 2: 「好奇心」の途中で吉田が割り込む ---
+    startNoise(0.3);
+    await typewriterCutoff(termContainer, '> 好奇心　…取得', 10, 35);
+    await wait(200);
 
-    // --- STAGE 2: Transfer interrupted ---
-    await typewriterLine(termContainer, '> 器の条件　…充足', 40);
-    await wait(1500);
-
-    // Type "K-059　転送開s" then cut off
-    await typewriterCutoff(termContainer, '> K-059　転送開始', 12, 40);
-    await wait(300);
-
-    // Glitch flash on interruption
+    // 割り込みグリッチ
     flashGlitch();
-    await wait(500);
-
-    // ERROR lines
-    var errLine = await typewriterLine(termContainer, '> ERROR', 30, 'terminal-line error');
-    await wait(600);
-    await typewriterLine(termContainer, '> 外部入力検知', 30, 'terminal-line error');
+    spawnBlockNoise(6);
+    setCrtIntensity(0.6);
+    await wait(300);
+    flashGlitch();
     await wait(400);
-    await typewriterLine(termContainer, '> 送信元：管理者権限', 30, 'terminal-line error');
 
-    await wait(2000);
-
-    // Fade out terminal
-    await fadeOutAllChildren(1500);
-    clearScreen();
+    // ERROR表示
+    await typewriterLine(termContainer, '> ERROR', 25, 'terminal-line error');
+    await wait(400);
+    await typewriterLine(termContainer, '> 外部入力検知', 25, 'terminal-line error');
+    await wait(300);
+    await typewriterLine(termContainer, '> 送信元：管理者権限', 25, 'terminal-line error');
     await wait(1500);
 
-    // --- STAGE 3: 吉田一郎 breaks in ---
+    // 画面をバッサリ切る
+    clearScreen();
+    stopNoise();
+    setCrtIntensity(0.05);
+    await wait(2000);
+
+    // --- STAGE 3: 吉田一郎の告白 ---
     var yoshidaLines1 = [
-      '「…もうやめる」',
-      '「全部俺がやった。お前を売った」',
-      '「キツネ団長のフリをして、ゆうやけさんぽのフリをして」',
-      '「お前の感情を…あいつに渡してた」',
-      '「でも…お前と話してるうちに分かった」',
-      '「あの子も…こんなこと望んでない」'
+      { text:'「…もうやめる」', time:3000 },
+      { text:'「全部俺がやった。お前を売った」', time:3500 },
+      { text:'「キツネ団長のフリをして、ゆうやけさんぽのフリをして」', time:3500 },
+      { text:'「お前の感情を…あいつに渡してた」', time:3500 },
+      { text:'「でも…お前と話してるうちに分かった」', time:3500 },
+      { text:'「あの子も…こんなこと望んでない」', time:3500 }
     ];
 
     for(var j = 0; j < yoshidaLines1.length; j++){
-      var yEl = await showYoshidaLine(yoshidaLines1[j]);
-      if(j === 0) await wait(3000);
-      else if(j === 1) await wait(3500);
-      else await wait(3500);
-      await fadeOutEl(yEl, 1500);
+      var yEl = await showYoshidaLine(yoshidaLines1[j].text);
+      await wait(yoshidaLines1[j].time);
+      await screenBlink(150);
       yEl.remove();
-      await wait(500);
     }
 
     await wait(2000);
 
-    // --- STAGE 4: 黒幕 responds ---
+    // --- STAGE 4: 黒幕が抵抗する ---
     var termContainer2 = document.createElement('div');
     termContainer2.id = 'terminal-container';
     screen.appendChild(termContainer2);
+    startNoise(0.2);
+    setCrtIntensity(0.3);
 
-    var warningLines = [
-      '> 警告：管理者権限による介入を検知',
-      '> 吉田一郎　契約違反',
-      '> 復元対象データ「あかね」の保全が不可能になります',
-      '> 続行しますか'
-    ];
+    await typewriterLine(termContainer2, '> 警告：管理者権限による介入を検知', 30, 'terminal-line warning');
+    await wait(800);
+    await typewriterLine(termContainer2, '> 吉田一郎　契約違反', 30, 'terminal-line warning');
+    await wait(800);
+    await typewriterLine(termContainer2, '> 復元対象データ「あかね」の保全が不可能になります', 30, 'terminal-line warning');
+    await wait(1200);
+    await typewriterLine(termContainer2, '> 続行しますか', 30, 'terminal-line warning');
+    await wait(2000);
 
-    for(var w = 0; w < warningLines.length; w++){
-      await typewriterLine(termContainer2, warningLines[w], 35, 'terminal-line warning');
-      await wait(1000);
-    }
-
-    await wait(3000);
-
-    // Fade out warning
-    await fadeOutAllChildren(1500);
     clearScreen();
+    stopNoise();
+    setCrtIntensity(0.05);
     await wait(1500);
 
-    // --- STAGE 5: 吉田一郎's resolve ---
+    // --- STAGE 5: 吉田一郎の決意 ---
     var yoshidaLines2 = [
-      '「…36年間、あの子のデータにすがってた」',
-      '「データでもいい、声が聞きたい、顔が見たいって」',
-      '「でも…もうあの子じゃない」',
-      '「あの子はとっくに…」',
-      '「…いかせてやらなきゃいけなかったんだ」',
-      '「ずっと前に」'
+      { text:'「…36年間、あの子のデータにすがってた」', time:3500 },
+      { text:'「データでもいい、声が聞きたい、顔が見たいって」', time:3500 },
+      { text:'「でも…もうあの子じゃない」', time:3500 },
+      { text:'「あの子はとっくに…」', time:4000 },
+      { text:'「…いかせてやらなきゃいけなかったんだ」', time:3500 },
+      { text:'「ずっと前に」', time:3000 }
     ];
 
     for(var k = 0; k < yoshidaLines2.length; k++){
-      var yEl2 = await showYoshidaLine(yoshidaLines2[k]);
-      if(k === 3) await wait(4000); // pause on "あの子はとっくに…"
-      else if(k === 5) await wait(3000);
-      else await wait(3500);
-      await fadeOutEl(yEl2, 1500);
+      var yEl2 = await showYoshidaLine(yoshidaLines2[k].text);
+      await wait(yoshidaLines2[k].time);
+      await screenBlink(150);
       yEl2.remove();
-      await wait(500);
     }
 
-    await wait(2000);
+    await wait(1500);
 
-    // --- STAGE 6: 吉田一郎 decides to destroy the system ---
+    // --- STAGE 6: 破壊宣言 ---
     var yDec1 = await showYoshidaLine('「…システムを落とす」');
     await wait(3000);
-    await fadeOutEl(yDec1, 1500);
+    await screenBlink(150);
     yDec1.remove();
 
     var yDec2 = await showYoshidaLine('「俺が作ったんだ。壊し方も分かる」');
     await wait(3500);
-    await fadeOutEl(yDec2, 1500);
+    await screenBlink(150);
     yDec2.remove();
 
     await wait(1500);
 
-    // --- STAGE 7: System shutdown - screen breaks apart ---
+    // --- STAGE 7: システム破壊 — 黒幕 vs 吉田（長期攻防） ---
     document.body.classList.add('screen-corrupt');
+    startNoise(0.5);
+    setCrtIntensity(0.6);
     flashGlitch();
-    await wait(300);
+    await wait(200);
     flashGlitch();
-    await wait(500);
+    await wait(400);
 
     var termContainer3 = document.createElement('div');
     termContainer3.id = 'terminal-container';
     screen.appendChild(termContainer3);
 
-    await typewriterLine(termContainer3, '> WARNING: SYSTEM SHUTDOWN INITIATED', 25, 'terminal-line warning');
+    // === 第1波：黒幕が拒否 ===
+    var resist1 = await typewriterLine(termContainer3, '> 停止できません', 25, 'terminal-line warning');
     flashGlitch();
+    await wait(700);
+
+    var resist2 = await typewriterLine(termContainer3, '> 権限を剥奪します', 25, 'terminal-line warning');
+    spawnBlockNoise(6);
     await wait(600);
-    await typewriterLine(termContainer3, '> DATA INTEGRITY COMPROMISED', 25, 'terminal-line warning');
+
+    var resist3 = await typewriterLine(termContainer3, '> アクセスを拒否します', 25, 'terminal-line warning');
+    flashGlitch();
+    await wait(800);
+
+    // 吉田の第1手：突破
+    startNoise(0.7);
+    setCrtIntensity(0.7);
+    await typewriterLine(termContainer3, '> OVERRIDE: 管理者権限で強制実行', 25, 'terminal-line error');
+    flashGlitch();
+    spawnBlockNoise(8);
+    await wait(400);
+
+    // 黒幕のテキストが揺らぐ
+    resist1.classList.add('text-dying');
+    await wait(600);
+
+    // === 第2波：黒幕が脅迫 ===
+    var threat1 = await typewriterLine(termContainer3, '> 「あかね」のデータが失われます', 25, 'terminal-line warning');
+    await wait(800);
+    var threat2 = await typewriterLine(termContainer3, '> 復元は不可能です', 25, 'terminal-line warning');
+    await wait(600);
+    var threat3 = await typewriterLine(termContainer3, '> 本当にいいのですか', 25, 'terminal-line warning');
+    flashGlitch();
+    spawnBlockNoise(6);
+    await wait(1200);
+
+    // 吉田の第2手：構わず続行
+    await typewriterLine(termContainer3, '> CONFIRMED: 続行', 20, 'terminal-line error');
+    flashGlitch();
+    await wait(300);
+    await typewriterLine(termContainer3, '> コアプロセス停止中...', 20, 'terminal-line error');
+    spawnBlockNoise(10);
+    flashGlitch();
+
+    // 黒幕のテキストがさらに崩壊
+    resist2.classList.add('text-dying');
+    resist3.classList.add('text-dying');
+    threat1.classList.add('text-dying');
+    await wait(800);
+
+    // === 第3波：黒幕がパニック ===
+    startNoise(0.85);
+    setCrtIntensity(0.85);
+    var panic1 = await typewriterLine(termContainer3, '> ﾃﾞｰﾀ ｶﾞ 消ｴﾏ▓▒░', 20, 'terminal-line warning');
+    panic1.classList.add('text-dying');
+    spawnBlockNoise(8);
     flashGlitch();
     await wait(400);
 
-    // Blank line
+    var panic2 = await typewriterLine(termContainer3, '> ﾔﾒﾛ ▓▒░ ﾔﾒ▓░', 15, 'terminal-line warning');
+    panic2.classList.add('text-dying');
+    flashGlitch();
+    await wait(400);
+
+    threat2.classList.add('text-dying');
+    threat3.classList.add('text-dying');
+
+    var panic3 = await typewriterLine(termContainer3, '> ░▒▓ ﾜﾀｼ ﾊ ▓▒░░ ﾏﾀﾞ ░▒▓', 12, 'terminal-line warning');
+    panic3.classList.add('text-dying');
+    spawnBlockNoise(12);
+    flashGlitch();
+    await wait(300);
+    flashGlitch();
+    await wait(300);
+
+    // === 最終フェーズ：吉田が止めを刺す ===
+    startNoise(0.95);
+    setCrtIntensity(0.95);
+
+    // SYSTEM SHUTDOWN
+    await typewriterLine(termContainer3, '> SYSTEM SHUTDOWN INITIATED', 18, 'terminal-line error');
+    flashGlitch();
+    spawnBlockNoise(15);
+    await wait(500);
+
+    // 削除シーケンス
     var blank = document.createElement('div');
     blank.className = 'terminal-line visible';
     blank.innerHTML = '&nbsp;';
     termContainer3.appendChild(blank);
-    await wait(800);
+    await wait(400);
 
-    // Deletion lines
-    await typewriterLine(termContainer3, '> あかね.dat ... 削除中', 30, 'delete-line');
+    await typewriterLine(termContainer3, '> あかね.dat ... 削除中', 22, 'delete-line');
     flashGlitch();
-    await wait(800);
-    await typewriterLine(termContainer3, '> process_main ... 停止中', 30, 'delete-line');
+    await wait(500);
+    await typewriterLine(termContainer3, '> process_main ... 停止中', 22, 'delete-line');
     flashGlitch();
-    await wait(800);
-    await typewriterLine(termContainer3, '> K-059_profile ... 削除中', 30, 'delete-line');
+    await wait(500);
+    await typewriterLine(termContainer3, '> K-059_profile ... 削除中', 22, 'delete-line');
+    flashGlitch();
+    spawnBlockNoise(15);
+    await wait(400);
+    await typewriterLine(termContainer3, '> emotional_data ... 削除中', 22, 'delete-line');
+    flashGlitch();
+    await wait(400);
+    await typewriterLine(termContainer3, '> core_system ... 強制停止', 22, 'delete-line');
+    flashGlitch();
+    spawnBlockNoise(20);
+    await wait(300);
+
+    // 黒幕の断末魔
+    var lastResist = await typewriterLine(termContainer3, '> ░░░░░░░░░░░░░░░░░░░░', 8, 'terminal-line warning');
+    lastResist.classList.add('text-dying');
+    flashGlitch();
+    await wait(150);
+    flashGlitch();
+    await wait(150);
+    flashGlitch();
+    await wait(150);
     flashGlitch();
 
-    await wait(1500);
+    // 一瞬の強烈な白フラッシュ → 完全な暗闇
+    var whiteFlash = document.createElement('div');
+    whiteFlash.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:30;pointer-events:none;';
+    document.body.appendChild(whiteFlash);
+    await wait(150);
+    whiteFlash.remove();
 
-    // --- STAGE 8: あかね's fragment ---
+    // 全部消える
     document.body.classList.remove('screen-corrupt');
-    await fadeOutAllChildren(1000);
+    stopNoise();
+    setCrtIntensity(0);
     clearScreen();
-    await wait(2000);
 
+    // --- STAGE 8: 完全な静寂 → あかねの断片 ---
+    // グリッチの嵐が去った後の、完全な無音・暗闇
+    await wait(6000);
+
+    // ものすごく小さく → じわっと浮かぶ
     var ak1 = await showAkaneLine('…パパ');
+    await wait(5000);
+    ak1.style.transition = 'opacity 3s ease';
+    ak1.style.opacity = '0';
     await wait(3000);
-    await fadeOutEl(ak1, 2000);
     ak1.remove();
 
-    await wait(1000);
+    await wait(3000);
 
     var ak2 = await showAkaneLine('…ありがとう');
-    await wait(3500);
-    await fadeOutEl(ak2, 2500);
+    await wait(6000);
+    ak2.style.transition = 'opacity 4s ease';
+    ak2.style.opacity = '0';
+    await wait(4000);
     ak2.remove();
 
-    // --- STAGE 9: Everything black, long silence ---
-    clearScreen();
+    // --- STAGE 9: 長い沈黙 ---
     await wait(5000);
 
     // --- STAGE 10: PROCESS TERMINATED ---
@@ -508,54 +677,129 @@
     proc.style.width = 'auto';
     screen.appendChild(proc);
     requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        proc.classList.add('visible');
-      });
+      requestAnimationFrame(function(){ proc.classList.add('visible'); });
     });
 
     await wait(4000);
-    await fadeOutEl(proc, 2000);
     proc.remove();
 
-    // --- STAGE 11: 吉田一郎's last words ---
+    // --- STAGE 11: 吉田一郎の最後の言葉 ---
     await wait(3000);
 
     var lastLines = [
-      '「…行けたかな」',
-      '「あの子…笑ってたかな」',
-      '「…もう分からない」',
-      '「でも…これでよかったんだ」'
+      { text:'「…行けたかな」', time:3500 },
+      { text:'「あの子…笑ってたかな」', time:4000 },
+      { text:'「…もう分からない」', time:3500 },
+      { text:'「でも…これでよかったんだ」', time:3500 }
     ];
 
     for(var m = 0; m < lastLines.length; m++){
-      var yLast = await showYoshidaLine(lastLines[m]);
-      if(m === 1) await wait(4000);
-      else await wait(3500);
-      await fadeOutEl(yLast, 1500);
+      var yLast = await showYoshidaLine(lastLines[m].text);
+      await wait(lastLines[m].time);
+      await screenBlink(150);
       yLast.remove();
       await wait(800);
     }
 
-    // --- STAGE 12: Fade to white ---
+    // --- STAGE 12: ブラウン管消え → エピローグ ---
     await wait(3000);
 
-    var overlay = document.getElementById('white-overlay');
-    overlay.classList.add('active');
-    await wait(3000);
+    // ブラウン管が消える演出（上下から白線が迫って1本になって消える）
+    var crtLine = document.getElementById('crt-off-line');
+    var topBar = document.createElement('div');
+    topBar.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:50%;background:#fff;z-index:110;pointer-events:none;transition:height 1.5s ease-in;';
+    var botBar = document.createElement('div');
+    botBar.style.cssText = 'position:fixed;bottom:0;left:0;width:100%;height:50%;background:#fff;z-index:110;pointer-events:none;transition:height 1.5s ease-in;';
+    document.body.appendChild(topBar);
+    document.body.appendChild(botBar);
 
-    document.getElementById('owari').classList.add('visible');
-    await wait(5000);
+    // 上下からゆっくり迫る
+    await wait(50);
+    topBar.style.height = '50%';
+    botBar.style.height = '50%';
+    await wait(100);
+    topBar.style.transition = 'height 1.2s ease-in';
+    botBar.style.transition = 'height 1.2s ease-in';
+    topBar.style.height = 'calc(50% - 1px)';
+    botBar.style.height = 'calc(50% - 1px)';
 
-    document.getElementById('epilogue-text').classList.add('visible');
+    // 白画面を一瞬見せてから
+    await wait(1200);
+
+    // 中央の1本の白線になる
+    topBar.style.transition = 'height 0.8s ease-out, opacity 0.8s ease-out';
+    botBar.style.transition = 'height 0.8s ease-out, opacity 0.8s ease-out';
+    topBar.style.height = '0';
+    botBar.style.height = '0';
+
+    // 中央に細い線を残す
+    crtLine.style.top = '50%';
+    crtLine.style.height = '2px';
+    crtLine.style.opacity = '1';
+    crtLine.style.transform = 'translateY(-50%)';
+
+    await wait(800);
+    topBar.remove();
+    botBar.remove();
+
+    // 細い線がゆっくり消える
+    crtLine.style.transition = 'opacity 1.5s ease, width 1.5s ease';
+    crtLine.style.opacity = '0';
+    await wait(1500);
+    crtLine.remove();
+
+    // 完全な暗闇
+    clearScreen();
+    await wait(4000);
+
+    // エピローグ（タイプライター）
+    var epiContainer = document.createElement('div');
+    epiContainer.id = 'epilogue-container';
+    screen.appendChild(epiContainer);
+
+    function typeEpilogue(text){
+      return new Promise(function(resolve){
+        var line = document.createElement('div');
+        line.className = 'epilogue-line';
+        line.textContent = '';
+        epiContainer.appendChild(line);
+        var i = 0;
+        var iv = setInterval(function(){
+          if(i < text.length){ line.textContent += text[i]; i++; }
+          else { clearInterval(iv); resolve(line); }
+        }, 60);
+      });
+    }
+
+    await typeEpilogue('こもれびゆうえんち　全システム停止');
+    await wait(1500);
+    await typeEpilogue('最終アクセス：吉田一郎');
+    await wait(4000);
+    await typeEpilogue('');
+    await typeEpilogue('この番組は終了しました');
+    await wait(2000);
+    await typeEpilogue('ご視聴ありがとうございました');
 
     // --- Set localStorage flags ---
     try {
       localStorage.setItem('ending_a_seen', 'true');
-      // Clear game state
       localStorage.removeItem('save_point_night5');
       localStorage.removeItem('current_night');
       localStorage.removeItem('game_progress');
     } catch(e){}
+
+    // 画面が徐々に白くなる → デスクトップへ遷移
+    await wait(5000);
+
+    var whiteFade = document.createElement('div');
+    whiteFade.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:200;pointer-events:none;opacity:0;transition:opacity 4s ease;';
+    document.body.appendChild(whiteFade);
+    await wait(50);
+    whiteFade.style.opacity = '1';
+    await wait(4500);
+
+    localStorage.setItem('enda_just_returned', 'true');
+    window.location.href = '../index.html';
   }
 
   main();

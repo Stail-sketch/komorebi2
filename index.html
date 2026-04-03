@@ -26,6 +26,11 @@ body {
   flex-direction: column;
 }
 
+/* EndA後：穏やかな壁紙（解放された状態） */
+.desktop.enda-wallpaper {
+  background: linear-gradient(160deg, #1a2a3a 0%, #2a3a4a 30%, #3a4a5a 60%, #1a2a3a 100%);
+}
+
 /* EndB後：壊れた壁紙 */
 .desktop.endb-wallpaper {
   background: #0a0a0f;
@@ -221,6 +226,18 @@ body {
       <span class="icon-label">吉田の<br>調査ファイル</span>
     </a>
 
+    <!-- エクストラ（EndA後に出現） -->
+    <a class="desktop-icon" id="extra-icon" href="#" onclick="window.open('extra/index.html','_blank');return false;" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#4a2a6a,#6a3a8a);font-size:22px;">🎬</div>
+      <span class="icon-label">エクストラ</span>
+    </a>
+
+    <!-- カスタムナイト（EndA後に出現） -->
+    <a class="desktop-icon" id="custom-icon" href="#" onclick="window.open('custom/index.html','_blank');return false;" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#6a1a1a,#8a3a2a);font-size:22px;">🎮</div>
+      <span class="icon-label">カスタム<br>ナイト</span>
+    </a>
+
   </div>
 
   <!-- タスクバー -->
@@ -295,8 +312,14 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
   }, 10000);
 })();
 
-// EndB後の壁紙変更 + syslogアイコン表示
-if(localStorage.getItem('ending_b_seen') === 'true'){
+// EndA後：穏やかな壁紙 + エクストラ/カスタムナイトアイコン表示
+if(localStorage.getItem('ending_a_seen') === 'true'){
+  document.getElementById('desktop-main').classList.add('enda-wallpaper');
+  document.getElementById('extra-icon').style.display = '';
+  document.getElementById('custom-icon').style.display = '';
+}
+// EndB後の壁紙変更 + syslogアイコン表示（EndA未到達時のみ壊れ壁紙）
+else if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('endb-wallpaper');
   document.getElementById('syslog-icon').style.display = '';
 }
@@ -386,10 +409,14 @@ if(localStorage.getItem('chat_unlocked') === 'true'){
   style.textContent = '.desktop-toast{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}.desktop-toast-item{background:rgba(20,20,40,0.92);backdrop-filter:blur(12px);border:1px solid rgba(100,100,200,0.2);border-radius:10px;padding:14px 20px;color:#c8c8e0;font-size:14px;font-family:"Segoe UI","Hiragino Kaku Gothic ProN",system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.4);opacity:0;transform:translateX(60px);transition:all 0.5s ease;pointer-events:auto;cursor:default;}.desktop-toast-item.show{opacity:1;transform:translateX(0);}';
   document.head.appendChild(style);
 
-  // EndBチェック（Nightより優先）
+  // EndA/EndBチェック（Nightより優先）
   var notifKey = null;
   var notifMsgs = null;
-  if(localStorage.getItem('endb_just_returned') === 'true'){
+  if(localStorage.getItem('enda_just_returned') === 'true'){
+    localStorage.removeItem('enda_just_returned');
+    notifMsgs = ['🎬 エクストラが追加されました', '🎮 カスタムナイトが追加されました'];
+  }
+  else if(localStorage.getItem('endb_just_returned') === 'true'){
     localStorage.removeItem('endb_just_returned');
     notifKey = 'endb';
     notifMsgs = notifications.endb;
