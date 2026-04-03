@@ -7,6 +7,7 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #000; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; user-select: none; -webkit-user-select: none; }
+    #briefing-log::-webkit-scrollbar { display: none; }
     img { -webkit-user-drag: none; pointer-events: none; }
     button, .cam-btn, .door-btn, .cam-toggle-btn { pointer-events: auto; }
 
@@ -234,7 +235,7 @@
   </div>
   <!-- ブリーフィング画面 -->
   <div id="briefing-screen" class="overlay-screen active" style="background:#000;justify-content:flex-start;padding:8vh 10vw;">
-    <div id="briefing-log" style="font-family:'Courier New',monospace;font-size:15px;line-height:2.2;max-width:700px;overflow-y:auto;max-height:75vh;"></div>
+    <div id="briefing-log" style="font-family:'Courier New',monospace;font-size:15px;line-height:2.2;max-width:700px;overflow-y:auto;max-height:75vh;scrollbar-width:none;-ms-overflow-style:none;"></div>
     <button id="briefing-start-btn" style="
       margin-top:30px;padding:14px 56px;background:none;
       border:1px solid #1a3a1a;color:#1a3a1a;font-family:'Courier New',monospace;
