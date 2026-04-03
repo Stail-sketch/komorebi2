@@ -1617,24 +1617,27 @@ var dmKeywords = {
 var dmWarmupScripts = {
   1: [
     {
+      choices: ['見てます','あなたは誰？','番組が気になる'],
       responses: [
         {keywords:['見てる','見てます','うん','はい','そう'], reply:'…仲間がいてよかった。周りに聞いても、誰もこの番組知らなくて'},
         {keywords:['誰','だれ','何者','あなた'], reply:'…ただの視聴者ですよ。散歩が趣味の、ただのおじさん'},
-        {keywords:['番組','なに','何'], reply:'深夜にやってる特番…見てますよね？あれ、何かおかしいと思いませんか'}
+        {keywords:['番組','なに','何','気になる'], reply:'深夜にやってる特番…見てますよね？あれ、何かおかしいと思いませんか'}
       ],
       defaultReply: '…来てくれたんですね。ありがとう',
       next: '…あなたは怖くないですか？この番組'
     },
     {
+      choices: ['怖い','怖くない','おかしいと思う'],
       responses: [
         {keywords:['怖い','こわい'], reply:'…ですよね。俺もです。でも目が離せなくて'},
         {keywords:['怖くない','大丈夫','平気'], reply:'…そうですか。強いんですね'},
-        {keywords:['おかしい','変','なに'], reply:'…ですよね。何かがおかしい'}
+        {keywords:['おかしい','変','なに','思う'], reply:'…ですよね。何かがおかしい'}
       ],
       defaultReply: '…そうですか。俺だけじゃなかったんだ',
       next: '実は気になってることがあって。デスクトップに旧サイトのアーカイブが出てませんか？'
     },
     {
+      choices: ['出てる','なんで？','アーカイブ？'],
       responses: [
         {keywords:['見た','ある','出てる','うん','はい'], reply:'…やっぱり出てるんですね'},
         {keywords:['アーカイブ','旧サイト'], reply:'そう、あのアーカイブです'},
@@ -1644,6 +1647,7 @@ var dmWarmupScripts = {
       next: '何か変えられてる。意図的に。…誰かが情報を操作してるんです'
     },
     {
+      choices: ['誰が？','わかった、見てみる','怖い…'],
       responses: [
         {keywords:['誰','だれ','操作'], reply:'…まだ分からないんです。でもあなたなら気づけるかもしれない'},
         {keywords:['わかった','見る','見ます','了解'], reply:'…ありがとう。丁寧に見てみてください'},
@@ -1653,6 +1657,7 @@ var dmWarmupScripts = {
       next: 'スタッフの情報、キャラクターの説明、会社の情報…3つのカテゴリにそれぞれ1つずつ、違うところがあります'
     },
     {
+      choices: ['わかった、探す','3つ？'],
       responses: [
         {keywords:['3つ','三つ','みっつ'], reply:'ええ、3つです。ちょっとした違いだけど…見つけたら意味が分かるはずです'},
         {keywords:['わかった','探す','了解'], reply:'…ありがとう。頼りにしてます'}
@@ -1663,6 +1668,7 @@ var dmWarmupScripts = {
   ],
   2: [
     {
+      choices: ['え、本当に？','どんな仕事？','関わってた？'],
       responses: [
         {keywords:['え','えっ','まじ','本当','ほんと'], reply:'…本当です。信じてもらえないかもしれませんが'},
         {keywords:['何','なに','どんな','どういう'], reply:'…セットの仕事をしてました。美術担当です'},
@@ -1672,6 +1678,7 @@ var dmWarmupScripts = {
       next: 'セットの美術を担当してました。子どもたちが楽しめるようにって…必死だった'
     },
     {
+      choices: ['すごい','子どもたちは？','楽しかった？'],
       responses: [
         {keywords:['セット','美術','遊園地'], reply:'ええ。あの遊園地の世界を作ったのは私です。…誇りだった'},
         {keywords:['子ども','楽しい'], reply:'…笑い声が聞こえるたびに、やっててよかったって思えた'},
@@ -1681,6 +1688,7 @@ var dmWarmupScripts = {
       next: '…でも途中からおかしいことに気づき始めた'
     },
     {
+      choices: ['何がおかしかった？','気づいた？','それで？'],
       responses: [
         {keywords:['おかしい','何が','なにが'], reply:'…地下のことです'},
         {keywords:['気づいた','何を'], reply:'…あの建物には、表と裏があったんです'},
@@ -1690,6 +1698,7 @@ var dmWarmupScripts = {
       next: '地下に行くなって言われてた。絶対に。…でも夜中に物音がして、見てしまった'
     },
     {
+      choices: ['何を見た？','地下？','怖い…'],
       responses: [
         {keywords:['見た','何を','物音'], reply:'…検査室って呼ばれてた場所がありました'},
         {keywords:['地下','ちか'], reply:'…そう、地下です。スタジオとは全く違う空間だった'},
@@ -1699,6 +1708,7 @@ var dmWarmupScripts = {
       next: '子どもたちが…別の部屋に案内されてた。「発達検査」だって説明されてたけど…'
     },
     {
+      choices: ['検査って何？','ひどい…','信じます'],
       responses: [
         {keywords:['検査','発達','子ども'], reply:'…最初はそう信じてた。でも…おかしかった'},
         {keywords:['嘘','うそ','違う'], reply:'…ええ。嘘だったんです'},
@@ -1710,6 +1720,7 @@ var dmWarmupScripts = {
   ],
   3: [
     {
+      choices: ['聞かせて','大丈夫ですか？'],
       responses: [
         {keywords:['聞く','聞きます','聞かせて','はい','うん','話して'], reply:'…ありがとう。聞いてくれるんですね'},
         {keywords:['大丈夫','だいじょうぶ'], reply:'…大丈夫じゃないかもしれません。でも…もう黙っていられない'}
@@ -1718,6 +1729,7 @@ var dmWarmupScripts = {
       next: 'この番組が気になるのは…昔、大切な人がいたからなんです'
     },
     {
+      choices: ['大切な人？','誰ですか？','うん'],
       responses: [
         {keywords:['大切','たいせつ','誰'], reply:'…娘です'},
         {keywords:['うん','はい','聞いてる'], reply:'…娘がいたんです'}
@@ -1726,6 +1738,7 @@ var dmWarmupScripts = {
       next: 'もう会えなくなって…36年になります'
     },
     {
+      choices: ['何があったの？','36年…','ごめんなさい'],
       responses: [
         {keywords:['36年','ながい','長い'], reply:'…ええ。人生の半分以上です'},
         {keywords:['何が','なにが','どうして'], reply:'…8歳の時に…いなくなりました'},
@@ -1735,6 +1748,7 @@ var dmWarmupScripts = {
       next: '「検査」だと言われて連れて行ったんです。私が。…私のせいです'
     },
     {
+      choices: ['あなたのせいじゃない','検査？','ひどい…'],
       responses: [
         {keywords:['あなたのせい','違う','悪くない'], reply:'…いいえ。私が連れて行った。それは事実です'},
         {keywords:['検査','連れて'], reply:'…子どもの発達に良いって…そう言われたんです'},
@@ -1744,6 +1758,7 @@ var dmWarmupScripts = {
       next: 'でもあの子はまだ「ここ」にいるんです'
     },
     {
+      choices: ['ここ？','え…？','まだいるの？'],
       responses: [
         {keywords:['ここ','どこ','いる'], reply:'…番組のシステムの中に'},
         {keywords:['え','まさか','嘘','うそ'], reply:'…信じられないですよね。でも本当なんです'},
@@ -1753,6 +1768,7 @@ var dmWarmupScripts = {
       next: '体はもうないけど…意識だけが残ってる。意識転移…そう呼ばれてました'
     },
     {
+      choices: ['意識転移？','信じられない','助けたい'],
       responses: [
         {keywords:['意識転移','転移','データ'], reply:'人の意識をデータ化する技術。あの会社の本当の目的です'},
         {keywords:['え','技術','まさか'], reply:'…信じられないのは分かります。でも…あの会社はそれを実現した'},
@@ -1762,6 +1778,7 @@ var dmWarmupScripts = {
       next: '…私の本名は吉田一郎です'
     },
     {
+      choices: ['吉田一郎…','知ってた','ありがとう'],
       responses: [
         {keywords:['吉田','よしだ','一郎'], reply:'…ええ。スタッフページに名前がある、あの吉田一郎です'},
         {keywords:['え','まさか','あの'], reply:'…ええ。セット設計の吉田一郎。それが私です'},
@@ -1773,6 +1790,7 @@ var dmWarmupScripts = {
   ],
   4: [
     {
+      choices: ['吉田さん','うん、聞く'],
       responses: [
         {keywords:['吉田','一郎','あなた'], reply:'…ああ。俺だ。吉田一郎'},
         {keywords:['はい','うん','聞く','聞きます'], reply:'…ありがとう。最後まで聞いてくれ'}
@@ -1781,6 +1799,7 @@ var dmWarmupScripts = {
       next: '…もう敬語はやめる。いいか'
     },
     {
+      choices: ['いいよ','なんで？'],
       responses: [
         {keywords:['いい','うん','はい','おk'], reply:'…ありがとう'},
         {keywords:['なんで','どうして'], reply:'…もうそういう関係じゃないだろ。お前と俺は'}
@@ -1789,6 +1808,7 @@ var dmWarmupScripts = {
       next: 'あの子のために…番組に協力してた'
     },
     {
+      choices: ['協力？','娘のため？','なぜ？'],
       responses: [
         {keywords:['協力','番組'], reply:'…「協力すればあの子に会える」って言われたんだ'},
         {keywords:['娘','あの子'], reply:'…ああ。あの子のためなら何でもするつもりだった'},
@@ -1798,6 +1818,7 @@ var dmWarmupScripts = {
       next: '信じたんだ。信じたかったんだ。…でも嘘だった。全部、嘘だった'
     },
     {
+      choices: ['騙されてた？','ひどい','黒幕は誰？'],
       responses: [
         {keywords:['騙','だま','嘘','うそ'], reply:'…ああ。あいつは俺の弱さにつけ込んだ'},
         {keywords:['あいつ','黒幕','誰'], reply:'…もう「人」じゃないんだ。データになった存在だ'},
@@ -1807,6 +1828,7 @@ var dmWarmupScripts = {
       next: '…でもお前が来てくれた。お前が調べてくれたから…目が覚めた'
     },
     {
+      choices: ['一緒にやる','どうすればいい？','助けたい'],
       responses: [
         {keywords:['目が覚めた','よかった'], reply:'…ああ。お前のおかげだ'},
         {keywords:['一緒','いっしょ','助け'], reply:'…ありがとう。お前は…いい奴だな'},
@@ -1871,6 +1893,7 @@ function handleWarmupResponse(text){
       setTimeout(function(){
         addYoshiResponse(script[stage-1].next);
         dmIsProcessing = false;
+        setTimeout(renderDMChoices, 300);
       }, 1500 + Math.random()*1000);
     } else if(stage >= script.length && script[stage-1].next){
       // Last step with a next message
@@ -2195,13 +2218,21 @@ var dmChoices = {
 function renderDMChoices(){
   var container = document.getElementById('dm-choices');
   if(!container) return;
-  // ウォームアップ中は選択肢を表示しない
+  var choices = null;
+
+  // ウォームアップ中：そのステップのchoicesを表示
   if(isInWarmup()){
-    container.innerHTML = '';
-    return;
+    var script = dmWarmupScripts[dmPhase];
+    var stage = getDMWarmupStage(dmPhase);
+    if(script && stage < script.length && script[stage].choices){
+      choices = script[stage].choices;
+    }
+  } else {
+    // フリーキーワードモード：フェーズ別の選択肢
+    choices = dmChoices[dmPhase];
   }
-  var choices = dmChoices[dmPhase];
-  if(!choices){
+
+  if(!choices || choices.length === 0){
     container.innerHTML = '';
     return;
   }
