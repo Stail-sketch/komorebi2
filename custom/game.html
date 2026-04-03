@@ -26,8 +26,9 @@
     .side-entity img { width: 100%; height: 100%; object-fit: cover; }
     .side-light-overlay { position: absolute; inset: 0; background: rgba(180,0,0,0.35); display: none; z-index: 1; }
     .side-light-overlay.active { display: block; }
-    .door-closed-overlay { position: absolute; inset: 0; background: #000; display: none; z-index: 2; }
-    .door-closed-overlay.active { display: block; }
+    .door-closed-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 2; transition: background 0.15s; }
+    .door-closed-overlay.powered { background: transparent; }
+    .door-closed-overlay.lit { background: rgba(120,0,0,0.55); }
 
     /* DOOR/LIGHTボタン */
     .door-buttons { position: absolute; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
@@ -40,7 +41,9 @@
       transition: background 0.15s, border-color 0.15s;
     }
     .door-btn:hover { background: rgba(40,40,40,0.9); border-color: #666; }
-    .btn-door.closed { background: rgba(40,20,20,0.9); border-color: #f44; color: #f44; }
+    .btn-power { color: #0f0; }
+    .btn-power:hover { border-color: #0f0; }
+    .btn-power.on { background: rgba(10,40,10,0.9); border-color: #0f0; color: #fff; }
     .btn-light { color: #fc4; }
     .btn-light:hover { border-color: #fc4; }
     .btn-light.active { background: rgba(40,30,10,0.9); border-color: #fc4; color: #fff; }
@@ -270,11 +273,11 @@
       </div>
 
       <div class="door-buttons" id="left-buttons">
-        <button class="door-btn btn-door" data-side="left">DOOR (Q)</button>
+        <button class="door-btn btn-power" data-side="left">POWER (Q)</button>
         <button class="door-btn btn-light" data-side="left">LIGHT (A)</button>
       </div>
       <div class="door-buttons" id="right-buttons">
-        <button class="door-btn btn-door" data-side="right">DOOR (E)</button>
+        <button class="door-btn btn-power" data-side="right">POWER (E)</button>
         <button class="door-btn btn-light" data-side="right">LIGHT (D)</button>
       </div>
 
@@ -546,7 +549,7 @@ function stopAllSounds() {
 // ゲーム状態
 // ============================================================
 var NIGHT_DURATION = 360; // 6 minutes (12AM to 6AM)
-var DRAIN_BASE = 0.09, DRAIN_CAM = 0.15, DRAIN_DOOR = 0.5, DRAIN_LIGHT = 0.3;
+var DRAIN_BASE = 0.06, DRAIN_CAM = 0.08, DRAIN_DOOR = 0.5, DRAIN_LIGHT = 0.15;
 
 // --- Active character count for power drain scaling ---
 var activeCharCount = 0;
@@ -747,13 +750,14 @@ function updateCameraChar() {
 // ============================================================
 // ドア操作
 // ============================================================
-function toggleDoor(side) {
+function togglePower(side) {
   if (!running) return;
   if (customLevels.yowari > 0) incrementYowariGuilt();
   if (side === 'left') {
     doorL = !doorL;
-    $('left-door').classList.toggle('active', doorL);
-    document.querySelector('#left-buttons .btn-door').classList.toggle('closed', doorL);
+    $('left-door').classList.toggle('powered', doorL);
+    if (doorL) $('left-door').classList.remove('lit');
+    document.querySelector('#left-buttons .btn-power').classList.toggle('on', doorL);
     playS(doorL ? sndMonitorOff : sndMonitorOn);
     if (doorL) {
       if (kururuDoor === 'left') defeatKururu();
@@ -765,8 +769,9 @@ function toggleDoor(side) {
     }
   } else {
     doorR = !doorR;
-    $('right-door').classList.toggle('active', doorR);
-    document.querySelector('#right-buttons .btn-door').classList.toggle('closed', doorR);
+    $('right-door').classList.toggle('powered', doorR);
+    if (doorR) $('right-door').classList.remove('lit');
+    document.querySelector('#right-buttons .btn-power').classList.toggle('on', doorR);
     playS(doorR ? sndMonitorOff : sndMonitorOn);
     if (doorR) {
       if (kururuDoor === 'right') defeatKururu();
@@ -783,6 +788,8 @@ function toggleDoor(side) {
 // ライト操作
 // ============================================================
 function setLight(side, on) {
+  if (!running) return;
+  if (camOpen) return;
   if (on) {
     playS(sndLight);
     if (customLevels.yowari > 0) incrementYowariGuilt();
@@ -790,11 +797,11 @@ function setLight(side, on) {
   if (side === 'left') {
     lightL = on;
     document.querySelector('#left-buttons .btn-light').classList.toggle('active', on);
-    $('left-light').classList.toggle('active', on);
+    if (!doorL) $('left-door').classList.toggle('lit', on);
   } else {
     lightR = on;
     document.querySelector('#right-buttons .btn-light').classList.toggle('active', on);
-    $('right-light').classList.toggle('active', on);
+    if (!doorR) $('right-door').classList.toggle('lit', on);
   }
   updateSideEntity();
 }
@@ -824,8 +831,8 @@ function updateSideEntity() {
   if (kaaDoor === 'right') rightEnemy = 'kaa';
   if (ukkichiDoor === 'right') rightEnemy = 'ukkichi';
 
-  var showL = leftEnemy && lightL && !doorL;
-  var showR = rightEnemy && lightR && !doorR;
+  var showL = leftEnemy && (lightL || doorL);
+  var showR = rightEnemy && (lightR || doorR);
 
   if (showL) $('left-entity-img').src = DOOR_IMAGES[leftEnemy];
   if (showR) $('right-entity-img').src = DOOR_IMAGES[rightEnemy];
@@ -1433,8 +1440,8 @@ document.querySelectorAll('.cam-btn').forEach(function(b) {
 });
 
 // ドア・ライトボタン
-document.querySelectorAll('.btn-door').forEach(function(b) {
-  b.addEventListener('click', function() { if (running) toggleDoor(b.dataset.side); });
+document.querySelectorAll('.btn-power').forEach(function(b) {
+  b.addEventListener('click', function() { if (running) togglePower(b.dataset.side); });
 });
 document.querySelectorAll('.btn-light').forEach(function(b) {
   b.addEventListener('mousedown', function() { if (running) setLight(b.dataset.side, true); });
@@ -1456,8 +1463,8 @@ document.addEventListener('keydown', function(e) {
   if (!running) return;
   var key = e.key.toLowerCase();
   switch(key) {
-    case 'q': toggleDoor('left'); break;
-    case 'e': toggleDoor('right'); break;
+    case 'q': togglePower('left'); break;
+    case 'e': togglePower('right'); break;
     case 'a': setLight('left', true); break;
     case 'd': setLight('right', true); break;
     case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
