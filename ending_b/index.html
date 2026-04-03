@@ -19,6 +19,57 @@
     z-index:1;
   }
 
+  /* ===== CRT常駐レイヤー ===== */
+  #crt-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:20;
+    opacity:0.3;
+    transition:opacity 8s ease;
+  }
+  #crt-overlay::before{
+    content:'';
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    background:repeating-linear-gradient(
+      0deg,
+      rgba(0,255,65,0.03) 0px,
+      rgba(0,255,65,0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    animation:crt-scroll 4s linear infinite;
+  }
+  #crt-overlay::after{
+    content:'';
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    animation:vignette-breathe 6s ease-in-out infinite;
+  }
+  @keyframes crt-scroll{
+    0%{background-position:0 0;}
+    100%{background-position:0 100vh;}
+  }
+  @keyframes vignette-breathe{
+    0%,100%{opacity:0.7;}
+    50%{opacity:1;}
+  }
+
+  /* ===== ランダム緑線ノイズ ===== */
+  #noise-layer{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:18;
+    overflow:hidden;
+  }
+  .noise-line{
+    position:absolute;
+    height:1px;
+    background:rgba(0,255,65,0.15);
+    animation:noise-flash 0.15s linear forwards;
+  }
+  @keyframes noise-flash{
+    0%{opacity:1;}
+    100%{opacity:0;}
+  }
+
   /* Terminal log (黒幕) */
   .terminal-line{
     color:#00ff41;
@@ -54,20 +105,30 @@
     position:absolute;
     letter-spacing:0.15em;
     line-height:2.2;
-    transition:opacity 1.5s ease;
+    transition:opacity 0.4s ease;
   }
   .yoshida-text.visible{opacity:1;}
+  .yoshida-text.trembling{
+    animation:text-tremble 0.08s linear infinite;
+  }
+  @keyframes text-tremble{
+    0%{transform:translate(0,0);}
+    25%{transform:translate(0.5px,-0.3px);}
+    50%{transform:translate(-0.3px,0.5px);}
+    75%{transform:translate(-0.5px,-0.5px);}
+    100%{transform:translate(0.3px,0.3px);}
+  }
 
-  /* 予定通りです callback */
+  /* 予定通りです */
   #yotei{
     position:absolute;
     color:#00ff41;
     font-family:'Courier New',monospace;
-    font-size:clamp(24px,5vw,48px);
+    font-size:clamp(32px,7vw,64px);
     letter-spacing:0.35em;
     text-align:center;
     opacity:0;
-    text-shadow:0 0 10px rgba(0,255,65,0.4);
+    text-shadow:0 0 30px rgba(0,255,65,0.8), 0 0 60px rgba(0,255,65,0.4);
   }
   @keyframes slow-pulse{
     0%,100%{opacity:0.85;text-shadow:0 0 10px rgba(0,255,65,0.4);}
@@ -76,8 +137,23 @@
   #yotei.pulsing{
     animation:slow-pulse 4s ease-in-out infinite;
   }
+  /* 予定通り：にじみ出る残像 */
+  .yotei-echo{
+    position:absolute;
+    color:#00ff41;
+    font-family:'Courier New',monospace;
+    letter-spacing:0.35em;
+    text-align:center;
+    pointer-events:none;
+    opacity:0;
+    animation:echo-drift 3s ease-out forwards;
+  }
+  @keyframes echo-drift{
+    0%{opacity:0.3;filter:blur(0px);}
+    100%{opacity:0;filter:blur(6px);}
+  }
 
-  /* Glitch effects */
+  /* ===== Glitch effects ===== */
   @keyframes glitch-skew{
     0%{transform:skew(0deg);}
     20%{transform:skew(-3deg);}
@@ -124,6 +200,66 @@
     animation:hard-glitch 0.3s linear forwards;
   }
 
+  /* RGB色収差 */
+  @keyframes rgb-split{
+    0%{text-shadow:0 0 8px rgba(0,255,65,0.4);}
+    25%{text-shadow:-3px 0 0 rgba(255,0,0,0.7), 3px 0 0 rgba(0,255,255,0.7), 0 0 8px rgba(0,255,65,0.4);}
+    50%{text-shadow:2px 1px 0 rgba(255,0,0,0.5), -2px -1px 0 rgba(0,255,255,0.5), 0 0 8px rgba(0,255,65,0.4);}
+    75%{text-shadow:-4px 0 0 rgba(255,0,0,0.8), 4px 0 0 rgba(0,100,255,0.8), 0 0 8px rgba(0,255,65,0.4);}
+    100%{text-shadow:0 0 8px rgba(0,255,65,0.4);}
+  }
+  .rgb-split{
+    animation:rgb-split 0.2s linear infinite;
+  }
+
+  /* ブロックノイズ */
+  .block-noise{
+    position:fixed;
+    z-index:14;
+    pointer-events:none;
+    animation:block-pop 0.15s linear forwards;
+  }
+  @keyframes block-pop{
+    0%{opacity:1;}
+    70%{opacity:1;}
+    100%{opacity:0;}
+  }
+
+  /* スライスずれ */
+  #slice-container{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:13;
+    display:none;
+  }
+  .glitch-slice{
+    position:absolute;
+    left:0;width:100%;
+    overflow:hidden;
+    background:#000;
+  }
+
+  /* サブリミナルテキスト */
+  .subliminal{
+    position:fixed;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    color:#ff0000;
+    font-family:'Courier New',monospace;
+    font-size:clamp(32px,8vw,80px);
+    z-index:16;
+    pointer-events:none;
+    opacity:0;
+    letter-spacing:0.2em;
+    text-shadow:0 0 20px rgba(255,0,0,0.8);
+    animation:subliminal-flash 0.12s linear forwards;
+  }
+  @keyframes subliminal-flash{
+    0%{opacity:0;}
+    15%{opacity:0.9;}
+    70%{opacity:0.9;}
+    100%{opacity:0;}
+  }
+
   /* PROCESS STILL RUNNING */
   .process-text{
     color:#00ff41;
@@ -134,47 +270,66 @@
     position:absolute;
     letter-spacing:0.12em;
     text-shadow:0 0 8px rgba(0,255,65,0.4);
-    transition:opacity 1s ease;
+    transition:opacity 0.2s ease;
   }
   .process-text.visible{opacity:1;}
 
-  /* Return prompt */
-  #return-prompt{
-    position:absolute;
-    text-align:center;
+  /* 画面端に残る小さいSTILL RUNNING */
+  .process-residue{
+    position:fixed;
+    bottom:12px;right:14px;
+    color:rgba(0,255,65,0.12);
+    font-family:'Courier New',monospace;
+    font-size:9px;
+    letter-spacing:0.1em;
+    pointer-events:none;
+    z-index:2;
+    animation:residue-flicker 5s ease-in-out infinite;
+  }
+  @keyframes residue-flicker{
+    0%,90%,100%{opacity:1;}
+    93%{opacity:0.3;}
+    96%{opacity:1;}
+  }
+
+  /* 暗転用 */
+  #blackout{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:#000;z-index:100;
     opacity:0;
-    transition:opacity 2s ease;
+    transition:opacity 0.4s ease;
+    pointer-events:none;
   }
-  #return-prompt.visible{opacity:1;}
-  #return-prompt p{
-    color:#aaa;
-    font-size:clamp(14px,2.5vw,20px);
-    letter-spacing:0.1em;
-    margin-bottom:1.5rem;
-  }
-  #return-prompt a{
-    display:inline-block;
-    color:#888;
-    font-size:clamp(13px,2vw,18px);
-    text-decoration:none;
-    letter-spacing:0.1em;
-    border:1px solid #555;
-    padding:0.5em 2em;
-    transition:color 0.3s ease, border-color 0.3s ease;
-  }
-  #return-prompt a:hover{
-    color:#ccc;
-    border-color:#999;
+
+  /* タイムスタンプ */
+  #timestamp{
+    position:fixed;
+    bottom:10px;left:14px;
+    color:rgba(0,255,65,0.15);
+    font-family:'Courier New',monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    z-index:2;
+    pointer-events:none;
   }
 </style>
 </head>
 <body>
 <div id="screen"></div>
 <div id="glitch-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;opacity:0;"></div>
+<div id="crt-overlay"></div>
+<div id="noise-layer"></div>
+<div id="slice-container"></div>
+<div id="timestamp">[00:00:00]</div>
+<div id="blackout"></div>
 
 <script>
 (function(){
   var screen = document.getElementById('screen');
+  var crtOverlay = document.getElementById('crt-overlay');
+  var noiseLayer = document.getElementById('noise-layer');
+  var sliceContainer = document.getElementById('slice-container');
+  var timestampEl = document.getElementById('timestamp');
 
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
@@ -186,11 +341,129 @@
     screen.style.flexDirection = 'column';
   }
 
+  /* ===== CRT intensity control ===== */
+  function setCrtIntensity(level){
+    // level: 0.0 ~ 1.0
+    crtOverlay.style.opacity = String(0.2 + level * 0.8);
+  }
+
+  /* ===== ランダム緑線ノイズ ===== */
+  var noiseInterval = null;
+  function startNoise(intensity){
+    if(noiseInterval) clearInterval(noiseInterval);
+    noiseInterval = setInterval(function(){
+      if(Math.random() > intensity) return;
+      var line = document.createElement('div');
+      line.className = 'noise-line';
+      line.style.top = (Math.random() * 100) + '%';
+      line.style.left = '0';
+      line.style.width = (20 + Math.random() * 80) + '%';
+      if(Math.random() > 0.5) { line.style.left = 'auto'; line.style.right = '0'; }
+      noiseLayer.appendChild(line);
+      setTimeout(function(){ line.remove(); }, 200);
+    }, 80);
+  }
+  function stopNoise(){
+    if(noiseInterval){ clearInterval(noiseInterval); noiseInterval = null; }
+    noiseLayer.innerHTML = '';
+  }
+
+  /* ===== タイムスタンプ ===== */
+  var tsStart = 0;
+  var tsInterval = null;
+  var tsFrozen = false;
+  function startTimestamp(){
+    tsStart = Date.now();
+    tsInterval = setInterval(function(){
+      if(tsFrozen) return;
+      var elapsed = Math.floor((Date.now() - tsStart) / 1000);
+      var h = String(Math.floor(elapsed/3600)).padStart(2,'0');
+      var m = String(Math.floor((elapsed%3600)/60)).padStart(2,'0');
+      var s = String(elapsed%60).padStart(2,'0');
+      timestampEl.textContent = '[' + h + ':' + m + ':' + s + ']';
+    }, 1000);
+  }
+  function freezeTimestamp(){
+    tsFrozen = true;
+  }
+  function setTimestampError(){
+    timestampEl.textContent = '[ERROR]';
+    timestampEl.style.color = 'rgba(255,0,0,0.25)';
+  }
+
+  /* ===== Glitch effects ===== */
   function flashGlitch(){
     var g = document.createElement('div');
     g.className = 'hard-glitch';
     document.body.appendChild(g);
     setTimeout(function(){ g.remove(); }, 400);
+  }
+
+  /* RGB色収差をターミナルコンテナに適用 */
+  function applyRgbSplit(el, duration){
+    el.classList.add('rgb-split');
+    setTimeout(function(){ el.classList.remove('rgb-split'); }, duration || 500);
+  }
+
+  /* ブロックノイズ */
+  function spawnBlockNoise(count){
+    for(var i = 0; i < (count||5); i++){
+      (function(delay){
+        setTimeout(function(){
+          var block = document.createElement('div');
+          block.className = 'block-noise';
+          var w = 30 + Math.random() * 200;
+          var h = 5 + Math.random() * 40;
+          block.style.width = w + 'px';
+          block.style.height = h + 'px';
+          block.style.top = (Math.random() * 100) + '%';
+          block.style.left = (Math.random() * 100) + '%';
+          var colors = ['#000','#000','#0f0','#001a00','#0a0a0a'];
+          block.style.background = colors[Math.floor(Math.random()*colors.length)];
+          document.body.appendChild(block);
+          setTimeout(function(){ block.remove(); }, 180);
+        }, delay);
+      })(i * 60);
+    }
+  }
+
+  /* スライスずれ */
+  function glitchSlice(duration){
+    sliceContainer.style.display = 'block';
+    sliceContainer.innerHTML = '';
+    var sliceCount = 5 + Math.floor(Math.random() * 4);
+    var sliceH = 100 / sliceCount;
+    for(var i = 0; i < sliceCount; i++){
+      var slice = document.createElement('div');
+      slice.className = 'glitch-slice';
+      slice.style.top = (i * sliceH) + '%';
+      slice.style.height = sliceH + '%';
+      var offset = (Math.random() - 0.5) * 40;
+      slice.style.transform = 'translateX(' + offset + 'px)';
+      slice.style.background = (Math.random() > 0.7) ? 'rgba(0,255,65,0.04)' : 'transparent';
+      sliceContainer.appendChild(slice);
+    }
+    setTimeout(function(){
+      sliceContainer.style.display = 'none';
+      sliceContainer.innerHTML = '';
+    }, duration || 200);
+  }
+
+  /* サブリミナルテキスト */
+  function subliminalFlash(text){
+    var el = document.createElement('div');
+    el.className = 'subliminal';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 150);
+  }
+
+  /* 画面暗転（まばたき） */
+  function screenBlink(duration){
+    var blink = document.createElement('div');
+    blink.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:25;pointer-events:none;';
+    document.body.appendChild(blink);
+    return wait(duration || 500).then(function(){ blink.remove(); });
   }
 
   /* Typewriter for terminal lines */
@@ -213,6 +486,29 @@
     });
   }
 
+  /* 不規則タイプライター */
+  function typewriterLineUneven(container, text, baseSpeed){
+    return new Promise(function(resolve){
+      var line = document.createElement('div');
+      line.className = 'terminal-line visible';
+      line.textContent = '';
+      container.appendChild(line);
+      var i = 0;
+      function nextChar(){
+        if(i < text.length){
+          line.textContent += text[i];
+          i++;
+          var jitter = baseSpeed + Math.floor((Math.random()-0.3)*baseSpeed*0.8);
+          if(jitter < 10) jitter = 10;
+          setTimeout(nextChar, jitter);
+        } else {
+          resolve(line);
+        }
+      }
+      nextChar();
+    });
+  }
+
   /* Show yoshida text centered */
   function showYoshidaLine(text){
     return new Promise(function(resolve){
@@ -223,6 +519,8 @@
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           el.classList.add('visible');
+          // 表示されたら震わせる
+          setTimeout(function(){ el.classList.add('trembling'); }, 800);
         });
       });
       setTimeout(function(){ resolve(el); }, 300);
@@ -235,8 +533,60 @@
     return wait(ms || 1500);
   }
 
+  /* ===== 複合グリッチシーケンス ===== */
+  async function intenseGlitchSequence(){
+    document.body.classList.add('screen-corrupt');
+    var termContainer = document.getElementById('terminal-container');
+
+    // Phase 1: RGB色収差 + フラッシュ
+    if(termContainer) applyRgbSplit(termContainer, 2000);
+    flashGlitch();
+    await wait(200);
+    flashGlitch();
+    spawnBlockNoise(4);
+    await wait(150);
+
+    // Phase 2: スライスずれ + ブロックノイズ
+    glitchSlice(200);
+    flashGlitch();
+    await wait(200);
+    spawnBlockNoise(8);
+    await wait(100);
+
+    // Phase 3: サブリミナル
+    subliminalFlash('ミテル');
+    await wait(250);
+    flashGlitch();
+    glitchSlice(150);
+    spawnBlockNoise(6);
+    await wait(200);
+
+    // Phase 4: 連続フラッシュ + 2つ目のサブリミナル
+    flashGlitch();
+    await wait(80);
+    flashGlitch();
+    await wait(120);
+    subliminalFlash('タスケテ');
+    await wait(200);
+
+    // Phase 5: 最大強度
+    glitchSlice(250);
+    spawnBlockNoise(12);
+    flashGlitch();
+    await wait(100);
+    flashGlitch();
+    await wait(100);
+    flashGlitch();
+    await wait(300);
+
+    document.body.classList.remove('screen-corrupt');
+  }
+
   /* ===== MAIN SEQUENCE ===== */
   async function main(){
+    startTimestamp();
+    startNoise(0.1); // 最初は薄いノイズ
+    setCrtIntensity(0.1);
     await wait(1000);
 
     // --- STAGE 1: 黒幕's log ---
@@ -245,172 +595,279 @@
     screen.appendChild(termContainer);
 
     var logLines = [
-      '> 接続確認　完了',
-      '> 対象：K-059',
-      '> …知っていた　お前が来ることは　最初から',
-      '> 感情データ収集率：98.7%',
-      '> 恐怖　　…取得済',
-      '> 悲しみ　…取得済',
-      '> 好奇心　…取得済',
-      '> 罪悪感　…取得済',
-      '> 執着　　…取得済',
-      '> 同情　　…取得済',
-      '> 全パラメータ　基準値を超過',
-      '> 全部　お前のために作った',
-      '> …うまくいった',
-      '> お前は優しいな　だから選んだ',
-      '> 協力者：吉田一郎',
-      '> 担当：K-059の感情誘導・信頼構築',
-      '> 手段：Popin偽装接触→DM移行→情報提供による感情増幅',
-      '> 状況：予定通り'
+      { text:'> 接続確認　完了', speed:35, pause:800 },
+      { text:'> 対象：K-059', speed:35, pause:800 },
+      { text:'> …知っていた　お前が来ることは　最初から', speed:35, pause:1500 },
+      { text:'> 感情データ収集率：98.7%', speed:35, pause:800 },
+      { text:'> 恐怖　　…取得済', speed:35, pause:400 },
+      { text:'> 悲しみ　…取得済', speed:35, pause:400 },
+      { text:'> 好奇心　…取得済', speed:35, pause:400 },
+      { text:'> 罪悪感　…取得済', speed:35, pause:400 },
+      { text:'> 執着　　…取得済', speed:35, pause:400 },
+      { text:'> 同情　　…取得済', speed:35, pause:400 },
+      { text:'> 全パラメータ　基準値を超過', speed:35, pause:800 },
+      { text:'> 全部　お前のために作った', speed:35, pause:800 },
+      { text:'> …うまくいった', speed:35, pause:1500 },
+      { text:'> お前は優しいな　だから選んだ', speed:35, pause:1500 },
+      { text:'> 協力者：吉田一郎', speed:35, pause:800 },
+      { text:'> 担当：K-059の感情誘導・信頼構築', speed:35, pause:800 },
+      { text:'> 手段：Popin偽装接触→DM移行→情報提供による感情増幅', speed:35, pause:800 },
+      { text:'> 状況：予定通り', speed:35, pause:800 }
     ];
 
     for(var i = 0; i < logLines.length; i++){
-      await typewriterLine(termContainer, logLines[i], 35);
-      // Shorter pause for data lines, longer for dramatic lines
-      if(i === 2 || i === 12 || i === 13) await wait(1500);
-      else if(i >= 4 && i <= 9) await wait(400);
-      else await wait(800);
+      // CRT強度を徐々に上げる
+      var progress = i / logLines.length;
+      setCrtIntensity(0.1 + progress * 0.3);
+
+      // 感情データ行あたりからノイズ強化
+      if(i === 4) startNoise(0.25);
+      if(i === 10) startNoise(0.4);
+
+      // 「お前は優しいな」で一瞬暗転
+      if(i === 13){
+        await screenBlink(400);
+      }
+
+      // 後半は不規則タイプライターで焦り表現
+      if(i >= 14){
+        await typewriterLineUneven(termContainer, logLines[i].text, logLines[i].speed);
+      } else {
+        await typewriterLine(termContainer, logLines[i].text, logLines[i].speed);
+      }
+      await wait(logLines[i].pause);
     }
 
     await wait(2000);
 
     // --- STAGE 2: Transfer initiation ---
-    await typewriterLine(termContainer, '> 器の条件　…充足', 40);
+    startNoise(0.5);
+    setCrtIntensity(0.5);
+    await typewriterLineUneven(termContainer, '> 器の条件　…充足', 40);
     await wait(1500);
-    await typewriterLine(termContainer, '> K-059　転送開始', 40);
+    await typewriterLineUneven(termContainer, '> K-059　転送開始', 40);
     await wait(800);
 
-    // --- STAGE 3: Intense glitch ---
-    document.body.classList.add('screen-corrupt');
-    for(var g = 0; g < 6; g++){
-      flashGlitch();
-      await wait(150);
-    }
-    await wait(800);
-    document.body.classList.remove('screen-corrupt');
+    // --- STAGE 3: 複合グリッチシーケンス ---
+    startNoise(0.9);
+    setCrtIntensity(0.9);
+    await intenseGlitchSequence();
+    stopNoise();
 
-    // Black screen
+    // 暗転（完全な暗闇）
     clearScreen();
-    await wait(2000);
+    setCrtIntensity(0.05);
+    await wait(3000); // 長めの暗闇 — 何も起きない恐怖
 
     // --- STAGE 4: 吉田一郎's voice ---
     var y1 = await showYoshidaLine('「…すまない」');
     await wait(3000);
-    await fadeOutEl(y1, 1500);
+    await screenBlink(150);
     y1.remove();
 
     var y2 = await showYoshidaLine('「あの子のために…お前を…」');
     await wait(3500);
-    await fadeOutEl(y2, 1500);
+    await screenBlink(150);
     y2.remove();
 
     var y3 = await showYoshidaLine('「でも…もう止められない」');
     await wait(3500);
-    await fadeOutEl(y3, 1500);
+    await screenBlink(150);
     y3.remove();
 
-    // --- STAGE 5: PROCESS STILL RUNNING ---
+    // 吉田セリフ後の沈黙（完全暗転）
     await wait(4000);
 
+    // --- STAGE 5: PROCESS STILL RUNNING（1回・演出全盛り） ---
     var proc = document.createElement('div');
     proc.className = 'process-text';
     proc.textContent = '> PROCESS STILL RUNNING';
+    proc.style.fontSize = 'clamp(14px,2.2vw,20px)';
+    proc.style.textShadow = '0 0 8px rgba(0,255,65,0.4)';
     screen.appendChild(proc);
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        proc.classList.add('visible');
-      });
-    });
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ proc.classList.add('visible'); }); });
 
-    await wait(4000);
-    await fadeOutEl(proc, 2000);
+    // 1.5秒静かに表示
+    await wait(1500);
+
+    // ノイズ走り出す
+    startNoise(0.4);
+    applyRgbSplit(proc, 1500);
+
+    // 画面が揺れ始める
+    document.body.classList.add('screen-corrupt');
+    await wait(600);
+
+    // フォントが段階的に膨張
+    proc.style.transition = 'font-size 0.3s, text-shadow 0.3s';
+    proc.style.fontSize = 'clamp(20px,3.5vw,32px)';
+    proc.style.textShadow = '0 0 15px rgba(0,255,65,0.6)';
+    spawnBlockNoise(4);
+    await wait(500);
+
+    proc.style.fontSize = 'clamp(28px,5vw,48px)';
+    proc.style.textShadow = '0 0 25px rgba(0,255,65,0.8), 0 0 50px rgba(0,255,65,0.3)';
+    flashGlitch();
+    spawnBlockNoise(8);
+    await wait(400);
+
+    // 最大 → 一瞬で画面いっぱい → 消滅
+    proc.style.transition = 'font-size 0.1s, text-shadow 0.1s';
+    proc.style.fontSize = 'clamp(48px,12vw,120px)';
+    proc.style.textShadow = '0 0 40px rgba(0,255,65,0.9), 0 0 80px rgba(0,255,65,0.5)';
+    flashGlitch();
+    await wait(200);
     proc.remove();
+    document.body.classList.remove('screen-corrupt');
+    stopNoise();
 
-    // --- STAGE 6: データ不足 → 再接続 ---
+    // 画面端に小さく残り続ける
+    var residue = document.createElement('div');
+    residue.className = 'process-residue';
+    residue.textContent = 'STILL RUNNING';
+    document.body.appendChild(residue);
+
+    // --- STAGE 6: データ不足 ---
     await wait(3000);
     clearScreen();
+    setCrtIntensity(0.3);
+    startNoise(0.15);
 
-    var lines = [
-      {text:'> K-059 STATUS CHECK', delay:0},
-      {text:'> 完了率: 98.7%', delay:1500},
-      {text:'> 感情データ: 不足', delay:3000},
+    var statusLines = [
+      { text:'> K-059 STATUS CHECK', pause:1500 },
+      { text:'> 完了率: 98.7%', pause:1500 },
+      { text:'> 感情データ: 不足', pause:2500 },
+      { text:'> …想定の範囲内', pause:600 },
+      { text:'> …問題ない', pause:500 },
+      { text:'> …折り込み済み', pause:400 },
+      { text:'> 修正の必要なし', pause:300 },
+      { text:'> …誤差の範囲', pause:1500 },
     ];
 
-    for(var li=0; li<lines.length; li++){
-      await wait(li === 0 ? 0 : lines[li].delay - lines[li-1].delay);
-      if(!lines[li].text) continue;
+    for(var li=0; li<statusLines.length; li++){
       var line = document.createElement('div');
       line.className = 'terminal-line';
-      line.textContent = lines[li].text;
+      line.textContent = statusLines[li].text;
       screen.appendChild(line);
       requestAnimationFrame(function(el){ return function(){ requestAnimationFrame(function(){ el.classList.add('visible'); }); }; }(line));
+      await wait(statusLines[li].pause);
     }
 
-    await wait(4000);
-
-    // --- STAGE 7: 予定通りです（不足なのに予定通り＝最初から2周の計画） ---
-    clearScreen();
     await wait(2000);
+
+    // --- STAGE 7: 予定通りです ---
+    clearScreen();
+    stopNoise();
+    setCrtIntensity(0.15);
+    await wait(2000);
+
+    // タイムスタンプを凍結
+    freezeTimestamp();
+
+    // グリッチ一発 → ドンと出す
+    flashGlitch();
+    spawnBlockNoise(6);
+    await wait(100);
 
     var yotei = document.createElement('div');
     yotei.id = 'yotei';
     yotei.textContent = '予定通りです';
+    yotei.style.opacity = '0.9';
     screen.appendChild(yotei);
+    setCrtIntensity(0.7);
 
-    var opacity = 0;
-    await new Promise(function(resolve){
-      var fadeIn = setInterval(function(){
-        opacity += 0.005;
-        if(opacity >= 0.85){
-          clearInterval(fadeIn);
-          yotei.style.opacity = '0.85';
-          yotei.classList.add('pulsing');
-          resolve();
-        } else {
-          yotei.style.opacity = String(opacity);
-        }
-      }, 30);
-    });
+    // タイムスタンプをERRORに
+    setTimestampError();
+
+    await wait(300);
+    yotei.classList.add('pulsing');
+
+    // にじみ出る残像エコー
+    for(var ei = 0; ei < 4; ei++){
+      (function(delay, ox, oy, sz){
+        setTimeout(function(){
+          var echo = document.createElement('div');
+          echo.className = 'yotei-echo';
+          echo.textContent = '予定通りです';
+          echo.style.fontSize = sz;
+          echo.style.top = 'calc(50% + ' + oy + 'px)';
+          echo.style.left = 'calc(50% + ' + ox + 'px)';
+          echo.style.transform = 'translate(-50%, -50%)';
+          screen.appendChild(echo);
+          setTimeout(function(){ echo.remove(); }, 3000);
+        }, delay);
+      })(ei * 800, (Math.random()-0.5)*60, (Math.random()-0.5)*40, 'clamp(28px,6vw,56px)');
+    }
 
     await wait(5000);
 
+    // 1文字ずつバラバラに消えていく
     yotei.classList.remove('pulsing');
-    yotei.style.transition = 'opacity 3s ease';
-    yotei.style.opacity = '0';
-    await wait(3000);
+    yotei.style.opacity = '1';
+    yotei.textContent = '';
+    var chars = '予定通りです'.split('');
+    var charEls = [];
+    for(var ci = 0; ci < chars.length; ci++){
+      var span = document.createElement('span');
+      span.textContent = chars[ci];
+      span.style.display = 'inline-block';
+      span.style.transition = 'opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease';
+      yotei.appendChild(span);
+      charEls.push(span);
+    }
 
-    // --- STAGE 8: 再接続 ---
+    // ランダム順に消す
+    var order = charEls.map(function(_,i){return i;});
+    for(var si = order.length - 1; si > 0; si--){
+      var sj = Math.floor(Math.random() * (si + 1));
+      var tmp = order[si]; order[si] = order[sj]; order[sj] = tmp;
+    }
+    for(var di = 0; di < order.length; di++){
+      (function(el, delay){
+        setTimeout(function(){
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(' + ((Math.random()-0.5)*30) + 'px)';
+          el.style.filter = 'blur(4px)';
+        }, delay);
+      })(charEls[order[di]], di * 400);
+    }
+    await wait(order.length * 400 + 800);
+    yotei.remove();
+
+    // --- STAGE 8: 再接続 → カウントダウン → 即遷移 ---
     clearScreen();
-    await wait(2000);
+    setCrtIntensity(0.2);
+    await wait(1500);
 
     var reconnect = document.createElement('div');
-    reconnect.className = 'terminal-line';
+    reconnect.className = 'terminal-line visible';
     reconnect.textContent = '> 再接続します';
     screen.appendChild(reconnect);
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ reconnect.classList.add('visible'); }); });
 
-    await wait(3000);
-    await fadeOutEl(reconnect, 2000);
+    await wait(2000);
     reconnect.remove();
 
-    // --- STAGE 9: Return prompt ---
-    clearScreen();
-    await wait(2000);
+    var countdowns = ['3','2','1'];
+    for(var cdi = 0; cdi < countdowns.length; cdi++){
+      var cd = document.createElement('div');
+      cd.className = 'terminal-line visible';
+      cd.textContent = '> ' + countdowns[cdi];
+      cd.style.textAlign = 'center';
+      cd.style.fontSize = 'clamp(20px,4vw,36px)';
+      screen.appendChild(cd);
+      setCrtIntensity(0.2 + (cdi + 1) * 0.15);
+      await wait(1000);
+      cd.remove();
+    }
 
-    var prompt = document.createElement('div');
-    prompt.id = 'return-prompt';
-    prompt.innerHTML = '<p>「デスクトップに戻りますか？」</p><a href="#" id="return-btn">戻る</a>';
-    screen.appendChild(prompt);
-
-    await wait(500);
-    prompt.classList.add('visible');
-
-    document.getElementById('return-btn').addEventListener('click', function(e){
-      e.preventDefault();
-      localStorage.setItem('endb_just_returned', 'true');
-      window.location.href = '../index.html';
-    });
+    // 暗転 → デスクトップへ直行
+    stopNoise();
+    timestampEl.style.display = 'none';
+    var blackout = document.getElementById('blackout');
+    blackout.style.opacity = '1';
+    await wait(800);
+    localStorage.setItem('endb_just_returned', 'true');
+    window.location.href = '../index.html';
 
     // --- Set localStorage flags ---
     try {
