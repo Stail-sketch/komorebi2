@@ -394,7 +394,9 @@
               }, 1500);
             }
           } else if(allPuzzlesClear()){
-            addMessage(partnerName, 'やあ！また来てくれたんだね！嬉しいなぁ！', true);
+            // パズル全クリアだがnight3_unlockedがまだ → 入口演出を再開
+            addMessage(partnerName, 'おかえり！', true);
+            setTimeout(function(){ showNight3Unlock(); }, 1500);
           } else if(puzzleStarted){
             addMessage(partnerName, 'おかえり！続きからいこう！', true);
             setTimeout(function(){ showCurrentQuestion(); }, 1500);
