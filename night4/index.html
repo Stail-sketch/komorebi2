@@ -153,6 +153,7 @@
       position: absolute; z-index: 50; top: 20px; right: 20px; text-align: right; display: none;
     }
 
+    @keyframes bfShake { 0%{transform:translate(0,0)} 25%{transform:translate(-6px,4px)} 50%{transform:translate(5px,-5px)} 75%{transform:translate(-4px,-3px)} 100%{transform:translate(6px,5px)} }
     /* ===== オーバーレイ ===== */
     .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 1s ease; }
     .overlay-screen.active { display: flex; opacity: 1; }
@@ -233,6 +234,7 @@
       font-size:1.1rem;letter-spacing:0.3em;cursor:pointer;
       opacity:0;transition:opacity 0.8s,background 0.2s,color 0.2s,border-color 0.2s;
     ">▶ broadcast_start</button>
+    <div id="glitch-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.1s;"></div>
   </div>
 
   <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
@@ -1074,17 +1076,26 @@ function showBriefing(){
     {type:'sys', text:'cast_loaded: kururu.dll, madara.dll, kasumi.dll'},
     {type:'sys', text:'new_cast_loaded: arane.dll'},
     {type:'sys', text:'warning: vent_system connected', warn:true},
+    {type:'sys', text:'warning: web_integrity declining', warn:true},
     {type:'sys', text:'initiating...'},
     {type:'gap'},
     {type:'char', name:'アラネ', text:'…ダクトの中にいるわ。巣を張ってあげてるの。', color:'#a060a0'},
-    {type:'char', name:'アラネ', text:'でも放っておくと…巣がなくなっちゃう。', color:'#a060a0'},
-    {type:'char', name:'アラネ', text:'巣がなくなったら…私が\u0336行\u0337く\u0334わ\u0335よ\u0336', color:'#a060a0', glitch:true},
-    {type:'sys', text:'character_error: recovered', warn:true},
-    {type:'gap'},
-    {type:'char', name:'くるる', text:'アラネはダクトの中にいるよ！Wキーで見に行って、長押しで巣を補充してあげて！', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'でも長押し中は他のことができないから気をつけ\u0337て\u0336…\u0334', color:'#5cb85c', glitch:true},
-    {type:'sys', text:'character_error: recovered', warn:true},
-    {type:'gap'},
+    {type:'char', name:'アラネ', text:'Wキーでダクトを覗いて、長押しで巣を補充してね。', color:'#a060a0'},
+    {type:'char', name:'アラネ', text:'でも放っておくと…巣がなくなって…', color:'#a060a0'},
+    {type:'fx', fx:'shake', duration:500},
+    {type:'char', name:'ア\u0336ラ\u0337ネ\u0334', text:'\u0336\u0337私\u0334が\u0335\u3000行\u0336く\u0337わ\u0334よ\u0335\u3000\u0336\u0337す\u0334ぐ\u0335\u0336そ\u0337ば\u0334に', color:'#ff33ff', glitch:true},
+    {type:'fx', fx:'flicker', duration:600},
+    {type:'sys', text:'ERROR: arane.dll accessing unauthorized sectors', warn:true},
+    {type:'sys', text:'ERROR: file_system corruption detected', warn:true},
+    {type:'fx', fx:'noise', duration:1000},
+    {type:'char', name:'???', text:'\u0336\u0337\u307f\u0334\u0335\u3093\u0336\u0337\u306a\u0334\u0335\u3000\u0336\u0337\u3082\u0334\u0335\u3046\u0336\u0337\u3059\u0334\u0335\u3050\u0336\u0337\u3060\u0334\u0335\u3088', color:'#660000', glitch:true},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:120},
+    {type:'char', name:'\u2588\u2588\u2588', text:'K\u0336-\u03370\u03345\u03359\u3000\u0336\u0337\u6b8b\u0334\u0335\u308a\u0336\u0337\u308f\u0334\u0335\u305a\u0336\u0337\u304b', color:'#330000', glitch:true},
+    {type:'fx', fx:'shake', duration:800},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:100},
+    {type:'fx', fx:'blackout', duration:2000},
+    {type:'sys', text:'...'},
+    {type:'sys', text:'system restored. data loss: 2 sectors'},
     {type:'sys', text:'broadcast ready.'}
   ];
   runBriefing(lines);
@@ -1092,34 +1103,26 @@ function showBriefing(){
 
 function runBriefing(lines){
   var log = $('briefing-log');
+  var ov = $('glitch-overlay');
+  var screen = $('briefing-screen');
   log.innerHTML = '';
   var idx = 0;
+  function fxShake(dur){ screen.style.animation='bfShake '+(dur<500?'0.05':'0.08')+'s infinite'; setTimeout(function(){screen.style.animation='';},dur); }
+  function fxFlash(color,dur){ ov.style.background=color||'#ff0000'; ov.style.opacity='0.6'; setTimeout(function(){ov.style.opacity='0';ov.style.background='';},dur); }
+  function fxFlicker(dur){ var end=Date.now()+dur; var iv=setInterval(function(){ if(Date.now()>end){clearInterval(iv);ov.style.opacity='0';return;} ov.style.background=Math.random()>0.5?'#ff0033':'#000'; ov.style.opacity=String(Math.random()*0.7); },50); }
+  function fxNoise(dur){ var ne=document.createElement('div'); ne.style.cssText='position:fixed;inset:0;z-index:9998;pointer-events:none;font-family:monospace;font-size:10px;color:rgba(255,0,0,0.15);overflow:hidden;line-height:1;white-space:pre;'; var ch='\u2588\u2591\u2592\u2593\u2502\u2500\u253c'; var r='';for(var i=0;i<80;i++){var row='';for(var j=0;j<120;j++)row+=ch[Math.floor(Math.random()*ch.length)];r+=row+'\n';} ne.textContent=r; document.body.appendChild(ne); var niv=setInterval(function(){var nr='';for(var i=0;i<80;i++){var row='';for(var j=0;j<120;j++)row+=ch[Math.floor(Math.random()*ch.length)];nr+=row+'\n';}ne.textContent=nr;},80); setTimeout(function(){clearInterval(niv);ne.remove();},dur); }
+  function fxBlackout(dur){ ov.style.background='#000'; ov.style.opacity='1'; log.style.visibility='hidden'; setTimeout(function(){ov.style.opacity='0';log.style.visibility='';},dur); }
   function next(){
-    if(idx >= lines.length){
-      var btn = $('briefing-start-btn');
-      btn.style.opacity = '1';
-      btn.style.borderColor = '#2a6a2a';
-      btn.style.color = '#2a6a2a';
-      return;
-    }
-    var line = lines[idx]; idx++;
-    if(line.type === 'gap'){ setTimeout(next, 400); return; }
-    var div = document.createElement('div');
-    if(line.type === 'sys'){
-      div.style.cssText = 'color:'+(line.warn?'#a44':'#335')+';font-size:13px;';
-      typeText(div, '[SYSTEM] '+line.text, 20, function(){ setTimeout(next, 300); });
-    } else {
-      div.style.cssText = 'color:'+line.color+';';
-      if(line.glitch) div.style.textShadow = '2px 0 #f00, -2px 0 #0ff';
-      typeText(div, '['+line.name+'] '+line.text, 25, function(){
-        if(line.glitch) setTimeout(function(){ div.style.textShadow='none'; }, 300);
-        setTimeout(next, line.glitch ? 600 : 350);
-      });
-    }
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+    if(idx>=lines.length){ var btn=$('briefing-start-btn'); btn.style.opacity='1'; btn.style.borderColor='#2a6a2a'; btn.style.color='#2a6a2a'; return; }
+    var line=lines[idx]; idx++;
+    if(line.type==='fx'){ var d=line.duration||500; if(line.fx==='shake')fxShake(d); else if(line.fx==='flash')fxFlash(line.color,d); else if(line.fx==='flicker')fxFlicker(d); else if(line.fx==='noise')fxNoise(d); else if(line.fx==='blackout')fxBlackout(d); setTimeout(next,d+100); return; }
+    if(line.type==='gap'){ setTimeout(next,400); return; }
+    var div=document.createElement('div');
+    if(line.type==='sys'){ div.style.cssText='color:'+(line.warn?'#a44':'#335')+';font-size:13px;'; typeText(div,'[SYSTEM] '+line.text,20,function(){setTimeout(next,300);}); }
+    else { div.style.cssText='color:'+line.color+';'; if(line.glitch)div.style.textShadow='2px 0 #f00, -2px 0 #0ff'; typeText(div,'['+line.name+'] '+line.text,25,function(){if(line.glitch)setTimeout(function(){div.style.textShadow='none';},300);setTimeout(next,line.glitch?600:350);}); }
+    log.appendChild(div); log.scrollTop=log.scrollHeight;
   }
-  setTimeout(next, 800);
+  setTimeout(next,800);
 }
 
 function typeText(el, text, speed, cb){

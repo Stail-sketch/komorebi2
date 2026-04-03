@@ -159,6 +159,7 @@
       50% { transform: translateX(-50%) translateY(-3px); }
     }
 
+    @keyframes bfShake { 0%{transform:translate(0,0)} 25%{transform:translate(-6px,4px)} 50%{transform:translate(5px,-5px)} 75%{transform:translate(-4px,-3px)} 100%{transform:translate(6px,5px)} }
     /* ===== オーバーレイ ===== */
     .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 1s ease; }
     .overlay-screen.active { display: flex; opacity: 1; }
@@ -240,6 +241,7 @@
       font-size:1.1rem;letter-spacing:0.3em;cursor:pointer;
       opacity:0;transition:opacity 0.8s,background 0.2s,color 0.2s,border-color 0.2s;
     ">▶ broadcast_start</button>
+    <div id="glitch-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.1s;"></div>
   </div>
   <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
   <div id="gameover-screen" class="overlay-screen"><h1>GAME OVER</h1><button class="overlay-btn" id="retry-btn">RETRY</button></div>
@@ -1200,16 +1202,35 @@ function showBriefing(){
     {type:'sys', text:'cast_loaded: kururu.dll, madara.dll, kasumi.dll, arane.dll'},
     {type:'sys', text:'new_cast_loaded: yowari.dll'},
     {type:'sys', text:'warning: debuff_system active', warn:true},
+    {type:'sys', text:'warning: system_integrity: 34%', warn:true},
     {type:'sys', text:'initiating...'},
     {type:'gap'},
     {type:'char', name:'よわり', text:'あの…ごめんなさい…', color:'#88b4d8'},
     {type:'char', name:'よわり', text:'わたし、泣いちゃうかもしれません…', color:'#88b4d8'},
-    {type:'char', name:'よわり', text:'泣き声が聞こえたら…カメラで見つけてください…', color:'#88b4d8'},
+    {type:'char', name:'よわり', text:'泣き声が聞こえたら…カメラで見つけてクリックしてください…', color:'#88b4d8'},
     {type:'gap'},
-    {type:'char', name:'くるる', text:'よわりが泣き始めると、ぼくたちみんなおかしくなっちゃうんだ。', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'早く見つけてクリックしてあ\u0337げ\u0336て\u0334…！\u0335', color:'#5cb85c', glitch:true},
-    {type:'sys', text:'character_error: critical', warn:true},
-    {type:'gap'},
+    {type:'char', name:'くるる', text:'よわりが泣くと、ぼくたちみんなおかしくなっちゃうんだ。', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'早く見つけてあげて…お願\u0336い\u0337…', color:'#5cb85c', glitch:true},
+    {type:'fx', fx:'shake', duration:600},
+    {type:'sys', text:'character_error: emotional_cascade', warn:true},
+    {type:'fx', fx:'flicker', duration:500},
+    {type:'char', name:'\u0336\u0337く\u0334る\u0335る', text:'\u0336\u0337た\u0334す\u0335け\u0336て', color:'#ff0033', glitch:true},
+    {type:'char', name:'\u0336\u0337ま\u0334だ\u0335ら', text:'\u0336\u0337\u3082\u0334う\u0335\u3000\u0336\u0337\u304a\u0334し\u0335\u307e\u0336い\u0337だ', color:'#ff0033', glitch:true},
+    {type:'char', name:'\u0336\u0337か\u0334す\u0335み', text:'\u0336\u0337\u3042\u0334げ\u0335\u308b\u0336\u3000\u0337\u305c\u0334ん\u0335\u3076\u0336\u3000\u0337\u3042\u0334げ\u0335\u308b', color:'#ff0033', glitch:true},
+    {type:'char', name:'\u0336\u0337\u30a2\u0334\u30e9\u0335\u30cd', text:'\u0336\u0337\u306b\u0334げ\u0335\u3089\u0336れ\u0337\u306a\u0334い', color:'#ff0033', glitch:true},
+    {type:'char', name:'\u0336\u0337\u3088\u0334わ\u0335\u308a', text:'\u0336\u0337\u3054\u0334め\u0335\u3093\u0336\u306a\u0337\u3055\u0334\u3044\u0335\u3000\u0336\u0337\u3054\u0334め\u0335\u3093\u0336\u306a\u0337\u3055\u0334\u3044\u0335\u3000\u0336\u0337\u3054\u0334め\u0335\u3093\u0336\u306a\u0337\u3055\u0334\u3044', color:'#ff0033', glitch:true},
+    {type:'fx', fx:'shake', duration:1000},
+    {type:'fx', fx:'noise', duration:1000},
+    {type:'sys', text:'CRITICAL: all_cast_corrupted', warn:true},
+    {type:'sys', text:'CRITICAL: broadcast_integrity: 0%', warn:true},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:150},
+    {type:'char', name:'\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', text:'K\u0336-\u03370\u03345\u03359\u3000\u0336\u0337\u304a\u0334\u308f\u0335\u308a\u0336\u3060\u0337\u3088', color:'#330000', glitch:true},
+    {type:'fx', fx:'shake', duration:500},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:100},
+    {type:'fx', fx:'blackout', duration:3000},
+    {type:'sys', text:'...'},
+    {type:'sys', text:'...'},
+    {type:'sys', text:'emergency_restore complete. data loss: critical'},
     {type:'sys', text:'all_cast_active: 5/5'},
     {type:'sys', text:'broadcast ready.'}
   ];
@@ -1218,34 +1239,26 @@ function showBriefing(){
 
 function runBriefing(lines){
   var log = $('briefing-log');
+  var ov = $('glitch-overlay');
+  var screen = $('briefing-screen');
   log.innerHTML = '';
   var idx = 0;
+  function fxShake(dur){ screen.style.animation='bfShake '+(dur<500?'0.05':'0.08')+'s infinite'; setTimeout(function(){screen.style.animation='';},dur); }
+  function fxFlash(color,dur){ ov.style.background=color||'#ff0000'; ov.style.opacity='0.6'; setTimeout(function(){ov.style.opacity='0';ov.style.background='';},dur); }
+  function fxFlicker(dur){ var end=Date.now()+dur; var iv=setInterval(function(){ if(Date.now()>end){clearInterval(iv);ov.style.opacity='0';return;} ov.style.background=Math.random()>0.5?'#ff0033':'#000'; ov.style.opacity=String(Math.random()*0.7); },50); }
+  function fxNoise(dur){ var ne=document.createElement('div'); ne.style.cssText='position:fixed;inset:0;z-index:9998;pointer-events:none;font-family:monospace;font-size:10px;color:rgba(255,0,0,0.15);overflow:hidden;line-height:1;white-space:pre;'; var ch='\u2588\u2591\u2592\u2593\u2502\u2500\u253c'; var r='';for(var i=0;i<80;i++){var row='';for(var j=0;j<120;j++)row+=ch[Math.floor(Math.random()*ch.length)];r+=row+'\n';} ne.textContent=r; document.body.appendChild(ne); var niv=setInterval(function(){var nr='';for(var i=0;i<80;i++){var row='';for(var j=0;j<120;j++)row+=ch[Math.floor(Math.random()*ch.length)];nr+=row+'\n';}ne.textContent=nr;},80); setTimeout(function(){clearInterval(niv);ne.remove();},dur); }
+  function fxBlackout(dur){ ov.style.background='#000'; ov.style.opacity='1'; log.style.visibility='hidden'; setTimeout(function(){ov.style.opacity='0';log.style.visibility='';},dur); }
   function next(){
-    if(idx >= lines.length){
-      var btn = $('briefing-start-btn');
-      btn.style.opacity = '1';
-      btn.style.borderColor = '#2a6a2a';
-      btn.style.color = '#2a6a2a';
-      return;
-    }
-    var line = lines[idx]; idx++;
-    if(line.type === 'gap'){ setTimeout(next, 400); return; }
-    var div = document.createElement('div');
-    if(line.type === 'sys'){
-      div.style.cssText = 'color:'+(line.warn?'#a44':'#335')+';font-size:13px;';
-      typeText(div, '[SYSTEM] '+line.text, 20, function(){ setTimeout(next, 300); });
-    } else {
-      div.style.cssText = 'color:'+line.color+';';
-      if(line.glitch) div.style.textShadow = '2px 0 #f00, -2px 0 #0ff';
-      typeText(div, '['+line.name+'] '+line.text, 25, function(){
-        if(line.glitch) setTimeout(function(){ div.style.textShadow='none'; }, 300);
-        setTimeout(next, line.glitch ? 600 : 350);
-      });
-    }
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+    if(idx>=lines.length){ var btn=$('briefing-start-btn'); btn.style.opacity='1'; btn.style.borderColor='#2a6a2a'; btn.style.color='#2a6a2a'; return; }
+    var line=lines[idx]; idx++;
+    if(line.type==='fx'){ var d=line.duration||500; if(line.fx==='shake')fxShake(d); else if(line.fx==='flash')fxFlash(line.color,d); else if(line.fx==='flicker')fxFlicker(d); else if(line.fx==='noise')fxNoise(d); else if(line.fx==='blackout')fxBlackout(d); setTimeout(next,d+100); return; }
+    if(line.type==='gap'){ setTimeout(next,400); return; }
+    var div=document.createElement('div');
+    if(line.type==='sys'){ div.style.cssText='color:'+(line.warn?'#a44':'#335')+';font-size:13px;'; typeText(div,'[SYSTEM] '+line.text,20,function(){setTimeout(next,300);}); }
+    else { div.style.cssText='color:'+line.color+';'; if(line.glitch)div.style.textShadow='2px 0 #f00, -2px 0 #0ff'; typeText(div,'['+line.name+'] '+line.text,25,function(){if(line.glitch)setTimeout(function(){div.style.textShadow='none';},300);setTimeout(next,line.glitch?600:350);}); }
+    log.appendChild(div); log.scrollTop=log.scrollHeight;
   }
-  setTimeout(next, 800);
+  setTimeout(next,800);
 }
 
 function typeText(el, text, speed, cb){

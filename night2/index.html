@@ -165,6 +165,7 @@
 
     #camera-close-bar { z-index: 50; }
 
+    @keyframes bfShake { 0%{transform:translate(0,0)} 25%{transform:translate(-6px,4px)} 50%{transform:translate(5px,-5px)} 75%{transform:translate(-4px,-3px)} 100%{transform:translate(6px,5px)} }
     /* ===== オーバーレイ ===== */
     .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 1s ease; }
     .overlay-screen.active { display: flex; opacity: 1; }
@@ -229,6 +230,7 @@
       font-size:1.1rem;letter-spacing:0.3em;cursor:pointer;
       opacity:0;transition:opacity 0.8s,background 0.2s,color 0.2s,border-color 0.2s;
     ">▶ broadcast_start</button>
+    <div id="glitch-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.1s;"></div>
   </div>
 
   <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
@@ -851,11 +853,15 @@ function showBriefing(){
     {type:'gap'},
     {type:'char', name:'まだら', text:'…本当にそうかな。ぼくのこと、見つけられる？', color:'#7b68ee'},
     {type:'char', name:'まだら', text:'…よく見てね。ぼくはうまく隠れるから。', color:'#7b68ee'},
+    {type:'char', name:'まだら', text:'見つけられなかったら…ど\u0336う\u0337な\u0334る\u0335か\u0336な\u0337', color:'#7b68ee', glitch:true},
+    {type:'fx', fx:'shake', duration:300},
+    {type:'sys', text:'character_error: opacity_fault', warn:true},
     {type:'gap'},
     {type:'char', name:'くるる', text:'まだらはちょっと見えにくいけど、カメラにうっすら映ってるよ！', color:'#5cb85c'},
-    {type:'char', name:'くるる', text:'見つけたら、モニターの電\u0336源\u0337を\u0334…', color:'#5cb85c', glitch:true},
-    {type:'sys', text:'character_error: recovered', warn:true},
-    {type:'gap'},
+    {type:'char', name:'くるる', text:'ぼくと同じで、POWERを入れれば大丈\u0336夫\u0337…だ\u0334と\u0335思\u0336う\u0337', color:'#5cb85c', glitch:true},
+    {type:'fx', fx:'flash', color:'#ff0033', duration:80},
+    {type:'fx', fx:'blackout', duration:1200},
+    {type:'sys', text:'system restored.'},
     {type:'sys', text:'broadcast ready.'}
   ];
   runBriefing(lines);
@@ -863,34 +869,26 @@ function showBriefing(){
 
 function runBriefing(lines){
   var log = $('briefing-log');
+  var ov = $('glitch-overlay');
+  var screen = $('briefing-screen');
   log.innerHTML = '';
   var idx = 0;
+  function fxShake(dur){ screen.style.animation='bfShake '+(dur<500?'0.05':'0.08')+'s infinite'; setTimeout(function(){screen.style.animation='';},dur); }
+  function fxFlash(color,dur){ ov.style.background=color||'#ff0000'; ov.style.opacity='0.6'; setTimeout(function(){ov.style.opacity='0';ov.style.background='';},dur); }
+  function fxFlicker(dur){ var end=Date.now()+dur; var iv=setInterval(function(){ if(Date.now()>end){clearInterval(iv);ov.style.opacity='0';return;} ov.style.background=Math.random()>0.5?'#ff0033':'#000'; ov.style.opacity=String(Math.random()*0.7); },50); }
+  function fxNoise(dur){ var ne=document.createElement('div'); ne.style.cssText='position:fixed;inset:0;z-index:9998;pointer-events:none;font-family:monospace;font-size:10px;color:rgba(255,0,0,0.15);overflow:hidden;line-height:1;white-space:pre;'; var ch='\u2588\u2591\u2592\u2593\u2502\u2500\u253c'; var r='';for(var i=0;i<80;i++){var row='';for(var j=0;j<120;j++)row+=ch[Math.floor(Math.random()*ch.length)];r+=row+'\n';} ne.textContent=r; document.body.appendChild(ne); var niv=setInterval(function(){var nr='';for(var i=0;i<80;i++){var row='';for(var j=0;j<120;j++)row+=ch[Math.floor(Math.random()*ch.length)];nr+=row+'\n';}ne.textContent=nr;},80); setTimeout(function(){clearInterval(niv);ne.remove();},dur); }
+  function fxBlackout(dur){ ov.style.background='#000'; ov.style.opacity='1'; log.style.visibility='hidden'; setTimeout(function(){ov.style.opacity='0';log.style.visibility='';},dur); }
   function next(){
-    if(idx >= lines.length){
-      var btn = $('briefing-start-btn');
-      btn.style.opacity = '1';
-      btn.style.borderColor = '#2a6a2a';
-      btn.style.color = '#2a6a2a';
-      return;
-    }
-    var line = lines[idx]; idx++;
-    if(line.type === 'gap'){ setTimeout(next, 400); return; }
-    var div = document.createElement('div');
-    if(line.type === 'sys'){
-      div.style.cssText = 'color:'+(line.warn?'#a44':'#335')+';font-size:13px;';
-      typeText(div, '[SYSTEM] '+line.text, 20, function(){ setTimeout(next, 300); });
-    } else {
-      div.style.cssText = 'color:'+line.color+';';
-      if(line.glitch) div.style.textShadow = '2px 0 #f00, -2px 0 #0ff';
-      typeText(div, '['+line.name+'] '+line.text, 25, function(){
-        if(line.glitch) setTimeout(function(){ div.style.textShadow='none'; }, 300);
-        setTimeout(next, line.glitch ? 600 : 350);
-      });
-    }
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+    if(idx>=lines.length){ var btn=$('briefing-start-btn'); btn.style.opacity='1'; btn.style.borderColor='#2a6a2a'; btn.style.color='#2a6a2a'; return; }
+    var line=lines[idx]; idx++;
+    if(line.type==='fx'){ var d=line.duration||500; if(line.fx==='shake')fxShake(d); else if(line.fx==='flash')fxFlash(line.color,d); else if(line.fx==='flicker')fxFlicker(d); else if(line.fx==='noise')fxNoise(d); else if(line.fx==='blackout')fxBlackout(d); setTimeout(next,d+100); return; }
+    if(line.type==='gap'){ setTimeout(next,400); return; }
+    var div=document.createElement('div');
+    if(line.type==='sys'){ div.style.cssText='color:'+(line.warn?'#a44':'#335')+';font-size:13px;'; typeText(div,'[SYSTEM] '+line.text,20,function(){setTimeout(next,300);}); }
+    else { div.style.cssText='color:'+line.color+';'; if(line.glitch)div.style.textShadow='2px 0 #f00, -2px 0 #0ff'; typeText(div,'['+line.name+'] '+line.text,25,function(){if(line.glitch)setTimeout(function(){div.style.textShadow='none';},300);setTimeout(next,line.glitch?600:350);}); }
+    log.appendChild(div); log.scrollTop=log.scrollHeight;
   }
-  setTimeout(next, 800);
+  setTimeout(next,800);
 }
 
 function typeText(el, text, speed, cb){
