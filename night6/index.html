@@ -57,7 +57,7 @@
     @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
     /* パワー */
-    #power-hud { position: absolute; z-index: 10; bottom: 20px; left: 20px; }
+    #power-hud { position: absolute; z-index: 100; bottom: 20px; left: 20px; pointer-events: none; }
     #power-hud .power-label { font-size: 14px; color: #5a8ab5; letter-spacing: 2px; margin-bottom: 4px; }
     #power-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #2a3a50; }
     #power-bar { height: 100%; background: #4c8; transition: width 0.5s; }
@@ -345,6 +345,10 @@
       </div>
 
       <button id="cam-toggle-area" class="cam-toggle-btn">OPEN CAMERA (SPACE)</button>
+      <div id="power-hud">
+        <div class="power-label">POWER: <span id="power-display">100</span>%</div>
+        <div id="power-bar-wrap"><div id="power-bar" style="width:100%"></div></div>
+      </div>
     </div>
 
     <!-- カメラビュー -->
@@ -376,10 +380,6 @@
           <button class="cam-btn" data-cam="7">CAM7</button>
           <button class="cam-btn" data-cam="8">CAM8</button>
         </div>
-        <div id="power-hud">
-          <div class="power-label">POWER: <span id="power-display">100</span>%</div>
-          <div id="power-bar-wrap"><div id="power-bar" style="width:100%"></div></div>
-        </div>
         <!-- クロックゲージ（キツネ団長用） -->
         <div id="clock-hud">
           <div class="clock-label">CLOCK: <span id="clock-display">100</span>%</div>
@@ -408,9 +408,11 @@
             <line x1="200" y1="200" x2="0" y2="400" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
             <line x1="200" y1="200" x2="0" y2="200" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
             <line x1="200" y1="200" x2="0" y2="0" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-            <circle cx="200" cy="200" r="30" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-            <circle cx="200" cy="200" r="60" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
-            <circle cx="200" cy="200" r="90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="40" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="80" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="160" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="200" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
           </svg>
         </div>
         <button id="camera-close-bar" class="cam-toggle-btn">CLOSE CAMERA (SPACE)</button>
