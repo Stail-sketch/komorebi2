@@ -263,11 +263,12 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
     LS.setItem('chat_unlocked','true');
     var btn = document.getElementById('chat-unlock-btn');
     if(btn){
-      btn.textContent = '\u2705 チャットが追加されました！デスクトップに戻ってね';
+      btn.textContent = '\u2705 チャットが追加されました';
       btn.style.color = '#4ca64c';
       btn.style.cursor = 'default';
       btn.onclick = null;
     }
+    setTimeout(function(){ window.location.href = '../index.html'; }, 1500);
   };
 
   // ---- Select Mail ----

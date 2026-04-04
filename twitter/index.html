@@ -1986,6 +1986,8 @@ function handleWarmupResponse(text){
         // onCompleteコールバック（ファイル送信等）
         if(script[stage-1].onComplete === 'sendYoshidaFiles'){
           localStorage.setItem('yoshida_files_sent', 'true');
+          setTimeout(function(){ window.location.href = '../index.html'; }, 2000);
+          return;
         }
         dmIsProcessing = false;
         setTimeout(renderDMChoices, 500);
