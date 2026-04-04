@@ -364,36 +364,6 @@ body.glitch-detect {
   animation: glitchCollapse 3s ease-in forwards;
 }
 
-/* 黒幕メッセージ */
-.kuromaku-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: #000;
-  color: #fff;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  font-size: 1.5rem;
-  letter-spacing: 0.1em;
-  line-height: 2.5;
-}
-
-.kuromaku-overlay {
-  display: none;
-}
-
-.kuromaku-overlay.active {
-  display: flex;
-}
-
-.kuromaku-overlay a {
-  color: #ff3333;
-  margin-top: 40px;
-  font-size: 1.2rem;
-}
 
 /* --- ON AIR バッジ --- */
 .on-air {
