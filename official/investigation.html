@@ -197,26 +197,6 @@
       window.location.href = 'index.html';
     }
 
-    // (evidence collection removed)
-    (function(){
-      var diffSection = document.getElementById('site-diff-section');
-      if (diffSection) {
-        var observer = new IntersectionObserver(function(entries) {
-          entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-              observer.disconnect();
-            }
-          });
-        }, { threshold: 0.3 });
-        observer.observe(diffSection);
-      }
-    })();
-  </script>
-  <script>
-(function(){
-  if(localStorage.getItem('night3_clear') === 'true' && !localStorage.getItem('night4_clear')) {
-  }
-})();
 </script>
 </body>
 </html>
