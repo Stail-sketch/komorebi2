@@ -160,44 +160,23 @@
     #clock-bar.low { background: #e06060; }
     #clock-bar.critical { background: #f22; animation: blink 0.5s infinite; }
 
-    /* ===== シールドUI（アラネ用） ===== */
-    #shield-hud {
-      position: absolute; z-index: 10; bottom: 50px; left: 20px;
-    }
-    .shield-label { font-size: 14px; color: #a070d0; letter-spacing: 2px; margin-bottom: 4px; }
-    #shield-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #4a2a6a; }
-    #shield-bar { height: 100%; background: #a060e0; transition: width 0.5s; }
-    #shield-bar.low { background: #e06060; }
-    #shield-bar.critical { background: #f22; animation: blink 0.5s infinite; }
-    #shield-add-btn {
-      margin-top: 6px; padding: 6px 18px;
-      background: rgba(60,30,90,0.8); border: 2px solid #6040a0;
-      color: #c090f0; font-family: 'Courier New', monospace; font-size: 12px;
-      cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
-    }
-    #shield-add-btn:hover { background: rgba(90,50,130,0.9); border-color: #a070d0; }
-
-    /* ===== よわり罪悪感インジケーター ===== */
-    #yowari-hud {
-      position: absolute; z-index: 10; top: 10px; left: 14px;
-      font-size: 14px; color: #8a8a6a; letter-spacing: 1px;
+    /* ===== 蜘蛛の巣ゲージUI ===== */
+    #web-gauge-ui {
+      position: absolute; z-index: 50; top: 20px; right: 20px; text-align: right; display: none;
     }
 
-    /* ===== かすみ警告 ===== */
-    #kasumi-warning {
-      position: absolute; z-index: 30; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2rem; color: #f44; letter-spacing: 0.3em;
-      text-shadow: 0 0 20px rgba(255,0,0,0.5);
-      display: none; pointer-events: none;
+    /* ===== よわり（カメラ内表示） ===== */
+    #camera-yowari {
+      animation: yowariCry 1s ease-in-out infinite;
     }
-    #kasumi-warning.active { display: block; animation: blink 0.5s infinite; }
+    @keyframes yowariCry {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-3px); }
+    }
 
-    /* かすみクリック領域 */
-    #kasumi-click-zone {
-      position: absolute; inset: 0; z-index: 25; cursor: pointer; display: none;
-    }
-    #kasumi-click-zone.active { display: block; }
+    /* ===== かすみオファーUI ===== */
+    #kasumi-offer p { margin: 0; }
+    #kasumi-accept, #kasumi-decline { pointer-events: auto; }
 
     /* ===== Blackmasterグリッチ ===== */
     #blackmaster-flash {
@@ -349,12 +328,21 @@
         <div class="hud-row">Night 6</div>
       </div>
 
-      <!-- よわり罪悪感インジケーター -->
-      <div id="yowari-hud">罪悪感: <span id="yowari-guilt">●○○○</span></div>
-
-      <!-- かすみ警告 -->
-      <div id="kasumi-warning">CLICK!</div>
-      <div id="kasumi-click-zone"></div>
+      <!-- かすみオファー -->
+      <div id="kasumi-offer" style="display:none; position:absolute; top:15.8%; left:27.7%; width:44.6%; height:48.5%; z-index:55; background:#000; border:2px solid #400; overflow:hidden;">
+        <p style="color:#c00; font-size:18px; font-weight:bold; text-shadow:0 0 15px rgba(200,0,0,0.8); letter-spacing:2px; text-align:center; padding-top:8px;">手を貸してあげようか？？</p>
+        <div style="display:flex; width:100%; height:calc(100% - 36px); align-items:center; justify-content:center;">
+          <div style="flex:0 0 25%; display:flex; align-items:center; justify-content:center;">
+            <button id="kasumi-accept" style="padding:12px 16px; background:#200; border:2px solid #c00; color:#c00; cursor:pointer; font-family:'Courier New',monospace; font-size:14px; letter-spacing:1px; transition:all 0.2s; writing-mode:vertical-rl;" onmouseover="this.style.background='#c00';this.style.color='#000'" onmouseout="this.style.background='#200';this.style.color='#c00'">受け取る</button>
+          </div>
+          <div style="flex:0 0 50%; display:flex; align-items:center; justify-content:center; height:100%;">
+            <img src="../image/character/kasumi-offer.png" alt="" style="max-width:100%; max-height:100%; pointer-events:none;">
+          </div>
+          <div style="flex:0 0 25%; display:flex; align-items:center; justify-content:center;">
+            <button id="kasumi-decline" style="padding:12px 16px; background:#111; border:2px solid #444; color:#444; cursor:pointer; font-family:'Courier New',monospace; font-size:14px; letter-spacing:1px; transition:all 0.2s; writing-mode:vertical-rl;" onmouseover="this.style.background='#444';this.style.color='#000'" onmouseout="this.style.background='#111';this.style.color='#444'">受け取らない</button>
+          </div>
+        </div>
+      </div>
 
       <button id="cam-toggle-area" class="cam-toggle-btn">OPEN CAMERA (SPACE)</button>
     </div>
@@ -371,9 +359,9 @@
         <!-- カメラクリック領域（キツネ時計巻き用） -->
         <div id="camera-click-zone"></div>
         <!-- DUCT入口ボタン（F2-CAM6の時だけ表示） -->
-        <button id="duct-enter-btn" class="hidden">▼ DUCT CAMERA</button>
+        <button id="duct-enter-btn" class="hidden">▼ DUCT CAMERA [W]</button>
         <!-- DUCT→CAM6に戻るボタン -->
-        <button id="duct-back-btn" class="hidden">▲ BACK TO CAM6</button>
+        <button id="duct-back-btn" class="hidden">▲ BACK [W]</button>
         <!-- UI -->
         <span id="camera-label">CAM 1</span>
         <span id="rec-indicator">● REC</span>
@@ -401,11 +389,33 @@
           <div class="clock-label">CLOCK: <span id="clock-display">100</span>%</div>
           <div id="clock-bar-wrap"><div id="clock-bar" style="width:100%"></div></div>
         </div>
-        <!-- シールドUI（アラネ用） -->
-        <div id="shield-hud">
-          <div class="shield-label">SHIELD: <span id="shield-display">100</span>%</div>
-          <div id="shield-bar-wrap"><div id="shield-bar" style="width:100%"></div></div>
-          <button id="shield-add-btn">+ REPAIR (R)</button>
+        <!-- 蜘蛛の巣ゲージ（アラネ用） -->
+        <div id="web-gauge-ui">
+          <div style="font-size:12px; color:#f80; letter-spacing:2px; margin-bottom:4px;">蜘蛛の巣</div>
+          <div style="width:120px; height:8px; background:#111; border:1px solid #f80;">
+            <div id="web-gauge-bar" style="height:100%; background:#f80; width:100%; transition:width 0.5s;"></div>
+          </div>
+          <div id="web-gauge-text" style="font-size:10px; color:#f80; margin-top:2px;">100%</div>
+        </div>
+        <!-- バグアイコン（電力回復用） -->
+        <div id="bug-icon" style="display:none;position:absolute;z-index:50;cursor:pointer;font-family:'Courier New',monospace;font-size:16px;color:#00ff41;text-shadow:0 0 8px rgba(0,255,65,0.6),0 0 20px rgba(0,255,65,0.2);background:none;padding:0;border:none;user-select:none;pointer-events:auto;transition:opacity 0.3s;" onclick="collectBugIcon()"></div>
+        <!-- よわり（カメラ内表示） -->
+        <img id="camera-yowari" class="hidden" src="../image/character/yowari nomal.png" alt="" onclick="clickYowari()" style="position:absolute; z-index:3; bottom:10%; left:50%; height:50%; transform:translateX(-50%); filter:brightness(0.50) contrast(1.15) saturate(0.25); cursor:pointer; pointer-events:auto;">
+        <!-- 蜘蛛の巣オーバーレイ -->
+        <div id="web-overlay" style="display:none; position:absolute; inset:0; z-index:7; pointer-events:none;">
+          <svg width="100%" height="100%" viewBox="0 0 400 400" style="position:absolute;inset:0;">
+            <line x1="200" y1="200" x2="200" y2="0" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="400" y2="0" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="400" y2="200" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="400" y2="400" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="200" y2="400" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="0" y2="400" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="0" y2="200" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+            <line x1="200" y1="200" x2="0" y2="0" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="30" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="60" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+            <circle cx="200" cy="200" r="90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          </svg>
         </div>
         <button id="camera-close-bar" class="cam-toggle-btn">CLOSE CAMERA (SPACE)</button>
       </div>
@@ -603,24 +613,33 @@ const MADARA_PATH_L = [6,3,4,7,'left_door'], MADARA_PATH_R = [6,2,5,8,'right_doo
 let madaraCam = 6, madaraPath = null, madaraIdx = 0, madaraDoor = null;
 let madaraMT = null, madaraDT = null;
 
-// --- かすみ ---
-const KASUMI_LIGHT_MIN = 15000, KASUMI_LIGHT_MAX = 20000, KASUMI_CLICK_TIME = 3000;
-let kasumiActive = false, kasumiTimer = null, kasumiClickTimer = null;
-let kasumiLightOff = false;
+// --- かすみ（オファーシステム）---
+const KS_OFFER_MIN = 20000, KS_OFFER_MAX = 30000;
+const KS_OFFER_TIMEOUT = 8000;
+const KS_NOISE_DURATION = 15000;
+const KS_DEBUFF_DURATION = 15000;
+const KS_SPEED_MULT = 2.0;
+const KS_WEB_DRAIN_MULT = 1.5;
+var kasumiDebuffActive = false;
+var kasumiTimer = null, kasumiNoiseTimer = null, kasumiDismissTimer = null;
+var kasumiDebuffTimer = null;
+var kasumiPending = false;
 
-// --- アラネ ---
-const ARANE_DECAY_INTERVAL = 20000, ARANE_DECAY_AMOUNT = 20;
-let shield = 100, araneDecayTimer = null;
+// --- アラネ（蜘蛛の巣ゲージ）---
+const WEB_DRAIN_RATE = 0.4;
+const WEB_REPLENISH_RATE = 2;
+var webGauge = 100, webDraining = true, webHolding = false, webTickId = null;
 
-// --- よわり ---
-const YOWARI_SPEEDS = [7000, 5000, 3500, 2000];
-const YOWARI_DOOR_WAIT = 4000;
-const YOWARI_PATH_OPTIONS = [
-  [5, 6, 7, 'left_door'],
-  [5, 6, 8, 'right_door'],
-];
-let yowariCam = 5, yowariPath = null, yowariIdx = 0, yowariDoor = null;
-let yowariSpeedStage = 0, yowariMT = null, yowariDT = null;
+// --- よわり（泣き声スポーン）---
+var yowariCam = -1, yowariCrying = false, yowariTimer = null;
+var yowariBuffActive = false;
+var YOWARI_SPEED_MULT = 1.5;
+var YOWARI_WEB_DRAIN_MULT = 2.0;
+
+// --- バグアイコン ---
+var bugSpawnTimer, bugDespawnTimer;
+var bugActiveCam = -1;
+var BUG_CODES = ['ERR_0x4F','SYS_NULL','0xDEAD','NaN','#REF!','FAULT','??:??','0x0000','ERR_K059','VOID','SEGFAULT','OVERFLOW','_NULL_','0xFFFF','ERR_MEM'];
 
 // ============================================================
 // Blackmaster攻撃
@@ -679,7 +698,6 @@ function openCamera() {
   sndClock.pause();
   updateClockHudVisibility();
   updateShieldHudVisibility();
-  incrementYowariGuilt();
 }
 
 function closeCamera() {
@@ -704,7 +722,6 @@ function switchCam(id) {
   updateShieldHudVisibility();
   if (currentFloor === 2) {
     checkKururuWatch();
-    incrementYowariGuilt();
   }
 }
 
@@ -731,7 +748,7 @@ function updateCameraView() {
       $('camera-bg').src = `../image/camera/CAM${curCam}.png`;
       $('camera-label').textContent = `F2 - CAM ${curCam}`;
     }
-    $('duct-enter-btn').classList.toggle('hidden', curCam !== 6);
+    $('duct-enter-btn').classList.toggle('hidden', curCam === 9);
     $('duct-back-btn').classList.toggle('hidden', curCam !== 9);
   }
   updateCameraChar();
@@ -754,11 +771,15 @@ function updateClockHudVisibility() {
   $('camera-click-zone').classList.toggle('active', show);
 }
 
-// --- シールドHUD表示制御 ---
+// --- 蜘蛛の巣ゲージ/よわり/バグアイコン表示制御 ---
 function updateShieldHudVisibility() {
-  const showShield = camOpen && currentFloor === 2;
-  $('shield-hud').style.display = showShield ? 'block' : 'none';
-  $('shield-add-btn').style.display = (camOpen && currentFloor === 2 && curCam === 9) ? 'block' : 'none';
+  updateWebGaugeUI();
+  updateYowariDisplay();
+  // バグアイコン表示更新
+  var bugEl = $('bug-icon');
+  if(bugEl && bugActiveCam >= 0) {
+    bugEl.style.display = (camOpen && currentFloor === 2 && curCam === bugActiveCam) ? 'block' : 'none';
+  }
 }
 
 // --- カメラ内キャラ表示（複数敵対応） ---
@@ -787,9 +808,6 @@ function updateCameraChar() {
     if (madaraCam === curCam && madaraCam > 0) {
       enemies.push({ name: 'madara', img: '../image/character/madara nomal.png', priority: madaraIdx || 0 });
     }
-    if (yowariCam === curCam && yowariCam > 0) {
-      enemies.push({ name: 'yowari', img: '../image/character/yowari nomal.png', priority: yowariIdx || 0 });
-    }
     if (curCam === 9) {
       enemies.push({ name: 'araane', img: '../image/character/araane nomal.png', priority: 0 });
     }
@@ -816,7 +834,6 @@ function updateCameraChar() {
 function togglePower(side) {
   if (!running) return;
   if (camOpen) return;
-  incrementYowariGuilt();
   if (side === 'left') {
     doorL = !doorL;
     $('left-door').classList.toggle('powered', doorL);
@@ -827,7 +844,6 @@ function togglePower(side) {
       // F2 enemies
       if (kururuDoor === 'left') defeatKururu();
       if (madaraDoor === 'left') defeatMadara();
-      if (yowariDoor === 'left') defeatYowari();
       // F1 enemies
       if (kaaDoor === 'left') defeatKaa();
       if (ukkichiDoor === 'left') defeatUkkichi();
@@ -844,7 +860,6 @@ function togglePower(side) {
       // F2 enemies
       if (kururuDoor === 'right') defeatKururu();
       if (madaraDoor === 'right') defeatMadara();
-      if (yowariDoor === 'right') defeatYowari();
       // F1 enemies
       if (kaaDoor === 'right') defeatKaa();
       if (ukkichiDoor === 'right') defeatUkkichi();
@@ -862,7 +877,6 @@ function setLight(side, on) {
   if (camOpen) return;
   if (on) {
     playS(sndLight);
-    incrementYowariGuilt();
   }
   if (side === 'left') {
     lightL = on;
@@ -1174,129 +1188,249 @@ function defeatMadara() {
 }
 
 // ============================================================
-// F2: かすみAI（ホタル）
+// F2: かすみAI（オファーシステム）
 // ============================================================
-function scheduleKasumiAttack() {
+function scheduleKasumiAttack() { scheduleKasumi(); }
+
+function scheduleKasumi() {
   clearTimeout(kasumiTimer);
-  const delay = KASUMI_LIGHT_MIN + Math.random() * (KASUMI_LIGHT_MAX - KASUMI_LIGHT_MIN);
-  kasumiTimer = setTimeout(kasumiLightOffAttack, delay);
-}
-
-function kasumiLightOffAttack() {
-  if (!running) return;
-  kasumiLightOff = true;
-  $('kasumi-warning').classList.add('active');
-  $('kasumi-click-zone').classList.add('active');
-  document.body.style.filter = 'brightness(0.15)';
-  kasumiClickTimer = setTimeout(() => {
-    if (!running || !kasumiLightOff) return;
-    gameOver('kasumi');
-  }, KASUMI_CLICK_TIME);
-}
-
-function kasumiClick() {
-  if (!kasumiLightOff || !running) return;
-  kasumiLightOff = false;
-  clearTimeout(kasumiClickTimer);
-  $('kasumi-warning').classList.remove('active');
-  $('kasumi-click-zone').classList.remove('active');
-  document.body.style.filter = '';
-  incrementYowariGuilt();
-  scheduleKasumiAttack();
-}
-
-// ============================================================
-// F2: アラネAI（クモ）
-// ============================================================
-function startAraneDecay() {
-  clearInterval(araneDecayTimer);
-  araneDecayTimer = setInterval(() => {
+  kasumiTimer = setTimeout(function() {
     if (!running) return;
-    shield = Math.max(0, shield - ARANE_DECAY_AMOUNT);
-    updateShieldDisplay();
-    if (shield <= 0) {
-      gameOver('araane');
-    }
-  }, ARANE_DECAY_INTERVAL);
+    showKasumiOffer();
+  }, KS_OFFER_MIN + Math.random() * (KS_OFFER_MAX - KS_OFFER_MIN));
 }
 
-function repairShield() {
+function showKasumiOffer() {
   if (!running) return;
-  shield = Math.min(100, shield + 25);
-  updateShieldDisplay();
-  incrementYowariGuilt();
+  if (camOpen) { kasumiPending = true; return; }
+  kasumiPending = false;
+  $('kasumi-offer').style.display = 'block';
+  clearTimeout(kasumiDismissTimer);
+  kasumiDismissTimer = setTimeout(function() {
+    hideKasumiOffer();
+  }, KS_OFFER_TIMEOUT);
 }
 
-function updateShieldDisplay() {
-  const s = Math.round(shield);
-  $('shield-display').textContent = s;
-  $('shield-bar').style.width = s + '%';
-  $('shield-bar').classList.toggle('low', s <= 30 && s > 15);
-  $('shield-bar').classList.toggle('critical', s <= 15);
+function hideKasumiOffer() {
+  $('kasumi-offer').style.display = 'none';
+  clearTimeout(kasumiDismissTimer);
+  if (running) scheduleKasumi();
+}
+
+function acceptKasumiOffer() {
+  if (!running) return;
+  power = Math.min(100, power + 20);
+  var p = Math.round(power);
+  $('power-display').textContent = p;
+  $('power-bar').style.width = p + '%';
+  $('power-bar').classList.toggle('low', p <= 25 && p > 10);
+  $('power-bar').classList.toggle('critical', p <= 10);
+  hideKasumiOffer();
+  startCameraNoise();
+  startKasumiDebuff();
+  var _origSetLight = setLight;
+  setLight = function(){};
+  setTimeout(function(){ setLight = _origSetLight; }, 3000);
+}
+
+function startKasumiDebuff() {
+  kasumiDebuffActive = true;
+  if(kasumiDebuffTimer) clearTimeout(kasumiDebuffTimer);
+  kasumiDebuffTimer = setTimeout(function() {
+    kasumiDebuffActive = false;
+  }, KS_DEBUFF_DURATION);
+}
+
+function declineKasumiOffer() {
+  hideKasumiOffer();
+}
+
+function startCameraNoise() {
+  if (kasumiNoiseTimer) clearTimeout(kasumiNoiseTimer);
+  $('camera-feed').style.filter = 'brightness(0.5) contrast(0.7) saturate(0)';
+  var noiseOv = document.createElement('div');
+  noiseOv.id = 'kasumi-noise-overlay';
+  noiseOv.style.cssText = 'position:absolute;inset:0;z-index:8;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.03) 2px,rgba(255,255,255,0.03) 4px);';
+  $('camera-feed').appendChild(noiseOv);
+  kasumiNoiseTimer = setTimeout(function() {
+    $('camera-feed').style.filter = '';
+    var ov = document.getElementById('kasumi-noise-overlay');
+    if(ov) ov.remove();
+  }, KS_NOISE_DURATION);
+}
+
+function getKasumiSpeedMult() {
+  return kasumiDebuffActive ? KS_SPEED_MULT : 1.0;
 }
 
 // ============================================================
-// F2: よわりAI（ヒツジ）
+// F2: アラネAI（蜘蛛の巣ゲージ）
 // ============================================================
-function scheduleYowariMove() {
-  clearTimeout(yowariMT);
-  yowariMT = setTimeout(moveYowari, YOWARI_SPEEDS[yowariSpeedStage]);
+function startAraneDecay() { startWebGauge(); }
+
+function startWebGauge() {
+  webGauge = 100;
+  webDraining = true;
+  webHolding = false;
+  updateWebGaugeUI();
+  clearInterval(webTickId);
+  webTickId = setInterval(webGaugeTick, 200);
 }
 
-function moveYowari() {
-  if (!running || yowariDoor) return;
-  if (!yowariPath || yowariCam === 5) {
-    yowariPath = YOWARI_PATH_OPTIONS[Math.random() < 0.5 ? 0 : 1];
-    yowariIdx = 0;
+function webGaugeTick() {
+  if (!running) return;
+  if (webHolding) {
+    webGauge = Math.min(100, webGauge + WEB_REPLENISH_RATE);
+  } else {
+    var drain = WEB_DRAIN_RATE * getYowariWebDrainMult();
+    if(kasumiDebuffActive) drain *= KS_WEB_DRAIN_MULT;
+    webGauge = Math.max(0, webGauge - drain);
   }
-  yowariIdx++;
-  if (yowariIdx >= yowariPath.length) {
-    const lastStep = yowariPath[yowariPath.length - 1];
-    yowariArriveAtDoor(lastStep === 'left_door' ? 'left' : 'right');
-    return;
-  }
-  const n = yowariPath[yowariIdx];
-  if (typeof n === 'number') yowariCam = n;
-  if (camOpen && currentFloor === 2) updateCameraChar();
-  scheduleYowariMove();
-}
-
-function yowariArriveAtDoor(side) {
-  yowariDoor = side; yowariCam = -1;
-  if (camOpen && currentFloor === 2) updateCameraChar();
-  updateSideEntity();
-  if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatYowari(); return; }
-  yowariDT = setTimeout(() => {
-    if (!running || yowariDoor !== side) return;
-    if ((side === 'left' && !doorL) || (side === 'right' && !doorR)) gameOver('yowari');
-  }, YOWARI_DOOR_WAIT);
-}
-
-function defeatYowari() {
-  clearTimeout(yowariDT);
-  yowariDoor = null; yowariCam = 5; yowariPath = null; yowariIdx = 0;
-  yowariSpeedStage = 0;
-  updateYowariGuiltDisplay();
-  updateSideEntity();
-  if (camOpen && currentFloor === 2) updateCameraChar();
-  scheduleYowariMove();
-}
-
-function incrementYowariGuilt() {
-  if (yowariSpeedStage < 3) {
-    yowariSpeedStage++;
-    updateYowariGuiltDisplay();
-    if (!yowariDoor) scheduleYowariMove();
+  updateWebGaugeUI();
+  if (camOpen && currentFloor === 2 && curCam === 9) updateCameraChar();
+  if (webGauge <= 0) {
+    clearInterval(webTickId);
+    gameOver('araane');
   }
 }
 
-function updateYowariGuiltDisplay() {
-  const symbols = [];
-  for (let i = 0; i < 4; i++) {
-    symbols.push(i < yowariSpeedStage ? '●' : '○');
-  }
-  $('yowari-guilt').textContent = symbols.join('');
+function startWebReplenish() {
+  if (!running || curCam !== 9 || !camOpen || currentFloor !== 2) return;
+  webHolding = true;
 }
+
+function stopWebReplenish() {
+  webHolding = false;
+}
+
+function updateWebGaugeUI() {
+  var bar = $('web-gauge-bar');
+  var text = $('web-gauge-text');
+  if (bar) bar.style.width = webGauge + '%';
+  if (text) text.textContent = Math.round(webGauge) + '%';
+  var color = webGauge > 50 ? '#f80' : webGauge > 25 ? '#f44' : '#f00';
+  if (bar) bar.style.background = color;
+  var webUI = $('web-gauge-ui');
+  if(webUI) { webUI.style.display = (camOpen && currentFloor === 2 && curCam === 9) ? 'block' : 'none'; }
+  var webOv = document.getElementById('web-overlay');
+  if(webOv) {
+    if(camOpen && currentFloor === 2 && curCam === 9) {
+      webOv.style.display = 'block';
+      var scale = webGauge / 100;
+      webOv.style.transform = 'scale(' + scale + ')';
+      webOv.style.opacity = (0.3 + scale * 0.7).toFixed(2);
+    } else {
+      webOv.style.display = 'none';
+    }
+  }
+}
+
+// ============================================================
+// F2: よわりAI（泣き声スポーン）
+// ============================================================
+function scheduleYowariMove() { scheduleYowari(); }
+
+function scheduleYowari() {
+  clearTimeout(yowariTimer);
+  var delay = 15000 + Math.random() * 10000;
+  yowariTimer = setTimeout(function() {
+    if (!running) return;
+    spawnYowari();
+  }, delay);
+}
+
+function spawnYowari() {
+  var cams = [1,2,3,4,5,6,7,8];
+  yowariCam = cams[Math.floor(Math.random() * cams.length)];
+  yowariCrying = true;
+  yowariBuffActive = true;
+  if (!window.yowariCrySound) {
+    window.yowariCrySound = new Audio('../sound/ribhavagrawal-a-woman-sobbing-type-3-265497.mp3');
+    window.yowariCrySound.loop = true;
+    window.yowariCrySound.volume = 0.3;
+  }
+  try { window.yowariCrySound.play(); } catch(e) {}
+  updateYowariDisplay();
+}
+
+function updateYowariDisplay() {
+  var el = document.getElementById('camera-yowari');
+  if (!el) return;
+  if (yowariCrying && camOpen && currentFloor === 2 && curCam === yowariCam) {
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function clickYowari() {
+  if (!yowariCrying) return;
+  yowariCrying = false;
+  yowariBuffActive = false;
+  yowariCam = -1;
+  if (window.yowariCrySound) {
+    window.yowariCrySound.pause();
+    window.yowariCrySound.currentTime = 0;
+  }
+  var el = document.getElementById('camera-yowari');
+  if (el) el.classList.add('hidden');
+  scheduleYowari();
+}
+
+function getYowariSpeedMult() {
+  return yowariBuffActive ? YOWARI_SPEED_MULT : 1.0;
+}
+
+function getYowariWebDrainMult() {
+  return yowariBuffActive ? YOWARI_WEB_DRAIN_MULT : 1.0;
+}
+
+// ============================================================
+// バグアイコン（電力回復）
+// ============================================================
+function scheduleBugIcon(){
+  if(!running) return;
+  var delay = 15000 + Math.random() * 20000;
+  bugSpawnTimer = setTimeout(spawnBugIcon, delay);
+}
+
+function spawnBugIcon(){
+  if(!running) return;
+  var el = $('bug-icon');
+  bugActiveCam = Math.floor(Math.random() * 8) + 1;
+  el.style.top = (15 + Math.random() * 60) + '%';
+  el.style.left = (10 + Math.random() * 70) + '%';
+  el.textContent = BUG_CODES[Math.floor(Math.random() * BUG_CODES.length)];
+  if(camOpen && currentFloor === 2 && curCam === bugActiveCam){
+    el.style.display = 'block'; el.style.opacity = '1';
+  }
+  bugDespawnTimer = setTimeout(function(){
+    el.style.display = 'none';
+    bugActiveCam = -1;
+    scheduleBugIcon();
+  }, 20000);
+}
+
+function collectBugIcon(){
+  var el = $('bug-icon');
+  el.style.opacity = '0';
+  setTimeout(function(){ el.style.display = 'none'; }, 300);
+  bugActiveCam = -1;
+  clearTimeout(bugDespawnTimer);
+  var recover = 2 + Math.random();
+  power = Math.min(100, power + recover);
+  var p = Math.round(power);
+  $('power-display').textContent = p;
+  $('power-bar').style.width = p + '%';
+  $('power-bar').classList.toggle('low', p <= 25 && p > 10);
+  $('power-bar').classList.toggle('critical', p <= 10);
+  scheduleBugIcon();
+}
+
+// 互換用ダミー関数
+function defeatYowari() {}
+function updateYowariGuiltDisplay() {}
+function incrementYowariGuilt() {}
 
 // ============================================================
 // Blackmaster攻撃 - ランダムにドアを開ける
@@ -1344,7 +1478,7 @@ function startGame() {
   $('start-screen').classList.add('fade-out');
   setTimeout(() => {
     $('start-screen').classList.remove('active');
-    running = true; elapsed = 0; power = 100; shield = 100; clockGauge = 100;
+    running = true; elapsed = 0; power = 100; webGauge = 100; clockGauge = 100;
     sndBGM.play().catch(()=>{});
     sndClock.play().catch(()=>{});
     tickId = setInterval(gameTick, 1000);
@@ -1362,13 +1496,12 @@ function startGame() {
     scheduleKasumiAttack();
     startAraneDecay();
     scheduleYowariMove();
+    scheduleBugIcon();
 
     // Blackmaster
     scheduleBlackmasterAttack();
 
-    updateShieldDisplay();
     updateClockDisplay();
-    updateYowariGuiltDisplay();
     updateShieldHudVisibility();
   }, 1500);
 }
@@ -1411,10 +1544,9 @@ function powerOut() {
 function gameOver(killer) {
   running = false; clearAllTimers(); stopAllSounds();
   // かすみエフェクト解除
-  kasumiLightOff = false;
-  $('kasumi-warning').classList.remove('active');
-  $('kasumi-click-zone').classList.remove('active');
-  document.body.style.filter = '';
+  $('kasumi-offer').style.display = 'none';
+  $('camera-feed').style.filter = '';
+  var _ksNov = document.getElementById('kasumi-noise-overlay'); if(_ksNov) _ksNov.remove();
   // Blackmasterエフェクト解除
   $('blackmaster-flash').classList.remove('active');
   $('blackmaster-text').classList.remove('active');
@@ -1443,10 +1575,9 @@ function gameOver(killer) {
 function nightClear() {
   running = false; clearAllTimers(); stopAllSounds();
   // かすみエフェクト解除
-  kasumiLightOff = false;
-  $('kasumi-warning').classList.remove('active');
-  $('kasumi-click-zone').classList.remove('active');
-  document.body.style.filter = '';
+  $('kasumi-offer').style.display = 'none';
+  $('camera-feed').style.filter = '';
+  var _ksNov2 = document.getElementById('kasumi-noise-overlay'); if(_ksNov2) _ksNov2.remove();
 
   localStorage.setItem('night6_clear', 'true');
   localStorage.setItem('night6_pages_unlocked', 'true');
@@ -1481,9 +1612,11 @@ function clearAllTimers() {
   // F2 timers
   clearTimeout(kururuMT); clearTimeout(kururuDT); clearTimeout(kururuWT);
   clearTimeout(madaraMT); clearTimeout(madaraDT);
-  clearTimeout(kasumiTimer); clearTimeout(kasumiClickTimer);
-  clearInterval(araneDecayTimer);
-  clearTimeout(yowariMT); clearTimeout(yowariDT);
+  clearTimeout(kasumiTimer); clearTimeout(kasumiDismissTimer); clearTimeout(kasumiNoiseTimer); clearTimeout(kasumiDebuffTimer);
+  clearInterval(webTickId);
+  clearTimeout(yowariTimer);
+  clearTimeout(bugSpawnTimer); clearTimeout(bugDespawnTimer);
+  if(window.yowariCrySound){ window.yowariCrySound.pause(); window.yowariCrySound.currentTime=0; }
   // Blackmaster
   clearTimeout(bmTimer);
 }
@@ -1518,12 +1651,15 @@ function retryGame() {
   // F2リセット
   kururuCam = 1; kururuPath = null; kururuIdx = 0; kururuDoor = null; kururuSpd = 'normal';
   madaraCam = 6; madaraPath = null; madaraIdx = 0; madaraDoor = null;
-  kasumiActive = false; kasumiLightOff = false;
-  $('kasumi-warning').classList.remove('active');
-  $('kasumi-click-zone').classList.remove('active');
-  document.body.style.filter = '';
-  shield = 100;
-  yowariCam = 5; yowariPath = null; yowariIdx = 0; yowariDoor = null; yowariSpeedStage = 0;
+  kasumiDebuffActive = false; kasumiPending = false;
+  $('kasumi-offer').style.display = 'none';
+  $('camera-feed').style.filter = '';
+  var _ksNov3 = document.getElementById('kasumi-noise-overlay'); if(_ksNov3) _ksNov3.remove();
+  webGauge = 100; webHolding = false;
+  yowariCam = -1; yowariCrying = false; yowariBuffActive = false;
+  if(window.yowariCrySound){ window.yowariCrySound.pause(); window.yowariCrySound.currentTime=0; }
+  var _yEl = document.getElementById('camera-yowari'); if(_yEl) _yEl.classList.add('hidden');
+  bugActiveCam = -1; var _bugEl=$('bug-icon'); if(_bugEl) _bugEl.style.display='none';
 
   $('left-door').classList.remove('powered','lit'); $('right-door').classList.remove('powered','lit');
   $('left-entity').classList.remove('visible'); $('right-entity').classList.remove('visible');
@@ -1535,9 +1671,8 @@ function retryGame() {
   $('power-display').textContent = '100';
   $('power-bar').style.width = '100%';
   $('power-bar').classList.remove('low', 'critical');
-  $('shield-display').textContent = '100';
-  $('shield-bar').style.width = '100%';
-  $('shield-bar').classList.remove('low', 'critical');
+  if($('web-gauge-bar')) $('web-gauge-bar').style.width = '100%';
+  if($('web-gauge-text')) $('web-gauge-text').textContent = '100%';
   $('clock-display').textContent = '100';
   $('clock-bar').style.width = '100%';
   $('clock-bar').classList.remove('low', 'critical');
@@ -1548,7 +1683,6 @@ function retryGame() {
 
   // フロアボタンリセット
   document.querySelectorAll('.floor-btn').forEach(b => b.classList.toggle('active', +b.dataset.floor === 2));
-  updateYowariGuiltDisplay();
 }
 
 // ============================================================
@@ -1792,11 +1926,16 @@ document.querySelectorAll('.btn-light').forEach(b => {
   b.addEventListener('mouseleave', () => setLight(b.dataset.side, false));
 });
 
-// かすみクリック
-$('kasumi-click-zone').addEventListener('click', kasumiClick);
+// かすみオファーボタン
+$('kasumi-accept').addEventListener('click', acceptKasumiOffer);
+$('kasumi-decline').addEventListener('click', declineKasumiOffer);
 
-// シールド修復
-$('shield-add-btn').addEventListener('click', () => { if (running && camOpen && currentFloor === 2) repairShield(); });
+// 蜘蛛の巣ゲージ：DUCT CAM (cam9)での長押し
+$('camera-feed').addEventListener('mousedown', function(e) {
+  if (running && camOpen && currentFloor === 2 && curCam === 9) startWebReplenish();
+});
+$('camera-feed').addEventListener('mouseup', stopWebReplenish);
+$('camera-feed').addEventListener('mouseleave', stopWebReplenish);
 
 // カメラクリック領域（キツネ時計巻き）
 $('camera-click-zone').addEventListener('click', windClock);
@@ -1811,7 +1950,7 @@ document.addEventListener('keydown', e => {
     case 'a': setLight('left', true); break;
     case 'd': setLight('right', true); break;
     case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
-    case 'r': if (camOpen && currentFloor === 2) repairShield(); break;
+    case 'w': if (camOpen && currentFloor === 2) { curCam === 9 ? switchCam(f2LastCam || 1) : switchCam(9); } break;
   }
   // 数字キーでカメラ切替
   if (camOpen) {
@@ -1830,7 +1969,7 @@ document.addEventListener('keyup', e => {
 applySideAreas();
 window.addEventListener('resize', applySideAreas);
 // 初期状態でシールドHUD非表示
-$('shield-hud').style.display = 'none';
+$('web-gauge-ui').style.display = 'none';
 </script>
 </body>
 </html>
