@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXTRA - あの番組を覚えていますか 〜木漏れ日遊園地編〜</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0a0a0a;color:#c8c8c8;
+  font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN','Courier New',monospace;
+  min-height:100vh;padding:0;
+}
+a{color:#0a0;text-decoration:none;transition:color 0.2s;}
+a:hover{color:#0f0;}
+
+/* ヘッダー */
+.extra-header{
+  text-align:center;padding:60px 20px 40px;
+  border-bottom:1px solid #1a3a1a;
+}
+.extra-header h1{
+  font-size:clamp(20px,4vw,32px);color:#0a0;letter-spacing:0.3em;
+  font-family:'Courier New',monospace;
+}
+.extra-header .sub{
+  font-size:13px;color:#335;margin-top:12px;letter-spacing:0.1em;
+}
+
+/* ナビゲーション */
+.extra-nav{
+  display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+  padding:20px;border-bottom:1px solid #111;
+  position:sticky;top:0;background:#0a0a0a;z-index:100;
+}
+.extra-nav a{
+  padding:8px 20px;border:1px solid #1a3a1a;color:#0a0;
+  font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.1em;
+  transition:all 0.2s;
+}
+.extra-nav a:hover,.extra-nav a.active{background:#0a0;color:#000;border-color:#0a0;}
+
+/* セクション */
+.section{
+  max-width:900px;margin:0 auto;padding:60px 20px;
+  border-bottom:1px solid #111;
+}
+.section-title{
+  font-size:clamp(16px,3vw,22px);color:#0a0;letter-spacing:0.2em;
+  font-family:'Courier New',monospace;
+  border-bottom:1px solid #1a3a1a;padding-bottom:12px;margin-bottom:30px;
+}
+
+/* ストーリー解説 */
+.story-block{margin-bottom:40px;}
+.story-block h3{
+  font-size:16px;color:#6a8a6a;letter-spacing:0.15em;margin-bottom:12px;
+}
+.story-block p{
+  line-height:2.2;font-size:15px;margin-bottom:16px;color:#aaa;
+}
+.story-block .emphasis{color:#0a0;}
+.story-block .redacted{color:#c88;background:rgba(200,100,100,0.1);padding:0 4px;}
+.story-timeline{
+  border-left:2px solid #1a3a1a;padding-left:20px;margin:20px 0;
+}
+.story-timeline .year{
+  color:#0a0;font-family:'Courier New',monospace;font-size:14px;
+  margin-bottom:4px;
+}
+.story-timeline .event{
+  color:#888;font-size:14px;line-height:1.8;margin-bottom:16px;
+}
+
+/* キャラクター */
+.chara-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:24px;
+}
+.chara-card{
+  background:#0f0f0f;border:1px solid #1a1a2a;border-radius:4px;
+  overflow:hidden;transition:border-color 0.2s;
+}
+.chara-card:hover{border-color:#0a0;}
+.chara-card img{
+  width:100%;height:200px;object-fit:contain;background:#080808;
+  padding:16px;
+}
+.chara-card .info{padding:16px;}
+.chara-card .name{
+  font-size:16px;color:#e0e0e0;letter-spacing:0.1em;margin-bottom:4px;
+}
+.chara-card .species{
+  font-size:12px;color:#0a0;letter-spacing:0.08em;margin-bottom:8px;
+  font-family:'Courier New',monospace;
+}
+.chara-card .desc{
+  font-size:13px;color:#888;line-height:1.8;
+}
+.chara-card .emotion{
+  display:inline-block;margin-top:8px;padding:2px 8px;
+  border:1px solid #333;color:#666;font-size:11px;
+  font-family:'Courier New',monospace;
+}
+.chara-divider{
+  grid-column:1/-1;text-align:center;padding:20px 0;
+  color:#335;font-size:13px;letter-spacing:0.2em;
+  border-top:1px solid #111;
+  font-family:'Courier New',monospace;
+}
+
+/* ギャラリー */
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:16px;
+}
+.gallery-item{
+  background:#080808;border:1px solid #1a1a1a;border-radius:4px;
+  overflow:hidden;cursor:pointer;transition:border-color 0.2s;
+}
+.gallery-item:hover{border-color:#0a0;}
+.gallery-item img{
+  width:100%;height:160px;object-fit:contain;padding:12px;
+  background:#050505;
+}
+.gallery-item .caption{
+  padding:8px;font-size:11px;color:#666;text-align:center;
+  font-family:'Courier New',monospace;letter-spacing:0.05em;
+}
+
+/* ライトボックス */
+#lightbox{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,0.95);
+  align-items:center;justify-content:center;cursor:pointer;
+}
+#lightbox.active{display:flex;}
+#lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;}
+
+/* 開発者コメント */
+.dev-comment{
+  background:#0f0f0f;border:1px solid #1a1a2a;border-radius:4px;
+  padding:30px;line-height:2.2;font-size:15px;color:#999;
+}
+.dev-comment .sign{
+  text-align:right;margin-top:20px;color:#0a0;
+  font-family:'Courier New',monospace;font-size:13px;
+}
+
+/* フッター */
+.extra-footer{
+  text-align:center;padding:40px 20px;
+  color:#333;font-size:12px;letter-spacing:0.1em;
+}
+.extra-footer a{color:#335;}
+</style>
+</head>
+<body>
+
+<div class="extra-header">
+  <h1>EXTRA</h1>
+  <div class="sub">あの番組を覚えていますか 〜木漏れ日遊園地編〜</div>
+</div>
+
+<nav class="extra-nav">
+  <a href="#story" class="active">STORY</a>
+  <a href="#characters">CHARACTERS</a>
+  <a href="#gallery">GALLERY</a>
+  <a href="#devcomment">DEV COMMENT</a>
+</nav>
+
+<!-- ========== ストーリー解説 ========== -->
+<div class="section" id="story">
+  <h2 class="section-title">// STORY</h2>
+
+  <div class="story-block">
+    <h3>タイムライン</h3>
+    <div class="story-timeline">
+      <div class="year">1986</div>
+      <div class="event">ゆめスタジオプロダクション設立。主任研究者が地下施設に意識転移システムを構築。</div>
+
+      <div class="year">1987</div>
+      <div class="event">吉田あかね誕生。吉田一郎、セット設計者としてゆめスタジオに参加。</div>
+
+      <div class="year">1990</div>
+      <div class="event">主任研究者が自らの意識をシステムに転送。肉体を捨て、データ生命体（黒幕）となる。意識転移の実験が本格化。</div>
+
+      <div class="year">1991</div>
+      <div class="event">子ども向け教養番組「木漏れ日遊園地」放送開始。キツネ団長・かあ博士・ぽたまる・うっきちの4体が出演。</div>
+
+      <div class="year">1995</div>
+      <div class="event">吉田あかね（8歳）が「発達検査」と称された実験で意識をキツネ団長に転移される。被験者G-0。</div>
+
+      <div class="year">1997</div>
+      <div class="event">番組終了。制作スタッフの多くが消失または離散。全アーカイブテープ破棄。</div>
+
+      <div class="year">2026</div>
+      <div class="event">黒幕が新たな番組「あの番組を覚えていますか〜木漏れ日遊園地編〜」を放送。59番目の収集対象K-059（プレイヤー）が接続。</div>
+    </div>
+  </div>
+
+  <div class="story-block">
+    <h3>前作「木漏れ日遊園地」</h3>
+    <p>1991年から1997年まで放送された子ども向け教養番組。キツネ団長を中心に、かあ博士・ぽたまる・うっきちの4体のアニマトロニクスが出演していた。</p>
+    <p>表向きは教育番組だったが、その裏では子どもたちの意識データを収集する実験が行われていた。「発達検査」と称された検査を受けた子どもたちの意識は、アニマトロニクスの中に転移された。</p>
+    <p>番組終了後、システムは停止したかに見えた。だが最後に残されたメッセージ——<span class="emphasis">「PROCESS STILL RUNNING」</span>——は、何かがまだ動き続けていることを示していた。</p>
+  </div>
+
+  <div class="story-block">
+    <h3>今作「木漏れ日遊園地編」</h3>
+    <p>2026年。黒幕はインターネットを通じて新たな番組を放送し始めた。プレイヤーは59番目の収集対象「K-059」として、この番組に接続してしまう。</p>
+    <p>吉田一郎は黒幕に協力していた。娘のあかねを取り戻すという嘘の約束を信じて、30年間。しかしプレイヤーとの交流を通じて、吉田は真実に気づく。</p>
+    <p>新たに5体の思念体——くるる・まだら・かすみ・アラネ・よわり——が作られ、プレイヤーの感情データを収集するために夜ごとに動き出す。</p>
+  </div>
+
+  <div class="story-block">
+    <h3>二つの結末</h3>
+    <p><span class="emphasis">Ending B</span> —— プレイヤーの感情データ収集は「不足」と判定される。だが黒幕は動じない。<span class="emphasis">「予定通りです」</span>。全ては2周目の計画の一部だった。</p>
+    <p><span class="emphasis">Ending A</span> —— 吉田一郎が決断する。36年間すがり続けた娘のデータを手放し、システムを破壊することを選ぶ。黒幕は抵抗するが、吉田はそれを押し切る。あかねの最後の言葉が聞こえる——<span class="redacted">「…パパ」「…ありがとう」</span>。</p>
+  </div>
+</div>
+
+<!-- ========== キャラクター設定資料 ========== -->
+<div class="section" id="characters">
+  <h2 class="section-title">// CHARACTERS</h2>
+
+  <div class="chara-grid">
+    <!-- 新キャラ5体 -->
+    <div class="chara-card">
+      <img src="../image/character/kururu nomal.png" alt="くるる">
+      <div class="info">
+        <div class="name">くるる</div>
+        <div class="species">SQUIRREL / リス</div>
+        <div class="desc">好奇心旺盛で純粋な性格。カメラで見つめると動きが遅くなる。仲間思いで、崩壊していく仲間たちを必死に止めようとする。</div>
+        <div class="emotion">収集感情: 好奇心</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/character/madara nomal.png" alt="まだら">
+      <div class="info">
+        <div class="name">まだら</div>
+        <div class="species">CHAMELEON / カメレオン</div>
+        <div class="desc">冷静で寡黙。カメラにはほとんど映らない（opacity 0.1）。注意深く観察しないと存在に気づけない。状況を俯瞰的に分析する。</div>
+        <div class="emotion">収集感情: 不信感</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/character/kasumi nomal.png" alt="かすみ">
+      <div class="info">
+        <div class="name">かすみ</div>
+        <div class="species">DEER / シカ</div>
+        <div class="desc">穏やかで優しいが、その親切には代償がある。電力を回復させてくれるが、引き換えにカメラにノイズが走り、敵が加速する。</div>
+        <div class="emotion">収集感情: 郷愁</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/character/araane nomal.png" alt="アラネ">
+      <div class="info">
+        <div class="name">アラネ</div>
+        <div class="species">SPIDER / クモ</div>
+        <div class="desc">ダクト内に巣を張り、ゲージが0%になると突撃してくる。巣を維持するにはダクトカメラで長押しし続ける必要がある。</div>
+        <div class="emotion">収集感情: 執着</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/character/yowari nomal.png" alt="よわり">
+      <div class="info">
+        <div class="name">よわり</div>
+        <div class="species">SHEEP / ヒツジ</div>
+        <div class="desc">泣き虫で心優しい。カメラのどこかに現れて泣き始める。泣いている間は全ての敵が加速し、蜘蛛の巣のドレインが倍増する。</div>
+        <div class="emotion">収集感情: 罪悪感</div>
+      </div>
+    </div>
+
+    <div class="chara-divider">── LEGACY CAST ──</div>
+
+    <!-- 前作キャラ4体 -->
+    <div class="chara-card">
+      <img src="../image/charas_f1/kitsune_normal.png" alt="キツネ団長">
+      <div class="info">
+        <div class="name">キツネ団長</div>
+        <div class="species">FOX / キツネ</div>
+        <div class="desc">前作の司会役。懐中時計が特徴。CAM2に固定されており、時計ゲージが0%になるとゲームオーバー。吉田の娘・あかねの意識が宿っている。</div>
+        <div class="emotion">被験者: G-0（吉田あかね）</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/charas_f1/kaa_normal.png" alt="かあ博士">
+      <div class="info">
+        <div class="name">かあ博士</div>
+        <div class="species">CROW / カラス</div>
+        <div class="desc">物知りな博士キャラ。黒幕との接続が最も強く、吉田の影響を受けられなかった。カメラ経路を移動してドアに到達する。</div>
+        <div class="emotion">被験者: G-1</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/charas_f1/ukkichi_normal.png" alt="うっきち">
+      <div class="info">
+        <div class="name">うっきち</div>
+        <div class="species">MONKEY / サル</div>
+        <div class="desc">いたずら好きのムードメーカー。恐怖反応を集めすぎて制御不能に陥っている。カメラに映った方と反対側のドアから侵入してくる。</div>
+        <div class="emotion">被験者: G-3</div>
+      </div>
+    </div>
+
+    <div class="chara-card">
+      <img src="../image/charas_f1/potamaru_normal.png" alt="ぽたまる">
+      <div class="info">
+        <div class="name">ぽたまる</div>
+        <div class="species">TANUKI / タヌキ</div>
+        <div class="desc">まんまるで可愛い太鼓持ち。カメラには映るが、攻撃は音楽で行う。音楽AかBを聞き分けて正しいドアを閉める必要がある。</div>
+        <div class="emotion">被験者: G-2</div>
+      </div>
+    </div>
+
+    <div class="chara-divider">── KEY CHARACTERS ──</div>
+
+    <div class="chara-card" style="grid-column:span 2;">
+      <div class="info">
+        <div class="name">吉田一郎</div>
+        <div class="species">HUMAN / 人間</div>
+        <div class="desc">ゆめスタジオのセット設計者。1995年に娘のあかねを失い、黒幕の「娘を取り戻す」という嘘の約束を信じて30年間協力し続けた。プレイヤーとの交流を通じて真実に気づき、最終的にシステムの破壊を決意する。管理者権限を持つ唯一の人間。</div>
+      </div>
+    </div>
+
+    <div class="chara-card" style="grid-column:span 2;">
+      <div class="info">
+        <div class="name">████████（黒幕）</div>
+        <div class="species">DATA ENTITY / データ生命体</div>
+        <div class="desc">ゆめスタジオの元主任研究者。自らの意志で意識転送を行い、システムそのものとなった。放送設備・サーバー・ネットワーク全てが「体」であり、インターネットを通じてプレイヤーのPCに直接接続する。目的は十分な量の人間の意識データを収集し「完全」になること。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ギャラリー ========== -->
+<div class="section" id="gallery">
+  <h2 class="section-title">// GALLERY</h2>
+
+  <h3 style="color:#6a8a6a;font-size:14px;letter-spacing:0.15em;margin-bottom:16px;">新キャスト</h3>
+  <div class="gallery-grid">
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/kururu nomal.png" alt="">
+      <div class="caption">くるる</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/kururu jumpscare.png" alt="">
+      <div class="caption">くるる [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/kururu door.png" alt="">
+      <div class="caption">くるる [DOOR]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/madara nomal.png" alt="">
+      <div class="caption">まだら</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/madara jumpscare.png" alt="">
+      <div class="caption">まだら [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/madara door.png" alt="">
+      <div class="caption">まだら [DOOR]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/kasumi nomal.png" alt="">
+      <div class="caption">かすみ</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/kasumi jumpscare.png" alt="">
+      <div class="caption">かすみ [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/kasumi door.png" alt="">
+      <div class="caption">かすみ [DOOR]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/araane nomal.png" alt="">
+      <div class="caption">アラネ</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/arane jumpscare.png" alt="">
+      <div class="caption">アラネ [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/yowari nomal.png" alt="">
+      <div class="caption">よわり</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/character/yowari jumpscare.png" alt="">
+      <div class="caption">よわり [JUMPSCARE]</div>
+    </div>
+  </div>
+
+  <h3 style="color:#6a8a6a;font-size:14px;letter-spacing:0.15em;margin:30px 0 16px;">旧キャスト</h3>
+  <div class="gallery-grid">
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/kitsune_normal.png" alt="">
+      <div class="caption">キツネ団長</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/kitsune_jumpscare.png" alt="">
+      <div class="caption">キツネ団長 [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/kaa_normal.png" alt="">
+      <div class="caption">かあ博士</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/kaa_jumpscare.png" alt="">
+      <div class="caption">かあ博士 [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/kaa_door.png" alt="">
+      <div class="caption">かあ博士 [DOOR]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/ukkichi_normal.png" alt="">
+      <div class="caption">うっきち</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/ukkichi_jumpscare.png" alt="">
+      <div class="caption">うっきち [JUMPSCARE]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/ukkichi_door.png" alt="">
+      <div class="caption">うっきち [DOOR]</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/potamaru_normal.png" alt="">
+      <div class="caption">ぽたまる</div>
+    </div>
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="../image/charas_f1/potamaru_jumpscare.png" alt="">
+      <div class="caption">ぽたまる [JUMPSCARE]</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 開発者コメント ========== -->
+<div class="section" id="devcomment">
+  <h2 class="section-title">// DEVELOPER COMMENT</h2>
+
+  <div class="dev-comment">
+    <p>（ここにすたぁいるさんのコメントが入ります）</p>
+    <br>
+    <p>前作を作った時の感想、今作に対する思い、この作品で伝えたかったこと……</p>
+    <br>
+    <p>（後日差し替え予定）</p>
+    <div class="sign">— すたぁいる</div>
+  </div>
+</div>
+
+<div class="extra-footer">
+  <a href="../index.html">デスクトップに戻る</a>
+</div>
+
+<!-- ライトボックス -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+// アクセス制限
+if(localStorage.getItem('ending_a_seen') !== 'true'){
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#333;font-family:monospace;">Ending Aをクリアすると解放されます</div>';
+}
+
+// ライトボックス
+function openLightbox(el){
+  var img = el.querySelector('img');
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+// ナビゲーションハイライト
+document.querySelectorAll('.extra-nav a').forEach(function(a){
+  a.addEventListener('click', function(){
+    document.querySelectorAll('.extra-nav a').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+  });
+});
+
+// スクロール連動
+window.addEventListener('scroll', function(){
+  var sections = document.querySelectorAll('.section');
+  var navLinks = document.querySelectorAll('.extra-nav a');
+  var current = '';
+  sections.forEach(function(s){
+    if(window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(function(a){
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
