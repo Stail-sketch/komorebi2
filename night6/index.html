@@ -365,11 +365,7 @@
         <!-- UI -->
         <span id="camera-label">CAM 1</span>
         <span id="rec-indicator">● REC</span>
-        <!-- F1/F2フロア切替 -->
-        <div id="floor-buttons">
-          <button class="floor-btn" data-floor="1">F1 ゆめスタジオ</button>
-          <button class="floor-btn active" data-floor="2">F2 現在</button>
-        </div>
+        <!-- フロアボタン廃止（全CAMがF1背景に侵食済み） -->
         <div id="cam-buttons">
           <button class="cam-btn active" data-cam="1">CAM1</button>
           <button class="cam-btn" data-cam="2">CAM2</button>
@@ -723,9 +719,7 @@ function switchCam(id) {
   updateCamButtons();
   updateClockHudVisibility();
   updateShieldHudVisibility();
-  if (currentFloor === 2) {
-    checkKururuWatch();
-  }
+  checkKururuWatch();
 }
 
 function triggerNoise() {
@@ -735,32 +729,22 @@ function triggerNoise() {
 }
 
 function updateCameraView() {
-  if (currentFloor === 1) {
-    // F1カメラ
-    $('camera-bg').src = `../image/camera_f1/cam${curCam}.png`;
-    $('camera-label').textContent = `F1 - CAM ${curCam}`;
-    // F1ではDUCTボタン非表示
-    $('duct-enter-btn').classList.add('hidden');
-    $('duct-back-btn').classList.add('hidden');
+  if (curCam === 9) {
+    $('camera-bg').src = '../image/camera/duct cam.png';
+    $('camera-label').textContent = 'DUCT CAM';
   } else {
-    // F2カメラ
-    if (curCam === 9) {
-      $('camera-bg').src = '../image/camera/duct cam.png';
-      $('camera-label').textContent = 'F2 - DUCT CAM';
-    } else {
-      $('camera-bg').src = `../image/camera/CAM${curCam}.png`;
-      $('camera-label').textContent = `F2 - CAM ${curCam}`;
-    }
-    $('duct-enter-btn').classList.toggle('hidden', curCam === 9);
-    $('duct-back-btn').classList.toggle('hidden', curCam !== 9);
+    $('camera-bg').src = `../image/camera_f1/cam${curCam}.png`;
+    $('camera-label').textContent = `CAM ${curCam}`;
   }
+  $('duct-enter-btn').classList.toggle('hidden', curCam === 9);
+  $('duct-back-btn').classList.toggle('hidden', curCam !== 9);
   updateCameraChar();
   updateClockTickSound();
 }
 
 // --- クロックティック音管理 ---
 function updateClockTickSound() {
-  if (camOpen && currentFloor === 1 && curCam === 2) {
+  if (camOpen && curCam === 2) {
     sndF1ClockTick.play().catch(()=>{});
   } else {
     sndF1ClockTick.pause();
@@ -769,7 +753,7 @@ function updateClockTickSound() {
 
 // --- クロックHUD表示制御 ---
 function updateClockHudVisibility() {
-  const show = camOpen && currentFloor === 1 && curCam === 2;
+  const show = camOpen && curCam === 2;
   $('clock-hud').classList.toggle('active', show);
   $('camera-click-zone').classList.toggle('active', show);
 }
@@ -781,7 +765,7 @@ function updateShieldHudVisibility() {
   // バグアイコン表示更新
   var bugEl = $('bug-icon');
   if(bugEl && bugActiveCam >= 0) {
-    bugEl.style.display = (camOpen && currentFloor === 2 && curCam === bugActiveCam) ? 'block' : 'none';
+    bugEl.style.display = (camOpen && curCam === bugActiveCam) ? 'block' : 'none';
   }
 }
 
@@ -790,30 +774,26 @@ function updateCameraChar() {
   const charEl = $('camera-char');
   const enemies = [];
 
-  if (currentFloor === 1) {
-    // F1キャラ表示
-    if (kaaCam === curCam && kaaCam > 0) {
-      enemies.push({ name: 'kaa', img: '../image/charas_f1/kaa.png', priority: kaaIdx || 0 });
-    }
-    if (ukkichiCam === curCam && ukkichiCam > 0) {
-      enemies.push({ name: 'ukkichi', img: '../image/charas_f1/ukkichi.png', priority: ukkichiIdx || 0 });
-    }
-    // キツネはCAM2で時計として存在（常にCAM2に表示）
-    if (curCam === 2) {
-      enemies.push({ name: 'kitsune', img: '../image/charas_f1/kitsune.png', priority: 0 });
-    }
-    // ぽたまるはカメラ上には表示しない（音楽で来る）
-  } else {
-    // F2キャラ表示
-    if (kururuCam === curCam && kururuCam > 0) {
-      enemies.push({ name: 'kururu', img: '../image/character/kururu nomal.png', priority: kururuIdx || 0 });
-    }
-    if (madaraCam === curCam && madaraCam > 0) {
-      enemies.push({ name: 'madara', img: '../image/character/madara nomal.png', priority: madaraIdx || 0 });
-    }
-    if (curCam === 9) {
-      enemies.push({ name: 'araane', img: '../image/character/araane nomal.png', priority: 0 });
-    }
+  // 全キャラ統合表示（F1背景に侵食済み）
+  // F1キャラ
+  if (kaaCam === curCam && kaaCam > 0) {
+    enemies.push({ name: 'kaa', img: '../image/charas_f1/kaa.png', priority: kaaIdx || 0 });
+  }
+  if (ukkichiCam === curCam && ukkichiCam > 0) {
+    enemies.push({ name: 'ukkichi', img: '../image/charas_f1/ukkichi.png', priority: ukkichiIdx || 0 });
+  }
+  if (curCam === 2) {
+    enemies.push({ name: 'kitsune', img: '../image/charas_f1/kitsune.png', priority: 0 });
+  }
+  // F2キャラ
+  if (kururuCam === curCam && kururuCam > 0) {
+    enemies.push({ name: 'kururu', img: '../image/character/kururu nomal.png', priority: kururuIdx || 0 });
+  }
+  if (madaraCam === curCam && madaraCam > 0) {
+    enemies.push({ name: 'madara', img: '../image/character/madara nomal.png', priority: madaraIdx || 0 });
+  }
+  if (curCam === 9) {
+    enemies.push({ name: 'araane', img: '../image/character/araane nomal.png', priority: 0 });
   }
 
   if (enemies.length > 0) {
@@ -946,7 +926,7 @@ function startClockDrain() {
 }
 
 function windClock() {
-  if (!running || !camOpen || currentFloor !== 1 || curCam !== 2) return;
+  if (!running || !camOpen || curCam !== 2) return;
   clockGauge = Math.min(100, clockGauge + CLOCK_WIND_AMOUNT);
   updateClockDisplay();
 }
@@ -981,13 +961,13 @@ function moveKaa() {
   }
   const n = kaaPath[kaaIdx];
   if (typeof n === 'number') kaaCam = n;
-  if (camOpen && currentFloor === 1) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleKaaMove();
 }
 
 function kaaArriveAtDoor(side) {
   kaaDoor = side; kaaCam = -1;
-  if (camOpen && currentFloor === 1) updateCameraChar();
+  if (camOpen) updateCameraChar();
   updateSideEntity();
   if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatKaa(); return; }
   kaaDT = setTimeout(() => {
@@ -1000,7 +980,7 @@ function defeatKaa() {
   clearTimeout(kaaDT);
   kaaDoor = null; kaaCam = 4; kaaPath = null; kaaIdx = 0;
   updateSideEntity();
-  if (camOpen && currentFloor === 1) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleKaaMove();
 }
 
@@ -1027,13 +1007,13 @@ function moveUkkichi() {
   }
   const n = ukkichiPath[ukkichiIdx];
   if (typeof n === 'number') ukkichiCam = n;
-  if (camOpen && currentFloor === 1) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleUkkichiMove();
 }
 
 function ukkichiArriveAtDoor(side) {
   ukkichiDoor = side; ukkichiCam = -1;
-  if (camOpen && currentFloor === 1) updateCameraChar();
+  if (camOpen) updateCameraChar();
   updateSideEntity();
   if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatUkkichi(); return; }
   ukkichiDT = setTimeout(() => {
@@ -1046,7 +1026,7 @@ function defeatUkkichi() {
   clearTimeout(ukkichiDT);
   ukkichiDoor = null; ukkichiCam = 5; ukkichiPath = null; ukkichiIdx = 0;
   updateSideEntity();
-  if (camOpen && currentFloor === 1) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleUkkichiMove();
 }
 
@@ -1112,14 +1092,14 @@ function moveKururu() {
   }
   const n = kururuPath[kururuIdx];
   if (typeof n === 'number') kururuCam = n;
-  if (camOpen && currentFloor === 2) updateCameraChar();
+  if (camOpen) updateCameraChar();
   checkKururuWatch();
   scheduleKururuMove();
 }
 
 function kururuArriveAtDoor(side) {
   kururuDoor = side; kururuCam = -1;
-  if (camOpen && currentFloor === 2) updateCameraChar();
+  if (camOpen) updateCameraChar();
   updateSideEntity();
   if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatKururu(); return; }
   kururuDT = setTimeout(() => {
@@ -1132,13 +1112,13 @@ function defeatKururu() {
   clearTimeout(kururuDT);
   kururuDoor = null; kururuCam = 1; kururuPath = null; kururuIdx = 0;
   updateSideEntity();
-  if (camOpen && currentFloor === 2) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleKururuMove();
 }
 
 function checkKururuWatch() {
   clearTimeout(kururuWT);
-  if (camOpen && currentFloor === 2 && curCam === kururuCam && kururuCam > 0) {
+  if (camOpen && curCam === kururuCam && kururuCam > 0) {
     kururuWT = setTimeout(() => {
       if (kururuSpd !== 'slow') { kururuSpd = 'slow'; scheduleKururuMove(); }
     }, KURURU_WATCH);
@@ -1168,13 +1148,13 @@ function moveMadara() {
   }
   const n = madaraPath[madaraIdx];
   if (typeof n === 'number') madaraCam = n;
-  if (camOpen && currentFloor === 2) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleMadaraMove();
 }
 
 function madaraArriveAtDoor(side) {
   madaraDoor = side; madaraCam = -1;
-  if (camOpen && currentFloor === 2) updateCameraChar();
+  if (camOpen) updateCameraChar();
   updateSideEntity();
   if ((side === 'left' && doorL) || (side === 'right' && doorR)) { defeatMadara(); return; }
   madaraDT = setTimeout(() => {
@@ -1187,7 +1167,7 @@ function defeatMadara() {
   clearTimeout(madaraDT);
   madaraDoor = null; madaraCam = 6; madaraPath = null; madaraIdx = 0;
   updateSideEntity();
-  if (camOpen && currentFloor === 2) updateCameraChar();
+  if (camOpen) updateCameraChar();
   scheduleMadaraMove();
 }
 
@@ -1291,7 +1271,7 @@ function webGaugeTick() {
     webGauge = Math.max(0, webGauge - drain);
   }
   updateWebGaugeUI();
-  if (camOpen && currentFloor === 2 && curCam === 9) updateCameraChar();
+  if (camOpen && curCam === 9) updateCameraChar();
   if (webGauge <= 0) {
     clearInterval(webTickId);
     gameOver('araane');
@@ -1299,7 +1279,7 @@ function webGaugeTick() {
 }
 
 function startWebReplenish() {
-  if (!running || curCam !== 9 || !camOpen || currentFloor !== 2) return;
+  if (!running || curCam !== 9 || !camOpen) return;
   webHolding = true;
 }
 
@@ -1315,10 +1295,10 @@ function updateWebGaugeUI() {
   var color = webGauge > 50 ? '#f80' : webGauge > 25 ? '#f44' : '#f00';
   if (bar) bar.style.background = color;
   var webUI = $('web-gauge-ui');
-  if(webUI) { webUI.style.display = (camOpen && currentFloor === 2 && curCam === 9) ? 'block' : 'none'; }
+  if(webUI) { webUI.style.display = (camOpen && curCam === 9) ? 'block' : 'none'; }
   var webOv = document.getElementById('web-overlay');
   if(webOv) {
-    if(camOpen && currentFloor === 2 && curCam === 9) {
+    if(camOpen && curCam === 9) {
       webOv.style.display = 'block';
       var scale = webGauge / 100;
       webOv.style.transform = 'scale(' + scale + ')';
@@ -1360,7 +1340,7 @@ function spawnYowari() {
 function updateYowariDisplay() {
   var el = document.getElementById('camera-yowari');
   if (!el) return;
-  if (yowariCrying && camOpen && currentFloor === 2 && curCam === yowariCam) {
+  if (yowariCrying && camOpen && curCam === yowariCam) {
     el.classList.remove('hidden');
   } else {
     el.classList.add('hidden');
@@ -1405,7 +1385,7 @@ function spawnBugIcon(){
   el.style.top = (15 + Math.random() * 60) + '%';
   el.style.left = (10 + Math.random() * 70) + '%';
   el.textContent = BUG_CODES[Math.floor(Math.random() * BUG_CODES.length)];
-  if(camOpen && currentFloor === 2 && curCam === bugActiveCam){
+  if(camOpen && curCam === bugActiveCam){
     el.style.display = 'block'; el.style.opacity = '1';
   }
   bugDespawnTimer = setTimeout(function(){
@@ -1643,7 +1623,7 @@ function retryGame() {
   stopAllSounds();
   clearAllTimers();
   elapsed = 0; power = 100; camOpen = false; curCam = 1;
-  currentFloor = 2; f1LastCam = 1; f2LastCam = 1;
+  f2LastCam = 1;
   doorL = false; doorR = false; lightL = false; lightR = false;
 
   // F1リセット
@@ -1686,7 +1666,7 @@ function retryGame() {
   $('blackmaster-text').classList.remove('active');
 
   // フロアボタンリセット
-  document.querySelectorAll('.floor-btn').forEach(b => b.classList.toggle('active', +b.dataset.floor === 2));
+  // フロアボタン廃止済み
 }
 
 // ============================================================
@@ -1904,8 +1884,8 @@ $('briefing-start-btn').addEventListener('click', function(){
 
 $('retry-btn').addEventListener('click', retryGame);
 $('cam-toggle-area').addEventListener('click', () => { if (running) openCamera(); });
-$('duct-enter-btn').addEventListener('click', () => { if (running && camOpen && currentFloor === 2) switchCam(9); });
-$('duct-back-btn').addEventListener('click', () => { if (running && camOpen && currentFloor === 2) switchCam(6); });
+$('duct-enter-btn').addEventListener('click', () => { if (running && camOpen) switchCam(9); });
+$('duct-back-btn').addEventListener('click', () => { if (running && camOpen) switchCam(6); });
 $('camera-close-bar').addEventListener('click', () => { if (running) closeCamera(); });
 
 // カメラボタン
@@ -1917,10 +1897,7 @@ document.querySelectorAll('.cam-btn').forEach(b => b.addEventListener('click', (
   }
 }));
 
-// フロア切替ボタン
-document.querySelectorAll('.floor-btn').forEach(b => b.addEventListener('click', () => {
-  if (running && camOpen) switchFloor(+b.dataset.floor);
-}));
+// フロア切替廃止
 
 // パワー・ライトボタン
 document.querySelectorAll('.btn-power').forEach(b => b.addEventListener('click', () => running && togglePower(b.dataset.side)));
@@ -1936,7 +1913,7 @@ $('kasumi-decline').addEventListener('click', declineKasumiOffer);
 
 // 蜘蛛の巣ゲージ：DUCT CAM (cam9)での長押し
 $('camera-feed').addEventListener('mousedown', function(e) {
-  if (running && camOpen && currentFloor === 2 && curCam === 9) startWebReplenish();
+  if (running && camOpen && curCam === 9) startWebReplenish();
 });
 $('camera-feed').addEventListener('mouseup', stopWebReplenish);
 $('camera-feed').addEventListener('mouseleave', stopWebReplenish);
@@ -1954,7 +1931,7 @@ document.addEventListener('keydown', e => {
     case 'a': setLight('left', true); break;
     case 'd': setLight('right', true); break;
     case ' ': e.preventDefault(); camOpen ? closeCamera() : openCamera(); break;
-    case 'w': if (camOpen && currentFloor === 2) { curCam === 9 ? switchCam(f2LastCam || 1) : switchCam(9); } break;
+    case 'w': if (camOpen) { curCam === 9 ? switchCam(f2LastCam || 1) : switchCam(9); } break;
   }
   // 数字キーでカメラ切替
   if (camOpen) {
@@ -2038,7 +2015,7 @@ window.DEBUG = {
     console.log('--- Night6 Debug Status ---');
     console.log('running:', running, '| elapsed:', elapsed + 's');
     console.log('power:', Math.round(power) + '% | webGauge:', Math.round(webGauge) + '% | clockGauge:', Math.round(clockGauge) + '%');
-    console.log('floor:', currentFloor, '| cam:', curCam, '| camOpen:', camOpen);
+    console.log('cam:', curCam, '| camOpen:', camOpen);
     console.log('doorL:', doorL, '| doorR:', doorR);
     console.log('よわり泣き中:', yowariCrying, '| バフ中:', yowariBuffActive, '| 位置:CAM' + yowariCam);
     console.log('かすみデバフ中:', kasumiDebuffActive);
