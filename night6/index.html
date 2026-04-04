@@ -593,7 +593,7 @@ let ukkichiMT = null, ukkichiDT = null;
 const POTA_MIN_INTERVAL = 20000;
 const POTA_MAX_INTERVAL = 30000;
 const POTA_REACT_TIME = 4000;
-let potaActive = false, potaSide = null;
+let potaActive = false, potaSide = null, potaCam = 3;
 let potaTimer = null, potaReactTimer = null;
 
 // ============================================================
@@ -769,46 +769,59 @@ function updateShieldHudVisibility() {
   }
 }
 
-// --- カメラ内キャラ表示（複数敵対応） ---
+// --- カメラ内キャラ表示（複数体同時表示） ---
 function updateCameraChar() {
-  const charEl = $('camera-char');
-  const enemies = [];
+  // 既存の動的キャラ要素を全削除
+  document.querySelectorAll('.cam-char-dynamic').forEach(function(el){ el.remove(); });
+  // 旧単体要素も非表示
+  var oldCharEl = $('camera-char');
+  if(oldCharEl) oldCharEl.classList.add('hidden');
 
-  // 全キャラ統合表示（F1背景に侵食済み）
+  var enemies = [];
+
   // F1キャラ
   if (kaaCam === curCam && kaaCam > 0) {
-    enemies.push({ name: 'kaa', img: '../image/charas_f1/kaa_normal.png', priority: kaaIdx || 0 });
+    enemies.push({ name: 'kaa', img: '../image/charas_f1/kaa_normal.png' });
   }
   if (ukkichiCam === curCam && ukkichiCam > 0) {
-    enemies.push({ name: 'ukkichi', img: '../image/charas_f1/ukkichi_normal.png', priority: ukkichiIdx || 0 });
+    enemies.push({ name: 'ukkichi', img: '../image/charas_f1/ukkichi_normal.png' });
   }
   if (curCam === 2) {
-    enemies.push({ name: 'kitsune', img: '../image/charas_f1/kitsune_normal.png', priority: 0 });
+    enemies.push({ name: 'kitsune', img: '../image/charas_f1/kitsune_normal.png' });
+  }
+  if (potaCam === curCam) {
+    enemies.push({ name: 'potamaru', img: '../image/charas_f1/potamaru_normal.png' });
   }
   // F2キャラ
   if (kururuCam === curCam && kururuCam > 0) {
-    enemies.push({ name: 'kururu', img: '../image/character/kururu nomal.png', priority: kururuIdx || 0 });
+    enemies.push({ name: 'kururu', img: '../image/character/kururu nomal.png' });
   }
   if (madaraCam === curCam && madaraCam > 0) {
-    enemies.push({ name: 'madara', img: '../image/character/madara nomal.png', priority: madaraIdx || 0 });
+    enemies.push({ name: 'madara', img: '../image/character/madara nomal.png' });
   }
   if (curCam === 9) {
-    enemies.push({ name: 'araane', img: '../image/character/araane nomal.png', priority: 0 });
+    enemies.push({ name: 'araane', img: '../image/character/araane nomal.png' });
   }
 
-  if (enemies.length > 0) {
-    enemies.sort((a, b) => b.priority - a.priority);
-    const show = enemies[0];
-    charEl.src = show.img;
-    charEl.classList.remove('hidden');
-    charEl.style.opacity = (show.name === 'madara') ? '0.1' : '1';
-    const pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
-    charEl.style.bottom = pos.bottom;
-    charEl.style.left = pos.left;
-    charEl.style.height = pos.height;
-    charEl.style.transform = 'translateX(-50%)';
-  } else {
-    charEl.classList.add('hidden');
+  var feed = $('camera-feed');
+  var pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
+
+  for (var ei = 0; ei < enemies.length; ei++) {
+    var e = enemies[ei];
+    var img = document.createElement('img');
+    img.className = 'cam-char-dynamic';
+    img.src = e.img;
+    img.draggable = false;
+    img.style.cssText = 'position:absolute;z-index:2;pointer-events:none;transform:translateX(-50%);';
+    img.style.bottom = pos.bottom;
+    img.style.height = pos.height;
+    // 複数体を少しずらして配置
+    var baseLeft = parseFloat(pos.left);
+    var offset = (ei - (enemies.length - 1) / 2) * 12;
+    img.style.left = (baseLeft + offset) + '%';
+    // まだらは透明
+    if (e.name === 'madara') img.style.opacity = '0.1';
+    feed.appendChild(img);
   }
 }
 
@@ -1045,14 +1058,15 @@ function potamaruAttack() {
   // ランダムでAかBの音楽
   const isA = Math.random() < 0.5;
   if (isA) {
-    // Music A = right door
     potaSide = 'right';
+    potaCam = 8;
     playS(sndPotamaruA);
   } else {
-    // Music B = left door
     potaSide = 'left';
+    potaCam = 7;
     playS(sndPotamaruB);
   }
+  if (camOpen) updateCameraChar();
 
   // プレイヤーは正しいドアを閉める必要がある
   potaReactTimer = setTimeout(() => {
@@ -1067,6 +1081,8 @@ function potamaruAttack() {
 function defeatPotamaru() {
   clearTimeout(potaReactTimer);
   potaActive = false;
+  potaCam = 3;
+  if (camOpen) updateCameraChar();
   potaSide = null;
   schedulePotamaru();
 }
@@ -1630,7 +1646,7 @@ function retryGame() {
   clockGauge = 100;
   kaaCam = 4; kaaPath = null; kaaIdx = 0; kaaDoor = null;
   ukkichiCam = 5; ukkichiPath = null; ukkichiIdx = 0; ukkichiDoor = null;
-  potaActive = false; potaSide = null;
+  potaActive = false; potaSide = null; potaCam = 3;
 
   // F2リセット
   kururuCam = 1; kururuPath = null; kururuIdx = 0; kururuDoor = null; kururuSpd = 'normal';
