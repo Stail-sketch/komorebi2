@@ -559,7 +559,7 @@ function stopAllSounds() {
 // ゲーム状態
 // ============================================================
 const NIGHT_DURATION = 180;
-const DRAIN_BASE = 0.06, DRAIN_CAM = 0.08, DRAIN_DOOR = 0.5, DRAIN_LIGHT = 0.15;
+const DRAIN_BASE = 0.07, DRAIN_CAM = 0.09, DRAIN_DOOR = 0.5, DRAIN_LIGHT = 0.15;
 
 // --- フロア管理 ---
 let currentFloor = 2; // 1=F1(ゆめスタジオ), 2=F2(現在)
@@ -576,7 +576,7 @@ const CLOCK_DRAIN_RATE = 0.5; // per second
 const CLOCK_WIND_AMOUNT = 1; // click per wind
 
 // --- かあ博士: 移動型 ---
-const KAA_MOVE_INTERVAL = 6000;
+const KAA_MOVE_INTERVAL = 5000;
 const KAA_DOOR_WAIT = 5000;
 const KAA_PATH_L = [4, 6, 7, 'left_door'];
 const KAA_PATH_R = [4, 6, 8, 'right_door'];
@@ -584,7 +584,7 @@ let kaaCam = 4, kaaPath = null, kaaIdx = 0, kaaDoor = null;
 let kaaMT = null, kaaDT = null;
 
 // --- うっきち: 逆サイド攻撃移動型 ---
-const UKKICHI_MOVE_INTERVAL = 7000;
+const UKKICHI_MOVE_INTERVAL = 6000;
 const UKKICHI_DOOR_WAIT = 5000;
 const UKKICHI_PATH_L = [5, 6, 7, 'right_door']; // CAM7(左廊下)にいるが右ドアから攻撃
 const UKKICHI_PATH_R = [5, 6, 8, 'left_door']; // CAM8(右廊下)にいるが左ドアから攻撃
@@ -592,9 +592,9 @@ let ukkichiCam = 5, ukkichiPath = null, ukkichiIdx = 0, ukkichiDoor = null;
 let ukkichiMT = null, ukkichiDT = null;
 
 // --- ぽたまる: 音楽ラッシュ ---
-const POTA_MIN_INTERVAL = 20000;
-const POTA_MAX_INTERVAL = 30000;
-const POTA_REACT_TIME = 4000;
+const POTA_MIN_INTERVAL = 15000;
+const POTA_MAX_INTERVAL = 25000;
+const POTA_REACT_TIME = 3500;
 let potaActive = false, potaSide = null, potaCam = 3;
 let potaTimer = null, potaReactTimer = null;
 
@@ -603,19 +603,19 @@ let potaTimer = null, potaReactTimer = null;
 // ============================================================
 
 // --- くるる ---
-const KURURU_FAST = 5000, KURURU_SLOW = 10000, KURURU_WATCH = 2000, KURURU_DOOR_WAIT = 5000;
+const KURURU_FAST = 4000, KURURU_SLOW = 8000, KURURU_WATCH = 2000, KURURU_DOOR_WAIT = 4500;
 const PATH_L = [1,2,4,7,'left_door'], PATH_R = [1,3,5,8,'right_door'];
 let kururuCam = 1, kururuPath = null, kururuIdx = 0, kururuDoor = null, kururuSpd = 'normal';
 let kururuMT = null, kururuDT = null, kururuWT = null;
 
 // --- まだら ---
-const MADARA_MOVE = 7000, MADARA_DOOR_WAIT = 5000;
+const MADARA_MOVE = 6000, MADARA_DOOR_WAIT = 4000;
 const MADARA_PATH_L = [6,3,4,7,'left_door'], MADARA_PATH_R = [6,2,5,8,'right_door'];
 let madaraCam = 6, madaraPath = null, madaraIdx = 0, madaraDoor = null;
 let madaraMT = null, madaraDT = null;
 
 // --- かすみ（オファーシステム）---
-const KS_OFFER_MIN = 20000, KS_OFFER_MAX = 30000;
+const KS_OFFER_MIN = 15000, KS_OFFER_MAX = 25000;
 const KS_OFFER_TIMEOUT = 8000;
 const KS_NOISE_DURATION = 15000;
 const KS_DEBUFF_DURATION = 15000;
@@ -627,7 +627,7 @@ var kasumiDebuffTimer = null;
 var kasumiPending = false;
 
 // --- アラネ（蜘蛛の巣ゲージ）---
-const WEB_DRAIN_RATE = 0.4;
+const WEB_DRAIN_RATE = 0.5;
 const WEB_REPLENISH_RATE = 2;
 var webGauge = 100, webDraining = true, webHolding = false, webTickId = null;
 
@@ -645,8 +645,8 @@ var BUG_CODES = ['ERR_0x4F','SYS_NULL','0xDEAD','NaN','#REF!','FAULT','??:??','0
 // ============================================================
 // Blackmaster攻撃
 // ============================================================
-const BM_MIN_INTERVAL = 15000;
-const BM_MAX_INTERVAL = 25000;
+const BM_MIN_INTERVAL = 12000;
+const BM_MAX_INTERVAL = 20000;
 let bmTimer = null;
 
 // --- 共通状態 ---
@@ -1334,7 +1334,7 @@ function scheduleYowariMove() { scheduleYowari(); }
 
 function scheduleYowari() {
   clearTimeout(yowariTimer);
-  var delay = 15000 + Math.random() * 10000;
+  var delay = 12000 + Math.random() * 8000;
   yowariTimer = setTimeout(function() {
     if (!running) return;
     spawnYowari();
