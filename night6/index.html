@@ -270,7 +270,7 @@
     @keyframes cursorBlink { 0%,100% { border-color: #4a7aaa; } 50% { border-color: transparent; } }
     #start-sub {
       color: #334; font-size: 0.85rem; letter-spacing: 0.15em;
-      opacity: 0; animation: fadeIn 1s 2.8s forwards;
+      opacity: 0; transition: opacity 0.5s ease;
     }
     @keyframes fadeIn { to { opacity: 1; } }
     #start-btn:hover { background: #2a4a6a; color: #000; border-color: #4a7aaa; }
@@ -305,8 +305,8 @@
       margin-top: 60px; padding: 18px 72px; background: none;
       border: 2px solid #2a4a6a; color: #2a4a6a; font-family: 'Courier New', monospace;
       font-size: 1.4rem; letter-spacing: 0.3em; cursor: pointer;
-      opacity: 0; animation: fadeIn 1s 3.5s forwards;
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      opacity: 0;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, opacity 0.5s;
     ">START</button>
   </div>
   <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
@@ -1689,21 +1689,81 @@ function typeText(el, text, speed, cb){
   t();
 }
 
-// ブリーフィング → NIGHT 6タイトル → ゲーム開始
+// ブリーフィング → NIGHT 6タイトル（不穏演出）→ ゲーム開始
 $('briefing-start-btn').addEventListener('click', function(){
   $('briefing-screen').classList.remove('active');
   $('briefing-screen').classList.add('hidden');
   $('start-screen').classList.add('active');
+
+  // 背景ノイズ
+  $('start-screen').style.background = '#000';
+  var noiseDiv = document.createElement('div');
+  noiseDiv.style.cssText = 'position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,0,0.015) 2px,rgba(255,0,0,0.015) 4px);animation:scanN6 3s linear infinite;pointer-events:none;z-index:0;';
+  var styleN6 = document.createElement('style');
+  styleN6.textContent = '@keyframes scanN6{0%{background-position:0 0}100%{background-position:0 100vh}}';
+  document.head.appendChild(styleN6);
+  $('start-screen').appendChild(noiseDiv);
+
   var titleEl = $('title-text');
+  var subEl = $('start-sub');
   var text = 'NIGHT 6';
+  var glitchChars = '▓▒░█▄▀■□';
   var i = 0;
+
+  // 不安定なタイプライター（時々文字がバグる）
   setTimeout(function typeTitle(){
-    if(i < text.length){ titleEl.textContent += text[i]; i++; setTimeout(typeTitle, 150); }
-    else { setTimeout(function(){ $('start-screen').classList.add('fade-out'); setTimeout(function(){ $('start-screen').classList.remove('active','fade-out'); $('start-screen').classList.add('hidden'); startGame(); }, 1000); }, 1500); }
+    if(i < text.length){
+      // たまにバグ文字が一瞬入る
+      if(Math.random() < 0.3 && i > 0){
+        var bugChar = glitchChars[Math.floor(Math.random()*glitchChars.length)];
+        titleEl.textContent += bugChar;
+        setTimeout(function(){
+          titleEl.textContent = text.substring(0, i+1);
+        }, 80);
+      } else {
+        titleEl.textContent += text[i];
+      }
+      i++;
+      setTimeout(typeTitle, 150 + Math.floor(Math.random()*100));
+    } else {
+      // タイトル確定後、サブテキストに警告を混ぜる
+      titleEl.style.textShadow = '0 0 15px rgba(255,0,0,0.3)';
+      setTimeout(function(){
+        subEl.textContent = '5:00 AM - 6:00 AM';
+        subEl.style.opacity = '1';
+        // サブテキストが一瞬だけ別のテキストに
+        setTimeout(function(){
+          subEl.textContent = 'ALL UNITS ACTIVE — 9/9';
+          subEl.style.color = '#a33';
+          setTimeout(function(){
+            subEl.textContent = '5:00 AM - 6:00 AM';
+            subEl.style.color = '';
+          }, 300);
+        }, 1500);
+      }, 500);
+
+      // STARTボタンは点滅
+      var startBtn = $('start-btn');
+      startBtn.style.opacity = '1';
+      startBtn.style.animation = 'none';
+      var blinkIv = setInterval(function(){
+        startBtn.style.borderColor = (Math.random() > 0.7) ? '#a33' : '#2a4a6a';
+      }, 500);
+
+      startBtn.addEventListener('click', function onStart(){
+        clearInterval(blinkIv);
+        startBtn.removeEventListener('click', onStart);
+        $('start-screen').classList.add('fade-out');
+        setTimeout(function(){
+          $('start-screen').classList.remove('active','fade-out');
+          $('start-screen').classList.add('hidden');
+          startGame();
+        }, 1000);
+      });
+    }
   }, 400);
 });
 
-$('retry-btn').addEventListener('click', retryGame);
 $('retry-btn').addEventListener('click', retryGame);
 $('cam-toggle-area').addEventListener('click', () => { if (running) openCamera(); });
 $('duct-enter-btn').addEventListener('click', () => { if (running && camOpen && currentFloor === 2) switchCam(9); });
