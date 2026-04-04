@@ -1340,7 +1340,7 @@ function scheduleYowari() {
 }
 
 function spawnYowari() {
-  var cams = [1,2,3,4,5,6,7,8];
+  var cams = [1,3,4,5,6,7,8]; // CAM2はキツネ時計巻きのクリック領域と競合するため除外
   yowariCam = cams[Math.floor(Math.random() * cams.length)];
   yowariCrying = true;
   yowariBuffActive = true;
