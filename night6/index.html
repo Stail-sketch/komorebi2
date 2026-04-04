@@ -1971,6 +1971,95 @@ applySideAreas();
 window.addEventListener('resize', applySideAreas);
 // 初期状態でシールドHUD非表示
 $('web-gauge-ui').style.display = 'none';
+
+// ============================================================
+// デバッグモード（コンソールから使用）
+// ============================================================
+window.DEBUG = {
+  // 特定の敵にわざと殺される
+  kill: function(name) {
+    var valid = ['kururu','madara','kasumi','araane','yowari','kitsune','kaa','ukkichi','potamaru'];
+    if (valid.indexOf(name) === -1) { console.log('使える名前: ' + valid.join(', ')); return; }
+    gameOver(name);
+  },
+  // 全敵のジャンプスケアを順番に確認
+  jumpscareTest: function() {
+    var enemies = ['kururu','madara','kasumi','araane','yowari','kitsune','kaa','ukkichi','potamaru'];
+    var i = 0;
+    console.log('ジャンプスケアテスト開始。クリックで次の敵に進む');
+    function showNext() {
+      if (i >= enemies.length) { console.log('テスト完了'); return; }
+      console.log((i+1) + '/9: ' + enemies[i]);
+      gameOver(enemies[i]);
+      i++;
+      setTimeout(function() {
+        document.addEventListener('click', function once() {
+          document.removeEventListener('click', once);
+          $('gameover-screen').classList.remove('active');
+          $('jumpscare-screen').classList.remove('active');
+          showNext();
+        });
+      }, 1200);
+    }
+    showNext();
+  },
+  // 即クリア
+  clear: function() { nightClear(); },
+  // 電力設定
+  setPower: function(val) { power = val; console.log('電力: ' + val + '%'); },
+  // 電力無限
+  infinitePower: function() { power = 999; console.log('電力無限モード（999%）'); },
+  // 蜘蛛の巣ゲージ設定
+  setWeb: function(val) { webGauge = val; updateWebGaugeUI(); console.log('蜘蛛の巣: ' + val + '%'); },
+  // 時計ゲージ設定
+  setClock: function(val) { clockGauge = val; updateClockDisplay(); console.log('時計: ' + val + '%'); },
+  // 全敵停止
+  freeze: function() {
+    clearAllTimers();
+    running = true; // ゲーム自体は動かす
+    console.log('全敵停止（ゲームは続行）');
+  },
+  // 時間を飛ばす（秒指定）
+  skip: function(sec) { elapsed += (sec || 30); console.log('経過時間: ' + elapsed + '秒'); },
+  // 即ゲーム開始（ブリーフィング・タイトルスキップ）
+  start: function() {
+    $('briefing-screen').classList.remove('active');
+    $('briefing-screen').classList.add('hidden');
+    $('start-screen').classList.remove('active');
+    $('start-screen').classList.add('hidden');
+    startGame();
+    console.log('ゲーム即開始');
+  },
+  // 現在の状態表示
+  status: function() {
+    console.log('--- Night6 Debug Status ---');
+    console.log('running:', running, '| elapsed:', elapsed + 's');
+    console.log('power:', Math.round(power) + '% | webGauge:', Math.round(webGauge) + '% | clockGauge:', Math.round(clockGauge) + '%');
+    console.log('floor:', currentFloor, '| cam:', curCam, '| camOpen:', camOpen);
+    console.log('doorL:', doorL, '| doorR:', doorR);
+    console.log('よわり泣き中:', yowariCrying, '| バフ中:', yowariBuffActive, '| 位置:CAM' + yowariCam);
+    console.log('かすみデバフ中:', kasumiDebuffActive);
+    console.log('くるる:CAM' + kururuCam, '| まだら:CAM' + madaraCam);
+    console.log('かあ:CAM' + kaaCam, '| うっきち:CAM' + ukkichiCam);
+    console.log('バグアイコン:CAM' + bugActiveCam);
+  },
+  // ヘルプ
+  help: function() {
+    console.log('=== Night6 デバッグコマンド ===');
+    console.log('DEBUG.kill("kururu")     — 指定の敵にわざと殺される');
+    console.log('DEBUG.jumpscareTest()    — 全9体のジャンプスケアを順番に確認');
+    console.log('DEBUG.clear()            — 即クリア');
+    console.log('DEBUG.start()            — ブリーフィングスキップ即開始');
+    console.log('DEBUG.setPower(50)       — 電力設定');
+    console.log('DEBUG.infinitePower()    — 電力無限');
+    console.log('DEBUG.setWeb(50)         — 蜘蛛の巣ゲージ設定');
+    console.log('DEBUG.setClock(50)       — 時計ゲージ設定');
+    console.log('DEBUG.freeze()           — 全敵停止');
+    console.log('DEBUG.skip(60)           — 時間を飛ばす（秒）');
+    console.log('DEBUG.status()           — 現在の状態表示');
+  }
+};
+console.log('%c Night6 デバッグモード有効 — DEBUG.help() でコマンド一覧', 'color:#0f0;font-size:14px;');
 </script>
 </body>
 </html>
