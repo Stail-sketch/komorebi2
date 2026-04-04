@@ -865,14 +865,13 @@
     var blackout = document.getElementById('blackout');
     blackout.style.opacity = '1';
     await wait(800);
-    localStorage.setItem('endb_just_returned', 'true');
-    window.location.href = '../index.html';
-
     // --- Set localStorage flags ---
     try {
       localStorage.setItem('ending_b_seen', 'true');
       localStorage.setItem('save_point_night5', 'true');
     } catch(e){}
+    localStorage.setItem('endb_just_returned', 'true');
+    window.location.href = '../index.html';
   }
 
   main();
