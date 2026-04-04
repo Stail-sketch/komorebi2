@@ -431,8 +431,7 @@
 const $ = id => document.getElementById(id);
 
 // --- アクセスチェック ---
-if (!localStorage.getItem('night5_clear')) {
-  alert('Night 5をクリアしてください。');
+if (!localStorage.getItem('night5_clear') || !localStorage.getItem('ending_b_seen')) {
   window.location.href = '../index.html';
 }
 

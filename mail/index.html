@@ -143,7 +143,6 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
 
   // ===== Night5クリア後（+7通） =====
   if(flag('night5_clear')){
-    mails.push({id:'n5_trigger', from:'', subject:'', snippet:'準備はできましたか', body:'<div style="text-align:center;padding:40px 0;"><p style="font-size:18px;color:#8888aa;margin-bottom:30px;">準備はできましたか</p><a href="../night6/" style="display:inline-block;padding:12px 40px;border:1px solid #6666aa;color:#6666aa;font-size:16px;letter-spacing:2px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.background=\'#6666aa\';this.style.color=\'#000\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'#6666aa\'">開始</a></div>', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5_creepy3', from:'0x00000000', subject:'K-059', snippet:'PROCESS COMPLETING...', body:'SUBJECT: K-059\nSTATUS: PROCESS COMPLETING\nESTIMATED COMPLETION: IMMINENT\n\n予定通りです', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5_creepy2', from:'', subject:'', snippet:'35.6812° N, 139.7671° E', body:'35.6812° N, 139.7671° E\n\n...', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5b', from:garbleSender(), subject:garbleSubject(), snippet:'…もう…時間がない…', body:'「…もう…時間がない……急いで……全てが…消える前に…」', unread:true, attachment:null, type:'normal'});
