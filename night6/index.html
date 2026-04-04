@@ -1591,16 +1591,8 @@ function nightClear() {
   localStorage.setItem('custom_night_unlocked', 'true');
   setTimeout(() => {
     allowNavigation();
-    var hasSeenEndB = localStorage.getItem('ending_b_seen') === 'true';
-    var hasReadFiles = localStorage.getItem('yoshida_files_read') === 'true';
-    var hasFinalConv = localStorage.getItem('final_conversation_done') === 'true';
-    if (hasSeenEndB && hasReadFiles && hasFinalConv) {
-      // True End - EndB seen + files read + final conversation
-      window.location.href = '../ending_a/';
-    } else {
-      // Bad End
-      window.location.href = '../ending_b/';
-    }
+    // Night6クリア → EndA直行（Night6はEndB後の最終決戦）
+    window.location.href = '../ending_a/';
   }, 3000);
 }
 

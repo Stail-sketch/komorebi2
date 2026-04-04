@@ -1156,14 +1156,8 @@ function nightClear() {
   setTimeout(() => playS(sndClearYay), 500);
   setTimeout(() => {
     allowNavigation();
-    var btn = document.createElement('button');
-    btn.textContent = '次へ進む';
-    btn.style.cssText = 'display:block;margin:30px auto;padding:14px 48px;background:transparent;border:2px solid #8cc;color:#8cc;font-size:18px;font-family:inherit;cursor:pointer;letter-spacing:3px;transition:all 0.3s;';
-    btn.onmouseover = function(){ this.style.background='#8cc'; this.style.color='#000'; };
-    btn.onmouseout = function(){ this.style.background='transparent'; this.style.color='#8cc'; };
-    btn.onclick = function(){ window.location.href = '../index.html'; };
-    document.getElementById('clear-screen').appendChild(btn);
-  }, 2000);
+    window.location.href = '../ending_b/';
+  }, 3000);
 }
 
 function clearAllTimers() {
