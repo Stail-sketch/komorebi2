@@ -166,7 +166,7 @@
 
       <div class="card" style="opacity:0.4;border-left:3px solid #4a4a6a;">
         <p style="font-size:0.8rem;color:var(--color-gray-500);">投稿者：??? / 受付日：????/??/??</p>
-        <p style="margin-top:12px;color:#6a6a8a;cursor:default;" class="memory-fragment" data-fragment="kioku" onclick="collectFragment('kioku',this)">…き…おく…の…かけら…を…あつめ…て…</p>
+        <p style="margin-top:12px;color:#6a6a8a;">…き…おく…の…かけら…を…あつめ…て…</p>
       </div>
     </section>
 
@@ -187,26 +187,6 @@
     <p>&copy; 2026 テレビ特別番組制作委員会. All rights reserved.</p>
   </footer>
 
-  <script>
-function collectFragment(id, el){
-  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
-  if(frags.indexOf(id)===-1){
-    frags.push(id);
-    localStorage.setItem('memory_fragments',JSON.stringify(frags));
-  }
-  el.style.color='#7070ff';
-  el.style.textShadow='0 0 8px rgba(100,100,255,0.6)';
-  setTimeout(function(){ el.style.opacity='0'; },1000);
-}
-// Restore if already collected
-(function(){
-  var frags = JSON.parse(localStorage.getItem('memory_fragments')||'[]');
-  if(frags.indexOf('kioku')!==-1){
-    var el = document.querySelector('[data-fragment="kioku"]');
-    if(el){ el.style.opacity='0.3'; el.style.color='#7070ff'; }
-  }
-})();
-</script>
   <script src="../js/main.js"></script>
 </body>
 </html>
