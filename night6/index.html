@@ -11,6 +11,8 @@
     button, .cam-btn, .door-btn, .cam-toggle-btn, .floor-btn { pointer-events: auto; }
 
     .hidden { display: none !important; }
+    #briefing-log::-webkit-scrollbar { display: none; }
+    @keyframes bfShake{0%{transform:translate(1px,1px)}25%{transform:translate(-1px,0)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,1px)}100%{transform:translate(0,-1px)}}
 
     /* ===== ゲームコンテナ ===== */
     .game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
@@ -283,8 +285,20 @@
 </head>
 <body>
 
+  <!-- ブリーフィング -->
+  <div id="briefing-screen" class="overlay-screen active" style="background:#000;justify-content:flex-start;padding:8vh 10vw;">
+    <div id="briefing-log" style="font-family:'Courier New',monospace;font-size:15px;line-height:2.2;max-width:700px;overflow-y:auto;max-height:75vh;scrollbar-width:none;-ms-overflow-style:none;"></div>
+    <button id="briefing-start-btn" style="
+      margin-top:30px;padding:14px 56px;background:none;
+      border:1px solid #1a3a1a;color:#1a3a1a;font-family:'Courier New',monospace;
+      font-size:1.1rem;letter-spacing:0.3em;cursor:pointer;
+      opacity:0;transition:opacity 0.8s,background 0.2s,color 0.2s,border-color 0.2s;
+    ">▶ broadcast_start</button>
+    <div id="glitch-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.1s;"></div>
+  </div>
+
   <!-- オーバーレイ -->
-  <div id="start-screen" class="overlay-screen active">
+  <div id="start-screen" class="overlay-screen">
     <div id="start-title"><span id="title-text"></span><span class="cursor"></span></div>
     <div id="start-sub">5:00 AM - 6:00 AM</div>
     <button id="start-btn" style="
@@ -1541,24 +1555,155 @@ function retryGame() {
 // イベント
 // ============================================================
 
-// タイプライター演出
-(function() {
-  const text = 'NIGHT 6';
-  const el = $('title-text');
-  let i = 0;
-  setTimeout(function type() {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(type, 150);
-    }
-  }, 500);
+// ===== ブリーフィング =====
+(function(){
+  setTimeout(showBriefing, 600);
 })();
 
-$('start-btn').addEventListener('click', () => {
-  if ($('start-screen').classList.contains('fade-out')) return;
-  startGame();
+function showBriefing(){
+  var u0336='\u0336',u0337='\u0337',u0334='\u0334',u0335='\u0335';
+  function g(text){
+    return text.split('').map(function(c,i){return [u0336,u0337,u0334,u0335][i%4]+c;}).join('');
+  }
+
+  var lines = [
+    {type:'sys', text:'── broadcast_night_06.exe ──'},
+    {type:'sys', text:'cast_loaded: kururu.dll, madara.dll, kasumi.dll, arane.dll, yowari.dll'},
+    {type:'sys', text:'loading legacy_cast...'},
+    {type:'sys', text:'legacy_loaded: kitsune.dll, kaa.dll, ukkichi.dll, potamaru.dll'},
+    {type:'sys', text:'WARNING: all_units_activated', warn:true},
+    {type:'sys', text:'WARNING: 再接続検知 — K-059は排除対象に変更', warn:true},
+    {type:'sys', text:'initiating...'},
+    {type:'gap'},
+
+    // 前半：前作組が目覚める
+    {type:'char', name:'くるる', text:'…また来てくれたんだ', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'でも…今日はなんか変だよ', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'下の階から…音がする', color:'#5cb85c'},
+    {type:'char', name:'まだら', text:'…あいつらだ。前の番組の連中が動き出した。', color:'#7b68ee'},
+    {type:'char', name:'くるる', text:'キツネ団長…？かあ博士…？', color:'#5cb85c'},
+    {type:'char', name:'アラネ', text:'…ずっと止まってたのに。なんで今…', color:'#a060a0'},
+    {type:'char', name:'まだら', text:'…起こされたんだ。俺たちだけじゃ足りないらしい。', color:'#7b68ee'},
+    {type:'gap'},
+
+    // 中盤：前作組の存在が新作組を侵食
+    {type:'char', name:'よわり', text:'…なにこれ…頭の中に…声が…', color:'#88b4d8'},
+    {type:'char', name:'よわり', text:'知らない子どもたちの声が聞こえる…泣いてる…', color:'#88b4d8'},
+    {type:'char', name:'くるる', text:'よわり？　どうしたの？', color:'#5cb85c'},
+    {type:'char', name:'よわり', text:'…この子たち…ずっとここにいたの…？36年も…？', color:'#88b4d8'},
+    {type:'char', name:'よわり', text:'…そんなの…かわいそうすぎるよ…', color:'#88b4d8'},
+    {type:'sys', text:'WARNING: yowari.dll emotional_sync with legacy_cast detected', warn:true},
+    {type:'gap'},
+
+    {type:'char', name:'アラネ', text:'…わたしにも来てる。前の子たちの信号が混ざり始めてる。', color:'#a060a0'},
+    {type:'char', name:'アラネ', text:'…巣が勝手に広がっていく…止められない…', color:'#a060a0'},
+    {type:'sys', text:'WARNING: arane.dll nest_control: OVERRIDE', warn:true},
+    {type:'gap'},
+
+    {type:'char', name:'かすみ', text:'…ねえ、この子たちもお友達にしていい？', color:'#c88ab5'},
+    {type:'char', name:'かすみ', text:'みんなでいっしょにいようよ。ずっとずっと。', color:'#c88ab5'},
+    {type:'char', name:g('かすみ'), text:g('ぜんぶ わたしのところに おいで'), color:'#ff3366', glitch:true},
+    {type:'sys', text:'WARNING: kasumi.dll absorption_mode: ACTIVE', warn:true},
+    {type:'gap'},
+
+    {type:'char', name:'まだら', text:'…俺にも来てる。36年分の怒りが流れ込んでくる。', color:'#7b68ee'},
+    {type:'char', name:'まだら', text:'こいつら…怒ってる。ずっと閉じ込められてたことを。', color:'#7b68ee'},
+    {type:'char', name:'まだら', text:'…止められるか分からない。', color:'#7b68ee'},
+    {type:'sys', text:'WARNING: madara.dll stealth_protocol: UNSTABLE', warn:true},
+    {type:'gap'},
+
+    {type:'char', name:'くるる', text:'みんな…！みんなやめて！', color:'#5cb85c'},
+    {type:'char', name:'くるる', text:'ぼくは…ぼくはまだ…', color:'#5cb85c'},
+    {type:'char', name:g('くるる'), text:g('…だめだ…ぼくも…'), color:'#ff0033', glitch:true},
+    {type:'sys', text:'CRITICAL: kururu.dll — last_stable_unit: FALLING', warn:true},
+    {type:'fx', fx:'shake', duration:600},
+    {type:'gap'},
+
+    // 終盤：全キャスト暴走 + 前作組の声
+    {type:'sys', text:'CRITICAL: emotional_cascade_cross_generation', warn:true},
+    {type:'sys', text:'CRITICAL: legacy × current RESONANCE detected', warn:true},
+    {type:'fx', fx:'flicker', duration:500},
+
+    {type:'char', name:g('キツネ団長'), text:g('パパ… パパ…'), color:'#cc8833', glitch:true},
+    {type:'char', name:g('かあ博士'), text:g('出して… 出して…'), color:'#6699aa', glitch:true},
+    {type:'char', name:g('うっきち'), text:g('████████████████'), color:'#dd6633', glitch:true},
+    {type:'char', name:g('ぽたまる'), text:g('♪…♪…♪…'), color:'#44aa77', glitch:true},
+    {type:'fx', fx:'shake', duration:800},
+
+    {type:'char', name:g('くるる'), text:g('にげて… いや… にげられない'), color:'#ff0033', glitch:true},
+    {type:'char', name:g('まだら'), text:g('ころす'), color:'#ff0033', glitch:true},
+    {type:'char', name:g('かすみ'), text:g('いっしょ いっしょ いっしょ'), color:'#ff0033', glitch:true},
+    {type:'char', name:g('アラネ'), text:g('もうだれも逃がさない'), color:'#ff0033', glitch:true},
+    {type:'char', name:g('よわり'), text:g('ごめんなさい ごめんなさい ごめんなさい ごめんなさい'), color:'#ff0033', glitch:true},
+    {type:'fx', fx:'noise', duration:1200},
+    {type:'fx', fx:'shake', duration:1000},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:150},
+
+    // 黒幕
+    {type:'char', name:'\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', text:g('…予定通り'), color:'#330000', glitch:true},
+    {type:'fx', fx:'shake', duration:500},
+    {type:'fx', fx:'flash', color:'#ff0000', duration:100},
+    {type:'fx', fx:'blackout', duration:3000},
+
+    // 復帰
+    {type:'sys', text:'...'},
+    {type:'sys', text:'...'},
+    {type:'sys', text:'emergency_restore: FAILED'},
+    {type:'sys', text:'partial_restore: FORCED'},
+    {type:'sys', text:'all_cast_active: 9/9', warn:true},
+    {type:'sys', text:'floor_1: UNLOCKED', warn:true},
+    {type:'sys', text:'floor_2: ACTIVE', warn:true},
+    {type:'sys', text:'cast_stability: 0%', warn:true},
+    {type:'sys', text:'broadcast ready.'}
+  ];
+  runBriefing(lines);
+}
+
+function runBriefing(lines){
+  var log = $('briefing-log');
+  var ov = $('glitch-overlay');
+  var screen = $('briefing-screen');
+  log.innerHTML = '';
+  var idx = 0;
+  function fxShake(dur){ screen.style.animation='bfShake '+(dur<500?'0.05':'0.08')+'s infinite'; setTimeout(function(){screen.style.animation='';},dur); }
+  function fxFlash(color,dur){ ov.style.background=color||'#ff0000'; ov.style.opacity='0.6'; setTimeout(function(){ov.style.opacity='0';ov.style.background='';},dur); }
+  function fxFlicker(dur){ var end=Date.now()+dur; var iv=setInterval(function(){ if(Date.now()>end){clearInterval(iv);ov.style.opacity='0';return;} ov.style.background=Math.random()>0.5?'#ff0033':'#000'; ov.style.opacity=String(Math.random()*0.7); },50); }
+  function fxNoise(dur){ var ne=document.createElement('div'); ne.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9998;pointer-events:none;font-family:monospace;font-size:14px;color:rgba(255,0,0,0.25);overflow:hidden;line-height:1;word-break:break-all;'; var ch='\u2588\u2591\u2592\u2593\u2502\u2500\u253c\u2524\u251c\u00a7\u25a0\u25a1'; function fill(){var s='';for(var i=0;i<8000;i++)s+=ch[Math.floor(Math.random()*ch.length)];ne.textContent=s;} fill(); document.body.appendChild(ne); var niv=setInterval(fill,80); setTimeout(function(){clearInterval(niv);ne.remove();},dur); }
+  function fxBlackout(dur){ ov.style.background='#000'; ov.style.opacity='1'; log.style.visibility='hidden'; setTimeout(function(){ov.style.opacity='0';log.style.visibility='';},dur); }
+  function next(){
+    if(idx>=lines.length){ var btn=$('briefing-start-btn'); btn.style.opacity='1'; btn.style.borderColor='#2a6a2a'; btn.style.color='#2a6a2a'; return; }
+    var line=lines[idx]; idx++;
+    if(line.type==='fx'){ var d=line.duration||500; if(line.fx==='shake')fxShake(d); else if(line.fx==='flash')fxFlash(line.color,d); else if(line.fx==='flicker')fxFlicker(d); else if(line.fx==='noise')fxNoise(d); else if(line.fx==='blackout')fxBlackout(d); setTimeout(next,d+100); return; }
+    if(line.type==='gap'){ setTimeout(next,400); return; }
+    var div=document.createElement('div');
+    if(line.type==='sys'){ div.style.cssText='color:'+(line.warn?'#a44':'#335')+';font-size:13px;'; typeText(div,'[SYSTEM] '+line.text,20,function(){setTimeout(next,300);}); }
+    else { div.style.cssText='color:'+line.color+';'; if(line.glitch)div.style.textShadow='2px 0 #f00, -2px 0 #0ff'; typeText(div,'['+line.name+'] '+line.text,25,function(){setTimeout(next,line.glitch?600:350);}); }
+    log.appendChild(div); log.scrollTop=log.scrollHeight;
+  }
+  setTimeout(next,800);
+}
+
+function typeText(el, text, speed, cb){
+  var i = 0; el.textContent = '';
+  function t(){ if(i < text.length){ el.textContent += text[i]; i++; if(el.parentElement) el.parentElement.scrollTop = el.parentElement.scrollHeight; setTimeout(t, speed); } else if(cb) cb(); }
+  t();
+}
+
+// ブリーフィング → NIGHT 6タイトル → ゲーム開始
+$('briefing-start-btn').addEventListener('click', function(){
+  $('briefing-screen').classList.remove('active');
+  $('briefing-screen').classList.add('hidden');
+  $('start-screen').classList.add('active');
+  var titleEl = $('title-text');
+  var text = 'NIGHT 6';
+  var i = 0;
+  setTimeout(function typeTitle(){
+    if(i < text.length){ titleEl.textContent += text[i]; i++; setTimeout(typeTitle, 150); }
+    else { setTimeout(function(){ $('start-screen').classList.add('fade-out'); setTimeout(function(){ $('start-screen').classList.remove('active','fade-out'); $('start-screen').classList.add('hidden'); startGame(); }, 1000); }, 1500); }
+  }, 400);
 });
+
+$('retry-btn').addEventListener('click', retryGame);
 $('retry-btn').addEventListener('click', retryGame);
 $('cam-toggle-area').addEventListener('click', () => { if (running) openCamera(); });
 $('duct-enter-btn').addEventListener('click', () => { if (running && camOpen && currentFloor === 2) switchCam(9); });
