@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HINT - あの番組を覚えていますか</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0a0a0a;color:#c8c8c8;
+  font-family:'Courier New','Yu Gothic',monospace;
+  min-height:100vh;padding:40px 20px;
+}
+.container{max-width:700px;margin:0 auto;}
+h1{
+  font-size:clamp(18px,4vw,28px);color:#0a0;letter-spacing:0.3em;
+  text-align:center;margin-bottom:8px;
+}
+.sub{text-align:center;font-size:12px;color:#555;margin-bottom:40px;letter-spacing:0.1em;}
+
+.night-block{
+  margin-bottom:40px;
+  border:1px solid #1a1a1a;
+  border-radius:4px;
+  overflow:hidden;
+}
+.night-header{
+  background:#0f0f0f;
+  padding:14px 20px;
+  font-size:16px;color:#0a0;letter-spacing:0.15em;
+  cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:background 0.2s;
+}
+.night-header:hover{background:#151515;}
+.night-header .toggle{color:#555;font-size:12px;}
+.night-body{display:none;padding:20px;}
+.night-body.open{display:block;}
+
+.hint-step{
+  margin-bottom:16px;
+}
+.hint-btn{
+  display:block;width:100%;text-align:left;
+  padding:10px 16px;
+  background:#111;border:1px solid #1a2a1a;
+  color:#6a8a6a;font-family:inherit;font-size:14px;
+  cursor:pointer;letter-spacing:0.08em;
+  transition:all 0.2s;border-radius:2px;
+}
+.hint-btn:hover{background:#1a1a1a;border-color:#0a0;color:#0a0;}
+.hint-btn.revealed{border-color:#333;color:#555;cursor:default;}
+.hint-btn.revealed:hover{background:#111;color:#555;}
+.hint-content{
+  display:none;
+  padding:12px 16px;
+  margin-top:4px;
+  background:#0c0c0c;
+  border-left:2px solid #1a3a1a;
+  color:#999;font-size:14px;line-height:2;
+}
+.hint-content.open{display:block;}
+.hint-content .answer{color:#c88;font-weight:bold;}
+.hint-content .keyword{color:#0a0;}
+
+.back-link{
+  text-align:center;margin-top:40px;
+}
+.back-link a{
+  color:#0a0;text-decoration:none;font-size:14px;
+  transition:color 0.2s;
+}
+.back-link a:hover{color:#0f0;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>HINT</h1>
+  <div class="sub">行き詰まった時のヒント集</div>
+
+  <!-- Night 1 -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      Night 1
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
+        <div class="hint-content">メールを確認してみよう。最初に届いてるメッセージに手がかりがある。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
+        <div class="hint-content">「<span class="keyword">…離さないで…あの名前を…</span>」。名前を離さない、つまり——長押し。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
+        <div class="hint-content">特番サイトのスタッフページを開いてみよう。誰か一人だけ、他と違うところがある。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">答え</button>
+        <div class="hint-content"><span class="answer">スタッフページの「吉田一郎」を10秒間長押しする。</span>画面がじわじわ暗くなっていけば正解。途中で離すと戻ってしまう。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Night 2 -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      Night 2
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
+        <div class="hint-content">Night1クリア後のメールを読もう。「<span class="keyword">…間違ってる…ところがある…ひとつじゃない…</span>」</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
+        <div class="hint-content">サイトの中に「間違い」が3つ隠されている。キャラ紹介ページや番組概要ページをよく読んで、おかしいところを探してクリックしよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
+        <div class="hint-content">ヒント：コーナー名をよく見て。キツネ団長の担当コーナーは本当に正しい？ぽたまるの「ソング」って合ってる？番組の放送曜日は？</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">答え</button>
+        <div class="hint-content">
+          3つの間違いをクリック：<br>
+          <span class="answer">1. キツネ団長のページ：「なぜなぜ教室」→ 正しくは「冒険タイム」</span><br>
+          <span class="answer">2. ぽたまるのページ：「ぽたまるソング♪」→ 正しくは「ぽたまるダンス♪」</span><br>
+          <span class="answer">3. 番組概要ページ：「毎週日曜日」→ 正しくは「毎週土曜日」</span><br>
+          3つ修正後にお問い合わせページを開くと、Night2への入口が出現する。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Night 3 -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      Night 3
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
+        <div class="hint-content">Night2クリア後のメールを確認しよう。「クイズの準備ができたよ！」という招待が届いているはず。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
+        <div class="hint-content">デスクトップにチャットアイコンが追加されている。キツネ団長とチャットで会話して、クイズに挑戦しよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
+        <div class="hint-content">クイズの答えは全てサイト内に書かれている。スタッフ情報、番組構成、キャラクター情報をよく読み返してみよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">答え</button>
+        <div class="hint-content">
+          チャットでクイズ3問に正解する：<br>
+          <span class="answer">Q1「辞めた脚本家の名前」→ 渡辺千春</span><br>
+          <span class="answer">Q2「コーナー間に隠されていたもの」→ ブリッジ映像</span><br>
+          <span class="answer">Q3「消えた5番目のキャラ」→ ひかりちゃん</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Night 4 -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      Night 4
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
+        <div class="hint-content">Night3クリア後、デスクトップに新しいアイコンが出現しているはず。「旧サイト（アーカイブ）」を開いてみよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
+        <div class="hint-content">旧サイト（前作のアーカイブ）と今のサイトを見比べてみよう。黒幕が書き換えた箇所が3つある。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
+        <div class="hint-content">見つけた差分をPopinのDMで「ゆうやけさんぽ」に報告しよう。キーワードを入力すると反応がある。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">答え</button>
+        <div class="hint-content">
+          3つの差分をDMで報告：<br>
+          <span class="answer">1. スタッフ一覧の「人形デザイン」の行が削除されている</span><br>
+          <span class="answer">2. 試作キツネの説明が「保管」→「廃棄処分」に書き換え</span><br>
+          <span class="answer">3. 設立年が「1987年」→「1988年」に変更</span><br>
+          DMで「試作きつね」「人形デザイン」「1987」などのキーワードを送る。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Night 5 -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      Night 5
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
+        <div class="hint-content">Night4クリア後、PopinのDMに新しい会話が解放されている。ゆうやけさんぽと話を進めよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
+        <div class="hint-content">DMの会話を最後まで進めると、何かが起きる。選択肢を全て選んでいこう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">答え</button>
+        <div class="hint-content"><span class="answer">DM Phase2のウォームアップ会話を最後まで進める。会話が崩壊し始め、自動的にNight5へ遷移する。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="../index.html">デスクトップに戻る</a>
+  </div>
+</div>
+
+<script>
+function toggleNight(header) {
+  var body = header.nextElementSibling;
+  var toggle = header.querySelector('.toggle');
+  body.classList.toggle('open');
+  toggle.textContent = body.classList.contains('open') ? '[ - ]' : '[ + ]';
+}
+
+function revealHint(btn) {
+  if (btn.classList.contains('revealed')) return;
+  btn.classList.add('revealed');
+  var content = btn.nextElementSibling;
+  content.classList.add('open');
+}
+</script>
+</body>
+</html>
