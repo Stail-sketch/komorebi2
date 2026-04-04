@@ -546,6 +546,9 @@ const sndJump = {
   araane:  new Audio('../sound/676232__werdkind0m__jumpscare-sound-v2.mp3'),
   yowari:  new Audio('../sound/812134__aksiny_soundeditor__jumpscare-1.mp3'),
   kitsune: new Audio('../sound/f1/kitsune_jumpscare.mp3'),
+  kaa: new Audio('../sound/f1/kaa_jumpscare.mp3'),
+  ukkichi: new Audio('../sound/f1/ukkichi_jumpscare.mp3'),
+  potamaru: new Audio('../sound/f1/potamaru_jumpscare.mp3'),
 };
 Object.values(sndJump).forEach(s => s.volume = 0.075);
 
@@ -1560,9 +1563,9 @@ function gameOver(killer) {
     araane: '../image/character/arane jumpscare.png',
     yowari: '../image/character/yowari jumpscare.png',
     kitsune: '../image/charas_f1/kitsune_jumpscare.png',
-    kaa: '../image/character/kururu jumpscare.png',
-    ukkichi: '../image/character/kururu jumpscare.png',
-    potamaru: '../image/character/kururu jumpscare.png',
+    kaa: '../image/charas_f1/kaa_jumpscare.png',
+    ukkichi: '../image/charas_f1/ukkichi_jumpscare.png',
+    potamaru: '../image/charas_f1/potamaru_jumpscare.png',
   };
   $('jumpscare-screen').querySelector('img').src = jumpImg[killer] || jumpImg.kururu;
   if (sndJump[killer]) playS(sndJump[killer]);
