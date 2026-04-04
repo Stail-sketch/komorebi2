@@ -336,7 +336,7 @@
             <button id="kasumi-accept" style="padding:12px 16px; background:#200; border:2px solid #c00; color:#c00; cursor:pointer; font-family:'Courier New',monospace; font-size:14px; letter-spacing:1px; transition:all 0.2s; writing-mode:vertical-rl;" onmouseover="this.style.background='#c00';this.style.color='#000'" onmouseout="this.style.background='#200';this.style.color='#c00'">受け取る</button>
           </div>
           <div style="flex:0 0 50%; display:flex; align-items:center; justify-content:center; height:100%;">
-            <img src="../image/character/kasumi-offer.png" alt="" style="max-width:100%; max-height:100%; pointer-events:none;">
+            <img src="../image/character/kasumi door.png" style="max-height:90%; max-width:100%; filter:brightness(0.8);" draggable="false">
           </div>
           <div style="flex:0 0 25%; display:flex; align-items:center; justify-content:center;">
             <button id="kasumi-decline" style="padding:12px 16px; background:#111; border:2px solid #444; color:#444; cursor:pointer; font-family:'Courier New',monospace; font-size:14px; letter-spacing:1px; transition:all 0.2s; writing-mode:vertical-rl;" onmouseover="this.style.background='#444';this.style.color='#000'" onmouseout="this.style.background='#111';this.style.color='#444'">受け取らない</button>
@@ -818,6 +818,7 @@ function updateCameraChar() {
     const show = enemies[0];
     charEl.src = show.img;
     charEl.classList.remove('hidden');
+    charEl.style.opacity = (show.name === 'madara') ? '0.1' : '1';
     const pos = CAM_CHAR_POS[curCam] || CAM_CHAR_POS[1];
     charEl.style.bottom = pos.bottom;
     charEl.style.left = pos.left;
