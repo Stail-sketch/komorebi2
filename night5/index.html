@@ -489,10 +489,18 @@ const MADARA_PATH_L = [6,3,4,7,'left_door'], MADARA_PATH_R = [6,2,5,8,'right_doo
 const KS_OFFER_MIN = 20000, KS_OFFER_MAX = 30000;
 const KS_OFFER_TIMEOUT = 8000;
 const KS_NOISE_DURATION = 15000;
-const KS_DEBUFF_DURATION = 15000;
+const KS_DEBUFF_BASE = 15000;
+const KS_DEBUFF_ESCALATE = 5000;
 const KS_SPEED_MULT = 2.0;
 const KS_WEB_DRAIN_MULT = 1.5;
+const KS_DECLINE_DRAIN_MULT = 1.3;
+const KS_DECLINE_DRAIN_DUR = 5000;
+const KS_DECLINE_SPEED_BOOST = 0.05;
 var kasumiDebuffActive = false;
+var kasumiAcceptCount = 0;
+var kasumiDeclineSpeedBuff = 0;
+var kasumiDeclineDrainActive = false;
+var kasumiDeclineDrainTimer = null;
 
 // --- アラネ（蜘蛛の巣ゲージ）設定 ---
 const WEB_DRAIN_RATE = 0.4;   // ~2% per second at 5 ticks/sec
@@ -742,6 +750,7 @@ function scheduleKururuMove() {
   clearTimeout(kururuMT);
   var kururuDelay = (kururuSpd === 'slow' ? KURURU_SLOW : KURURU_FAST) / getYowariSpeedMult();
   if(kasumiDebuffActive) kururuDelay /= KS_SPEED_MULT;
+  kururuDelay /= (1.0 + kasumiDeclineSpeedBuff);
   kururuMT = setTimeout(moveKururu, kururuDelay);
 }
 
@@ -800,6 +809,7 @@ function scheduleMadaraMove() {
   clearTimeout(madaraMT);
   var delay = MADARA_MOVE / getYowariSpeedMult();
   if(kasumiDebuffActive) delay /= KS_SPEED_MULT;
+  delay /= (1.0 + kasumiDeclineSpeedBuff);
   madaraMT = setTimeout(moveMadara, delay);
 }
 
@@ -863,7 +873,9 @@ function showKasumiOffer() {
   $('kasumi-offer').style.display = 'block';
   clearTimeout(kasumiDismissTimer);
   kasumiDismissTimer = setTimeout(function() {
-    hideKasumiOffer();
+    if (!running) return;
+    $('kasumi-offer').style.display = 'none';
+    gameOver('kasumi');
   }, KS_OFFER_TIMEOUT);
 }
 
@@ -884,7 +896,7 @@ function acceptKasumiOffer() {
   hideKasumiOffer();
   startCameraNoise();
   startKasumiDebuff();
-  // LIGHT封印（3秒間確認不能）
+  kasumiAcceptCount++;
   var _origSetLight5 = setLight;
   setLight = function(){};
   setTimeout(function(){ setLight = _origSetLight5; }, 3000);
@@ -893,14 +905,22 @@ function acceptKasumiOffer() {
 function startKasumiDebuff() {
   kasumiDebuffActive = true;
   if(kasumiDebuffTimer) clearTimeout(kasumiDebuffTimer);
+  var debuffDur = KS_DEBUFF_BASE + kasumiAcceptCount * KS_DEBUFF_ESCALATE;
   kasumiDebuffTimer = setTimeout(function() {
     kasumiDebuffActive = false;
-  }, KS_DEBUFF_DURATION);
+  }, debuffDur);
 }
 var kasumiDebuffTimer;
 
 function declineKasumiOffer() {
+  if (!running) return;
   hideKasumiOffer();
+  kasumiDeclineDrainActive = true;
+  clearTimeout(kasumiDeclineDrainTimer);
+  kasumiDeclineDrainTimer = setTimeout(function() {
+    kasumiDeclineDrainActive = false;
+  }, KS_DECLINE_DRAIN_DUR);
+  kasumiDeclineSpeedBuff += KS_DECLINE_SPEED_BOOST;
 }
 
 function startCameraNoise() {
@@ -1090,6 +1110,7 @@ function powerTick() {
   if (doorR) d += DRAIN_DOOR;
   if (lightL) d += DRAIN_LIGHT;
   if (lightR) d += DRAIN_LIGHT;
+  if (kasumiDeclineDrainActive) d *= KS_DECLINE_DRAIN_MULT;
   power = Math.max(0, power - d);
   const p = Math.round(power);
   $('power-display').textContent = p;
@@ -1245,6 +1266,8 @@ function retryGame() {
   // まだらリセット
   madaraCam = 6; madaraPath = null; madaraIdx = 0; madaraDoor = null;
   // かすみリセット
+  kasumiDebuffActive = false; kasumiAcceptCount = 0; kasumiDeclineSpeedBuff = 0;
+  kasumiDeclineDrainActive = false; clearTimeout(kasumiDeclineDrainTimer);
   $('kasumi-offer').style.display = 'none';
   $('camera-feed').style.filter = '';
   var _ov3 = document.getElementById('kasumi-noise-overlay'); if(_ov3) _ov3.remove();
