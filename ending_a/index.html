@@ -687,10 +687,14 @@
     await wait(3000);
 
     var lastLines = [
-      { text:'「…行けたかな」', time:3500 },
-      { text:'「あの子…笑ってたかな」', time:4000 },
-      { text:'「…もう分からない」', time:3500 },
-      { text:'「でも…これでよかったんだ」', time:3500 }
+      { text:'「…聞こえたか。今の」', time:3500 },
+      { text:'「あかね…」', time:3000 },
+      { text:'「…笑ってたかな」', time:3500 },
+      { text:'「泣いてたかな」', time:3500 },
+      { text:'「…36年分の『おやすみ』を言えなかった」', time:4000 },
+      { text:'「でも…最後に『ありがとう』って言ってくれた」', time:4500 },
+      { text:'「…それだけで十分だ」', time:3500 },
+      { text:'「…これでよかったんだ」', time:4000 }
     ];
 
     for(var m = 0; m < lastLines.length; m++){
@@ -774,6 +778,9 @@
     await typeEpilogue('こもれびゆうえんち　全システム停止');
     await wait(1500);
     await typeEpilogue('最終アクセス：吉田一郎');
+    await wait(3000);
+    await typeEpilogue('');
+    await typeEpilogue('被験者G-0　解放');
     await wait(4000);
     await typeEpilogue('');
     await typeEpilogue('この番組は終了しました');
