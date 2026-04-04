@@ -1440,9 +1440,6 @@ function collectBugIcon(){
 function defeatYowari() { /* よわりは泣き声スポーン方式なのでドア撃退なし */ }
 function updateYowariGuiltDisplay() { /* 不要 */ }
 function incrementYowariGuilt() { /* 不要 */ }
-  }
-  $('yowari-guilt').textContent = symbols.join('');
-}
 
 // ============================================================
 // Blackmaster攻撃 - ランダムにドアを開ける
@@ -1683,9 +1680,9 @@ function retryGame() {
   $('power-display').textContent = '100';
   $('power-bar').style.width = '100%';
   $('power-bar').classList.remove('low', 'critical');
-  $('shield-display').textContent = '100';
-  $('shield-bar').style.width = '100%';
-  $('shield-bar').classList.remove('low', 'critical');
+  // 蜘蛛の巣ゲージリセット
+  if($('web-gauge-bar')) $('web-gauge-bar').style.width = '100%';
+  if($('web-gauge-text')) $('web-gauge-text').textContent = '100%';
   $('clock-display').textContent = '100';
   $('clock-bar').style.width = '100%';
   $('clock-bar').classList.remove('low', 'critical');
