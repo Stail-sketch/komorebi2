@@ -616,19 +616,6 @@ window.fixError = fixError;
   if(endBseen){
     document.body.classList.add('akane-revealed');
 
-    // ヘッダーグリッチ（ランダムに発生）
-    var header = document.querySelector('.site-header');
-    if(header){
-      var glitchStyle = document.createElement('style');
-      glitchStyle.textContent = '@keyframes headerGlitch{0%,92%,100%{transform:none;filter:none;}93%{transform:translateX(-3px);filter:hue-rotate(90deg);}95%{transform:translateX(4px) skewX(-2deg);filter:hue-rotate(180deg) brightness(1.5);}97%{transform:translateX(-2px);filter:hue-rotate(270deg);}99%{transform:none;filter:brightness(0.5);}}';
-      document.head.appendChild(glitchStyle);
-      // 15〜30秒ごとにグリッチ
-      setInterval(function(){
-        header.style.animation = 'headerGlitch 0.5s';
-        setTimeout(function(){ header.style.animation = ''; }, 500);
-      }, 15000 + Math.random() * 15000);
-    }
-
     // ページ下部に2周目限定テキスト（EndB後のみ）
     var footer = document.querySelector('.site-footer');
     if(footer){
