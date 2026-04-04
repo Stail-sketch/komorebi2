@@ -1633,8 +1633,19 @@ function retryGame() {
   $('title-text').textContent = 'NIGHT 6';
   $('start-sub').style.animation = 'none'; $('start-sub').style.opacity = '1';
   $('start-btn').style.animation = 'none'; $('start-btn').style.opacity = '1';
-  $('start-screen').classList.remove('fade-out');
+  $('start-screen').classList.remove('fade-out', 'hidden');
   $('start-screen').classList.add('active');
+
+  // STARTボタンにイベントリスナー再登録
+  $('start-btn').addEventListener('click', function onRetryStart(){
+    $('start-btn').removeEventListener('click', onRetryStart);
+    $('start-screen').classList.add('fade-out');
+    setTimeout(function(){
+      $('start-screen').classList.remove('active','fade-out');
+      $('start-screen').classList.add('hidden');
+      startGame();
+    }, 1000);
+  });
 
   stopAllSounds();
   clearAllTimers();
@@ -2023,7 +2034,16 @@ window.DEBUG = {
     $('briefing-screen').classList.add('hidden');
     $('start-screen').classList.remove('active');
     $('start-screen').classList.add('hidden');
-    startGame();
+    // startGameのsetTimeout内を直接実行
+    running = true; elapsed = 0; power = 100; webGauge = 100; clockGauge = 100;
+    sndBGM.play().catch(function(){});
+    sndClock.play().catch(function(){});
+    tickId = setInterval(gameTick, 1000);
+    pwrId = setInterval(powerTick, 500);
+    startClockDrain(); scheduleKaaMove(); scheduleUkkichiMove(); schedulePotamaru();
+    scheduleKururuMove(); scheduleMadaraMove(); scheduleKasumiAttack(); startAraneDecay(); scheduleYowariMove(); scheduleBugIcon();
+    scheduleBlackmasterAttack();
+    updateClockDisplay(); updateShieldHudVisibility();
     console.log('ゲーム即開始');
   },
   // 現在の状態表示
