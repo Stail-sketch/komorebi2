@@ -52,24 +52,41 @@ a:hover{color:#0f0;}
 }
 
 /* ストーリー解説 */
-.story-block{margin-bottom:40px;}
+.story-block{margin-bottom:60px;}
 .story-block h3{
-  font-size:16px;color:#6a8a6a;letter-spacing:0.15em;margin-bottom:12px;
+  font-size:clamp(15px,2.5vw,19px);color:#7a9a7a;letter-spacing:0.15em;margin-bottom:16px;
+  padding-bottom:8px;border-bottom:1px solid #1a1a1a;
 }
 .story-block p{
-  line-height:2.2;font-size:15px;margin-bottom:16px;color:#aaa;
+  line-height:2.4;font-size:clamp(13px,1.8vw,15px);margin-bottom:18px;color:#888;
 }
-.story-block .emphasis{color:#0a0;}
+.story-block .emphasis{color:#0c0;font-weight:normal;}
 .story-block .redacted{color:#c88;background:rgba(200,100,100,0.1);padding:0 4px;}
+.story-block .bright{color:#ccc;}
+
+/* 章扉 */
+.chapter-gate{
+  text-align:center;padding:80px 20px 50px;margin-bottom:40px;
+  border-bottom:1px solid #1a1a1a;
+}
+.chapter-gate h2{
+  font-size:clamp(22px,5vw,36px);color:#0a0;letter-spacing:0.4em;
+  font-family:'Courier New',monospace;margin-bottom:16px;
+}
+.chapter-gate .chapter-sub{
+  font-size:clamp(12px,1.6vw,15px);color:#555;letter-spacing:0.1em;
+  line-height:1.8;
+}
+
 .story-timeline{
-  border-left:2px solid #1a3a1a;padding-left:20px;margin:20px 0;
+  border-left:2px solid #1a3a1a;padding-left:20px;margin:24px 0;
 }
 .story-timeline .year{
-  color:#0a0;font-family:'Courier New',monospace;font-size:14px;
+  color:#0a0;font-family:'Courier New',monospace;font-size:clamp(12px,1.6vw,14px);
   margin-bottom:4px;
 }
 .story-timeline .event{
-  color:#888;font-size:14px;line-height:1.8;margin-bottom:16px;
+  color:#777;font-size:clamp(12px,1.6vw,14px);line-height:1.8;margin-bottom:20px;
 }
 
 /* キャラクター */
@@ -174,11 +191,16 @@ a:hover{color:#0f0;}
   <h2 class="section-title">// STORY</h2>
 
   <!-- 前作 -->
+  <div class="chapter-gate">
+    <h2>CHAPTER 1</h2>
+    <div class="chapter-sub">1991年、番組は始まった。<br>子どもたちの笑い声が響くスタジオの、地下で。</div>
+  </div>
+
   <div class="story-block">
     <h3>前作「木漏れ日遊園地」——表の物語</h3>
     <p>「こもれびゆうえんち」は、1991年4月から1997年9月まで、地方局「きらら放送」で放映された子ども向け教養番組。毎週土曜日の朝8:30、30分枠。制作は株式会社ゆめスタジオプロダクション。</p>
     <p>番組を彩ったのは4体のアニマトロニクス。冒険好きな司会役の<span class="emphasis">キツネ団長</span>、物知りな<span class="emphasis">かあ博士</span>、まんまるで可愛い<span class="emphasis">ぽたまる</span>、いたずら好きの<span class="emphasis">うっきち</span>。「冒険タイム」「なぜなぜ教室」「ぽたまるダンス♪」「いたずら大作戦」といったコーナーが人気を博し、全315回（最終回は放送中止）を数えた。</p>
-    <p>番組は子ども達の日常に溶け込んでいた。毎週土曜日の朝、テレビの前に座って待っていた子ども達。キツネ団長の「時間だぞー！今日も冒険だ！」を合図に始まる30分間。それは確かに、温かい記憶だった。</p>
+    <p class="bright">番組は子ども達の日常に溶け込んでいた。毎週土曜日の朝、テレビの前に座って待っていた子ども達。キツネ団長の「時間だぞー！今日も冒険だ！」を合図に始まる30分間。それは確かに、温かい記憶だった。</p>
   </div>
 
   <div class="story-block">
@@ -193,7 +215,7 @@ a:hover{color:#0f0;}
     <h3>被験者たち</h3>
     <p><span class="emphasis">被験者G-0：吉田あかね</span>。1987年生まれ。吉田一郎の一人娘、母とは死別。ゆめスタジオ正式登記のわずか5日後、1歳で被験者登録された。1988年から1990年までの「空白の3年間」、地下施設で脳波スキャニング処置を受けていたとされる。</p>
     <p>1993年、6歳で小学校に一時転入。おとなしく、動物の絵を描く女の子だった。キツネの絵に「パパ」と書き込んでいた。1995年前半に突然学校を去り、<span class="emphasis">1995年9月3日、8歳で意識がキツネ団長に転移された</span>。</p>
-    <p>「発達検査」の後、あかねは次第にぼんやりとし、食事を取らなくなり、「キツネさんが呼んでる」と言い——やがて完全にいなくなった。</p>
+    <p class="bright">「発達検査」の後、あかねは次第にぼんやりとし、食事を取らなくなり、「キツネさんが呼んでる」と言い——やがて完全にいなくなった。</p>
     <p>G-1（かあ博士に転移）、G-2（ぽたまるに転移）、G-3（うっきちに転移）——他の子ども達も順次、アニマトロニクスの中に閉じ込められた。G-4からG-6は記録が断片的で詳細不明。</p>
   </div>
 
@@ -212,8 +234,13 @@ a:hover{color:#0f0;}
     <p>最終回の前、キツネ団長は通常のコーナー進行を行わず、スタジオ中央にひとりで佇んでいた。番組終了直前、カメラに向かって何かを話したが音声は極端に小さく字幕もない。ある視聴者は「ありがとう」と、別の視聴者は「ごめんね」と聞こえたと証言している。</p>
     <p>制作スタッフの多くが消失した。プロデューサー高橋誠一は1996年に真実を知り、番組中止を試みた後に消えた。脚本家の渡辺千春だけが無事に辞職し、台本のコピーを保管していた。技術スタッフの斎藤正樹は「1996年以降、あのスタジオで起きていたことは番組制作と無関係だ」と証言した。</p>
     <p>翌1998年、きらら放送は解散。社屋は駐車場になった。アーカイブテープは全て破棄された。</p>
-    <p>吉田一郎は「あかねを連れて行く。あの場所に戻る」と言い残し、娘とともに失踪した。</p>
+    <p class="bright">吉田一郎は「あかねを連れて行く。あの場所に戻る」と言い残し、娘とともに失踪した。</p>
     <p>そして前作の最後に残されたメッセージ——<span class="emphasis">「PROCESS STILL RUNNING」</span>、<span class="emphasis">「K-059」</span>、<span class="emphasis">「予定通りです」</span>。何かがまだ動き続けていた。</p>
+  </div>
+
+  <div class="chapter-gate">
+    <h2>CHAPTER 2</h2>
+    <div class="chapter-sub">黒幕は、もう人間ではない。</div>
   </div>
 
   <div class="story-block">
@@ -227,6 +254,11 @@ a:hover{color:#0f0;}
   </div>
 
   <!-- 今作 -->
+  <div class="chapter-gate">
+    <h2>CHAPTER 3</h2>
+    <div class="chapter-sub">2026年。29年の沈黙を破り、番組が帰ってきた。<br>あなたは59番目の対象者。</div>
+  </div>
+
   <div class="story-block">
     <h3>タイムライン</h3>
     <div class="story-timeline">
@@ -268,7 +300,7 @@ a:hover{color:#0f0;}
     <p>1995年に娘を失い、黒幕から「娘を取り戻せる」と約束された。藁にもすがる思いで番組制作に協力した。人形の調達・修復・新キャラ制作・スタジオ設計——物理的な作業は全て吉田が担った。</p>
     <p>番組サイトの管理権限を持ち、情報をこっそり混ぜ込んでいた。Popinでは「ゆうやけさんぽ」という一見普通の視聴者アカウントを運営し、プレイヤーに偽装接触した。DMに移行し、情報を提供して感情を増幅させる——全てが黒幕の計画通りだった。</p>
     <p>吉田のツイートには、娘を探す痕跡が滲み出ていた。「久しぶりにテレビつけたら懐かしい顔が映ってた」（旧4体の人形を見た）。「春になると散歩しながらいろいろ考える。毎年ね」（娘が行方不明になった季節）。「連絡、来るといいな」。</p>
-    <p><span class="emphasis">嘘だった。</span>黒幕にはあかねを元に戻す気など最初からなかった。あかねのデータも、黒幕の「完全」の一部に過ぎなかった。30年間、吉田はその嘘を信じ続けた。プレイヤーとの交流を通じて、ようやく気づく。</p>
+    <p class="bright"><span class="emphasis">嘘だった。</span>黒幕にはあかねを元に戻す気など最初からなかった。あかねのデータも、黒幕の「完全」の一部に過ぎなかった。30年間、吉田はその嘘を信じ続けた。プレイヤーとの交流を通じて、ようやく気づく。</p>
   </div>
 
   <div class="story-block">
@@ -288,6 +320,11 @@ a:hover{color:#0f0;}
     <p>各ブリーフィングの終盤では、キャラクターがグリッチ化して正体不明のメッセージを残す。くるるの「つけられなくなったら　ぼくが　きちゃうよ」、まだらの「確かめてみないとね」、かすみの「でも　タダじゃないの」。そしてNight5の終盤では全員が同時に崩壊し、未知の存在が<span class="emphasis">「K-059　おわりだよ」</span>と告げる。</p>
   </div>
 
+  <div class="chapter-gate">
+    <h2>CHAPTER 4</h2>
+    <div class="chapter-sub">最終夜。全てが動き出す。<br>9体。もう逃げ場はない。</div>
+  </div>
+
   <div class="story-block">
     <h3>Night6——最終夜「全ユニット起動」</h3>
     <p>EndBを経て再接続したプレイヤーに対し、黒幕は全力で応答する。前作の4体——キツネ団長、かあ博士、うっきち、ぽたまる——を36年ぶりに起動。全9体による包囲。</p>
@@ -303,6 +340,11 @@ a:hover{color:#0f0;}
     <p><span class="emphasis">かあ博士（視覚を宿す）</span>——黒幕との接続が最も強く、吉田の影響を受けられなかった。敵のまま。</p>
     <p><span class="emphasis">ぽたまる（聴覚を宿す）</span>——修復途中で吉田が何かに気づいた。その感情が影響し、中盤で覚醒して味方になる。だがNight6で再び敵化される。</p>
     <p><span class="emphasis">うっきち（恐怖反応を宿す）</span>——恐怖反応を集めすぎた状態で修復され、制御不能。カメラに映った方と反対側のドアから侵入する予測不能な行動。</p>
+  </div>
+
+  <div class="chapter-gate">
+    <h2>CHAPTER 5</h2>
+    <div class="chapter-sub">二つの結末。<br>どちらを選んでも、何かが失われる。</div>
   </div>
 
   <div class="story-block">
