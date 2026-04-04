@@ -427,6 +427,12 @@ if(localStorage.getItem('chat_unlocked') === 'true'){
     notifKey = 'endb';
     notifMsgs = notifications.endb;
   }
+  // 初回起動後の通知チェック
+  var isFirstBoot = (!notifMsgs && localStorage.getItem('first_boot_notified') !== 'true');
+  if(isFirstBoot){
+    localStorage.setItem('first_boot_notified', 'true');
+    notifMsgs = ['📧 新しいメールが届いています', '🌐 ブラウザにサイトが追加されました', '💬 Popinに新しい投稿があります'];
+  }
   if(!notifMsgs){
     for(var n = 1; n <= 5; n++){
       var key = 'night' + n + '_just_cleared';
@@ -438,6 +444,7 @@ if(localStorage.getItem('chat_unlocked') === 'true'){
     }
   }
   if(notifMsgs){
+    var notifDelay = isFirstBoot ? 12000 : 0; // BIOS演出中なら12秒待つ
     var container = document.createElement('div');
     container.className = 'desktop-toast';
     document.body.appendChild(container);
@@ -453,7 +460,7 @@ if(localStorage.getItem('chat_unlocked') === 'true'){
           toast.style.transform = 'translateX(60px)';
           setTimeout(function(){ toast.remove(); }, 500);
         }, 5000);
-      }, i * 800);
+      }, notifDelay + i * 800);
     });
   }
 })();
