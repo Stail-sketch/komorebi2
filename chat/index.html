@@ -436,15 +436,9 @@
 
       function showCurrentQuestion(){
         showTyping(function(){
-          var q1 = localStorage.getItem('chat_q1_clear') === 'true';
-          var q2 = localStorage.getItem('chat_q2_clear') === 'true';
-          var q3 = localStorage.getItem('chat_q3_clear') === 'true';
-          if(!q1){
-            addMessage(partnerName, 'この番組でね、自分が書いたものと違うものが放送されてるのに気づいて、辞めちゃった人がいるんだ。その人の名前、わかるかな？', true);
-          } else if(!q2){
-            addMessage(partnerName, 'コーナーとコーナーの間に何か挟まってたの、知ってるかな？脚本家さんは書いてないのに、なぜかそこにあったんだ。あれ、なんて呼ばれてたっけ？', true);
-          } else if(!q3){
-            addMessage(partnerName, '企画書にはね、ぼくたちの名前が5つ書いてあったんだ。でも放送されたのは4つだけ。消えちゃった5番目のおともだち、名前わかるかな？', true);
+          var qi = getCurrentQuestion();
+          if(qi >= 0 && qi < puzzleQuestions.length){
+            addMessage(partnerName, puzzleQuestions[qi].question, true);
           }
         });
       }
@@ -494,20 +488,33 @@
     var puzzleQuestions = [
       {
         key: 'chat_q1_clear',
+        question: 'この番組でね、自分が書いたものと違うものが放送されてるのに気づいて、辞めちゃった人がいるんだ。その人の名前、わかるかな？',
         keywords: ['渡辺千春', 'わたなべちはる', '渡辺', 'わたなべ'],
-        correctResponse: 'すごいね！正解だよ！渡辺千春さん。自分の台本と違うものが放送されてるのを見て、辞めちゃったんだ',
-        nextQuestion: 'じゃあ次の問題！コーナーとコーナーの間に何か挟まってたの、知ってるかな？脚本家さんは書いてないのに、なぜかそこにあったんだ。あれ、なんて呼ばれてたっけ？'
+        correctResponse: 'すごいね！正解だよ！渡辺千春さん。自分の台本と違うものが放送されてるのを見て、辞めちゃったんだ'
       },
       {
         key: 'chat_q2_clear',
+        question: 'コーナーとコーナーの間に何か挟まってたの、知ってるかな？脚本家さんは書いてないのに、なぜかそこにあったんだ。あれ、なんて呼ばれてたっけ？',
         keywords: ['ブリッジ映像', 'ブリッジ', 'ぶりっじ'],
-        correctResponse: 'さすがだね！ブリッジ映像！誰が作ったのか、誰も知らなかったんだよ',
-        nextQuestion: 'さすがだね！もう一問いくよ！企画書にはね、ぼくたちの名前が5つ書いてあったんだ。でも放送されたのは4つだけ。消えちゃった5番目のおともだち、名前わかるかな？'
+        correctResponse: 'さすがだね！ブリッジ映像！誰が作ったのか、誰も知らなかったんだよ'
       },
       {
         key: 'chat_q3_clear',
+        question: '企画書にはね、ぼくたちの名前が5つ書いてあったんだ。でも放送されたのは4つだけ。消えちゃった5番目のおともだち、名前わかるかな？',
         keywords: ['ひかりちゃん', 'ひかり', 'hikari'],
-        correctResponse: '全問正解！キミはすごいね！'
+        correctResponse: 'うん……ひかりちゃん。あの子のこと、ぼくも覚えてるよ……'
+      },
+      {
+        key: 'chat_q4_clear',
+        question: 'CDのね……最後の曲の、そのまた後に……30秒くらいの沈黙があって……そのあとに聞こえたものがあるんだ。何が聞こえた？',
+        keywords: ['たすけて', 'タスケテ', '助けて'],
+        correctResponse: '…………うん。「たすけて」って……聞こえたんだよね。ぼくもね、聞いたことがあるんだ。あの声……'
+      },
+      {
+        key: 'chat_q5_clear',
+        question: '……最後にひとつだけ。"冷たい体"の歌——あの曲のタイトル、覚えてる？',
+        keywords: ['さよならの向こう側', 'さよなら', 'サヨナラ'],
+        correctResponse: '……「さよならの向こう側」。作詞者が誰も名乗らなかった曲。あの歌詞は……誰の言葉だったんだろうね'
       }
     ];
 
@@ -533,9 +540,10 @@
     }
 
     function allPuzzlesClear() {
-      return localStorage.getItem('chat_q1_clear') === 'true' &&
-             localStorage.getItem('chat_q2_clear') === 'true' &&
-             localStorage.getItem('chat_q3_clear') === 'true';
+      for (var i = 0; i < puzzleQuestions.length; i++) {
+        if (localStorage.getItem(puzzleQuestions[i].key) !== 'true') return false;
+      }
+      return true;
     }
 
     function showNight3Unlock() {
