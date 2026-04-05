@@ -318,16 +318,19 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
   }, 10000);
 })();
 
+// EndB後：syslogアイコン表示（EndA到達後も残す）
+if(localStorage.getItem('ending_b_seen') === 'true'){
+  document.getElementById('syslog-icon').style.display = '';
+}
 // EndA後：穏やかな壁紙 + エクストラ/カスタムナイトアイコン表示
 if(localStorage.getItem('ending_a_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('enda-wallpaper');
   document.getElementById('extra-icon').style.display = '';
   document.getElementById('custom-icon').style.display = '';
 }
-// EndB後の壁紙変更 + syslogアイコン表示（EndA未到達時のみ壊れ壁紙）
+// EndB後（EndA未到達）：壊れ壁紙
 else if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('endb-wallpaper');
-  document.getElementById('syslog-icon').style.display = '';
 }
 
 // 吉田ファイル送信後にフォルダアイコン表示
