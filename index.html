@@ -322,11 +322,16 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
 if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('syslog-icon').style.display = '';
 }
-// EndA後：穏やかな壁紙 + エクストラ/カスタムナイトアイコン表示
+// EndA後：穏やかな壁紙 + 全条件付きアイコン強制表示
 if(localStorage.getItem('ending_a_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('enda-wallpaper');
   document.getElementById('extra-icon').style.display = '';
   document.getElementById('custom-icon').style.display = '';
+  document.getElementById('archive-icon').style.display = '';
+  document.getElementById('archive-pin').style.display = '';
+  document.getElementById('chat-icon').style.display = '';
+  document.getElementById('chat-pin').style.display = '';
+  document.getElementById('yoshida-folder').style.display = '';
 }
 // EndB後（EndA未到達）：壊れ壁紙
 else if(localStorage.getItem('ending_b_seen') === 'true'){
