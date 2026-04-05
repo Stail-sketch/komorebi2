@@ -281,7 +281,7 @@
   </div>
   <div id="jumpscare-screen" class="overlay-screen"><img src="../image/character/kururu jumpscare.png" alt=""></div>
   <div id="gameover-screen" class="overlay-screen"><h1>GAME OVER</h1><button class="overlay-btn" id="retry-btn">RETRY</button></div>
-  <div id="clear-screen" class="overlay-screen"><h1>NIGHT 6 CLEAR</h1><p>6:00 AM</p></div>
+  <div id="clear-screen" class="overlay-screen"><h1>NIGHT 6 CLEAR</h1><p>6:00 AM</p><a id="clear-proceed" href="../ending_a/" class="overlay-btn" style="display:none;margin-top:30px;text-decoration:none;">PROCEED</a></div>
 
   <!-- Blackmasterグリッチエフェクト -->
   <div id="blackmaster-flash"></div>
@@ -1573,12 +1573,10 @@ function nightClear() {
   $('clear-screen').classList.add('active');
   setTimeout(() => playS(sndClearYay), 500);
 
-  // エンディング分岐
   localStorage.setItem('custom_night_unlocked', 'true');
   setTimeout(() => {
     allowNavigation();
-    // Night6クリア → EndA直行（Night6はEndB後の最終決戦）
-    window.location.href = '../ending_a/';
+    $('clear-proceed').style.display = 'inline-block';
   }, 3000);
 }
 
