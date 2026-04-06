@@ -1416,7 +1416,15 @@ var dmAutoMessages = {
   4: '…もう一度やらされてるのか。あいつはお前の感情をもっと欲しがってる。でも…これはチャンスでもある。今度は俺が本当のことを話す'
 };
 
-// Night4 puzzle: track reported diffs
+// Night4 puzzle: archive visit tracking
+function getArchiveVisitCount(){
+  var count = 0;
+  if(localStorage.getItem('archive_staff_visited') === 'true') count++;
+  if(localStorage.getItem('archive_characters_visited') === 'true') count++;
+  if(localStorage.getItem('archive_about_visited') === 'true') count++;
+  return count;
+}
+// Legacy keyword tracking (kept for compatibility)
 function getN4Diffs(){
   try{return JSON.parse(localStorage.getItem('n4_puzzle_diffs') || '[]');}catch(e){return [];}
 }
@@ -1428,13 +1436,13 @@ function addN4Diff(key){
   }
   return diffs.length;
 }
-function checkN4Complete(totalAfter){
-  if(totalAfter >= 3 && !hasFlag('night4_clear')){
+function checkN4Complete(){
+  if(getArchiveVisitCount() >= 3 && !hasFlag('night4_clear')){
     // All 3 diffs found — schedule the Night4 unlock message
     setTimeout(function(){
       showTypingIndicator();
       setTimeout(function(){
-        addYoshiResponse('…全部見つけたのか。あなたには全部話す。');
+        addYoshiResponse('…全部見たんですね。あの3つの違い…誰かが意図的に書き換えてる。');
         showTypingIndicator();
         setTimeout(function(){
           var linkMsg = '…こっちに来てくれ。';
@@ -2180,7 +2188,7 @@ function handleDMSend(){
       showTypingIndicator();
       setTimeout(function(){
         addYoshiResponse(match.response);
-        if(!checkN4Complete(totalDiffs)){
+        if(!checkN4Complete()){
           // Give hint about remaining diffs
           if(totalDiffs < 3){
             showTypingIndicator();
@@ -2299,6 +2307,15 @@ function _showDM(noPush){
   }
   // 選択肢ボタンを表示
   renderDMChoices();
+
+  // Night4: archive訪問チェック（Phase1でアーカイブ3ページ訪問済みなら自動発動）
+  if(dmPhase === 1 && !hasFlag('night4_clear')){
+    setTimeout(function(){
+      if(getArchiveVisitCount() >= 3){
+        checkN4Complete();
+      }
+    }, 2000);
+  }
 }
 
 // ===== DM選択肢ボタン =====

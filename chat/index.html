@@ -414,12 +414,9 @@
               }); }, 1500);
             }
           } else if(warmupStage >= 3){
-            // ウォームアップ終了済み、パズルへ
-            addMessage(partnerName, 'おかえり！クイズの続きだよ！', true);
-            setTimeout(function(){
-              localStorage.setItem('chat_puzzle_started', 'true');
-              showCurrentQuestion();
-            }, 1500);
+            // ウォームアップ終了済み、自由会話モードへ
+            addMessage(partnerName, 'おかえり！気になることがあったらなんでも聞いてね！', true);
+            localStorage.setItem('chat_freemode', 'true');
           } else {
             // 初回: Stage 0の挨拶を順番に表示
             var greetings = warmupScript[0].greeting;
@@ -434,14 +431,6 @@
         });
       }, 1000);
 
-      function showCurrentQuestion(){
-        showTyping(function(){
-          var qi = getCurrentQuestion();
-          if(qi >= 0 && qi < puzzleQuestions.length){
-            addMessage(partnerName, puzzleQuestions[qi].question, true);
-          }
-        });
-      }
     }
 
     function getTimeString() {
@@ -484,66 +473,78 @@
       }, delay);
     }
 
-    // Night3 puzzle: 3 questions (子ども番組MC口調)
-    var puzzleQuestions = [
+    // Night3: 敏感トピックシステム（尋問型）
+    var sensitiveTopics = [
       {
-        key: 'chat_q1_clear',
-        question: 'この番組でね、自分が書いたものと違うものが放送されてるのに気づいて、辞めちゃった人がいるんだ。その人の名前、わかるかな？',
-        keywords: ['渡辺千春', 'わたなべちはる', '渡辺', 'わたなべ'],
-        correctResponse: 'すごいね！正解だよ！渡辺千春さん。自分の台本と違うものが放送されてるのを見て、辞めちゃったんだ'
+        key: 'chat_topic_watanabe',
+        triggers: ['渡辺', 'わたなべ', '脚本', '辞めた', 'やめた', '台本', '違うもの', '脚本家'],
+        reactions: [
+          '……え？ 渡辺さんのこと…知ってるの？',
+          '…うん…渡辺さんは…自分の書いたものと違うものが放送されてるのを見て…',
+          '……ごめん、これ以上は……でも、知ってくれてるんだね'
+        ]
       },
       {
-        key: 'chat_q2_clear',
-        question: 'コーナーとコーナーの間に何か挟まってたの、知ってるかな？脚本家さんは書いてないのに、なぜかそこにあったんだ。あれ、なんて呼ばれてたっけ？',
-        keywords: ['ブリッジ映像', 'ブリッジ', 'ぶりっじ'],
-        correctResponse: 'さすがだね！ブリッジ映像！誰が作ったのか、誰も知らなかったんだよ'
+        key: 'chat_topic_bridge',
+        triggers: ['ブリッジ', 'ぶりっじ', '映像', 'コーナーの間', '挟まってた', '誰が作った', '企画書にない'],
+        reactions: [
+          '…！ それ……知ってるんだ…',
+          'あの映像…脚本には書いてないのに、なぜかそこにあったんだ',
+          '……誰が作ったのか……ぼくにも、わからない……'
+        ]
       },
       {
-        key: 'chat_q3_clear',
-        question: '企画書にはね、ぼくたちの名前が5つ書いてあったんだ。でも放送されたのは4つだけ。消えちゃった5番目のおともだち、名前わかるかな？',
-        keywords: ['ひかりちゃん', 'ひかり', 'hikari'],
-        correctResponse: 'うん……ひかりちゃん。あの子のこと、ぼくも覚えてるよ……'
-      },
-      {
-        key: 'chat_q4_clear',
-        question: 'CDのね……最後の曲の、そのまた後に……30秒くらいの沈黙があって……そのあとに聞こえたものがあるんだ。何が聞こえた？',
-        keywords: ['たすけて', 'タスケテ', '助けて'],
-        correctResponse: '…………うん。「たすけて」って……聞こえたんだよね。ぼくもね、聞いたことがあるんだ。あの声……'
-      },
-      {
-        key: 'chat_q5_clear',
-        question: '……最後にひとつだけ。"冷たい体"の歌——あの曲のタイトル、覚えてる？',
-        keywords: ['さよならの向こう側', 'さよなら', 'サヨナラ'],
-        correctResponse: '……「さよならの向こう側」。作詞者が誰も名乗らなかった曲。あの歌詞は……誰の言葉だったんだろうね'
+        key: 'chat_topic_hikari',
+        triggers: ['ひかり', 'hikari', '5番目', '五番目', '消えた', '消えちゃった', '5体', '五体', '企画書の名前'],
+        reactions: [
+          '…………',
+          '…ひかりちゃんのこと……覚えてる人がいたんだ……',
+          '……あの子は…ぼくの………いや、なんでもない'
+        ]
       }
     ];
 
-    function getCurrentQuestion() {
-      for (var i = 0; i < puzzleQuestions.length; i++) {
-        if (localStorage.getItem(puzzleQuestions[i].key) !== 'true') return i;
+    function getHitTopicCount() {
+      var count = 0;
+      for (var i = 0; i < sensitiveTopics.length; i++) {
+        if (localStorage.getItem(sensitiveTopics[i].key) === 'true') count++;
       }
-      return -1; // all cleared
+      return count;
     }
 
-    function checkPuzzleAnswer(input) {
-      var qi = getCurrentQuestion();
-      if (qi === -1) return null; // all done
-      var q = puzzleQuestions[qi];
+    function checkSensitiveTopic(input) {
       var lowerInput = input.toLowerCase();
-      for (var j = 0; j < q.keywords.length; j++) {
-        if (lowerInput.indexOf(q.keywords[j].toLowerCase()) !== -1) {
-          localStorage.setItem(q.key, 'true');
-          return { correct: true, response: q.correctResponse, nextQuestion: q.nextQuestion || null };
+      for (var i = 0; i < sensitiveTopics.length; i++) {
+        var topic = sensitiveTopics[i];
+        if (localStorage.getItem(topic.key) === 'true') continue;
+        for (var j = 0; j < topic.triggers.length; j++) {
+          if (lowerInput.indexOf(topic.triggers[j].toLowerCase()) !== -1) {
+            localStorage.setItem(topic.key, 'true');
+            return { hit: true, reactions: topic.reactions };
+          }
         }
       }
-      return null; // no match
+      return null;
     }
 
-    function allPuzzlesClear() {
-      for (var i = 0; i < puzzleQuestions.length; i++) {
-        if (localStorage.getItem(puzzleQuestions[i].key) !== 'true') return false;
+    function allTopicsHit() {
+      for (var i = 0; i < sensitiveTopics.length; i++) {
+        if (localStorage.getItem(sensitiveTopics[i].key) !== 'true') return false;
       }
       return true;
+    }
+
+    function showTopicReactions(reactions, callback) {
+      var idx = 0;
+      function nextReaction() {
+        if (idx >= reactions.length) { if (callback) callback(); return; }
+        showTyping(function() {
+          addMessage(partnerName, reactions[idx], true);
+          idx++;
+          setTimeout(nextReaction, 1500);
+        });
+      }
+      nextReaction();
     }
 
     function showNight3Unlock() {
@@ -551,17 +552,16 @@
         addMessage(partnerName, '……', true);
         setTimeout(function(){
           showTyping(function(){
-            addMessage(partnerName, '……ねえ', true);
+            addMessage(partnerName, '……ねえ、キミさ', true);
             setTimeout(function(){
               showTyping(function(){
-                addMessage(partnerName, 'ぼくのこと、もっと知りたい？', true);
+                addMessage(partnerName, '……なんでそんなこと知ってるの？', true);
                 setTimeout(function(){
                   showTyping(function(){
-                    addMessage(partnerName, 'でもね、ここから先は怖いかもしれないよ', true);
+                    addMessage(partnerName, '……怖いよ', true);
                     setTimeout(function(){
                       showTyping(function(){
-                        addMessage(partnerName, 'それでも、来てくれる？', true);
-                        // Show link
+                        addMessage(partnerName, '……でも……来てくれる？', true);
                         setTimeout(function(){
                           var linkDiv = document.createElement('div');
                           linkDiv.className = 'message partner';
@@ -613,7 +613,7 @@
       addMessage('あなた', text, false);
 
       // Warmup phase: scripted conversation
-      if (!localStorage.getItem('chat_puzzle_started')) {
+      if (!localStorage.getItem('chat_freemode')) {
         var stage = parseInt(localStorage.getItem('chat_warmup_stage') || '0');
 
         if (stage < warmupScript.length) {
@@ -650,18 +650,13 @@
                 });
               }, 1500);
             } else {
-              // Warmup done → transition to puzzle
+              // Warmup done → free conversation mode
               setTimeout(function(){
                 showTyping(function(){
-                  addMessage(partnerName, 'じゃあさ、ぼくからクイズを出してもいい？ サイトをちゃんと読んでたら答えられるやつ！', true);
-                  setTimeout(function(){
-                    showTyping(function(){
-                      localStorage.setItem('chat_puzzle_started', 'true');
-                      showCurrentQuestion();
-                      isProcessing = false;
-                      messageInput.focus();
-                    });
-                  }, 1500);
+                  addMessage(partnerName, 'サイトでいろいろ読んでくれたんだよね？ 気になったこととか、なんでも聞いてよ！ぼく、待ってるから！', true);
+                  localStorage.setItem('chat_freemode', 'true');
+                  isProcessing = false;
+                  messageInput.focus();
                 });
               }, 1500);
             }
@@ -670,27 +665,14 @@
         }
       }
 
-      // Check puzzle answer FIRST
-      var puzzleResult = checkPuzzleAnswer(text);
-      if (puzzleResult && puzzleResult.correct) {
-        showTyping(function () {
-          addMessage(partnerName, puzzleResult.response, true);
-
-          // Check if all 3 are done
-          if (allPuzzlesClear() && !localStorage.getItem('night3_unlocked')) {
-            setTimeout(function () {
+      // Check sensitive topic (尋問システム)
+      var topicResult = checkSensitiveTopic(text);
+      if (topicResult && topicResult.hit) {
+        showTopicReactions(topicResult.reactions, function() {
+          if (allTopicsHit() && !localStorage.getItem('night3_unlocked')) {
+            setTimeout(function() {
               showNight3Unlock();
             }, 2000);
-          } else if (puzzleResult.nextQuestion) {
-            // Show next question
-            setTimeout(function () {
-              showTyping(function () {
-                addMessage(partnerName, puzzleResult.nextQuestion, true);
-                isProcessing = false;
-                messageInput.focus();
-              });
-            }, 1500);
-            return; // don't set isProcessing=false yet
           }
           isProcessing = false;
           messageInput.focus();
