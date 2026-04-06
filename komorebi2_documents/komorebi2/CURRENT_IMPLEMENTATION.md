@@ -54,51 +54,47 @@ PCデスクトップ（index.html）
 
 ## Night3への入口
 
-**方式**: キツネ団長チャット（chat/）でクイズ3問正解
+**方式**: キツネ団長チャット（chat/）で敏感トピック3つに触れる（尋問型）
 **前提**: `night2_clear === 'true'`、チャット解放済み（`chat_unlocked === 'true'`）
 
-**ウォームアップ会話**: 3段階の自然な会話後にクイズモード
+**ウォームアップ会話**: 3段階の自然な会話後「なんでも聞いてよ！」で自由会話モードへ
 
-**クイズ3問**:
-- Q1:「辞めた脚本家の名前」→ **渡辺千春**
-- Q2:「コーナー間に隠されていたもの」→ **ブリッジ映像**
-- Q3:「消えた5番目のキャラ」→ **ひかりちゃん**
+**敏感トピック3つ**（プレイヤーが自分から話題を振る）:
+1. 渡辺千春 / 脚本 / 辞めた → キツネ団長「…それ…知ってるの…？」
+2. ブリッジ映像 / コーナーの間 → キツネ団長「…！ 知ってるんだ…」
+3. ひかりちゃん / 5番目 / 消えた → キツネ団長「…………」（沈黙）
 
-**正解時localStorage**: `chat_q1_clear`, `chat_q2_clear`, `chat_q3_clear`
-**全問正解後**: `night3_unlocked = 'true'`、チャット内に「▶ 行く」リンク表示
+**localStorage**: `chat_topic_watanabe`, `chat_topic_bridge`, `chat_topic_hikari`
+**3トピック後**: 「……なんでそんなこと知ってるの？……怖いよ……でも……来てくれる？」→ Night3リンク
 **URL**: `../night3/`
 
 ---
 
 ## Night4への入口
 
-**方式**: archive/とofficial/の差分3つをPopin DMでゆうやけさんぽに報告
+**方式**: DMでゆうやけさんぽにNight3後の追加資料の内容をぶつける（尋問型）
 **前提**: `night3_clear === 'true'`、DM Phase1解放済み
+**状態**: 設計中（トピック・キーワード・反応は未確定）
 
-**差分3つ**:
-1. スタッフ一覧の「人形デザイン ██████████」行 → officialでは削除
-2. 試作キツネ「密かに保管」→ official「廃棄処分済み」
-3. ゆめスタジオ設立「1987年」→ official「1988年」
-
-**DMキーワード**:
-- `['人形デザイン','名前が消えてる','名前が消えている']` → puzzle: `diff_name`
-- `['試作きつね','試作キツネ','保管','廃棄']` → puzzle: `diff_kitsune`
-- `['1987','設立年','年がずれ','年が違']` → puzzle: `diff_year`
-
-**3つ報告後**: 「全部見つけたのか。あなたには全部話す。」→ Night4リンク表示
-**URL**: `../night4/`
-**localStorage**: `n4_puzzle_diffs`
+**設計方針**:
+- Night3と同じ「尋問」方式だがDMで相手が違う
+- Night3後に解放されたページ（被験者リスト、行方不明者、事件年表等）の情報をぶつける
+- 3トピック触れるとゆうやけさんぽが崩れてNight4解放
+- キツネ団長は怯えるが、ゆうやけさんぽはもっと重い反応
 
 ---
 
 ## Night5への入口
 
-**方式**: DM Phase2ウォームアップ会話の完了で自動遷移
+**方式**: 全ツール横断の最難関ARG（contactフォーム使用）
 **前提**: `night4_clear === 'true'`
+**状態**: 設計中
 
-**仕掛け**: Phase2最終メッセージの`onComplete: 'triggerNight5Collapse'`
-**演出**: DM画面がグリッチ → シェイク → 暗転 → 自動リダイレクト
-**URL**: `../night5/`（自動遷移、リンク不要）
+**設計方針**:
+- official + Popin + メール + チャット + DM + アーカイブに散らばった情報を組み立てる
+- contactフォームに何かを入力して送信
+- 前作もNight5でcontactフォームを使ったためオマージュ
+- 全ページ横断、シリーズ最高難度
 
 ---
 
@@ -125,8 +121,8 @@ PCデスクトップ（index.html）
 | Night2 | `night2_clear` | `night2_pages_unlocked`, `night2_just_cleared` | ../index.html |
 | Night3 | `night3_clear` | `night3_pages_unlocked`, `night3_just_cleared` | ../index.html |
 | Night4 | `night4_clear` | `night4_pages_unlocked`, `night4_just_cleared` | ../index.html |
-| Night5 | `night5_clear` | `night5_pages_unlocked`, `night5_clear_time`, `save_point_night5` | ../ending_b/ |
-| Night6 | `night6_clear` | `night6_pages_unlocked`, `custom_night_unlocked` | ../ending_a/ |
+| Night5 | `night5_clear` | `night5_pages_unlocked`, `night5_clear_time`, `save_point_night5` | PROCEEDボタン → ../ending_b/ |
+| Night6 | `night6_clear` | `night6_pages_unlocked`, `custom_night_unlocked` | PROCEEDボタン → ../ending_a/ |
 
 ---
 
@@ -157,7 +153,7 @@ PCデスクトップ（index.html）
 | メール | 最初から | — |
 | チャット | Night2後メールで解放 | `chat_unlocked === 'true'` |
 | 旧サイト | Night3クリア後 | `night3_clear === 'true'` |
-| sys_log.txt | EndB後（EndA前のみ） | `ending_b_seen === 'true'` |
+| sys_log.txt | EndB後（EndA後も残る） | `ending_b_seen === 'true'` |
 | 吉田調査 | DM Phase4完了後 | `yoshida_files_sent === 'true'` |
 | エクストラ | EndA後 | `ending_a_seen === 'true'` |
 | カスタムナイト | EndA後 | `ending_a_seen === 'true'` |
@@ -169,7 +165,7 @@ PCデスクトップ（index.html）
 | Phase | 解放条件 | 内容 |
 |-------|---------|------|
 | 0 | Night2以前 | DM非表示 |
-| 1 | Night3クリア後 | ゆうやけさんぽと初会話 + Night4差分パズル誘導 |
+| 1 | Night3クリア後 | ゆうやけさんぽと初会話 + Night4尋問トリガー（設計中） |
 | 2 | Night4クリア後 | 過去の関与告白 + Night5自動遷移トリガー |
 | 3 | Night5クリア後 | 真相告白 + Night6自動遷移トリガー |
 | 4 | EndB後 | 説得キーワード解放（吉田/あかね/騙されてる/K-059等、3つ以上でEndA条件） |
@@ -187,7 +183,7 @@ PCデスクトップ（index.html）
 |--------|--------|--------------|
 | くるる | カメラ経路移動、見ると減速 | 移動3秒(通常)/6秒(減速)、ドア待機4.5秒 |
 | まだら | ステルス経路移動（opacity 0.1） | 移動4.5秒、ドア待機4秒 |
-| かすみ | オファーシステム（後述） | 出現15-25秒間隔、タイムアウト8秒 |
+| かすみ | オファーシステム（後述） | 出現10-18秒間隔、タイムアウト8秒 |
 | アラネ | 蜘蛛の巣ゲージ管理 | 消費0.5/tick、回復2/tick（CAM9長押し） |
 | よわり | カメラに出現、クリックで消す | 出現12-20秒間隔、放置で全敵1.5倍速 |
 
@@ -212,7 +208,7 @@ PCデスクトップ（index.html）
 
 | 項目 | 消費/tick(500ms) |
 |------|-----------------|
-| 基本 | 0.10 |
+| 基本 | 0.15 |
 | カメラ | +0.09 |
 | ドア(片方) | +0.50 |
 | ライト(片方) | +0.15 |
