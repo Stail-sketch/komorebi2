@@ -1416,33 +1416,25 @@ var dmAutoMessages = {
   4: '…もう一度やらされてるのか。あいつはお前の感情をもっと欲しがってる。でも…これはチャンスでもある。今度は俺が本当のことを話す'
 };
 
-// Night4 puzzle: archive visit tracking
-function getArchiveVisitCount(){
+// Night4 puzzle: sensitive topic tracking (尋問型)
+function getN4TopicCount(){
   var count = 0;
-  if(localStorage.getItem('archive_staff_visited') === 'true') count++;
-  if(localStorage.getItem('archive_characters_visited') === 'true') count++;
-  if(localStorage.getItem('archive_about_visited') === 'true') count++;
+  if(localStorage.getItem('dm_topic_g0') === 'true') count++;
+  if(localStorage.getItem('dm_topic_demand') === 'true') count++;
+  if(localStorage.getItem('dm_topic_voice') === 'true') count++;
   return count;
 }
-// Legacy keyword tracking (kept for compatibility)
-function getN4Diffs(){
-  try{return JSON.parse(localStorage.getItem('n4_puzzle_diffs') || '[]');}catch(e){return [];}
-}
-function addN4Diff(key){
-  var diffs = getN4Diffs();
-  if(diffs.indexOf(key) === -1){
-    diffs.push(key);
-    try{localStorage.setItem('n4_puzzle_diffs', JSON.stringify(diffs));}catch(e){}
-  }
-  return diffs.length;
+function addN4Topic(key){
+  localStorage.setItem('dm_' + key, 'true');
+  return getN4TopicCount();
 }
 function checkN4Complete(){
-  if(getArchiveVisitCount() >= 3 && !hasFlag('night4_clear')){
+  if(getN4TopicCount() >= 3 && !hasFlag('night4_clear')){
     // All 3 diffs found — schedule the Night4 unlock message
     setTimeout(function(){
       showTypingIndicator();
       setTimeout(function(){
-        addYoshiResponse('…全部見たんですね。あの3つの違い…誰かが意図的に書き換えてる。');
+        addYoshiResponse('…そこまで知ってるのか。…あなたには…全部話した方がいいのかもしれない。');
         showTypingIndicator();
         setTimeout(function(){
           var linkMsg = '…こっちに来てくれ。';
@@ -1470,17 +1462,15 @@ function checkN4Complete(){
 // Keyword responses per phase
 var dmKeywords = {
   1: [
-    // === Night4 puzzle: 差分報告キーワード（3種）===
-    {keywords:['人形デザイン','名前が消えてる','名前が消えている','名前が消'], response:'…！ やっぱり気づいたか。前のサイトにはあった名前が消されてる…', puzzle:'diff_name'},
-    {keywords:['試作きつね','試作キツネ','保管','廃棄'], response:'…そうだ…前は「密かに保管」だったはず…書き換えられてる', puzzle:'diff_kitsune'},
-    {keywords:['1987','設立年','年がずれ','年が違'], response:'…設立年が…1年ずれてる…前のサイトでは1987年だったのに…', puzzle:'diff_year'},
-    // === アーカイブ関連 ===
-    {keywords:['アーカイブ','旧サイト','前のサイト','古いサイト'], response:'あのサイト見たんですか…？ よく見比べてみてください。何か違うところがあるはずです'},
-    {keywords:['違い','違う','差分','変わ','おかしい'], response:'スタッフの情報、キャラクターの説明、会社の情報…3つ、変えられてるところがある'},
-    {keywords:['比べ','見比べ','見くらべ'], response:'そう、よく見比べて。ちょっとした違いに気づけるかどうかが大事です'},
-    {keywords:['書き換え','改竄','改ざん'], response:'誰かが…意図的に情報を変えてる。なぜそんなことをするのか…考えてみてください'},
-    {keywords:['スタッフ','名前'], response:'スタッフ一覧…前のサイトと今のサイトで、人数が同じかどうか確認してみて'},
-    {keywords:['ヒント','わからない','わかりません'], response:'スタッフのこと、キャラクターのこと、会社のこと…3つのカテゴリに1つずつ。よく見比べてみて'},
+    // === Night4: 敏感トピック（尋問型・3種）===
+    {keywords:['G-0','G0','ゼロ号','被験者G','被験者リスト','会社設立前から'], response:'…なんでその番号を知ってるんですか…あれは…あの資料は公開されるはずじゃ…', puzzle:'topic_g0'},
+    {keywords:['娘を返せ','申し入れ書','申し入れ','返せ'], response:'…………それは……そんなことがなんで……あなたの口から……', puzzle:'topic_demand'},
+    {keywords:['内部から直接生成','内部から生成','脳波パターン','基底波形','7歳','8歳','女児のパターン'], response:'…やめてくれ…それ以上は…お願いだから…もう…', puzzle:'topic_voice'},
+    // === 追加ヒント ===
+    {keywords:['ヒント','わからない','わかりません','何を言えば'], response:'…サイトに追加されたページを読んでみてください。被験者のこと、行方不明者のこと、声のこと…気になったことを教えてくれればいい'},
+    {keywords:['被験者','ひけんしゃ'], response:'…被験者リスト…見たんですか。あの一番上の行…'},
+    {keywords:['行方不明','消えた人','失踪'], response:'…ええ…消えた人たちがいます。あの番組に関わった人たちの中に…'},
+    {keywords:['アニマトロニクス','人形','中に誰か'], response:'…あの人形たちのことは…今は…まだ話せません'},
     // === 番組・キャラクター ===
     {keywords:['番組'], response:'不思議な番組ですよね…なんか気になって毎晩見ちゃうんです'},
     {keywords:['怖い','こわい'], response:'怖いですよね…でもなんか目が離せなくて'},
@@ -1679,35 +1669,25 @@ var dmWarmupScripts = {
         {keywords:['おかしい','変','なに','思う'], reply:'…ですよね。何かがおかしい'}
       ],
       defaultReply: '…そうですか。俺だけじゃなかったんだ',
-      next: '実は気になってることがあって。デスクトップに旧サイトのアーカイブが出てませんか？'
+      next: '…サイトに新しいページが増えてますよね。被験者リストとか、行方不明者とか…読みました？'
     },
     {
-      choices: ['あるある、出てた','なんであんなの出たの？','アーカイブって何？'],
+      choices: ['読んだよ','まだ全部は…','怖くて読めない'],
       responses: [
-        {keywords:['見た','ある','出てる','うん','はい'], reply:'…やっぱり出てるんですね'},
-        {keywords:['アーカイブ','旧サイト'], reply:'そう、あのアーカイブです'},
-        {keywords:['なぜ','なんで','どうして'], reply:'…誰かがサイトの情報を書き換えてるんです。意図的に'}
+        {keywords:['読んだ','読みました','見た','うん','はい'], reply:'…あなたもあれを読んだんですか'},
+        {keywords:['まだ','全部は','途中'], reply:'…全部読んでみてください。大事なことが書いてある'},
+        {keywords:['怖い','こわい','読めない'], reply:'…怖いですよね。でも…知らないと先に進めない'}
       ],
-      defaultReply: '…あれを今の番組サイトと見比べてみてください',
-      next: '何か変えられてる。意図的に。…誰かが情報を操作してるんです'
+      defaultReply: '…あれを読んで、俺は眠れなくなった',
+      next: '…あなたは、どこまで知ってるんですか'
     },
     {
-      choices: ['誰がそんなことを？','わかった、見てみるよ','…ちょっと怖いな'],
+      choices: ['どういうこと？','何を知りたいの？','色々調べたよ'],
       responses: [
-        {keywords:['誰','だれ','操作'], reply:'…まだ分からないんです。でもあなたなら気づけるかもしれない'},
-        {keywords:['わかった','見る','見ます','了解'], reply:'…ありがとう。丁寧に見てみてください'},
-        {keywords:['怖い','やばい'], reply:'…ええ。でも…知らないままの方がもっと怖い'}
+        {keywords:['どういう','何を','なにを'], reply:'…サイトで読んだこと。気になったこと。…俺に教えてくれませんか'},
+        {keywords:['調べた','色々','いろいろ','知ってる'], reply:'…そうですか。じゃあ…聞かせてください'}
       ],
-      defaultReply: '…お願いします。よく見てみてください',
-      next: 'スタッフの情報、キャラクターの説明、会社の情報…3つのカテゴリにそれぞれ1つずつ、違うところがあります'
-    },
-    {
-      choices: ['わかった、探してみる','3つもあるの？'],
-      responses: [
-        {keywords:['3つ','三つ','みっつ'], reply:'ええ、3つです。見つけたら、ここにメッセージで打ち込んで教えてください'},
-        {keywords:['わかった','探す','了解'], reply:'…ありがとう。見つけたら、ここにメッセージで打ち込んで教えてください'}
-      ],
-      defaultReply: '見つけたら、ここにメッセージで打ち込んで教えてください。何が違ってたか…そのまま送ってくれれば分かります',
+      defaultReply: '…あなたが調べたこと、知ったこと…聞かせてほしいんです',
       next: null
     }
   ],
@@ -2181,25 +2161,14 @@ function handleDMSend(){
       addPersuasionKey(match.keywords[0]);
     }
 
-    // Track Night4 puzzle diffs
+    // Track Night4 sensitive topics
     if(match.puzzle){
-      var totalDiffs = addN4Diff(match.puzzle);
-      // Show response first, then check completion
+      var totalTopics = addN4Topic(match.puzzle);
       showTypingIndicator();
       setTimeout(function(){
         addYoshiResponse(match.response);
         if(!checkN4Complete()){
-          // Give hint about remaining diffs
-          if(totalDiffs < 3){
-            showTypingIndicator();
-            setTimeout(function(){
-              var remaining = 3 - totalDiffs;
-              addYoshiResponse('…あと' + remaining + 'つ…見つけてくれ');
-              dmIsProcessing = false;
-            }, 1500);
-          } else {
-            dmIsProcessing = false;
-          }
+          dmIsProcessing = false;
         }
       }, 1000 + Math.random() * 500);
       return;
@@ -2308,14 +2277,6 @@ function _showDM(noPush){
   // 選択肢ボタンを表示
   renderDMChoices();
 
-  // Night4: archive訪問チェック（Phase1でアーカイブ3ページ訪問済みなら自動発動）
-  if(dmPhase === 1 && !hasFlag('night4_clear')){
-    setTimeout(function(){
-      if(getArchiveVisitCount() >= 3){
-        checkN4Complete();
-      }
-    }, 2000);
-  }
 }
 
 // ===== DM選択肢ボタン =====
