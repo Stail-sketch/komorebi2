@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>社員専用アーカイブ - ゆめスタジオプロダクション</title>
+  <link rel="stylesheet" href="css/corporate.css">
+</head>
+<body>
+
+<div class="archive-banner">
+  <strong>WEB ARCHIVE</strong> &mdash; このページは Wayback Archive により保存された 1997年9月 時点のキャッシュです。
+</div>
+
+<div class="site-wrapper">
+
+  <header class="corp-header">
+    <h1>ゆめスタジオプロダクション</h1>
+    <div class="subtitle">YUME STUDIO PRODUCTION Co., Ltd.</div>
+  </header>
+
+  <nav class="corp-nav">
+    <a href="index.html">ホーム</a>
+    <a href="about.html">会社概要</a>
+    <a href="history.html">沿革</a>
+    <a href="program.html">番組紹介</a>
+    <a href="characters.html">キャラクター</a>
+    <a href="news.html">お知らせ</a>
+  </nav>
+
+  <main class="corp-main">
+    <div class="staff-login-page">
+      <h2>社員専用アーカイブ</h2>
+      <p style="font-size:12px; color:#666; text-indent:0;">このページは社員専用です。<br>アクセスコードを入力してください。</p>
+
+      <div class="login-box">
+        <label for="access-code">アクセスコード（6桁）</label>
+        <input type="text" id="access-code" maxlength="6" placeholder="______" autocomplete="off">
+        <button class="login-btn" id="login-btn">認証</button>
+        <div class="login-error" id="login-error">アクセスコードが正しくありません。</div>
+        <div class="login-hint">※ 各文書の管理番号を参照してください。</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="corp-footer">
+    <p>&copy; 1996-1997 YUME STUDIO PRODUCTION Co., Ltd.</p>
+  </footer>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var CORRECT_CODE = '199703';
+  var codeInput = document.getElementById('access-code');
+  var loginBtn = document.getElementById('login-btn');
+  var errorMsg = document.getElementById('login-error');
+
+  // 数字のみ入力可
+  codeInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    errorMsg.style.display = 'none';
+  });
+
+  function attemptLogin() {
+    var code = codeInput.value.trim();
+    if (code === CORRECT_CODE) {
+      // Night4解放フラグをセット
+      localStorage.setItem('yumestudio_unlocked', 'true');
+      localStorage.setItem('night4_arg_complete', 'true');
+
+      // 演出：認証成功
+      errorMsg.style.display = 'block';
+      errorMsg.style.color = '#006600';
+      errorMsg.textContent = '認証成功 — アクセスを許可します…';
+
+      setTimeout(function() {
+        // Night4へ遷移
+        window.location.href = '../night4/index.html';
+      }, 1500);
+    } else {
+      errorMsg.style.display = 'block';
+      errorMsg.style.color = '#cc3333';
+      errorMsg.textContent = 'アクセスコードが正しくありません。';
+      codeInput.value = '';
+      codeInput.focus();
+    }
+  }
+
+  loginBtn.addEventListener('click', attemptLogin);
+  codeInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') attemptLogin();
+  });
+})();
+</script>
+
+</body>
+</html>

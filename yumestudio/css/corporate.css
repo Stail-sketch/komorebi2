@@ -1,0 +1,568 @@
+/* ===================================================
+   ゆめスタジオプロダクション 公式サイト
+   1996-97年当時のデザインを再現
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap');
+
+/* --- リセット --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --navy: #003366;
+  --navy-dark: #001a33;
+  --navy-light: #004488;
+  --gold: #cc9900;
+  --gold-light: #e6b800;
+  --cream: #f5f0e8;
+  --cream-dark: #ebe3d5;
+  --text: #333333;
+  --text-light: #666666;
+  --link: #003399;
+  --link-visited: #660099;
+  --border: #ccccaa;
+  --white: #ffffff;
+  --bg: #f8f5ef;
+  --red-accent: #cc3333;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: 'Noto Serif JP', 'MS P明朝', 'ヒラギノ明朝 ProN', serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+}
+a:visited {
+  color: var(--link-visited);
+}
+a:hover {
+  color: var(--red-accent);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border: none;
+}
+
+/* --- アーカイブバナー --- */
+.archive-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #1a1a1a;
+  color: #aaa;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  border-bottom: 1px solid #444;
+}
+.archive-banner strong {
+  color: #e0e0e0;
+}
+.archive-banner a {
+  color: #88aacc;
+}
+
+/* --- 全体レイアウト --- */
+.site-wrapper {
+  max-width: 760px;
+  margin: 40px auto 0;
+  padding: 0 10px 40px;
+}
+
+/* --- ヘッダー --- */
+.corp-header {
+  background: linear-gradient(to bottom, var(--navy), var(--navy-dark));
+  border: 2px solid var(--gold);
+  padding: 20px 24px 16px;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.corp-header h1 {
+  font-size: 22px;
+  color: var(--gold-light);
+  letter-spacing: 6px;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.corp-header .subtitle {
+  font-size: 11px;
+  color: #8899aa;
+  letter-spacing: 2px;
+}
+
+/* --- ナビゲーション --- */
+.corp-nav {
+  background: var(--cream-dark);
+  border-left: 2px solid var(--gold);
+  border-right: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  padding: 6px 0;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+
+.corp-nav a {
+  display: inline-block;
+  padding: 3px 12px;
+  color: var(--navy);
+  text-decoration: none;
+  border-right: 1px solid var(--border);
+}
+.corp-nav a:last-child {
+  border-right: none;
+}
+.corp-nav a:hover {
+  color: var(--red-accent);
+  text-decoration: underline;
+}
+
+/* --- 検索バー --- */
+.search-box {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.search-box input[type="text"] {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid #999;
+  background: var(--white);
+  width: 140px;
+}
+.search-box button {
+  font-family: inherit;
+  font-size: 10px;
+  padding: 2px 8px;
+  background: var(--navy);
+  color: var(--white);
+  border: 1px solid var(--navy-dark);
+  cursor: pointer;
+}
+.search-box button:hover {
+  background: var(--navy-light);
+}
+
+/* --- メインコンテンツ --- */
+.corp-main {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  min-height: 300px;
+}
+
+.corp-main h2 {
+  font-size: 16px;
+  color: var(--navy);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.corp-main h3 {
+  font-size: 14px;
+  color: var(--navy-dark);
+  margin: 20px 0 8px;
+  padding-left: 10px;
+  border-left: 3px solid var(--gold);
+}
+
+.corp-main p {
+  margin-bottom: 12px;
+  text-indent: 1em;
+}
+
+.corp-main ul, .corp-main ol {
+  margin: 8px 0 16px 2em;
+}
+.corp-main li {
+  margin-bottom: 4px;
+}
+
+/* --- テーブル --- */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 13px;
+}
+.info-table th,
+.info-table td {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.info-table th {
+  background: var(--cream);
+  color: var(--navy-dark);
+  white-space: nowrap;
+  width: 140px;
+  font-weight: 700;
+}
+.info-table td {
+  background: var(--white);
+}
+
+/* --- お知らせリスト --- */
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.news-list li {
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--border);
+  font-size: 13px;
+}
+.news-list .date {
+  display: inline-block;
+  width: 100px;
+  color: var(--text-light);
+  font-size: 12px;
+}
+.news-list .tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  background: var(--navy);
+  color: var(--white);
+  margin-right: 6px;
+}
+.news-list .tag.event {
+  background: #336633;
+}
+.news-list .tag.goods {
+  background: #993366;
+}
+
+/* --- サイドバー風（トップページ用） --- */
+.top-layout {
+  display: flex;
+  gap: 20px;
+}
+.top-main {
+  flex: 1;
+}
+.top-side {
+  width: 200px;
+  flex-shrink: 0;
+}
+.side-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.side-box h4 {
+  font-size: 12px;
+  color: var(--navy);
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+.side-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.side-box li {
+  padding: 2px 0;
+}
+.side-box a {
+  font-size: 12px;
+}
+
+/* --- フッター --- */
+.corp-footer {
+  background: var(--navy-dark);
+  border: 2px solid var(--gold);
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 10px;
+  color: #8899aa;
+  line-height: 1.6;
+}
+.corp-footer a {
+  color: #8899aa;
+  text-decoration: none;
+  font-size: 9px;
+}
+.corp-footer a:hover {
+  color: var(--gold-light);
+  text-decoration: underline;
+}
+.corp-footer .footer-links {
+  margin-bottom: 6px;
+}
+.corp-footer .footer-links a {
+  margin: 0 8px;
+}
+.corp-footer .staff-login {
+  margin-top: 4px;
+  font-size: 9px;
+}
+.corp-footer .staff-login a {
+  color: #556677;
+}
+
+/* --- 訪問者カウンター（90年代風） --- */
+.visitor-counter {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-light);
+  margin: 12px 0 0;
+}
+.visitor-counter .count {
+  font-family: 'Courier New', monospace;
+  background: #222;
+  color: #0f0;
+  padding: 1px 8px;
+  letter-spacing: 2px;
+  font-size: 12px;
+}
+
+/* --- 「工事中」マーク --- */
+.under-construction {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 12px;
+  padding: 40px 0;
+}
+
+/* --- 区切り線 --- */
+hr.fancy {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* --- パンくずリスト --- */
+.breadcrumb {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+.breadcrumb a {
+  font-size: 11px;
+}
+
+/* --- 検索結果ページ --- */
+.search-results {
+  margin: 16px 0;
+}
+.search-result-item {
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--border);
+}
+.search-result-item h3 {
+  font-size: 14px;
+  margin: 0 0 4px;
+  padding: 0;
+  border: none;
+}
+.search-result-item h3 a {
+  color: var(--link);
+}
+.search-result-item .url {
+  font-size: 11px;
+  color: #006600;
+  font-family: monospace;
+  margin-bottom: 2px;
+}
+.search-result-item .snippet {
+  font-size: 12px;
+  color: var(--text-light);
+  text-indent: 0;
+}
+.search-result-item.hidden-result {
+  /* 隠し文書：微妙に違和感のあるスタイル */
+}
+.search-result-item.hidden-result h3 a {
+  color: var(--navy-dark);
+}
+.search-result-item.hidden-result .url {
+  color: #666;
+}
+
+.search-no-result {
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 0;
+  font-size: 13px;
+}
+
+/* --- 社員専用ページ --- */
+.staff-login-page {
+  max-width: 400px;
+  margin: 40px auto;
+  text-align: center;
+}
+.staff-login-page h2 {
+  border: none;
+  text-align: center;
+}
+.staff-login-page .login-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-top: 16px;
+}
+.staff-login-page label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.staff-login-page input[type="text"],
+.staff-login-page input[type="password"] {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  padding: 6px 12px;
+  border: 1px solid #999;
+  background: var(--white);
+  width: 200px;
+  text-align: center;
+  letter-spacing: 6px;
+}
+.staff-login-page .login-btn {
+  display: block;
+  margin: 16px auto 0;
+  padding: 6px 32px;
+  background: var(--navy);
+  color: var(--white);
+  border: 1px solid var(--navy-dark);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.staff-login-page .login-btn:hover {
+  background: var(--navy-light);
+}
+.staff-login-page .login-error {
+  color: var(--red-accent);
+  font-size: 11px;
+  margin-top: 8px;
+  display: none;
+}
+.staff-login-page .login-hint {
+  font-size: 10px;
+  color: #999;
+  margin-top: 12px;
+}
+
+/* --- 隠しページ（内部文書風） --- */
+.internal-doc {
+  font-family: 'Courier New', 'MS ゴシック', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.internal-doc .doc-header {
+  border: 1px solid #999;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #fafafa;
+}
+.internal-doc .doc-header .classification {
+  font-size: 10px;
+  color: var(--red-accent);
+  text-align: right;
+  margin-bottom: 4px;
+}
+.internal-doc .doc-header h2 {
+  font-size: 14px;
+  border: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  letter-spacing: 4px;
+}
+.internal-doc .doc-header .doc-meta {
+  font-size: 11px;
+  color: #666;
+  margin-top: 8px;
+}
+.internal-doc .doc-header .doc-meta .management-number {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+}
+.internal-doc .doc-body {
+  padding: 0 8px;
+}
+.internal-doc .doc-body p {
+  text-indent: 1em;
+  margin-bottom: 8px;
+}
+.internal-doc .redacted {
+  background: #333;
+  color: #333;
+  padding: 0 2px;
+  user-select: none;
+}
+.internal-doc .stamp {
+  color: var(--red-accent);
+  border: 2px solid var(--red-accent);
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  transform: rotate(-5deg);
+  margin: 8px 0;
+}
+
+/* --- レスポンシブ（90年代サイトだけど最低限） --- */
+@media (max-width: 780px) {
+  .site-wrapper {
+    margin-top: 36px;
+    padding: 0 6px 20px;
+  }
+  .corp-header h1 {
+    font-size: 18px;
+    letter-spacing: 3px;
+  }
+  .corp-nav a {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  .corp-main {
+    padding: 16px 14px;
+  }
+  .top-layout {
+    flex-direction: column;
+  }
+  .top-side {
+    width: 100%;
+  }
+  .search-box {
+    float: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 4px;
+  }
+}
