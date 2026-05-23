@@ -227,7 +227,13 @@ body {
       <span class="icon-label">sys_log.txt</span>
     </a>
 
-    <!-- 吉田の調査ファイル（DM Phase4ウォームアップ後に出現） -->
+    <!-- Night6（EndB後に出現、EndA後は非表示） -->
+    <a class="desktop-icon" id="night6-icon" href="#" onclick="window.open('night6/index.html','_blank');return false;" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#2a0a0a,#4a1a1a);font-size:22px;">🌙</div>
+      <span class="icon-label">Night 6</span>
+    </a>
+
+    <!-- 吉田の調査ファイル（メール添付から解放） -->
     <a class="desktop-icon" id="yoshida-folder" href="#" onclick="window.open('yoshida/index.html','_blank');return false;" style="display:none;">
       <div class="icon-img" style="background:linear-gradient(135deg,#2a1a0a,#4a3a1a);font-size:22px;">📂</div>
       <span class="icon-label">吉田の<br>調査ファイル</span>
@@ -321,6 +327,9 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
 // EndB後：syslogアイコン表示（EndA到達後も残す）
 if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('syslog-icon').style.display = '';
+  if(localStorage.getItem('dm_phase_4_complete') === 'true'){
+    document.getElementById('night6-icon').style.display = '';
+  }
 }
 // EndA後：穏やかな壁紙 + 全条件付きアイコン強制表示
 if(localStorage.getItem('ending_a_seen') === 'true'){
@@ -330,6 +339,7 @@ if(localStorage.getItem('ending_a_seen') === 'true'){
   document.getElementById('chat-icon').style.display = '';
   document.getElementById('chat-pin').style.display = '';
   document.getElementById('yoshida-folder').style.display = '';
+  document.getElementById('night6-icon').style.display = 'none';
 }
 // EndB後（EndA未到達）：壊れ壁紙
 else if(localStorage.getItem('ending_b_seen') === 'true'){
@@ -402,12 +412,12 @@ if(localStorage.getItem('chat_unlocked') === 'true'){
 // ===== デスクトップ通知 =====
 (function(){
   var notifications = {
-    night1: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります'],
+    night1: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '✉ PopinにDMが届いています'],
     night2: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります'],
-    night3: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '📁 旧サイトアーカイブが追加されました', '✉️ PopinにDMが届いています'],
-    night4: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '✉️ PopinにDMが届いています'],
-    night5: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '✉️ PopinにDMが届いています'],
-    endb: ['📧 新しいメールが届いています', '💬 Popinに新しい投稿があります', '✉️ PopinにDMが届いています', '⚠ サイトに変化があります']
+    night3: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '✉ PopinにDMが届いています'],
+    night4: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります', '✉ PopinにDMが届いています'],
+    night5: ['📧 新しいメールが届いています', '🌐 サイトが更新されました', '💬 Popinに新しい投稿があります'],
+    endb: ['📧 新しいメールが届いています', '💬 Popinに新しい投稿があります', '✉ PopinにDMが届いています', '⚠ サイトに変化があります']
   };
 
   // 通知スタイル注入

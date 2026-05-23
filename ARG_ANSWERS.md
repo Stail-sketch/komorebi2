@@ -4,13 +4,27 @@
 
 ```
 [初回アクセス] → official/staff.html 吉田長押し → Night1
-→ サイト間違い3つ修正 → contact.html → Night2
-→ チャットで尋問3つ → Night3
-→ DM Phase1 尋問3つ → yumestudio code入力 → Night4
-→ DM Phase2 会話崩壊 or システム端末L5 → Night5
-→ Night5クリア → EndB → Night6解放
+→ サイト間違い3つ修正 → Night2
+→ チャットで敏感トピック3つ → Night3
+→ yumestudio 6桁コード入力 → Night4
+→ システム端末L5 → Night5
+→ Night5クリア → EndB → DM Phase4完了 → Night6解放
 → Night6クリア → EndA
 ```
+
+### DM（ゆうやけさんぽ）— ストーリー補完・Night6ゲート
+
+パズルではなく選択肢会話。吉田一郎が偽アカウントで接触してくる。
+
+| Phase | 解放条件 | 内容 |
+|-------|---------|------|
+| 1 | Night1クリア後 | 日常会話、特番のことを調べてるか聞いてくる |
+| 2 | Night3クリア後 | 昔リアタイで見てた告白、キャラが4体じゃなかった記憶 |
+| 3 | Night4クリア後 | 内部文書の話、被験者・行方不明者の恐怖、感情吐露 |
+| 4 | EndB後 | 正体明かし（吉田一郎）、偽アカウント告白、協力要請 |
+
+**Night6解放条件**: `night5_clear AND ending_b_seen AND dm_phase_4_complete`
+**フラグ**: `dm_phase_1_complete` 〜 `dm_phase_4_complete`
 
 ---
 
@@ -29,7 +43,7 @@
 ## Night2 入口
 
 **前提**: `night1_clear`
-**操作**: サイト内の **間違い3つ** をクリックで修正 → `contact.html` を開く
+**操作**: サイト内の **間違い3つ** をクリックで修正 → 3つ目修正時にその場で遷移演出が発動
 
 | # | 場所 | 間違い | 正解 |
 |---|------|--------|------|
@@ -93,16 +107,10 @@
 
 ---
 
-## Night5 入口（2ルート）
+## Night5 入口
 
 **前提**: `night4_clear`
 
-### ルートA: DM Phase2 会話崩壊
-**場所**: Popin DM（ゆうやけさんぽ）
-**操作**: Phase2のウォームアップ会話を最後まで進める
-**演出**: 吉田のメッセージが壊れ始め → グリッチ → 自動的にNight5へ遷移
-
-### ルートB: システム端末 Level5
 **場所**: `system/index.html`（Night4クリア後にアクセス可能）
 **操作**: Level5まで到達 → CORE演出 → Night5遷移
 **システム端末パスコード**:
@@ -132,8 +140,8 @@
 
 ## Night6
 
-**前提**: `night5_clear` AND `ending_b_seen`
-**導線**: EndB後にメール/Popinで通知。ハブ画面にNight6入口出現。
+**前提**: `night5_clear` AND `ending_b_seen` AND `dm_phase_4_complete`
+**導線**: EndB後にPopinでDM Phase4（吉田の正体明かし）を完了 → ハブ画面にNight6アイコン出現。
 **ゲーム**: 最高難易度のFNAFナイト
 
 **クリア時のフラグ**: `night6_clear`
@@ -153,24 +161,14 @@
 
 | フラグ | 解放されるコンテンツ |
 |--------|---------------------|
-| `night1_clear` | official追加ページ、メール+6通、Popin Phase1投稿 |
-| `night2_clear` | チャット（`chat_unlocked`経由）、メール追加、archiveサイト前段 |
-| `night3_clear` | archiveサイト（前作）、yumestudio導線、メール追加 |
-| `night4_clear` | システム端末、DM Phase2、メール追加 |
-| `night5_clear` | 吉田ファイル前段、メール追加 |
-| `ending_b_seen` | Night6解放、吉田ファイル全15通、DM Phase3-4 |
+| `night1_clear` | official追加ページ、メール+6通、Popin Phase1投稿、DM Phase1 |
+| `night2_clear` | チャット（`chat_unlocked`経由）、メール追加 |
+| `night3_clear` | yumestudio導線、メール追加、DM Phase2 |
+| `night4_clear` | システム端末、メール追加、DM Phase3 |
+| `night5_clear` | メール追加 |
+| `ending_b_seen` | 吉田ファイル（メール添付経由）、Popin投稿追加、DM Phase4 |
+| `dm_phase_4_complete` | Night6解放（ハブにアイコン出現） |
 | `ending_a_seen` | エクストラページ（extra/index.html） |
-
----
-
-## DM Phase（Popin ゆうやけさんぽ）
-
-| Phase | 解放条件 | 内容 |
-|-------|---------|------|
-| Phase 1 | night3_clear | 尋問：被験者G-0、娘を返せ、声の直接生成 |
-| Phase 2 | night4_clear | ウォームアップ会話 → 崩壊 → Night5遷移 |
-| Phase 3 | ending_b_seen | 吉田の真相告白 |
-| Phase 4 | ending_b_seen | 最終会話 |
 
 ---
 
@@ -178,7 +176,7 @@
 
 ```
 Level 1: スタッフ情報、ログ
-Level 2: AIキャスト仕様、バグトリガー、DM指令
+Level 2: AIキャスト仕様、バグトリガー
 Level 3: 被験者DB（G-0〜G-4, K被験者統計）、意識転写、ひかり筐体、トレースログ
 Level 4: K-059プロファイル、プロジェクト計画、器仕様、吉田制御記録
 Level 5: COREプロセス状態、COREからK-059へのメッセージ

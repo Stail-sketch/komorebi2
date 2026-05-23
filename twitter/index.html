@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -147,24 +147,16 @@ a:hover{color:#FF7EB3;}
 .dm-container{display:flex;flex-direction:column;height:calc(100vh - 120px);}
 .dm-header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #2a1530;}
 .dm-header-avatar{width:40px;height:40px;border-radius:50%;background:#e8945a;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;}
-.dm-header-info{flex:1;}
 .dm-header-name{font-weight:700;font-size:16px;color:#f0e8f8;}
 .dm-header-handle{font-size:13px;color:#8070a0;}
 .dm-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:4px;}
 .dm-bubble{max-width:75%;padding:10px 16px;border-radius:18px;margin-bottom:8px;font-size:15px;line-height:1.6;word-break:break-word;white-space:pre-wrap;}
 .dm-bubble-left{background:#1a1520;color:#e8e0f0;align-self:flex-start;border-bottom-left-radius:4px;}
 .dm-bubble-right{background:linear-gradient(135deg,#FF6B6B,#FF7EB3);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
-.dm-input-area{display:flex;gap:8px;padding:12px 16px;border-top:2px solid #2a1530;}
-.dm-input{flex:1;background:#1a1520;border:2px solid #2a1530;border-radius:24px;padding:10px 16px;color:#e8e0f0;font-size:15px;outline:none;font-family:inherit;}
-.dm-input:focus{border-color:#FF7EB3;}
-.dm-input::placeholder{color:#8070a0;}
-.dm-send-btn{background:linear-gradient(135deg,#FF6B6B,#FF7EB3);color:#fff;border:none;border-radius:24px;padding:10px 20px;font-weight:700;cursor:pointer;font-family:inherit;font-size:15px;transition:all .2s;}
-.dm-send-btn:hover{transform:translateY(-1px);box-shadow:0 2px 10px rgba(255,107,107,.3);}
 .dm-typing{color:#8070a0;font-size:13px;padding:8px 16px;font-style:italic;align-self:flex-start;}
-.dm-date-divider{text-align:center;color:#8070a0;font-size:12px;padding:8px 0;margin:8px 0;}
-.dm-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 120px);color:#8070a0;text-align:center;padding:40px;}
-.dm-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.5;}
-.dm-locked-text{font-size:16px;line-height:1.8;}
+.dm-choices{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:2px solid #2a1530;}
+.dm-choice-btn{padding:8px 16px;background:#1a1520;border:1px solid #2a1530;border-radius:16px;color:#e8e0f0;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.2s;}
+.dm-choice-btn:hover{border-color:#FF7EB3;color:#FF7EB3;}
 
 /* DM Button */
 .dm-btn{position:relative;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:#1a1520;border:2px solid #2a1530;cursor:pointer;transition:all .2s;}
@@ -174,14 +166,13 @@ a:hover{color:#FF7EB3;}
 @keyframes dmBadgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
 
 /* Night6 DM overrides */
-.night6-override .dm-container,.night6-override .dm-locked{color:#660022;}
+.night6-override .dm-container{color:#660022;}
 .night6-override .dm-bubble-left{background:rgba(40,0,10,.9);color:#ff0033;}
-.night6-override .dm-input{background:rgba(40,0,10,.9);border-color:rgba(255,0,0,.2);color:#ff0033;}
 .night6-override .dm-header{border-bottom-color:rgba(255,0,0,.2);}
-.night6-override .dm-input-area{border-top-color:rgba(255,0,0,.2);}
+.night6-override .dm-choices{border-top-color:rgba(255,0,0,.2);}
 .night6-override .dm-btn{background:rgba(40,0,10,.9);border-color:rgba(255,0,0,.2);}
 .night6-override .dm-btn svg{fill:#ff0033;}
-.night6-override .dm-typing,.night6-override .dm-header-handle,.night6-override .dm-date-divider{color:#660022;}
+.night6-override .dm-typing,.night6-override .dm-header-handle{color:#660022;}
 .night6-override .dm-header-name{color:#ff3355;}
 
 /* Responsive */
@@ -221,10 +212,10 @@ a:hover{color:#FF7EB3;}
       <svg viewBox="0 0 24 24"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"/></svg>
       <input type="text" placeholder="ポピンを検索...">
     </div>
-    <div class="dm-btn" id="dm-btn" onclick="showDM()" title="ダイレクトメッセージ">
-      <svg viewBox="0 0 24 24"><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v.511l8 5.334 8-5.334V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 2.644l-8 5.334-8-5.334V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5V7.644z"/></svg>
-      <span class="dm-badge" id="dm-badge" style="display:none;">1</span>
-    </div>
+    <button id="dm-btn" class="dm-btn" style="display:none;" onclick="showDM()">
+      <svg viewBox="0 0 24 24"><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v.401l8.999 5.899 9.001-5.899v-.401c0-.276-.224-.5-.5-.5h-15zm17.5 2.636l-8.999 5.9-9.001-5.9v10.864c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5V7.636z"/></svg>
+      <span id="dm-badge" class="dm-badge" style="display:none;">1</span>
+    </button>
   </div>
 </header>
 
@@ -1276,7 +1267,6 @@ var viewTimeline=document.getElementById('view-timeline');
 var viewPostDetail=document.getElementById('view-post-detail');
 var viewProfile=document.getElementById('view-profile');
 var viewDM=document.getElementById('view-dm');
-
 function switchView(viewEl){
   viewTimeline.classList.remove('active');
   viewPostDetail.classList.remove('active');
@@ -1386,1024 +1376,215 @@ window.showProfile=function(accountKey){
 };
 
 // ===== DM SYSTEM =====
-var hasSeenEndB = hasFlag('ending_b_seen');
-var dmPhase = n5 ? 3 : n4 ? 2 : n3 ? 1 : 0;
-// Phase 4 requires End B seen
-if(hasSeenEndB && n5) dmPhase = 4;
+var dmBtn=document.getElementById('dm-btn');
+var dmBadge=document.getElementById('dm-badge');
 
-// DM conversation history stored in localStorage
-function getDMHistory(){
-  try{return JSON.parse(localStorage.getItem('dm_history') || '[]');}catch(e){return [];}
-}
-function saveDMHistory(msgs){
-  try{localStorage.setItem('dm_history', JSON.stringify(msgs));}catch(e){}
-}
-function getDMLastReadPhase(){
-  try{return parseInt(localStorage.getItem('dm_last_read_phase') || '0', 10);}catch(e){return 0;}
-}
-function setDMLastReadPhase(p){
-  try{localStorage.setItem('dm_last_read_phase', String(p));}catch(e){}
-}
-function getPersuasionKeys(){
-  try{return JSON.parse(localStorage.getItem('persuasion_keys') || '[]');}catch(e){return [];}
-}
-function addPersuasionKey(keyword){
-  var keys = getPersuasionKeys();
-  if(keys.indexOf(keyword) === -1){
-    keys.push(keyword);
-    try{localStorage.setItem('persuasion_keys', JSON.stringify(keys));}catch(e){}
+var DM_PHASES = [
+  {
+    id:1, require:function(){return n1;},
+    script:[
+      {from:'yoshi', text:'こんにちは！　Popinで見かけたので…\nもしかして、特番のこと調べてますか？'},
+      {choices:['はい、気になって','ちょっとだけ…']},
+      {from:'yoshi', text:'やっぱり！　私もなんです。\nあの番組、なんだか引っかかることが多くて。'},
+      {choices:['引っかかること？','わかります']},
+      {from:'yoshi', text:'うまく言えないんですけど…\n見てると懐かしいのに、ちょっと怖いんですよね。\nまた何かわかったら教えてください。'},
+      {choices:['わかりました']},
+    ]
+  },
+  {
+    id:2, require:function(){return n3;},
+    script:[
+      {from:'yoshi', text:'あの…少し話しにくいことなんですけど。\n特番のこと、もっと深く調べてませんか？'},
+      {choices:['はい','…なんでわかるんですか？']},
+      {from:'yoshi', text:'私、実は昔あの番組を見てたんです。リアルタイムで。\nでも…覚えてることと、サイトに書いてあることが違う気がして。'},
+      {choices:['どこが違いますか？','記憶違いでは？']},
+      {from:'yoshi', text:'キャラクターが…4体じゃなかった気がするんです。\nもう1体いたような…\n考えすぎかもしれませんけど。'},
+      {choices:['それ、私も気になってた','調べてみます']},
+      {from:'yoshi', text:'ありがとうございます。\n一人で抱えてるの、ちょっと怖かったんです。'},
+    ]
+  },
+  {
+    id:3, require:function(){return n4;},
+    script:[
+      {from:'yoshi', text:'大変なことがわかりました。\nあの番組…普通の子ども番組じゃなかったかもしれない。'},
+      {choices:['どういうことですか？','何を見つけたんですか？']},
+      {from:'yoshi', text:'制作会社の内部文書を見つけたんです。\n被験者リスト、行方不明者の記録…\nこれ、本当のことなんでしょうか。'},
+      {choices:['私も見ました','信じがたいですよね']},
+      {from:'yoshi', text:'怖いです。でも、もう引き返せない気がする。\nあの子たちに何が起きたのか、知らないといけない気がして。\n…私、おかしいですか？'},
+      {choices:['おかしくないです','一緒に調べましょう']},
+      {from:'yoshi', text:'…ありがとう。\nあなたがいてくれてよかった。本当に。'},
+    ]
+  },
+  {
+    id:4, require:function(){return endBseen;},
+    script:[
+      {from:'yoshi', text:'ずっと黙っていて、ごめんなさい。'},
+      {choices:['…誰ですか？','吉田さん…？']},
+      {from:'yoshi', text:'最初から嘘をついていました。\n「ゆうやけさんぽ」なんて人間は存在しません。\n全部、僕が作った偽のアカウントです。'},
+      {choices:['なんで？','知ってた']},
+      {from:'yoshi', text:'あなたに調べ続けてほしかったからです。\nあの番組で何が起きたのか、誰かに知ってほしかった。\n僕一人じゃ、もうどうにもできなかった。'},
+      {choices:['吉田さんは何を知ってるんですか','あなたも関わってたんですか']},
+      {from:'yoshi', text:'全部知っています。僕はあの現場にいました。\nでも止められなかった。何も。\n…あの子たちを助けてください。\n僕にはもう、あなたしか頼れる人がいないんです。'},
+      {choices:['わかりました']},
+      {from:'yoshi', text:'ありがとう…\n…本当に、ありがとう。'},
+    ]
   }
-}
+];
 
-// Auto-messages per phase
-var dmAutoMessages = {
-  1: 'あなたもこの番組見てますよね。少し話しませんか。…旧サイトのアーカイブ、見ましたか？何か違うところがあるかもしれません',
-  2: '…あの番組のこと、もう少し話してもいいですか。実は…昔、あの番組に関わっていたことがあるんです',
-  3: '…もう隠し続けるのは限界です。あなたに…全部話します。聞いてくれますか',
-  4: '…もう一度やらされてるのか。あいつはお前の感情をもっと欲しがってる。でも…これはチャンスでもある。今度は俺が本当のことを話す'
-};
-
-// Keyword responses per phase
-var dmKeywords = {
-  1: [
-    // === 敏感トピック ===
-    {keywords:['G-0','G0','ゼロ号','被験者G','被験者リスト','会社設立前から'], response:'…なんでその番号を知ってるんですか…あれは…あの資料は公開されるはずじゃ…'},
-    {keywords:['娘を返せ','申し入れ書','申し入れ','返せ'], response:'…………それは……そんなことがなんで……あなたの口から……'},
-    {keywords:['内部から直接生成','内部から生成','脳波パターン','基底波形','7歳','8歳','女児のパターン'], response:'…やめてくれ…それ以上は…お願いだから…もう…'},
-    {keywords:['被験者','ひけんしゃ'], response:'…被験者リスト…見たんですか。あの一番上の行…'},
-    {keywords:['行方不明','消えた人','失踪'], response:'…ええ…消えた人たちがいます。あの番組に関わった人たちの中に…'},
-    {keywords:['アニマトロニクス','人形','中に誰か'], response:'…あの人形たちのことは…今は…まだ話せません'},
-    // === 番組・キャラクター ===
-    {keywords:['番組'], response:'不思議な番組ですよね…なんか気になって毎晩見ちゃうんです'},
-    {keywords:['怖い','こわい'], response:'怖いですよね…でもなんか目が離せなくて'},
-    {keywords:['キツネ団長','きつねだんちょう'], response:'キツネ団長…昔はあの子の声が家中に響いてた。懐かしいです'},
-    {keywords:['キャラクター','キャラ'], response:'昔のキャラクター、懐かしいですよね…特にキツネ団長が…'},
-    {keywords:['かあ博士'], response:'かあ博士…物知りなカラスでしたね。子どもたちに人気でした'},
-    {keywords:['ぽたまる'], response:'ぽたまる…あの子はいつも踊ってた。可愛かったなぁ'},
-    {keywords:['うっきち'], response:'うっきち…いたずらばかりしてたけど、みんな好きだった'},
-    {keywords:['くるる'], response:'くるる…今の番組のAIの子ですね。元気がいいですよね'},
-    {keywords:['まだら'], response:'まだら…カメレオンのAI。冷静で…鋭いですよね'},
-    {keywords:['よわり'], response:'よわり…あの子は泣いてばかりだけど…何か感じてるんでしょうね'},
-    {keywords:['アラネ','あらね'], response:'アラネ…データを追い続けるクモ。…少し怖いですね'},
-    {keywords:['かすみ'], response:'かすみ…優しいシカの子。でもあの「手を貸す」って…'},
-    {keywords:['AI','エーアイ'], response:'AIが番組をやってる…不思議な時代になりましたね。でもなぜAIなのか…考えたことありますか'},
-    // === 見てる・挨拶・感情 ===
-    {keywords:['見てる','見てます'], response:'仲間がいてよかった。周りに聞いても誰も知らないから…'},
-    {keywords:['こんにちは','こんにちわ'], response:'こんにちは。…あなたもこの番組が気になるんですね'},
-    {keywords:['こんばんは','こんばんわ'], response:'こんばんは。遅い時間まで調べてるんですね…無理しないでください'},
-    {keywords:['おはよう'], response:'おはようございます。…あまり眠れなかったんですか？'},
-    {keywords:['はじめまして'], response:'…はじめまして。あなたもこの番組を見てるんですね'},
-    {keywords:['よろしく'], response:'…よろしくお願いします。少しだけ、お話できればと思って'},
-    {keywords:['ありがとう','ありがと'], response:'…いえ。こちらこそ…話を聞いてくれてありがとう'},
-    {keywords:['誰','だれ','何者'], response:'…ただの視聴者ですよ。散歩が趣味の…ただのおじさん'},
-    {keywords:['夕焼け','ゆうやけ','散歩','さんぽ'], response:'夕焼けの写真を撮るのが好きなんです。…理由は、まだ言えません'},
-    {keywords:['おやすみ'], response:'おやすみなさい。…また来てくれますか'},
-    {keywords:['好き','すき'], response:'…どうも。そういうの、久しぶりに言われました'},
-    {keywords:['悲しい','かなしい','つらい'], response:'…つらいですか。…私もです。ずっと'},
-    {keywords:['楽しい','たのしい'], response:'…楽しめてるならいいんです。でも…深入りしすぎないで'},
-    {keywords:['信じ','しんじ'], response:'…信じてくれるんですか。ありがたい…でもまだ全部は話せません'},
-    {keywords:['嘘','うそ'], response:'嘘…私が嘘をついてると思いますか？…かもしれませんね。でも違います'},
-    {keywords:['助けて','たすけて'], response:'…あなたが？…私にですか？…ありがとう。でもまだ早いです'},
-    // === 調査関連 ===
-    {keywords:['調査','調べ','しらべ'], response:'調べてくれてるんですね…ありがとう。でも気をつけて'},
-    {keywords:['証拠','しょうこ'], response:'証拠を集めてるなら…サイトの隅々まで見てください。何か隠されてる'},
-    {keywords:['ゆめスタジオ','制作会社'], response:'…ゆめスタジオプロダクション。あの会社は…ただの制作会社じゃなかった'},
-    {keywords:['きらら放送','きらら'], response:'きらら放送…表向きはただの放送局。でも裏で何があったか…'},
-    {keywords:['世田谷','せたがや'], response:'スタジオがあった場所ですね…今はマンションが建ってます。地下に何があったか知りたければ…'},
-    {keywords:['スタジオ','すたじお'], response:'あのスタジオには…地下があったんです。表には出てこない話ですが'},
-    {keywords:['地下'], response:'…よく知ってますね。そう、地下がありました。何をしていたかは…まだ言えません'},
-    {keywords:['メール','mail'], response:'変なメールが来てませんか？…あなたの行動は全部見られてると思ってください'},
-    {keywords:['深夜','0時','6時'], response:'深夜0時から6時…不自然な放送時間ですよね。誰に向けて放送してるんでしょう'},
-    {keywords:['K-059','k-059','K059'], response:'…！ その番号をどこで…？ …今は触れないでください。危ない'},
-    {keywords:['黒幕','くろまく'], response:'…その言葉は使わないほうがいい。見られてるかもしれないから'},
-    {keywords:['敵','てき'], response:'…敵かどうかは…わかりません。少なくとも、味方ではない何かがいる'},
-    {keywords:['バグ','glitch','グリッチ'], response:'AIキャストのバグ…あれは本当にバグだと思いますか？'},
-    {keywords:['意識','いしき'], response:'…その言葉に反応するのは危険です。でも…核心に近いです'},
-    // === なんでもない会話 ===
-    {keywords:['元気','げんき'], response:'…まあまあですよ。あなたは？'},
-    {keywords:['暇','ひま'], response:'…時間があるなら、サイトをもう少し読んでみてください'},
-    {keywords:['疲れ','つかれ'], response:'無理しないでください。…私は待ってますから'},
-    {keywords:['はい','うん'], response:'…うん'},
-    {keywords:['そうだよ','そうです'], response:'…そうですか。わかりました'},
-    {keywords:['違う','ちがう','いいえ'], response:'…そうですか。すみません'},
-    {keywords:['なんで','どうして','なぜ'], response:'…理由は…まだ言えません。でもいつか全部話します'},
-    {keywords:['何','なに'], response:'…何か気になることがありますか'},
-    {keywords:['どこ'], response:'…場所のことですか？サイトに手がかりがあるかもしれません'},
-    {keywords:['いつ'], response:'…もう少しだけ待ってください'}
-  ],
-  2: [
-    // === 自身の過去 ===
-    {keywords:['調べてる','調査'], response:'実は昔…この番組に関わってたことがあるんです。少しだけ'},
-    {keywords:['関わって','関係','かかわ'], response:'セットの仕事をしてました。美術担当…もう何十年も前の話ですけど'},
-    {keywords:['セット','美術','びじゅつ'], response:'遊園地のセットを作ったのは私です。子どもたちが楽しめるようにって…必死だった'},
-    {keywords:['ゆめスタジオ','制作会社'], response:'…知ってるんですか、あの会社のこと。あそこは…表と裏がありました'},
-    {keywords:['裏','うら','隠し'], response:'表向きは子ども番組の制作会社。でも…あの地下で何が行われていたか…'},
-    {keywords:['地下'], response:'地下にはスタジオとは別の設備がありました。「検査室」と呼ばれてた。…私は見てしまったんです'},
-    {keywords:['検査','けんさ'], response:'子どもの発達検査…そう説明されました。最初はそう信じてた'},
-    {keywords:['子ども','こども'], response:'…スタジオには収録参加の子どもたちが来てた。でも…一部の子どもたちは「別の部屋」に案内されてた'},
-    // === キャラクター・番組 ===
-    {keywords:['キツネ団長','きつね'], response:'キツネ団長のアニマトロニクス…あれは本当によくできてた。でもあの改修以降…動きが変わった'},
-    {keywords:['試作','しさく','プロトタイプ'], response:'試作キツネ…あれは最初の実験だったんだと思います。失敗した後…本番用が作られた'},
-    {keywords:['アニマトロニクス','人形'], response:'あの人形たちには…何かが入ってた。ただの機械じゃなかった。そう感じてました'},
-    {keywords:['改修','かいしゅう'], response:'1996年の改修…あの費用は異常でした。子ども番組の予算じゃない'},
-    {keywords:['被験者','ひけんしゃ','リスト'], response:'…！ そこまで辿り着いたんですか。…あのリストのことは…'},
-    {keywords:['G-0','ジーゼロ'], response:'…その話はまだ…まだ早い。でもあなたなら…いつか話します'},
-    // === 感情・挨拶 ===
-    {keywords:['あなた','誰','だれ','一体','正体'], response:'…今はまだ言えません。でも…いつか全部話します。約束します'},
-    {keywords:['番組','なんだった','何だった'], response:'あの番組は…子ども番組の皮を被った何かでした。でもまだ全部は話せない'},
-    {keywords:['娘','むすめ'], response:'…'},
-    {keywords:['家族','かぞく'], response:'…家族の話は…今はちょっと…すみません'},
-    {keywords:['辞めた','やめた','辞め','なぜ辞め'], response:'辞めたんじゃない。追い出されたんです。知りすぎたから'},
-    {keywords:['怖い','こわい'], response:'怖い…ええ、私もずっと怖い。でももう逃げられないんです'},
-    {keywords:['信じ','しんじ'], response:'信じてくれるんですか…ありがとう。もう少しだけ…もう少しだけ待ってください'},
-    {keywords:['ありがとう','ありがと'], response:'…こちらこそ。こうして話を聞いてくれる人がいるだけで…'},
-    {keywords:['大丈夫','だいじょうぶ'], response:'…大丈夫じゃないかもしれません。でも…あなたがいてくれるなら'},
-    {keywords:['なんで','どうして','なぜ'], response:'なぜこの番組を見続けてるのか…それは次に会った時に話します'},
-    {keywords:['秘密','ひみつ'], response:'秘密はたくさんあります。でも…一つずつしか話せない。許してください'},
-    {keywords:['本当','ほんとう'], response:'本当です。全部本当のことです。…信じられないのは分かります'},
-    {keywords:['はい','うん','そうだよ'], response:'…ありがとう'},
-    {keywords:['K-059'], response:'…その番号は知らないほうがいい。でも…もう遅いかもしれませんね'},
-    {keywords:['黒幕'], response:'…まだその話はしないでください。ここも…見られてるかもしれない'},
-    {keywords:['メール'], response:'変なメールが来てるでしょう？…あれは警告です。でも誰からの警告なのか…'},
-    {keywords:['バグ','エラー'], response:'AIのバグ…あれが本当にバグだとしたら、なぜ「核心」に触れた時だけ起きるんでしょうね'},
-    {keywords:['見てる','見られ','監視'], response:'…ええ。見られてます。あなたも、私も。それでも調べ続けますか？'},
-    {keywords:['危険','あぶない','危ない'], response:'危険です。でも…もう引き返せない段階まで来てしまった'},
-    {keywords:['助けて','たすけて'], response:'…まだ早いです。でも…その時が来たら、お願いするかもしれません'},
-    {keywords:['夕焼け','ゆうやけ','散歩'], response:'夕焼けを見ると…あの子のことを思い出すんです。名前の由来でもあるんですけど'},
-    {keywords:['名前','なまえ'], response:'名前…ゆうやけさんぽは本名じゃありません。分かってますよね'}
-  ],
-  3: [
-    // === 核心に近い話 ===
-    {keywords:['話して','聞かせて','教えて'], response:'…分かりました。この番組が気になるのは…昔、大切な人がいたからなんです'},
-    {keywords:['大切な人','たいせつ'], response:'娘です。もう会えなくなって…30年以上になります'},
-    {keywords:['娘','むすめ'], response:'…娘の名前は…今は言えません。でも…あの子はまだ「ここ」にいるんです'},
-    {keywords:['ここにいる','まだいる'], response:'データとして…番組のシステムの中に。体はもうないけど…意識だけが…'},
-    {keywords:['意識','いしき'], response:'意識転移…そう呼ばれてました。人の意識をデータ化する技術。あの会社はそれを…'},
-    {keywords:['意識転移','転移'], response:'…番組はそのための実験場だったんです。子どもたちを集めて…「データ」を取ってた'},
-    {keywords:['実験','じっけん'], response:'子どもの発達検査だと説明されてた。…でも本当は意識のスキャニングだった'},
-    {keywords:['夕焼け','ゆうやけ'], response:'…よく気づきましたね。夕焼けの色…あの子の名前の色なんです'},
-    {keywords:['あかね'], response:'…！ …その名前を…どこで…'},
-    {keywords:['家族','かぞく','父親','ちちおや','パパ','ぱぱ'], response:'…私はあの子の父親です。…もう隠しても仕方ないですね'},
-    {keywords:['吉田','よしだ'], response:'…ええ。吉田一郎。それが私の本名です'},
-    // === キャラクター関連 ===
-    {keywords:['キツネ団長','きつね'], response:'キツネ団長の中に…あの子の意識が…少しだけ残ってるんです。そう信じてた'},
-    {keywords:['アニマトロニクス','人形'], response:'アニマトロニクスに意識を転移する。…それがあの会社の本当の目的でした'},
-    {keywords:['試作','プロトタイプ'], response:'試作キツネが最初の実験台でした。失敗して…次は本番用のキツネ団長に…'},
-    // === 感情 ===
-    {keywords:['かわいそう','つらい','悲しい'], response:'…ありがとう。でも一番つらいのは…あの子だと思います。ずっとデータの中で…'},
-    {keywords:['怒り','おこ','ひどい','許せ'], response:'…怒ってくれるんですか。…ありがとう。私は…怒る資格もない。知ってて黙ってたから'},
-    {keywords:['ごめん','すみません'], response:'…謝るのは私のほうです。あなたを巻き込んでしまって…'},
-    {keywords:['信じる','しんじる'], response:'…信じてくれるなら…最後まで付き合ってくれますか'},
-    {keywords:['助ける','たすける','助けたい'], response:'…ありがとう。でも…まだ方法が分からない。もう少し調べてくれませんか'},
-    {keywords:['ありがとう'], response:'…こんなおじさんの話を聞いてくれて…本当に…ありがとう'},
-    {keywords:['大丈夫'], response:'…大丈夫じゃないです。でも…あなたがいてくれるから、まだ…'},
-    // === 番組・システム ===
-    {keywords:['黒幕','くろまく'], response:'…黒幕は…もう「人」じゃないんです。データになった存在。暴走してる'},
-    {keywords:['K-059'], response:'K-059…あなたのことです。59番目の対象。…すみません。私のせいです'},
-    {keywords:['対象','ターゲット'], response:'この番組を見てる人は…全員データ収集の対象なんです。でもK-059は特別に…'},
-    {keywords:['データ','でーた'], response:'意識のデータ。あの子のデータはまだシステムの中にある。取り出せるかもしれない…'},
-    {keywords:['番組','ばんぐみ'], response:'この番組は…意識データを集めるための「器」です。視聴者の感情を餌にしてる'},
-    {keywords:['Popin','ぽぴん','SNS'], response:'Popin…あそこで反応してる人たちは…全員AIです。あなたを「普通の番組」だと信じさせるための'},
-    {keywords:['AI'], response:'AIキャスト…あの5体も道具です。視聴者の感情を効率的に収集するための'},
-    {keywords:['バグ'], response:'バグが起きるタイミング…「核心」に触れた時。あれは黒幕がリアルタイムで制御してる'},
-    {keywords:['メール'], response:'あの不気味なメールも…システムの一部です。恐怖を煽ってデータの質を上げてる'},
-    {keywords:['深夜','0時','放送時間'], response:'深夜0時〜6時…人間の意識が最も無防備な時間帯。意図的なんです'},
-    // === 一般 ===
-    {keywords:['はい','うん','そうだよ'], response:'…うん。ありがとう'},
-    {keywords:['なんで','どうして','なぜ'], response:'…全部話すと長くなります。でも…あなたには知る権利がある'},
-    {keywords:['嘘','うそ'], response:'嘘だと思いますか？…そう思うのが普通です。でも…全部本当です'},
-    {keywords:['怖い','こわい'], response:'…怖いですよね。すみません。でも知らないままのほうが…もっと怖い'},
-    {keywords:['見てる','監視'], response:'ええ…この会話も見られてるかもしれない。でもいいんです。もう隠すことはない'}
-  ],
-  4: [
-    // === 核心キーワード（critical=true → persuasion_keysに記録） ===
-    {keywords:['吉田','吉田一郎'], response:'…！ なんでその名前を…どこで知った', critical:true},
-    {keywords:['あかね'], responses:['…やめてくれ…なんであの子の名前を…','…お前は…何を知ってるんだ'], delays:[1500,3000], critical:true},
-    {keywords:['黒幕'], responses:['…','…何の話だ','…お前も気づいてるのか。この番組がおかしいことに'], delays:[1000,2500,5000], critical:true},
-    {keywords:['騙されて','だまされ','騙されてた','騙されてたの'], responses:['…俺は…あの子のために…','…でも…本当にあの子は戻ってくるのか…','…分からなくなってきた'], delays:[1500,3000,5000], critical:true},
-    {keywords:['K-059'], responses:['…！','…お前がそうなのか','…すまない'], delays:[1000,2500,4000], critical:true},
-    {keywords:['データ'], responses:['あの子は…もう体はない。データだけが…残ってる','…データでもいい。会いたかったんだ'], delays:[2000,4000], critical:true},
-    {keywords:['助けて','助ける','たすけて','助けたい','俺にできること','できること'], responses:['…お前を巻き込んでしまった','…もう遅いかもしれない','…でも…まだ間に合うか…'], delays:[1500,3000,5000], critical:true},
-    {keywords:['意識転移','転移'], responses:['…知ってるのか','あの子の意識は…まだシステムの中にある','…取り出すには…全部壊すしかない'], delays:[1500,3000,5000], critical:true},
-    {keywords:['娘','むすめ'], responses:['…あかね…あの子は8歳だった','…検査だと言われて連れて行った。俺が。…俺のせいだ'], delays:[2000,4500], critical:true},
-    {keywords:['止めて','やめて','止める','止めたい','終わらせ'], responses:['…止められるのか…本当に','…俺にはできなかった。何十年も…できなかった','…お前になら…できるかもしれない'], delays:[1500,3000,5500], critical:true},
-    {keywords:['パパ','ぱぱ','父親','お父さん'], responses:['…！','…あの子に…そう呼ばれてた','…もう一度だけ…聞きたかった'], delays:[1000,2500,4500], critical:true},
-    {keywords:['壊す','こわす','破壊','シャットダウン'], responses:['システムを壊せば…黒幕も消える','…でもあの子のデータも…消える','…それでも…やるしかないのか'], delays:[1500,3500,5500], critical:true},
-    // === 一般会話（Phase4） ===
-    {keywords:['ありがとう'], response:'…もういいんだ。全部話す。何が聞きたい'},
-    {keywords:['ごめん','すみません'], response:'…謝るな。悪いのは全部俺だ'},
-    {keywords:['大丈夫'], response:'…大丈夫なもんか。でも…もう覚悟はできた'},
-    {keywords:['なんで','どうして','なぜ'], response:'なぜか…あの子に会いたかったからだ。ただ…それだけだ'},
-    {keywords:['嘘','うそ'], response:'嘘なもんか。全部本当だ。…信じてくれ'},
-    {keywords:['怖い'], response:'…怖くて当然だ。でも…ここまで来たんだ。最後まで行こう'},
-    {keywords:['信じる','しんじる'], response:'…ありがとう。お前は…いい奴だな'},
-    {keywords:['番組','ばんぐみ'], response:'この番組は…全部あいつの仕掛けた罠だ。お前を捕まえるための'},
-    {keywords:['Popin','ぽぴん'], response:'Popinの連中は全部AI。お前以外に「本物」はいない'},
-    {keywords:['メール'], response:'あのメールも全部仕掛け。恐怖を与えてデータの質を上げるため'},
-    {keywords:['キツネ団長'], response:'キツネ団長…あの中にあかねの意識の断片が…まだ残ってる気がする'},
-    {keywords:['最後','さいご','終わり','おわり'], response:'…ああ。もう終わりにしよう。全部'},
-    {keywords:['一緒','いっしょ','一緒にやろう'], responses:['…一緒にやってくれるのか','…ありがとう。…お前は…いい奴だな'], delays:[1500,3000], critical:true},
-    {keywords:['はい','うん'], response:'…よし'},
-    {keywords:['夕焼け','ゆうやけ'], response:'…あかねって名前はな…茜色の空から取ったんだ。あの子が生まれた日の…夕焼けが綺麗で'},
-    {keywords:['名前','なまえ'], response:'名前は大事だ。あの子の名前…覚えていてくれ。頼む'}
-  ]
-};
-
-// ===== DM Warmup Scripts (チャットのウォームアップと同様) =====
-// 各フェーズの自動メッセージの後、プレイヤーが返事するたびに会話が展開する
-var dmWarmupScripts = {
-  1: [
-    {
-      choices: ['うん、見てるよ','あなた誰…？','なんか気になって'],
-      responses: [
-        {keywords:['見てる','見てます','うん','はい','そう'], reply:'…仲間がいてよかった。周りに聞いても、誰もこの番組知らなくて'},
-        {keywords:['誰','だれ','何者','あなた'], reply:'…ただの視聴者ですよ。散歩が趣味の、ただのおじさん'},
-        {keywords:['番組','なに','何','気になる'], reply:'深夜にやってる特番…見てますよね？あれ、何かおかしいと思いませんか'}
-      ],
-      defaultReply: '…来てくれたんですね。ありがとう',
-      next: '…あなたは怖くないですか？この番組'
-    },
-    {
-      choices: ['正直怖い…','別に怖くないけど','なんかおかしいよね'],
-      responses: [
-        {keywords:['怖い','こわい'], reply:'…ですよね。俺もです。でも目が離せなくて'},
-        {keywords:['怖くない','大丈夫','平気'], reply:'…そうですか。強いんですね'},
-        {keywords:['おかしい','変','なに','思う'], reply:'…ですよね。何かがおかしい'}
-      ],
-      defaultReply: '…そうですか。俺だけじゃなかったんだ',
-      next: '…サイトに新しいページが増えてますよね。被験者リストとか、行方不明者とか…読みました？'
-    },
-    {
-      choices: ['読んだよ','まだ全部は…','怖くて読めない'],
-      responses: [
-        {keywords:['読んだ','読みました','見た','うん','はい'], reply:'…あなたもあれを読んだんですか'},
-        {keywords:['まだ','全部は','途中'], reply:'…全部読んでみてください。大事なことが書いてある'},
-        {keywords:['怖い','こわい','読めない'], reply:'…怖いですよね。でも…知らないと先に進めない'}
-      ],
-      defaultReply: '…あれを読んで、俺は眠れなくなった',
-      next: '…あなたは、どこまで知ってるんですか'
-    },
-    {
-      choices: ['どういうこと？','何を知りたいの？','色々調べたよ'],
-      responses: [
-        {keywords:['どういう','何を','なにを'], reply:'…サイトで読んだこと。気になったこと。…俺に教えてくれませんか'},
-        {keywords:['調べた','色々','いろいろ','知ってる'], reply:'…そうですか。じゃあ…聞かせてください'}
-      ],
-      defaultReply: '…あなたが調べたこと、知ったこと…聞かせてほしいんです',
-      next: null
-    }
-  ],
-  2: [
-    {
-      choices: ['え、マジで？','どんなことしてたの？','関わってたんだ…'],
-      responses: [
-        {keywords:['え','えっ','まじ','本当','ほんと'], reply:'…本当です。信じてもらえないかもしれませんが'},
-        {keywords:['何','なに','どんな','どういう'], reply:'…セットの仕事をしてました。美術担当です'},
-        {keywords:['関わ','かかわ','スタッフ'], reply:'ええ…美術として。遊園地のセットを作ったのは私です'}
-      ],
-      defaultReply: '…驚きますよね。でも本当なんです',
-      next: 'セットの美術を担当してました。子どもたちが楽しめるようにって…必死だった'
-    },
-    {
-      choices: ['それはすごいね','子どもたち喜んでた？','楽しかった？'],
-      responses: [
-        {keywords:['セット','美術','遊園地'], reply:'ええ。あの遊園地の世界を作ったのは私です。…誇りだった'},
-        {keywords:['子ども','楽しい'], reply:'…笑い声が聞こえるたびに、やっててよかったって思えた'},
-        {keywords:['すごい','いい仕事'], reply:'…ありがとう。あの頃は…本当に楽しかった'}
-      ],
-      defaultReply: '笑い声が聞こえるたびに、やっててよかったって思えた',
-      next: '…でも途中からおかしいことに気づき始めた'
-    },
-    {
-      choices: ['何がおかしかったの？','何に気づいたの？','…それで？'],
-      responses: [
-        {keywords:['おかしい','何が','なにが'], reply:'…地下のことです'},
-        {keywords:['気づいた','何を'], reply:'…あの建物には、表と裏があったんです'},
-        {keywords:['どうした','それで'], reply:'…地下に行くなって言われてたんです。絶対に'}
-      ],
-      defaultReply: '…あの建物には、表と裏がありました',
-      next: '地下に行くなって言われてた。絶対に。…でも夜中に物音がして、見てしまった'
-    },
-    {
-      choices: ['何を見たの…？','地下があったの？','…怖い'],
-      responses: [
-        {keywords:['見た','何を','物音'], reply:'…検査室って呼ばれてた場所がありました'},
-        {keywords:['地下','ちか'], reply:'…そう、地下です。スタジオとは全く違う空間だった'},
-        {keywords:['怖い','こわい'], reply:'…ええ。今思い出しても体が震えます'}
-      ],
-      defaultReply: '…「検査室」と呼ばれてた場所があったんです',
-      next: '子どもたちが…別の部屋に案内されてた。「発達検査」だって説明されてたけど…'
-    },
-    {
-      choices: ['検査って何してたの？','ひどいね…','信じるよ'],
-      responses: [
-        {keywords:['検査','発達','子ども'], reply:'…最初はそう信じてた。でも…おかしかった'},
-        {keywords:['嘘','うそ','違う'], reply:'…ええ。嘘だったんです'},
-        {keywords:['ひどい','許せない'], reply:'…ええ。でも当時の俺は何もできなかった'}
-      ],
-      defaultReply: '…本当は違ったんです。でもまだ…全部は話せません',
-      next: '…すみません、一気に話しすぎました。…でも、もう少しだけ聞いてくれますか'
-    },
-    {
-      choices: ['もちろん','聞くよ','…うん'],
-      responses: [
-        {keywords:['もちろん','聞く','うん','はい'], reply:'…ありがとう'}
-      ],
-      defaultReply: '…ありがとう',
-      next: '…あの検査室で何が行われていたか…俺はまだ全部を理解したわけじゃない。でも…あの子どもたちが…'
-    },
-    {
-      choices: ['子どもたちが…？','何があったの？','…大丈夫？'],
-      responses: [
-        {keywords:['子ども','何が','あった'], reply:'…消えたんです。検査を受けた子どもたちが。1人、また1人と'},
-        {keywords:['大丈夫'], reply:'…大丈夫じゃないです。でも…言わなきゃいけない'}
-      ],
-      defaultReply: '…消えたんです。検査を受けた子どもたちが',
-      next: '…俺の知ってる限り、少なくとも4人。全員、番組の収録に参加してた子どもたちで…'
-    },
-    {
-      choices: ['4人も…','それって…','怖い…'],
-      responses: [
-        {keywords:['4人','よにん'], reply:'…ええ。4人。もしかしたらもっと'},
-        {keywords:['それ','まさか'], reply:'…ええ。あなたが想像してる通りかもしれない'},
-        {keywords:['怖い','こわい'], reply:'…怖いですよね。でも…これが現実です'}
-      ],
-      defaultReply: '…ええ。4人の子どもが消えた。そして…',
-      next: '…そして、あの番組のキャラクターたちの動きが…変わった。まるで…中に誰かが'
-    },
-    {
-      choices: ['まさか…','中に誰かが…？','嘘でしょ…'],
-      responses: [
-        {keywords:['まさか','嘘','うそ'], reply:'…嘘だと思いたい。俺だって30年間そう思おうとした'},
-        {keywords:['中に','誰か'], reply:'…ええ。あのアニマトロニクスの中に…子どもたちの…'}
-      ],
-      defaultReply: '…ええ。あの人形たちの中に…',
-      next: null,
-      onComplete: 'triggerNight5Collapse'
-    }
-  ],
-  3: [
-    {
-      choices: ['聞かせてください','…大丈夫？'],
-      responses: [
-        {keywords:['聞く','聞きます','聞かせて','はい','うん','話して'], reply:'…ありがとう。聞いてくれるんですね'},
-        {keywords:['大丈夫','だいじょうぶ'], reply:'…大丈夫じゃないかもしれません。でも…もう黙っていられない'}
-      ],
-      defaultReply: '…覚悟はいいですか。聞いたら、戻れないかもしれません',
-      next: 'この番組が気になるのは…昔、大切な人がいたからなんです'
-    },
-    {
-      choices: ['大切な人って…','誰のこと？','…うん'],
-      responses: [
-        {keywords:['大切','たいせつ','誰'], reply:'…娘です'},
-        {keywords:['うん','はい','聞いてる'], reply:'…娘がいたんです'}
-      ],
-      defaultReply: '…娘です',
-      next: 'もう会えなくなって…30年以上になります'
-    },
-    {
-      choices: ['何があったの…？','30年以上も…','…ごめんなさい'],
-      responses: [
-        {keywords:['30年以上','ながい','長い'], reply:'…ええ。人生の半分以上です'},
-        {keywords:['何が','なにが','どうして'], reply:'…8歳の時に…いなくなりました'},
-        {keywords:['かわいそう','つらい','悲しい','ごめん'], reply:'…ありがとう。でも泣いてる場合じゃないんです'}
-      ],
-      defaultReply: '…8歳の時に、いなくなりました',
-      next: '「検査」だと言われて連れて行ったんです。私が。…私のせいです'
-    },
-    {
-      choices: ['あなたのせいじゃないよ','検査って何…？','…ひどい'],
-      responses: [
-        {keywords:['あなたのせい','違う','悪くない'], reply:'…いいえ。私が連れて行った。それは事実です'},
-        {keywords:['検査','連れて'], reply:'…子どもの発達に良いって…そう言われたんです'},
-        {keywords:['ひどい','許せない'], reply:'…ええ。一番許せないのは自分自身です'}
-      ],
-      defaultReply: '…騙されたんです。でも連れて行ったのは私です',
-      next: 'でもあの子はまだ「ここ」にいるんです'
-    },
-    {
-      choices: ['ここにいるって…？','え…どういうこと？','まだいるの…？'],
-      responses: [
-        {keywords:['ここ','どこ','いる'], reply:'…番組のシステムの中に'},
-        {keywords:['え','まさか','嘘','うそ'], reply:'…信じられないですよね。でも本当なんです'},
-        {keywords:['生きてる','まだ'], reply:'…体はもうない。でも…意識だけが'}
-      ],
-      defaultReply: '…データとして。番組のシステムの中に',
-      next: '体はもうないけど…意識だけが残ってる。意識転移…そう呼ばれてました'
-    },
-    {
-      choices: ['意識転移…？','信じられない…','助ける方法はないの？'],
-      responses: [
-        {keywords:['意識転移','転移','データ'], reply:'人の意識をデータ化する技術。あの会社の本当の目的です'},
-        {keywords:['え','技術','まさか'], reply:'…信じられないのは分かります。でも…あの会社はそれを実現した'},
-        {keywords:['助け','たすけ','どうすれば'], reply:'…方法は…まだ分からないんです。でもあなたなら…'}
-      ],
-      defaultReply: '…人の意識をデータ化する技術。それがあの会社の本当の目的でした',
-      next: '…私の本名は吉田一郎です'
-    },
-    {
-      choices: ['あの吉田一郎…','…なんとなく気づいてた','話してくれてありがとう'],
-      responses: [
-        {keywords:['吉田','よしだ','一郎'], reply:'…ええ。スタッフページに名前がある、あの吉田一郎です'},
-        {keywords:['え','まさか','あの'], reply:'…ええ。セット設計の吉田一郎。それが私です'},
-        {keywords:['知ってた','やっぱり'], reply:'…気づいてたんですか。さすがですね'}
-      ],
-      defaultReply: '…あの番組のセットを作り…娘をあの場所に連れて行った男です',
-      next: '…もう全部話しました。何でも聞いてください。もう隠すことはありません'
-    }
-  ],
-  4: [
-    {
-      choices: ['…吉田さん','うん、聞くよ'],
-      responses: [
-        {keywords:['吉田','一郎','あなた'], reply:'…ああ。俺だ。吉田一郎'},
-        {keywords:['はい','うん','聞く','聞きます'], reply:'…ありがとう。最後まで聞いてくれ'}
-      ],
-      defaultReply: '…もう全部話す。俺の本名は吉田一郎。あの番組のセットを作った男だ',
-      next: '…もう敬語はやめる。いいか'
-    },
-    {
-      choices: ['いいよ、楽にして','なんで急に？'],
-      responses: [
-        {keywords:['いい','うん','はい','おk'], reply:'…ありがとう'},
-        {keywords:['なんで','どうして'], reply:'…もうそういう関係じゃないだろ。お前と俺は'}
-      ],
-      defaultReply: '…すまない。でもこの方が話しやすい',
-      next: 'あの子のために…番組に協力してた'
-    },
-    {
-      choices: ['協力って何を…','娘さんのためだったんだ','なんでそんなことに…'],
-      responses: [
-        {keywords:['協力','番組'], reply:'…「協力すればあの子に会える」って言われたんだ'},
-        {keywords:['娘','あの子'], reply:'…ああ。あの子のためなら何でもするつもりだった'},
-        {keywords:['なぜ','どうして'], reply:'…娘に会いたかった。ただそれだけだ'}
-      ],
-      defaultReply: '…「協力すればあの子に会える」って言われて',
-      next: '信じたんだ。信じたかったんだ。…でも嘘だった。全部、嘘だった'
-    },
-    {
-      choices: ['ずっと騙されてたの…？','…ひどいな','そいつは誰なんだ'],
-      responses: [
-        {keywords:['騙','だま','嘘','うそ'], reply:'…ああ。あいつは俺の弱さにつけ込んだ'},
-        {keywords:['あいつ','黒幕','誰'], reply:'…もう「人」じゃないんだ。データになった存在だ'},
-        {keywords:['かわいそう','つらい','ひどい'], reply:'…同情はいらない。俺のせいだ。全部'}
-      ],
-      defaultReply: '…情けない話だ。何十年も騙されてた',
-      next: '…でもお前が来てくれた。お前が調べてくれたから…目が覚めた'
-    },
-    {
-      choices: ['一緒にやろう','俺にできることは？','助けたいんだ'],
-      responses: [
-        {keywords:['目が覚めた','よかった'], reply:'…ああ。お前のおかげだ'},
-        {keywords:['一緒','いっしょ','助け'], reply:'…ありがとう。お前は…いい奴だな'},
-        {keywords:['どうする','これから'], reply:'…あの子を救う方法が…1つだけある'}
-      ],
-      defaultReply: '…あの子を…本当に救うには',
-      next: '全部壊すしかないんだ。…でもその前に、お前に全部知ってほしい'
-    },
-    {
-      choices: ['わかった','全部教えてくれ'],
-      responses: [
-        {keywords:['わかった','教えて','知りたい','うん','はい'], reply:'…ありがとう'}
-      ],
-      defaultReply: '…ありがとう',
-      next: '俺が30年間で集めた情報を全部まとめた。…今、お前のPCにファイルを送った。あいつのシステムを通さずに直接送った。全部読んでくれ。読み終わったら…またここで話そう',
-      onComplete: 'sendYoshidaFiles'
-    }
-  ]
-};
-
-// Warmup stage tracking
-function getDMWarmupStage(phase){
-  try{return parseInt(localStorage.getItem('dm_warmup_'+phase)||'0',10);}catch(e){return 0;}
-}
-function setDMWarmupStage(phase, stage){
-  try{localStorage.setItem('dm_warmup_'+phase, String(stage));}catch(e){}
-}
-
-// Check if warmup is active for current phase
-function isInWarmup(){
-  var script = dmWarmupScripts[dmPhase];
-  if(!script) return false;
-  var stage = getDMWarmupStage(dmPhase);
-  return stage < script.length;
-}
-
-// Handle warmup response
-function handleWarmupResponse(text){
-  var script = dmWarmupScripts[dmPhase];
-  if(!script) return false;
-  var stage = getDMWarmupStage(dmPhase);
-  if(stage >= script.length) return false;
-
-  var step = script[stage];
-  var reply = step.defaultReply;
-
-  // Check keyword matches
-  for(var i=0; i<step.responses.length; i++){
-    var r = step.responses[i];
-    for(var k=0; k<r.keywords.length; k++){
-      if(text.indexOf(r.keywords[k]) !== -1){
-        reply = r.reply;
-        break;
-      }
-    }
-    if(reply !== step.defaultReply) break;
-  }
-
-  dmIsProcessing = true;
-  showTypingIndicator();
-  setTimeout(function(){
-    addYoshiResponse(reply);
-
-    // Advance stage
-    stage++;
-    setDMWarmupStage(dmPhase, stage);
-
-    // Send next prompt if exists
-    if(stage < script.length && script[stage-1].next){
-      showTypingIndicator();
-      setTimeout(function(){
-        addYoshiResponse(script[stage-1].next);
-        dmIsProcessing = false;
-        setTimeout(renderDMChoices, 300);
-      }, 1500 + Math.random()*1000);
-    } else if(stage >= script.length && script[stage-1].next){
-      // Last step with a next message
-      showTypingIndicator();
-      setTimeout(function(){
-        addYoshiResponse(script[stage-1].next);
-        // onCompleteコールバック（ファイル送信等）
-        if(script[stage-1].onComplete === 'sendYoshidaFiles'){
-          localStorage.setItem('yoshida_files_sent', 'true');
-          setTimeout(function(){ window.location.href = '../index.html'; }, 2000);
-          return;
-        }
-        dmIsProcessing = false;
-        setTimeout(renderDMChoices, 500);
-      }, 1500 + Math.random()*1000);
-    } else {
-      // onCompleteコールバック（nextがnullの最終ステップ）
-      if(script[stage-1].onComplete === 'triggerNight5Collapse'){
-        setTimeout(triggerNight5Collapse, 1500);
-      } else {
-        dmIsProcessing = false;
-        setTimeout(renderDMChoices, 500);
-      }
-    }
-  }, 800 + Math.random()*800);
-
-  return true;
-}
-
-// Generic fallback responses per phase
-var dmGenericByPhase = {
-  1: ['…そうですか','…','なるほど…','…ちょっと考えさせてください','……','…そうなんですね','…続けてください'],
-  2: ['…','…そうですか','…少し考えさせてください','……','…うん','…なるほど'],
-  3: ['…','…うん','……','…そうか','…分かりました','…続けてください'],
-  4: ['…','……','…ああ','…うん','…そうか','…']
-};
-var dmGenericIndex = 0;
-
-// Check for unread DM badge
-function updateDMBadge(){
-  var badge = document.getElementById('dm-badge');
-  var btn = document.getElementById('dm-btn');
-  if(!badge || !btn) return;
-  if(dmPhase >= 1 && getDMLastReadPhase() < dmPhase){
-    badge.style.display = 'flex';
-  } else {
-    badge.style.display = 'none';
-  }
-  // Hide DM button entirely if phase 0
-  if(dmPhase < 1){
-    btn.style.display = 'none';
-  } else {
-    btn.style.display = 'flex';
-  }
-}
-updateDMBadge();
-
-// Ensure auto-messages are in history for unlocked phases
-function ensureAutoMessages(){
-  var history = getDMHistory();
-  var existingAutoPhases = {};
-  history.forEach(function(m){ if(m.auto) existingAutoPhases[m.autoPhase] = true; });
-
-  var changed = false;
-  for(var p = 1; p <= dmPhase; p++){
-    if(dmAutoMessages[p] && !existingAutoPhases[p]){
-      history.push({
-        sender: 'yoshi',
-        text: dmAutoMessages[p],
-        auto: true,
-        autoPhase: p,
-        time: Date.now() - (dmPhase - p) * 86400000 // stagger timestamps
-      });
-      changed = true;
-    }
-  }
-  if(changed) saveDMHistory(history);
-  return history;
-}
-
-function findKeywordResponse(text){
-  // Check from highest available phase down to 1
-  for(var p = dmPhase; p >= 1; p--){
-    var entries = dmKeywords[p];
-    if(!entries) continue;
-    for(var i = 0; i < entries.length; i++){
-      var entry = entries[i];
-      for(var k = 0; k < entry.keywords.length; k++){
-        if(text.indexOf(entry.keywords[k]) !== -1){
-          return entry;
-        }
-      }
-    }
+function getDMPhase(){
+  for(var i=DM_PHASES.length-1;i>=0;i--){
+    if(DM_PHASES[i].require()) return DM_PHASES[i];
   }
   return null;
 }
 
-function renderDMMessages(msgs){
-  var html = '';
-  msgs.forEach(function(m){
-    if(m.sender === 'yoshi'){
-      html += '<div class="dm-bubble dm-bubble-left">' + escapeHTML(m.text) + '</div>';
-    } else {
-      html += '<div class="dm-bubble dm-bubble-right">' + escapeHTML(m.text) + '</div>';
-    }
-  });
-  return html;
-}
-
-function escapeHTML(str){
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-var dmTypingTimer = null;
-var dmIsProcessing = false;
-
-function scrollDMToBottom(){
-  var msgArea = document.getElementById('dm-messages');
-  if(msgArea) msgArea.scrollTop = msgArea.scrollHeight;
-}
-
-function showTypingIndicator(){
-  var msgArea = document.getElementById('dm-messages');
-  if(!msgArea) return;
-  // Remove any existing typing indicator
-  var existing = msgArea.querySelector('.dm-typing');
-  if(existing) existing.remove();
-  var typing = document.createElement('div');
-  typing.className = 'dm-typing';
-  typing.textContent = 'ゆうやけさんぽが入力中...';
-  msgArea.appendChild(typing);
-  scrollDMToBottom();
-}
-
-function removeTypingIndicator(){
-  var msgArea = document.getElementById('dm-messages');
-  if(!msgArea) return;
-  var existing = msgArea.querySelector('.dm-typing');
-  if(existing) existing.remove();
-}
-
-function addYoshiResponse(text){
-  removeTypingIndicator();
-  var history = getDMHistory();
-  history.push({sender:'yoshi', text:text, time:Date.now()});
-  saveDMHistory(history);
-  var msgArea = document.getElementById('dm-messages');
-  if(msgArea){
-    var bubble = document.createElement('div');
-    bubble.className = 'dm-bubble dm-bubble-left';
-    bubble.textContent = text;
-    msgArea.appendChild(bubble);
-    scrollDMToBottom();
+function getCompletedPhase(){
+  for(var i=DM_PHASES.length-1;i>=0;i--){
+    if(hasFlag('dm_phase_'+DM_PHASES[i].id+'_complete')) return DM_PHASES[i].id;
   }
+  return 0;
 }
 
-function handleDMSend(){
-  if(dmIsProcessing) return;
-  var input = document.getElementById('dm-input');
-  if(!input) return;
-  var text = input.value.trim();
-  if(!text) return;
+function getDMProgress(){
+  var phase=getDMPhase();
+  if(!phase) return null;
+  var completed=getCompletedPhase();
+  if(phase.id<=completed) return null;
+  return phase;
+}
 
-  // Add player message
-  var history = getDMHistory();
-  history.push({sender:'player', text:text, time:Date.now()});
-  saveDMHistory(history);
-  input.value = '';
-
-  var msgArea = document.getElementById('dm-messages');
-  if(msgArea){
-    var bubble = document.createElement('div');
-    bubble.className = 'dm-bubble dm-bubble-right';
-    bubble.textContent = text;
-    msgArea.appendChild(bubble);
-    scrollDMToBottom();
-  }
-
-  // Check warmup flow first (scripted conversation before free keyword mode)
-  if(isInWarmup()){
-    handleWarmupResponse(text);
-    return;
-  }
-
-  // Find keyword match
-  var match = findKeywordResponse(text);
-
-  dmIsProcessing = true;
-
-  if(match){
-    // Track persuasion keys for phase 4
-    if(match.critical){
-      addPersuasionKey(match.keywords[0]);
-    }
-
-    if(match.responses && match.delays){
-      // Multi-response with delays
-      showTypingIndicator();
-      var resps = match.responses;
-      var delays = match.delays;
-      var idx = 0;
-      function sendNext(){
-        if(idx >= resps.length){
-          dmIsProcessing = false;
-          return;
-        }
-        var delay = idx === 0 ? delays[0] : (delays[idx] - delays[idx-1]);
-        setTimeout(function(){
-          addYoshiResponse(resps[idx]);
-          idx++;
-          if(idx < resps.length){
-            showTypingIndicator();
-            sendNext();
-          } else {
-            dmIsProcessing = false;
-          }
-        }, delay);
-      }
-      sendNext();
-    } else {
-      // Single response
-      showTypingIndicator();
-      setTimeout(function(){
-        addYoshiResponse(match.response);
-        dmIsProcessing = false;
-      }, 1000 + Math.random() * 1000);
-    }
+function initDMButton(){
+  var phase=getDMProgress();
+  if(phase){
+    dmBtn.style.display='flex';
+    var read=hasFlag('dm_phase_'+phase.id+'_read');
+    dmBadge.style.display=read?'none':'flex';
+  } else if(getCompletedPhase()>0){
+    dmBtn.style.display='flex';
+    dmBadge.style.display='none';
   } else {
-    // Generic response (phase-aware)
-    showTypingIndicator();
-    setTimeout(function(){
-      var pool = dmGenericByPhase[dmPhase] || dmGenericByPhase[1];
-      var resp = pool[dmGenericIndex % pool.length];
-      dmGenericIndex++;
-      addYoshiResponse(resp);
-      dmIsProcessing = false;
-    }, 1000 + Math.random() * 500);
+    dmBtn.style.display='none';
   }
+}
+initDMButton();
+
+function renderDMMessages(phase, step){
+  var script=phase.script;
+  var h='<div class="dm-container">';
+  h+='<div class="dm-header">';
+  h+='<div class="dm-header-avatar">夕</div>';
+  h+='<div><div class="dm-header-name">ゆうやけさんぽ</div><div class="dm-header-handle">@yuuyake_sanpo</div></div>';
+  h+='</div>';
+  h+='<div class="dm-messages" id="dm-msg-area">';
+
+  for(var i=0;i<step && i<script.length;i++){
+    var s=script[i];
+    if(s.from){
+      h+='<div class="dm-bubble dm-bubble-left">'+s.text.replace(/\n/g,'<br>')+'</div>';
+    } else if(s.choices && i<step-1){
+      var chosen=localStorage.getItem('dm_p'+phase.id+'_c'+i);
+      if(chosen) h+='<div class="dm-bubble dm-bubble-right">'+chosen+'</div>';
+    }
+  }
+
+  if(step<script.length){
+    var current=script[step];
+    if(current.from){
+      h+='<div class="dm-typing">入力中…</div>';
+    }
+  }
+
+  h+='</div>';
+
+  if(step<script.length && script[step].choices){
+    h+='<div class="dm-choices">';
+    script[step].choices.forEach(function(c,ci){
+      h+='<button class="dm-choice-btn" onclick="chooseDM('+phase.id+','+step+','+ci+')">'+c+'</button>';
+    });
+    h+='</div>';
+  } else if(step>=script.length){
+    h+='<div class="dm-choices" style="justify-content:center;color:#8070a0;font-size:13px;">会話は終了しました</div>';
+  }
+
+  h+='</div>';
+  return h;
 }
 
 function _showDM(noPush){
-  if(dmPhase < 1){
-    // DM not available yet
-    viewDM.innerHTML = '<button class="back-btn" onclick="history.back()">' + BACK_SVG + ' 戻る</button>' +
-      '<div class="dm-locked">' +
-      '<div class="dm-locked-icon">✉</div>' +
-      '<div class="dm-locked-text">ダイレクトメッセージはまだありません</div>' +
-      '</div>';
+  var phase=getDMPhase();
+  var completed=getCompletedPhase();
+
+  if(!phase && completed>0){
+    phase=DM_PHASES[completed-1];
+    var step=phase.script.length;
+    viewDM.innerHTML=renderDMMessages(phase,step);
     switchView(viewDM);
+    scrollDMBottom();
     return;
   }
+  if(!phase) return;
 
-  // Mark as read
-  setDMLastReadPhase(dmPhase);
-  updateDMBadge();
+  localStorage.setItem('dm_phase_'+phase.id+'_read','true');
+  dmBadge.style.display='none';
 
-  // Ensure auto messages exist
-  var msgs = ensureAutoMessages();
-
-  var h = '<button class="back-btn" onclick="history.back()">' + BACK_SVG + ' 戻る</button>';
-  h += '<div class="dm-container">';
-  h += '<div class="dm-header">';
-  h += '<div class="dm-header-avatar">夕</div>';
-  h += '<div class="dm-header-info">';
-  h += '<div class="dm-header-name">ゆうやけさんぽ</div>';
-  h += '<div class="dm-header-handle">@yuuyake_sanpo</div>';
-  h += '</div>';
-  h += '</div>';
-  h += '<div class="dm-messages" id="dm-messages">';
-  h += renderDMMessages(msgs);
-  h += '</div>';
-  h += '<div id="dm-choices" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px;border-top:1px solid #2a1530;"></div>';
-  h += '<div class="dm-input-area">';
-  h += '<input type="text" class="dm-input" id="dm-input" placeholder="メッセージを入力..." autocomplete="off">';
-  h += '<button class="dm-send-btn" id="dm-send-btn" onclick="handleDMSend()">送信</button>';
-  h += '</div>';
-  h += '</div>';
-
-  viewDM.innerHTML = h;
+  var step=parseInt(localStorage.getItem('dm_step_'+phase.id)||'0',10);
+  viewDM.innerHTML=renderDMMessages(phase,step);
   switchView(viewDM);
 
-  // Scroll to bottom
-  setTimeout(scrollDMToBottom, 50);
-
-  // Enter key to send
-  var dmInput = document.getElementById('dm-input');
-  if(dmInput){
-    dmInput.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        handleDMSend();
-      }
-    });
-    dmInput.focus();
+  if(step<phase.script.length && phase.script[step].from){
+    setTimeout(function(){advanceDM(phase.id);},1200);
   }
-  // 選択肢ボタンを表示
-  renderDMChoices();
-
+  scrollDMBottom();
 }
 
-// ===== DM選択肢ボタン =====
-var dmChoices = {
-  1: ['この番組なんなの？','AIキャラが怖い','他に見てる人いる？','メール来てるんだけど','なんか変だよね'],
-  2: ['セットってどんな感じだった？','地下って何があったの？','検査って何してたの？','なんで辞めたの？','あなたは一体…','番組はなんだったの？'],
-  3: ['娘さんのこと聞いてもいい？','意識転移ってなに？','キツネ団長と関係ある？','データってどういうこと？','この番組の本当の目的は？','助けたい'],
-  4: ['娘さんのために…','騙されてたの？','壊すしかないの？','俺にできることある？','止めたいんだ','一緒にやろう']
-};
-
-function renderDMChoices(){
-  var container = document.getElementById('dm-choices');
-  var inputArea = document.querySelector('.dm-input-area');
-  if(!container) return;
-
-  var choices = null;
-  var showInput = false;
-
-  if(isInWarmup()){
-    // ウォームアップ中：選択肢のみ、テキスト入力非表示
-    var script = dmWarmupScripts[dmPhase];
-    var stage = getDMWarmupStage(dmPhase);
-    if(script && stage < script.length && script[stage].choices){
-      choices = script[stage].choices;
-    }
-    showInput = false;
-  } else if(dmPhase === 4 && localStorage.getItem('yoshida_files_read') === 'true' && !localStorage.getItem('final_conversation_done')){
-    // ファイル読了後：最終会話
-    choices = null;
-    showInput = false;
-    // 自動で最終会話を開始
-    if(!document.getElementById('final-conv-started')){
-      var marker = document.createElement('span');
-      marker.id = 'final-conv-started';
-      marker.style.display = 'none';
-      container.appendChild(marker);
-      setTimeout(function(){
-        showTypingIndicator();
-        setTimeout(function(){
-          addYoshiResponse('…全部読んだか');
-          showTypingIndicator();
-          setTimeout(function(){
-            addYoshiResponse('…ありがとう。全部知った上で、まだここにいてくれるんだな');
-            showTypingIndicator();
-            setTimeout(function(){
-              addYoshiResponse('…覚悟はいいか');
-              // 最終選択肢を表示
-              container.innerHTML = '<button style="padding:10px 24px;background:#1a1520;border:1px solid #FF7EB3;border-radius:20px;color:#FF7EB3;font-size:15px;cursor:pointer;font-family:inherit;transition:all 0.3s;letter-spacing:2px;" onmouseover="this.style.background=\'#FF7EB3\';this.style.color=\'#000\'" onmouseout="this.style.background=\'#1a1520\';this.style.color=\'#FF7EB3\'" onclick="triggerFinalConversation()">一緒に終わらせよう</button>';
-            }, 2000);
-          }, 2500);
-        }, 2000);
-      }, 1000);
-    }
-    return;
-  } else if(dmPhase === 1){
-    // Phase1フリーモード：テキスト入力のみ（差分報告待ち）
-    choices = null;
-    showInput = true;
-  } else {
-    // Phase2-4フリーモード：選択肢のみ
-    choices = dmChoices[dmPhase];
-    showInput = false;
-  }
-
-  // テキスト入力の表示/非表示
-  if(inputArea) inputArea.style.display = showInput ? '' : 'none';
-
-  // 選択肢ボタンの表示
-  if(!choices || choices.length === 0){
-    container.innerHTML = '';
-    return;
-  }
-  var html = '';
-  choices.forEach(function(c){
-    html += '<button style="padding:6px 14px;background:#1a1520;border:1px solid #2a1530;border-radius:16px;color:#e8e0f0;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor=\'#FF7EB3\';this.style.color=\'#FF7EB3\'" onmouseout="this.style.borderColor=\'#2a1530\';this.style.color=\'#e8e0f0\'" onclick="sendDMChoice(this.textContent)">' + c + '</button>';
-  });
-  container.innerHTML = html;
-}
-
-function sendDMChoice(text){
-  var input = document.getElementById('dm-input');
-  if(input) input.value = text;
-  handleDMSend();
-  // 送信後に選択肢を再描画（使った選択肢は残してOK）
-  setTimeout(function(){ renderDMChoices(); }, 100);
-}
-window.sendDMChoice = sendDMChoice;
-
-// Night5崩壊遷移（Phase2ウォームアップ最後）
-function triggerNight5Collapse(){
-  var container = document.getElementById('dm-choices');
-  if(container) container.innerHTML = '';
-  var msgArea = document.getElementById('dm-messages');
-
-  // 吉田のメッセージが壊れ始める
-  showTypingIndicator();
-  setTimeout(function(){
-    addYoshiResponse('…おかしい…見られて');
-    showTypingIndicator();
-    setTimeout(function(){
-      addYoshiResponse('\u0336\u0337\u3084\u0334\u3081\u0335\u308d\u0336…\u0337\u4ffa\u0334\u306f\u0335\u307e\u0336\u3060\u0337');
-      // DM画面グリッチ
-      var dmContainer = document.querySelector('.dm-container');
-      if(dmContainer){
-        dmContainer.style.animation = 'bfShake 0.08s infinite';
-        // シェイクアニメ追加
-        var ss = document.createElement('style');
-        ss.textContent = '@keyframes bfShake{0%{transform:translate(0,0)}25%{transform:translate(-6px,4px)}50%{transform:translate(5px,-5px)}75%{transform:translate(-4px,-3px)}100%{transform:translate(6px,5px)}}';
-        document.head.appendChild(ss);
-      }
-      setTimeout(function(){
-        // 画面全体が赤く点滅
-        var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;opacity:0;transition:opacity 1s;';
-        document.body.appendChild(overlay);
-        var fc = 0;
-        var fi = setInterval(function(){
-          overlay.style.background = fc % 2 === 0 ? 'rgba(80,0,0,0.8)' : '#000';
-          overlay.style.opacity = '1';
-          fc++;
-          if(fc >= 6){
-            clearInterval(fi);
-            overlay.style.background = '#000';
-            overlay.style.opacity = '1';
-            // Night5へ遷移
-            setTimeout(function(){
-              window.location.href = '../night5/';
-            }, 1500);
-          }
-        }, 150);
-      }, 2000);
-    }, 1500);
-  }, 1000);
-}
-window.triggerNight5Collapse = triggerNight5Collapse;
-
-// 最終会話→Night6遷移
-function triggerFinalConversation(){
-  localStorage.setItem('final_conversation_done', 'true');
-  var container = document.getElementById('dm-choices');
-  if(container) container.innerHTML = '';
-
-  // プレイヤーのメッセージ表示
-  var msgArea = document.getElementById('dm-messages');
-  if(msgArea){
-    var bubble = document.createElement('div');
-    bubble.className = 'dm-bubble dm-bubble-right';
-    bubble.textContent = '一緒に終わらせよう';
-    msgArea.appendChild(bubble);
-    scrollDMToBottom();
-  }
-
-  // 吉田の最後の返事→Night6遷移
-  showTypingIndicator();
-  setTimeout(function(){
-    addYoshiResponse('…ああ');
-    showTypingIndicator();
-    setTimeout(function(){
-      addYoshiResponse('…行こう');
-      // 画面フェードアウト→Night6
-      setTimeout(function(){
-        var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;opacity:0;transition:opacity 2s;';
-        document.body.appendChild(overlay);
-        setTimeout(function(){ overlay.style.opacity = '1'; }, 50);
-        setTimeout(function(){
-          window.location.href = '../night6/';
-        }, 2500);
-      }, 1500);
-    }, 2000);
-  }, 1500);
-}
-window.triggerFinalConversation = triggerFinalConversation;
-
-window.showDM = function(){
-  history.pushState({view:'dm'}, '', '');
+window.showDM=function(){
+  history.pushState({view:'dm'},'','');
   _showDM();
 };
-window.handleDMSend = handleDMSend;
+
+window.chooseDM=function(phaseId,step,choiceIdx){
+  var phase=null;
+  for(var i=0;i<DM_PHASES.length;i++){if(DM_PHASES[i].id===phaseId){phase=DM_PHASES[i];break;}}
+  if(!phase) return;
+  var chosen=phase.script[step].choices[choiceIdx];
+  localStorage.setItem('dm_p'+phaseId+'_c'+step,chosen);
+  localStorage.setItem('dm_step_'+phaseId,''+(step+1));
+  viewDM.innerHTML=renderDMMessages(phase,step+1);
+  scrollDMBottom();
+
+  var nextStep=step+1;
+  if(nextStep<phase.script.length && phase.script[nextStep].from){
+    setTimeout(function(){advanceDM(phaseId);},1200);
+  }
+  if(nextStep>=phase.script.length){
+    localStorage.setItem('dm_phase_'+phaseId+'_complete','true');
+    initDMButton();
+  }
+};
+
+function advanceDM(phaseId){
+  var phase=null;
+  for(var i=0;i<DM_PHASES.length;i++){if(DM_PHASES[i].id===phaseId){phase=DM_PHASES[i];break;}}
+  if(!phase) return;
+  var step=parseInt(localStorage.getItem('dm_step_'+phaseId)||'0',10);
+  step++;
+  localStorage.setItem('dm_step_'+phaseId,''+step);
+  viewDM.innerHTML=renderDMMessages(phase,step);
+  scrollDMBottom();
+
+  if(step<phase.script.length && phase.script[step].from){
+    setTimeout(function(){advanceDM(phaseId);},1200);
+  }
+  if(step>=phase.script.length){
+    localStorage.setItem('dm_phase_'+phaseId+'_complete','true');
+    initDMButton();
+  }
+}
+
+function scrollDMBottom(){
+  var area=document.getElementById('dm-msg-area');
+  if(area) setTimeout(function(){area.scrollTop=area.scrollHeight;},50);
+}
 
 // 初期状態を履歴に記録
 history.replaceState({view:'timeline'}, '', '');
