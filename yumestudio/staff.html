@@ -53,12 +53,10 @@
 (function() {
   'use strict';
 
-  var CORRECT_CODE = '199703';
   var codeInput = document.getElementById('access-code');
   var loginBtn = document.getElementById('login-btn');
   var errorMsg = document.getElementById('login-error');
 
-  // 数字のみ入力可
   codeInput.addEventListener('input', function() {
     this.value = this.value.replace(/[^0-9]/g, '');
     errorMsg.style.display = 'none';
@@ -66,7 +64,7 @@
 
   function attemptLogin() {
     var code = codeInput.value.trim();
-    if (code === CORRECT_CODE) {
+    if (code.length === 6 && parseInt(code,10) === 0x30C17) {
       // Night4解放フラグをセット
       localStorage.setItem('yumestudio_unlocked', 'true');
       localStorage.setItem('night4_arg_complete', 'true');

@@ -215,12 +215,6 @@ body {
       <span class="icon-label">メール</span>
     </a>
 
-    <!-- 旧サイトアーカイブ（night3_clearフラグで表示） -->
-    <a class="desktop-icon" id="archive-icon" href="#" onclick="window.open('archive/index.html','_blank');return false;" style="display:none;">
-      <div class="icon-img" style="background:linear-gradient(135deg,#8B6914,#D4A843);font-size:24px;">📁</div>
-      <span class="icon-label">旧サイト<br>(アーカイブ)</span>
-    </a>
-
     <!-- チャット（chat_unlockedフラグで表示） -->
     <a class="desktop-icon" id="chat-icon" href="#" onclick="window.open('chat/index.html','_blank');return false;" style="display:none;">
       <div class="icon-img icon-chat">💭</div>
@@ -262,7 +256,6 @@ body {
     <div class="taskbar-pin" onclick="window.open('official/index.html','_blank')">🌐</div>
     <div class="taskbar-pin" onclick="window.open('twitter/index.html','_blank')">💬</div>
     <div class="taskbar-pin" onclick="window.open('mail/index.html','_blank')">✉️</div>
-    <div class="taskbar-pin" id="archive-pin" onclick="window.open('archive/index.html','_blank')" style="display:none;">📁</div>
     <div class="taskbar-pin" id="chat-pin" onclick="window.open('chat/index.html','_blank')" style="display:none;">💭</div>
   </div>
 </div>
@@ -334,8 +327,6 @@ if(localStorage.getItem('ending_a_seen') === 'true'){
   document.getElementById('desktop-main').classList.add('enda-wallpaper');
   document.getElementById('extra-icon').style.display = '';
   document.getElementById('custom-icon').style.display = '';
-  document.getElementById('archive-icon').style.display = '';
-  document.getElementById('archive-pin').style.display = '';
   document.getElementById('chat-icon').style.display = '';
   document.getElementById('chat-pin').style.display = '';
   document.getElementById('yoshida-folder').style.display = '';
@@ -400,12 +391,6 @@ function openSyslog(){
   win.appendChild(header);
   win.appendChild(body);
   document.body.appendChild(win);
-}
-
-// アーカイブアイコンの表示制御（Night3クリア後）
-if(localStorage.getItem('night3_clear') === 'true'){
-  document.getElementById('archive-icon').style.display = '';
-  document.getElementById('archive-pin').style.display = '';
 }
 
 // チャットアイコンの表示制御

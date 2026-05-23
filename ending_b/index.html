@@ -324,6 +324,7 @@
 <div id="blackout"></div>
 
 <script>
+if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#333;font-family:monospace;font-size:14px;">アクセスできません</div>';throw new Error();}
 (function(){
   var screen = document.getElementById('screen');
   var crtOverlay = document.getElementById('crt-overlay');
@@ -869,6 +870,8 @@
     try {
       localStorage.setItem('ending_b_seen', 'true');
       localStorage.setItem('save_point_night5', 'true');
+      localStorage.setItem('show_night6', 'true');
+      localStorage.setItem('night6_started', 'true');
     } catch(e){}
     localStorage.setItem('endb_just_returned', 'true');
     window.location.href = '../index.html';

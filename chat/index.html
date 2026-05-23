@@ -176,10 +176,9 @@
   </div>
 
   <script>
-    // Access control (一時的に無効化)
-    // if (!localStorage.getItem('night3_clear')) {
-    //   window.location.href = '../index.html';
-    // }
+    if (localStorage.getItem('chat_unlocked') !== 'true') {
+      window.location.href = '../index.html';
+    }
 
     // State
     var isNight6 = !!localStorage.getItem('night6_started');
@@ -225,7 +224,7 @@
       { keywords: ['高橋', 'たかはし', 'プロデューサー'], response: '高橋さんはね、番組を作ってくれた人だよ。でも番組が終わった後…どこに行っちゃったんだろう' },
       { keywords: ['松田', 'まつだ', '演出'], response: '松田さんは演出の人だね。番組をどう見せるか考えてくれてたんだ' },
       { keywords: ['斎藤', 'さいとう', '技術'], response: '斎藤さんはぼくたちの体をメンテナンスしてくれてた人だよ！ぼくたちが動けるのは斎藤さんのおかげなんだ' },
-      { keywords: ['木村', 'きむら', '音楽', '作曲'], response: '木村さんはぼくたちの歌を作ってくれた人！OPもEDもコーナーの曲も全部！すてきな曲ばっかりだったなぁ' },
+      { keywords: ['中村', 'なかむら', '音楽', '作曲'], response: '中村さんはぼくたちの歌を作ってくれた人！OPもEDもコーナーの曲も全部！すてきな曲ばっかりだったなぁ' },
       { keywords: ['伊藤', 'いとう', 'デザイン'], response: '伊藤さんはぼくたちの見た目を考えてくれた人だよ！ぼくの帽子もマントも伊藤さんのデザインなんだ' },
       { keywords: ['小林', 'こばやし', '音声'], response: '小林さんは音のことを担当してくれてた人だね。ぼくたちの声がちゃんと届くようにしてくれてたんだ' },
       // === 場所 ===
@@ -275,7 +274,7 @@
       // === 調査関連 ===
       { keywords: ['調査', '調べ', 'しらべ'], response: 'おっ、調べてるんだね！えらいなぁ。サイトのページをよく読んでみて！' },
       { keywords: ['証拠', 'しょうこ'], response: '証拠を集めてるの？さすが！ちゃんと隅々まで見てね！' },
-      { keywords: ['ゆめスタジオ', '制作会社'], response: 'ゆめスタジオプロダクション…ぼくたちを作ってくれた会社だよ。でも今はもうないんだ' },
+      { keywords: ['ゆめスタジオ', '制作会社'], response: 'ゆめスタジオプロダクション…ぼくたちを作ってくれた会社だよ。でも今はもうないんだ。…<a href="../yumestudio/">サイトだけ残ってる</a>みたいだけど' },
       { keywords: ['1986', '1988', '1990', '1991', '1993', '1997'], response: 'その年に何かあったのかな？サイトで調べてみよう！' },
       { keywords: ['試作', 'しさく', 'プロトタイプ'], response: '試作…？ぼくの前に別のキツネがいた…って話、聞いたことある？' },
       { keywords: ['グッズ', 'ぬいぐるみ', 'おもちゃ'], response: 'グッズ！ぽたまるのぬいぐるみが一番人気だったんだよ！ぼくのはあんまり売れなかったけど…えへへ' },
@@ -376,20 +375,57 @@
         showTyping(function () {
           if(allPuzzlesClear() && localStorage.getItem('night3_unlocked')){
             addMessage(partnerName, 'やあ！また来てくれたんだね！', true);
-            // Night3リンクを再表示
             if(!localStorage.getItem('night3_clear')){
+              // Night3リンクを再表示
               setTimeout(function(){
                 showTyping(function(){
                   addMessage(partnerName, 'ここから先に行けるよ。準備はいい？', true);
                   setTimeout(function(){
                     var linkDiv = document.createElement('div');
                     linkDiv.className = 'message partner';
-                    linkDiv.innerHTML = '<span class="sender" style="color:#c00;">' + escapeHtml(partnerName) + ':</span>' +
-                      '<span class="time">' + getTimeString() + '</span>' +
-                      '<span class="text"> <a href="../night3/" style="color:#0054e3; text-decoration:underline; cursor:pointer; font-weight:bold;">▶ 行く</a></span>';
+                    linkDiv.innerHTML = '<div class="msg-avatar">🦊</div><div class="msg-body"><div class="msg-header"><span class="msg-name" style="color:#c8760e;">' + escapeHtml(partnerName) + '</span></div>' +
+                      '<div class="msg-text"><a href="../night3/" style="color:#c8760e; text-decoration:underline; cursor:pointer; font-weight:bold;">▶ 行く</a></div></div>';
                     chatArea.insertBefore(linkDiv, typingIndicator);
                     scrollToBottom();
                   }, 500);
+                });
+              }, 1500);
+            } else if(!localStorage.getItem('night4_clear') && !localStorage.getItem('yumestudio_hint_shown')){
+              // Night3クリア後・Night4未クリア → yumestudioへの導線
+              localStorage.setItem('yumestudio_hint_shown', 'true');
+              setTimeout(function(){
+                showTyping(function(){
+                  addMessage(partnerName, '…ねえ、ちょっと気になることがあるんだ', true);
+                  setTimeout(function(){
+                    showTyping(function(){
+                      addMessage(partnerName, 'ぼくたちを作った会社のこと覚えてる？「ゆめスタジオプロダクション」っていうんだけど…', true);
+                      setTimeout(function(){
+                        showTyping(function(){
+                          addMessage(partnerName, '…あの会社のサイトがまだ残ってるみたいなんだ', true);
+                          setTimeout(function(){
+                            showTyping(function(){
+                              addMessage(partnerName, 'ぼくは怖くて見れなかった。…でもキミなら…', true);
+                              setTimeout(function(){
+                                var linkDiv = document.createElement('div');
+                                linkDiv.className = 'message partner';
+                                linkDiv.innerHTML = '<div class="msg-avatar">🦊</div><div class="msg-body"><div class="msg-header"><span class="msg-name" style="color:#c8760e;">' + escapeHtml(partnerName) + '</span></div>' +
+                                  '<div class="msg-text"><a href="../yumestudio/" style="color:#c8760e; text-decoration:underline; cursor:pointer; font-weight:bold;">▶ ゆめスタジオプロダクション</a></div></div>';
+                                chatArea.insertBefore(linkDiv, typingIndicator);
+                                scrollToBottom();
+                              }, 1000);
+                            });
+                          }, 1500);
+                        });
+                      }, 1500);
+                    });
+                  }, 1500);
+                });
+              }, 2000);
+            } else if(localStorage.getItem('night4_clear')){
+              // Night4もクリア済み → 普通の再会
+              setTimeout(function(){
+                showTyping(function(){
+                  addMessage(partnerName, '…色々大変だったね。でもキミがいてくれてよかった', true);
                 });
               }, 1500);
             }
@@ -698,7 +734,6 @@
     });
 
     // Update last activity
-    document.getElementById('lastActivity').textContent = '最終更新: ' + getTimeString();
 
     // ===== 選択肢ボタンシステム =====
     var warmupChoices = [

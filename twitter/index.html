@@ -720,6 +720,13 @@ if(n3){
     {account:'viewer7', text:'それはハマってる証拠だよ'},
     {account:'viewer1', text:'中毒性あるよなこの番組'}
   ]});
+  posts.push({account:'potamaru', text:'ねんねんころりよ　おころりよ\n…ちがう　こうじゃない\nねんねん　ねんねん…おやすみ…', phase:3, replies:[
+    {account:'viewer4', text:'子守歌…？'},
+    {account:'viewer6', text:'これぽたまるの声優が歌ってたやつとは違うよな'},
+    {account:'viewer8', text:'なんか…子どもが歌ってるみたいで怖い'},
+    {account:'viewer10', text:'番組の曲じゃないわこれ。普通の子守歌…'},
+    {account:'viewer5', text:'誰が歌ってるの？'}
+  ]});
   posts.push({account:'potamaru', text:'しってる　しってる　しってる', phase:3, replies:[
     {account:'viewer4', text:'何を知ってるの…？'},
     {account:'viewer1', text:'怖すぎる'},
@@ -1416,58 +1423,13 @@ var dmAutoMessages = {
   4: '…もう一度やらされてるのか。あいつはお前の感情をもっと欲しがってる。でも…これはチャンスでもある。今度は俺が本当のことを話す'
 };
 
-// Night4 puzzle: sensitive topic tracking (尋問型)
-function getN4TopicCount(){
-  var count = 0;
-  if(localStorage.getItem('dm_topic_g0') === 'true') count++;
-  if(localStorage.getItem('dm_topic_demand') === 'true') count++;
-  if(localStorage.getItem('dm_topic_voice') === 'true') count++;
-  return count;
-}
-function addN4Topic(key){
-  localStorage.setItem('dm_' + key, 'true');
-  return getN4TopicCount();
-}
-function checkN4Complete(){
-  if(getN4TopicCount() >= 3 && !hasFlag('night4_clear')){
-    // All 3 diffs found — schedule the Night4 unlock message
-    setTimeout(function(){
-      showTypingIndicator();
-      setTimeout(function(){
-        addYoshiResponse('…そこまで知ってるのか。…あなたには…全部話した方がいいのかもしれない。');
-        showTypingIndicator();
-        setTimeout(function(){
-          var linkMsg = '…こっちに来てくれ。';
-          removeTypingIndicator();
-          var history = getDMHistory();
-          history.push({sender:'yoshi', text:linkMsg, time:Date.now(), hasLink:true});
-          saveDMHistory(history);
-          var msgArea = document.getElementById('dm-messages');
-          if(msgArea){
-            var bubble = document.createElement('div');
-            bubble.className = 'dm-bubble dm-bubble-left';
-            bubble.innerHTML = '<span style="color:#e8e0f0;">' + escapeHTML(linkMsg) + '</span><br><a href="../night4/" style="color:#FF7EB3;font-size:13px;margin-top:8px;display:inline-block;">…何かが違う…</a>';
-            msgArea.appendChild(bubble);
-            scrollDMToBottom();
-          }
-          dmIsProcessing = false;
-        }, 2000);
-      }, 1500);
-    }, 500);
-    return true;
-  }
-  return false;
-}
-
 // Keyword responses per phase
 var dmKeywords = {
   1: [
-    // === Night4: 敏感トピック（尋問型・3種）===
-    {keywords:['G-0','G0','ゼロ号','被験者G','被験者リスト','会社設立前から'], response:'…なんでその番号を知ってるんですか…あれは…あの資料は公開されるはずじゃ…', puzzle:'topic_g0'},
-    {keywords:['娘を返せ','申し入れ書','申し入れ','返せ'], response:'…………それは……そんなことがなんで……あなたの口から……', puzzle:'topic_demand'},
-    {keywords:['内部から直接生成','内部から生成','脳波パターン','基底波形','7歳','8歳','女児のパターン'], response:'…やめてくれ…それ以上は…お願いだから…もう…', puzzle:'topic_voice'},
-    // === 追加ヒント ===
-    {keywords:['ヒント','わからない','わかりません','何を言えば'], response:'…サイトに追加されたページを読んでみてください。被験者のこと、行方不明者のこと、声のこと…気になったことを教えてくれればいい'},
+    // === 敏感トピック ===
+    {keywords:['G-0','G0','ゼロ号','被験者G','被験者リスト','会社設立前から'], response:'…なんでその番号を知ってるんですか…あれは…あの資料は公開されるはずじゃ…'},
+    {keywords:['娘を返せ','申し入れ書','申し入れ','返せ'], response:'…………それは……そんなことがなんで……あなたの口から……'},
+    {keywords:['内部から直接生成','内部から生成','脳波パターン','基底波形','7歳','8歳','女児のパターン'], response:'…やめてくれ…それ以上は…お願いだから…もう…'},
     {keywords:['被験者','ひけんしゃ'], response:'…被験者リスト…見たんですか。あの一番上の行…'},
     {keywords:['行方不明','消えた人','失踪'], response:'…ええ…消えた人たちがいます。あの番組に関わった人たちの中に…'},
     {keywords:['アニマトロニクス','人形','中に誰か'], response:'…あの人形たちのことは…今は…まだ話せません'},
@@ -2157,21 +2119,7 @@ function handleDMSend(){
   if(match){
     // Track persuasion keys for phase 4
     if(match.critical){
-      // Use first keyword as the key name
       addPersuasionKey(match.keywords[0]);
-    }
-
-    // Track Night4 sensitive topics
-    if(match.puzzle){
-      var totalTopics = addN4Topic(match.puzzle);
-      showTypingIndicator();
-      setTimeout(function(){
-        addYoshiResponse(match.response);
-        if(!checkN4Complete()){
-          dmIsProcessing = false;
-        }
-      }, 1000 + Math.random() * 500);
-      return;
     }
 
     if(match.responses && match.delays){

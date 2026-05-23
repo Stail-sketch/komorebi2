@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YSP SYSTEM</title>
+  <link rel="stylesheet" href="css/terminal.css">
+</head>
+<body>
+
+<div class="crt-overlay"></div>
+
+<div class="terminal-wrapper">
+
+  <!-- Header bar -->
+  <div class="header-bar">
+    <div class="header-title">YSP — INTERNAL MANAGEMENT SYSTEM v3.1.7</div>
+    <div class="header-status">
+      <div class="status-item"><span class="status-dot"></span> SYSTEM ACTIVE</div>
+      <div class="status-item" style="color:var(--amber-dim);">SESSION: EXTERNAL</div>
+    </div>
+  </div>
+
+  <!-- Main area -->
+  <div class="main-area">
+
+    <!-- Sidebar / file tree -->
+    <div class="sidebar">
+      <div class="sidebar-header">FILE SYSTEM</div>
+      <div class="file-tree" id="file-tree"></div>
+    </div>
+
+    <!-- Content area -->
+    <div class="content-area">
+      <div class="content-path" id="content-path">sys:// <span>ready</span></div>
+      <div class="content-viewer" id="content-viewer"></div>
+    </div>
+
+  </div>
+
+  <!-- Command output -->
+  <div id="command-output" style="display:none;padding:4px 16px;background:var(--panel);border-top:1px solid var(--border);font-size:11px;color:var(--amber);"></div>
+
+  <!-- Command bar -->
+  <div class="command-bar">
+    <span class="command-prompt">K-059@ysp-sys:~$</span>
+    <input type="text" class="command-input" id="command-input" placeholder="コマンドを入力..." autocomplete="off" spellcheck="false">
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span id="status-level">ACCESS LEVEL: 1</span>
+    <span id="status-files">FILES: 0</span>
+    <span id="status-session">K-059: CONNECTED</span>
+  </div>
+
+</div>
+
+<!-- 黒幕 terminal overlay -->
+<div id="kuromaku-terminal" class="kuromaku-terminal"></div>
+
+<!-- Blackout overlay -->
+<div id="blackout-overlay" class="blackout-overlay"></div>
+
+<!-- Access control -->
+<script>if(localStorage.getItem('night4_clear')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#333;font-family:monospace;font-size:14px;">アクセスできません</div>';throw new Error();}</script>
+
+<!-- Core engine -->
+<script src="js/system.js"></script>
+
+<!-- Content data -->
+<script src="js/level1.js"></script>
+<script src="js/level2.js"></script>
+<script src="js/level3.js"></script>
+<script src="js/level4.js"></script>
+<script src="js/level5.js"></script>
+
+</body>
+</html>

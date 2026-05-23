@@ -151,8 +151,9 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
     mails.push({id:'n5_spam2', from:'news@weather-app.example', subject:'明日の天気：曇りのち雨', snippet:'傘を忘れずに', body:'明日の天気予報\n\n東京: 曇りのち雨 最高18℃/最低12℃\n降水確率: 70%\n\n傘を忘れずにお出かけください。', unread:false, attachment:null, type:'normal'});
   }
 
-  // ===== Night4クリア後（+7通） =====
+  // ===== Night4クリア後（+8通） =====
   if(flag('night4_clear')){
+    mails.push({id:'n4_system', from:'root@ysp-core-01.internal', subject:'[YSP-SYS] 内部管理システムへのアクセスが許可されました', snippet:'K-059: アクセスレベル1が付与されました', body:'自動通知\n\n対象: K-059\nステータス: アクセス許可\n\n内部管理システムへのアクセスが許可されました。\n以下のリンクからアクセスしてください。\n\n<a href="../system/" style="color:#7788cc;">ysp-sys://internal/management</a>\n\n※ 本メールはシステムにより自動送信されています。\n※ このアクセス権限は取り消される場合があります。', unread:true, attachment:null, type:'n4_sys'});
     mails.push({id:'n4_creepy', from:'no-reply@████████.██', subject:'自動通知：異常なアクセスを検知しました', snippet:'あなたのアクセスログに異常が…', body:'あなたのアクセスログに異常なパターンが検出されました。\n\n対象: あなた\n行動: 全て記録済み\n\n※ このメールに心当たりがない場合は無視してください。', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n4_binary', from:'00000000@null', subject:'01001011', snippet:'010010110010110100110101...', body:'01001011 00101101 00110000 00110101 00111001\n01010000 01010010 01001111 01000011 01000101 01010011 01010011\n01010011 01010100 01001001 01001100 01001100\n01010010 01010101 01001110 01001110 01001001 01001110 01000111', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n4_spam1', from:'update@app-store.example', subject:'アプリのアップデートがあります', snippet:'3件のアップデート', body:'以下のアプリのアップデートが利用可能です:\n\n・Popin v4.2.1 - バグ修正\n・カメラアプリ v2.0 - 新フィルター追加\n・天気予報 v3.1 - UI改善', unread:false, attachment:null, type:'normal'});
@@ -303,7 +304,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
     } else {
       bodyEl.className='detail-body';
       // Allow HTML for chat link and special items
-      if(m.id==='n3' || m.id==='n2_chat' || m.type==='n5'){
+      if(m.id==='n3' || m.id==='n2_chat' || m.type==='n5' || m.type==='n4_sys'){
         bodyEl.innerHTML=m.body;
       } else {
         bodyEl.textContent='';
