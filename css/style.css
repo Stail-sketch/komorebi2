@@ -47,6 +47,9 @@ a {
   color: var(--color-accent-dark);
   text-decoration: none;
 }
+a:visited {
+  color: #7c3aed;
+}
 
 a:hover {
   text-decoration: underline;
@@ -111,6 +114,9 @@ img {
   font-size: 0.85rem;
   font-weight: 500;
   transition: background-color 0.2s, color 0.2s;
+}
+.site-nav a:visited {
+  color: rgba(200, 160, 255, 0.9);
 }
 
 .site-nav a:hover,

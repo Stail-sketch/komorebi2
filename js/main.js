@@ -3,6 +3,27 @@
    localStorage管理・初回演出・Night5後崩壊
    ============================================ */
 
+// デスクトップに戻るボタン（hub以外で表示）
+(function(){
+  var scripts = document.getElementsByTagName('script');
+  var base = '';
+  for(var i=0;i<scripts.length;i++){
+    var m = scripts[i].src && scripts[i].src.match(/(.*?)js\/main\.js/);
+    if(m){ base = m[1]; break; }
+  }
+  if(!base) return;
+  var hub = base + 'index.html';
+  if(location.href.replace(/[#?].*$/,'').replace(/\/$/,'') === hub.replace(/\/$/,'').replace(/index\.html$/,'')) return;
+  var btn = document.createElement('a');
+  btn.href = hub;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" style="fill:currentColor;vertical-align:middle;margin-right:4px;"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2z"/></svg>Desktop';
+  var s = btn.style;
+  s.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;background:rgba(26,39,68,.9);color:#fff;padding:8px 14px;border-radius:8px;font-size:12px;font-family:sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s;opacity:0.7;';
+  btn.onmouseenter = function(){s.opacity='1';};
+  btn.onmouseleave = function(){s.opacity='0.7';};
+  document.body.appendChild(btn);
+})();
+
 // --- localStorage管理 ---
 const GameState = {
   // Nightクリアフラグ取得
@@ -72,12 +93,36 @@ function updateUnlockedContent() {
   }
 }
 
-
+// --- NEWバッジ ---
+function addNewBadges(){
+  var visited = [];
+  try{ visited = JSON.parse(localStorage.getItem('visited_pages')||'[]'); }catch(e){}
+  var sections = document.querySelectorAll('.unlocked-content');
+  if(!sections.length) return;
+  var st = document.createElement('style');
+  st.textContent = '.new-badge{display:inline-block;background:#e53e3e;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle;letter-spacing:0.05em;animation:newPulse 2s infinite;}@keyframes newPulse{0%,100%{opacity:1;}50%{opacity:0.6;}}';
+  document.head.appendChild(st);
+  sections.forEach(function(sec){
+    var links = sec.querySelectorAll('a[href]');
+    links.forEach(function(a){
+      var href = a.getAttribute('href');
+      if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('..')) return;
+      var pageName = href.split('/').pop().split('?')[0].split('#')[0];
+      if(pageName && visited.indexOf(pageName) === -1){
+        var badge = document.createElement('span');
+        badge.className = 'new-badge';
+        badge.textContent = 'NEW';
+        a.appendChild(badge);
+      }
+    });
+  });
+}
 
 // --- ページ読み込み時の共通初期化 ---
 document.addEventListener('DOMContentLoaded', () => {
   playDetectGlitch();
   updateUnlockedContent();
+  addNewBadges();
   initSiteErrors();
 });
 

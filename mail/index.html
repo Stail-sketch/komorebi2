@@ -163,8 +163,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
   // ===== Night3クリア後（+7通） =====
   if(flag('night3_clear')){
     mails.push({id:'n3_self', from:'（あなたのメールアドレス）', subject:'（件名なし）', snippet:'覚えていないけど…', body:'このメールはあなた自身から送信されました。\n\n…覚えていますか？\n\n送信日時: 2026年3月31日 03:47', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n3', from:'キツネ団長', subject:'クイズの準備ができたよ！', snippet:'ぼくとチャットで話そう！', body:'やあ！\n\nサイトのこと、いっぱい調べてくれてるみたいだね！\n\nぼくからキミにクイズを出したいんだ。\nチャットで待ってるから、来てね！\n\nキツネ団長より', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'n3_spam1', from:'no-reply@video-tube.example', subject:'あなたへのおすすめ動画', snippet:'話題の動画をチェック', body:'あなたへのおすすめ\n\n▶ 90年代の子ども番組まとめ【懐かしすぎる】- 再生回数 234万回\n▶ 【閲覧注意】放送事故になった子ども番組5選 - 再生回数 89万回\n▶ 都市伝説！あの番組の裏側とは - 再生回数 156万回', unread:false, attachment:null, type:'normal'});
+mails.push({id:'n3_spam1', from:'no-reply@video-tube.example', subject:'あなたへのおすすめ動画', snippet:'話題の動画をチェック', body:'あなたへのおすすめ\n\n▶ 90年代の子ども番組まとめ【懐かしすぎる】- 再生回数 234万回\n▶ 【閲覧注意】放送事故になった子ども番組5選 - 再生回数 89万回\n▶ 都市伝説！あの番組の裏側とは - 再生回数 156万回', unread:false, attachment:null, type:'normal'});
     mails.push({id:'n3_spam2', from:'campaign@shopping-mall.example', subject:'【期間限定】春の大セール開催中！', snippet:'最大50%OFF', body:'春の大セール開催中！\n\n対象商品が最大50%OFF！\n期間: 3月25日〜4月7日\n\nお見逃しなく！', unread:false, attachment:null, type:'normal'});
     mails.push({id:'n3_spam3', from:'no-reply@library.example', subject:'返却期限のお知らせ', snippet:'貸出中の本があります', body:'返却期限のお知らせ\n\n以下の本の返却期限が近づいています。\n\n・「日本のテレビ番組史 1980-2000」\n  返却期限: 4月5日\n\n延長手続きはWebサイトから。', unread:false, attachment:null, type:'normal'});
   }
@@ -327,7 +326,7 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
         att.innerHTML='&#128193; '+esc(m.attachment.name);
         att.addEventListener('click',function(){
           localStorage.setItem('yoshida_files_sent','true');
-          window.open('../yoshida/index.html','_blank');
+          location.href='../yoshida/index.html';
         });
       }
       attEl.appendChild(att);

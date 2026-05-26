@@ -60,8 +60,8 @@ button.blue:hover{background:#48f;color:#000;}
   <div id="chat-display"></div>
   <div style="margin-top:12px;">
     <button onclick="setFlag('chat_unlocked','true')">チャット解放</button>
-    <button onclick="setFlag('chat_puzzle_started','true')">パズル開始済みにする</button>
-    <button onclick="setFlag('chat_q1_clear','true');setFlag('chat_q2_clear','true');setFlag('chat_q3_clear','true')">全問正解済み</button>
+    <button onclick="setFlag('chat_freemode','true')">クイズモード開始</button>
+    <button onclick="setFlag('chat_q1_clear','true');setFlag('chat_q2_clear','true');setFlag('chat_q3_clear','true');setFlag('chat_q4_clear','true');setFlag('chat_q5_clear','true')">全問正解済み</button>
     <button class="danger" onclick="clearChat()">チャット初期化</button>
   </div>
 </div>
@@ -189,7 +189,15 @@ function clearChat(){
   localStorage.removeItem('chat_q1_clear');
   localStorage.removeItem('chat_q2_clear');
   localStorage.removeItem('chat_q3_clear');
+  localStorage.removeItem('chat_q4_clear');
+  localStorage.removeItem('chat_q5_clear');
+  localStorage.removeItem('chat_warmup_stage');
+  localStorage.removeItem('chat_freemode');
+  localStorage.removeItem('chat_topic_watanabe');
+  localStorage.removeItem('chat_topic_bridge');
+  localStorage.removeItem('chat_topic_hikari');
   localStorage.removeItem('night3_unlocked');
+  localStorage.removeItem('yumestudio_hint_shown');
   refreshAll();
   addLog('チャット全初期化');
 }
@@ -197,14 +205,15 @@ function clearChat(){
 function renderChat(){
   var el = document.getElementById('chat-display');
   var unlocked = localStorage.getItem('chat_unlocked')==='true';
-  var started = localStorage.getItem('chat_puzzle_started')==='true';
+  var freemode = localStorage.getItem('chat_freemode')==='true';
   var q1 = localStorage.getItem('chat_q1_clear')==='true';
   var q2 = localStorage.getItem('chat_q2_clear')==='true';
   var q3 = localStorage.getItem('chat_q3_clear')==='true';
-  var msgs = localStorage.getItem('chat_msg_count')||'0';
+  var q4 = localStorage.getItem('chat_q4_clear')==='true';
+  var q5 = localStorage.getItem('chat_q5_clear')==='true';
   el.innerHTML = '<span class="flag-value '+(unlocked?'':'off')+'">解放:'+(unlocked?'ON':'OFF')+'</span> | '+
-    '<span class="flag-value '+(started?'':'off')+'">パズル:'+(started?'ON':'OFF')+'</span> | '+
-    'メッセージ数:'+msgs+' | Q1:'+(q1?'✓':'×')+' Q2:'+(q2?'✓':'×')+' Q3:'+(q3?'✓':'×');
+    '<span class="flag-value '+(freemode?'':'off')+'">クイズ:'+(freemode?'ON':'OFF')+'</span> | '+
+    'Q1:'+(q1?'✓':'×')+' Q2:'+(q2?'✓':'×')+' Q3:'+(q3?'✓':'×')+' Q4:'+(q4?'✓':'×')+' Q5:'+(q5?'✓':'×');
 }
 
 function setAllDMComplete(){
