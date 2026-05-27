@@ -421,9 +421,10 @@
 const $ = id => document.getElementById(id);
 
 // --- アクセスチェック ---
-if (!localStorage.getItem('night5_clear') || !localStorage.getItem('ending_b_seen')) {
+if (!localStorage.getItem('night5_clear') || !localStorage.getItem('ending_b_seen') || !localStorage.getItem('yoshida_files_read')) {
   window.location.href = '../index.html';
 }
+localStorage.setItem('night6_started', 'true');
 
 // --- ブラウザの戻る・リロードを無効化 ---
 history.pushState(null, '', location.href);

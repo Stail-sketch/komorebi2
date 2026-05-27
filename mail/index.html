@@ -132,18 +132,22 @@ body{font-family:'Courier New',monospace;background:#1a1a2a;color:#c8c8d4;overfl
   // ---- Mail Definitions ----
   var mails=[];
 
-  // ===== EndB後（+5通） =====
+  // ===== EndB後（+4通） =====
   if(flag('ending_b_seen')){
     mails.push({id:'endb_akane', from:'', subject:'', snippet:'…パパ…', body:'パパ\n\nどこにいるの\nさがしてるの\n\nここはくらいよ\n\nわたしはここにいるよ\n\nまだきこえる？', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'endb_system', from:'SYSTEM', subject:'PROCESS STATUS', snippet:'K-059: STILL RUNNING', body:'SUBJECT: K-059\nSTATUS: PROCESS STILL RUNNING\nCOMPLETION: 98.7%\n\n警告：対象の意識データが不安定です。\n次回の接続で完了する可能性があります。\n\n…予定通りです', unread:true, attachment:null, type:'normal'});
-    mails.push({id:'endb_yoshi', from:'吉田一郎', subject:'調査ファイル', snippet:'…全部まとめた。見てくれ', body:'俺が集めた資料を全部まとめた。\n\nあの番組で何が起きていたのか。\n俺が何をしていたのか。\n\n…全部、この中に入ってる。\n\n見てくれ。頼む。', unread:true, attachment:{name:'yoshida_files.zip', type:'yoshida'}, type:'normal'});
+    mails.push({id:'endb_system', from:'SYSTEM', subject:'PROCESS STATUS', snippet:'K-059: STILL RUNNING', body:'SUBJECT: K-059\nSTATUS: PROCESS STILL RUNNING\nCOMPLETION: 93.4%\n\n警告：対象の意識データが不安定です。\n目標閾値に未到達。再接続で収集を継続します。', unread:true, attachment:null, type:'normal'});
     mails.push({id:'endb_unknown', from:'', subject:garble(6), snippet:garble(10), body:'見ていたよ\n\n最初から\n\nぜんぶ\n\n\n…もう一度やり直す？\n\n…結果は変わらないのに', unread:true, attachment:null, type:'normal'});
     mails.push({id:'endb_spam', from:'no-reply@night-streaming.example', subject:'視聴データレポート', snippet:'あなたの深夜視聴時間が…', body:'深夜視聴時間レポート\n\n視聴時間合計: ██時間\n視聴回数: ██回\n感情データ: 収集済み\n\n※ このデータは番組改善のために使用されます。\n\nご協力ありがとうございます。', unread:false, attachment:null, type:'normal'});
   }
 
+  // ===== DM Phase4完了後（吉田ファイル） =====
+  if(flag('dm_phase_4_complete')){
+    mails.push({id:'yoshi_files', from:'吉田一郎', subject:'調査ファイル', snippet:'さっき話した資料です', body:'さっき話した資料です。\n全部入ってます。\n\n添付ファイルを開いてください。', unread:true, attachment:{name:'yoshida_files.zip', type:'yoshida'}, type:'normal'});
+  }
+
   // ===== Night5クリア後（+7通） =====
   if(flag('night5_clear')){
-    mails.push({id:'n5_creepy3', from:'0x00000000', subject:'K-059', snippet:'PROCESS COMPLETING...', body:'SUBJECT: K-059\nSTATUS: PROCESS COMPLETING\nESTIMATED COMPLETION: IMMINENT\n\n予定通りです', unread:true, attachment:null, type:'normal'});
+    mails.push({id:'n5_creepy3', from:'0x00000000', subject:'K-059', snippet:'PROCESS COMPLETING...', body:'SUBJECT: K-059\nSTATUS: PROCESS COMPLETING\nESTIMATED COMPLETION: IMMINENT\n\nPROCESS STILL RUNNING', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5_creepy2', from:'', subject:'', snippet:'35.6812° N, 139.7671° E', body:'35.6812° N, 139.7671° E\n\n...', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5b', from:garbleSender(), subject:garbleSubject(), snippet:'…もう…時間がない…', body:'「…もう…時間がない……急いで……全てが…消える前に…」', unread:true, attachment:null, type:'normal'});
     mails.push({id:'n5', from:'キツネ団長', subject:garbleSubject(), snippet:'…もうすぐ…終わる…', body:'「…もうすぐ…終わる……全部……ありがとう…」\n\n<span onclick="this.style.color=\'#6a6\';this.style.textShadow=\'0 0 8px rgba(100,200,100,0.3)\';" style="font-size:14px;color:#555570;cursor:pointer;letter-spacing:1px;transition:color 0.3s;">…忘れないで…あの子のことを…</span>', unread:true, attachment:null, type:'n5'});

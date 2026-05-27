@@ -46,7 +46,7 @@ body{background:#0a0a0a;color:#c8c8c8;font-family:'Courier New','Yu Gothic',mono
 </div>
 <script>
 if(localStorage.getItem('ending_b_seen')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#333;font-family:monospace;">アクセスできません</div>';}
-if(localStorage.getItem('yoshida_files_read')==null) localStorage.setItem('yoshida_files_progress','0');
+var _k='yoshida_read_05';if(localStorage.getItem(_k)!=='true'){localStorage.setItem(_k,'true');var _c=parseInt(localStorage.getItem('yoshida_read_count')||'0',10)+1;localStorage.setItem('yoshida_read_count',''+_c);if(_c>=15)localStorage.setItem('yoshida_files_read','true');}
 </script>
 </body>
 </html>

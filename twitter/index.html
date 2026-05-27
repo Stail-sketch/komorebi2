@@ -276,7 +276,7 @@ function hasFlag(key){try{return localStorage.getItem(key)!==null;}catch(e){retu
 function removeFlag(key){try{localStorage.removeItem(key);}catch(e){}}
 
 var n1=hasFlag('night1_clear'), n2=hasFlag('night2_clear'), n3=hasFlag('night3_clear'), n4=hasFlag('night4_clear'), n5=hasFlag('night5_clear');
-var night6=hasFlag('night6_started');
+var night6=hasFlag('yoshida_files_read') && !hasFlag('ending_a_seen');
 var ukki_takeover=hasFlag('ukki_takeover');
 var endBseen=hasFlag('ending_b_seen');
 
@@ -1146,8 +1146,9 @@ posts.forEach(function(p,i){
   p._replyCount=(p.replies&&p.replies.length)||0;
 });
 
-// Night6 override
-if(night6){
+// Night6 override — 2回目以降は即適用、初回はアニメーション（後で実行）
+var night6Animate = night6 && !hasFlag('popin_takeover_seen');
+if(night6 && !night6Animate){
   document.body.classList.add('night6-override');
   posts = posts.filter(function(p){return p.account!=='yoshi';});
   posts.forEach(function(p){p.text='予定通りです';p.replies=[];p._replyCount=0;});
@@ -1253,6 +1254,92 @@ posts.forEach(function(p,i){
   html+=renderPostCard(p,i);
 });
 timeline.innerHTML=html;
+
+// ===== CORE乗っ取り演出（DM Phase4完了後の初回訪問） =====
+if(night6Animate){
+(function(){
+  localStorage.setItem('popin_takeover_seen','true');
+  var cards=timeline.querySelectorAll('.post-card');
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0;transition:opacity 0.1s;';
+  document.body.appendChild(overlay);
+
+  function flash(color,dur){
+    overlay.style.background=color;overlay.style.opacity='1';
+    setTimeout(function(){overlay.style.opacity='0';},dur);
+  }
+  function flicker(times,cb){
+    var i=0;
+    var iv=setInterval(function(){
+      overlay.style.background=i%2===0?'rgba(255,0,0,0.12)':'';
+      overlay.style.opacity=i%2===0?'1':'0';
+      i++;if(i>=times*2){clearInterval(iv);overlay.style.opacity='0';if(cb)cb();}
+    },60);
+  }
+
+  // 3秒間は普通 → 異変
+  setTimeout(function(){
+    // Phase 1: 微かな赤フラッシュ
+    flash('rgba(255,0,0,0.08)',200);
+
+    setTimeout(function(){
+      // Phase 2: フリッカー
+      flicker(4,function(){
+
+        setTimeout(function(){
+          // Phase 3: 暗転 → 赤化
+          overlay.style.background='#000';
+          overlay.style.opacity='0.9';
+          overlay.style.transition='opacity 0.3s';
+
+          setTimeout(function(){
+            // 赤テーマ適用
+            document.body.classList.add('night6-override');
+
+            // 投稿テキストを一つずつ書き換え
+            var postTexts=timeline.querySelectorAll('.post-text');
+            postTexts.forEach(function(el,i){
+              setTimeout(function(){
+                el.textContent='予定通りです';
+                el.style.transition='none';
+              },i*120);
+            });
+
+            // 吉田の投稿を消す
+            cards.forEach(function(card){
+              var name=card.querySelector('.post-name');
+              if(name && name.textContent==='ゆうやけさんぽ'){
+                card.style.transition='opacity 0.4s,transform 0.4s';
+                card.style.opacity='0';
+                card.style.transform='translateX(-30px)';
+                setTimeout(function(){card.style.display='none';},400);
+              }
+            });
+
+            // 暗転をゆっくり解除
+            setTimeout(function(){
+              overlay.style.opacity='0';
+
+              // Phase 4: COREメッセージ
+              setTimeout(function(){
+                var msg=document.createElement('div');
+                msg.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10000;pointer-events:none;color:rgba(0,255,65,0.7);font-family:"Courier New",monospace;font-size:15px;letter-spacing:0.3em;text-shadow:0 0 12px rgba(0,255,65,0.4);opacity:0;transition:opacity 0.5s;text-align:center;line-height:2;';
+                msg.innerHTML='…見ていたよ';
+                document.body.appendChild(msg);
+                setTimeout(function(){msg.style.opacity='1';},50);
+                setTimeout(function(){
+                  msg.style.opacity='0';
+                  setTimeout(function(){msg.remove();overlay.remove();},600);
+                },2500);
+              },400);
+            },800);
+          },400);
+        },200);
+      });
+    },800);
+  },3000);
+})();
+}
 
 // Click handler for post cards (open detail)
 timeline.addEventListener('click',function(e){
@@ -1439,23 +1526,41 @@ var DM_PHASES = [
   {
     id:4, require:function(){return endBseen;},
     script:[
-      {from:'yoshi', text:'ずっと黙っていて、ごめんなさい。'},
-      {choices:['何のことですか？','…誰ですか？','吉田さん…？']},
-      {from:'yoshi', text:'最初から嘘をついていました。\n「ゆうやけさんぽ」なんて人間は存在しません。'},
-      {choices:['…え？','やっぱり','どういうことですか？']},
-      {from:'yoshi', text:'全部、僕が作った偽のアカウントです。\n本当の名前は吉田一郎。\nあの番組のセット設計をしていた人間です。'},
-      {choices:['なんで偽アカウントを？','セット設計…','あなたは何を知ってるんですか']},
-      {from:'yoshi', text:'あなたに調べ続けてほしかったからです。\n最初から自分の名前を出したら、怖がらせてしまうと思って。'},
-      {choices:['確かに怖かったかも','嘘はよくない','…続けてください']},
-      {from:'yoshi', text:'あの番組で何が起きたのか、誰かに知ってほしかった。\n僕一人じゃ、もうどうにもできなかった。'},
-      {choices:['何があったんですか','なぜ一人で？','あなたも関わってたんですか']},
-      {from:'yoshi', text:'全部知っています。僕はあの現場にいました。\n目の前で起きていたことを、ただ見ていることしかできなかった。'},
-      {choices:['何を見たんですか','…止められなかった？']},
-      {from:'yoshi', text:'…今はまだ全部は話せません。\nでもひとつだけ。\nあの子たちを…助けてください。'},
-      {choices:['あの子たち？','助けるって…','わかりました']},
-      {from:'yoshi', text:'僕にはもう、あなたしか頼れる人がいないんです。\n…お願いします。'},
-      {choices:['わかりました','力になります']},
-      {from:'yoshi', text:'ありがとう…\n…本当に、ありがとう。'},
+      {from:'yoshi', text:'生きてますか'},
+      {from:'yoshi', text:'お願いです\n返事をしてください'},
+      {choices:['…生きてます','あなたの声が聞こえた','何が起きたんですか']},
+      {from:'yoshi', text:'よかった…'},
+      {from:'yoshi', text:'よかった なんて\n言う資格ないのに'},
+      {choices:['どういうこと？','…大丈夫ですか？','落ち着いてください']},
+      {from:'yoshi', text:'「ゆうやけさんぽ」なんて人間はいません。\n僕が作った嘘です。'},
+      {from:'yoshi', text:'本当の名前は吉田一郎。\nあの番組のスタッフでした。'},
+      {choices:['…知ってた気がする','なんで嘘を？','吉田さん…']},
+      {from:'yoshi', text:'あなたに番組のことを調べさせて\n怖がらせて\n悲しませて\n誰かを心配させて'},
+      {from:'yoshi', text:'その全部を あのシステムに送ってました'},
+      {choices:['…','私の感情を？','さっきの転写は…']},
+      {from:'yoshi', text:'娘がいました。\nあかねっていう名前の。'},
+      {from:'yoshi', text:'30年以上前に失いました。\nでもあの子の記録だけが\nシステムの中に残ってた。'},
+      {from:'yoshi', text:'「協力すれば会わせてやる」って言われて\n…飛びつきました'},
+      {choices:['娘さんだったんですか','気持ちは…分かります','それで私を']},
+      {from:'yoshi', text:'最初はただの仕事でした。\nあなたを監視して データを渡すだけの。'},
+      {from:'yoshi', text:'でもあなたと話してるうちに だめだった'},
+      {from:'yoshi', text:'あなたが「信じます」って言ってくれた時\n「一緒に調べましょう」って言ってくれた時'},
+      {from:'yoshi', text:'あの子に似てるって 思ってしまった\n怖いのに逃げないところが\n優しいところが'},
+      {choices:['…','吉田さん','あかねちゃんに？']},
+      {from:'yoshi', text:'その人を\n僕が売ってた'},
+      {choices:['さっき止めようとしてくれた','もういいです','自分を責めないでください']},
+      {from:'yoshi', text:'「この子は関係ないだろ」って叫んだの\n聞こえましたか'},
+      {from:'yoshi', text:'遅すぎたけど'},
+      {choices:['聞こえてました','遅くなんかない','…ありがとう']},
+      {from:'yoshi', text:'あいつは諦めてません。\nデータが足りなかったから もう一度やると。\n次はもっと強引に来ます。'},
+      {choices:['逃げられますか','…','どうすればいいですか']},
+      {from:'yoshi', text:'逃げてもいいんです。\nこのサイトを閉じれば あなたは安全です。'},
+      {from:'yoshi', text:'でもあの子たちは残る。\n30年以上あの中にいる子たちが。\nあかねも。'},
+      {from:'yoshi', text:'僕はあなたを巻き込んだ最低な人間です。\nそんな僕が言えることじゃないけど。'},
+      {choices:['最低なんかじゃない','…やります','あの子たちを放っておけない']},
+      {from:'yoshi', text:'…ありがとう'},
+      {from:'yoshi', text:'俺が調べたこと 全部まとめてメールで送ります。\n見てください。'},
+      {from:'yoshi', text:'次が最後です。\n僕もできることを全部やります。\n今度こそ。'},
     ]
   }
 ];

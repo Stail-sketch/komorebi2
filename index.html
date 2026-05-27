@@ -333,7 +333,7 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
 // EndB後：syslogアイコン表示（EndA到達後も残す）
 if(localStorage.getItem('ending_b_seen') === 'true'){
   document.getElementById('syslog-icon').style.display = '';
-  if(localStorage.getItem('dm_phase_4_complete') === 'true'){
+  if(localStorage.getItem('yoshida_files_read') === 'true'){
     document.getElementById('night6-icon').style.display = '';
   }
 }
@@ -401,7 +401,7 @@ function openSyslog(){
     '<span style="color:#335;">[SYSTEM]</span> risk assessment: acceptable',
     '<span style="color:#335;">[SYSTEM]</span> probability of target bonding with yoshida: 2.3%',
     '',
-    '<span style="color:#0f0;">[STATUS]</span> 予定通りです',
+    '<span style="color:#0f0;">[STATUS]</span> PROCESS STILL RUNNING',
   ].join('<br>');
 
   win.appendChild(header);

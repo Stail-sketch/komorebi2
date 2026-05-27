@@ -48,6 +48,15 @@ yoshida_investigation / author: yoshida_ichiro / total: 15 files
 </div>
 <script>
 if(localStorage.getItem('ending_b_seen')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#333;font-family:monospace;">アクセスできません</div>';}
+var links=document.querySelectorAll('.file-list li a');
+var count=parseInt(localStorage.getItem('yoshida_read_count')||'0',10);
+for(var i=0;i<links.length;i++){
+  var n=(i+1<10?'0':'')+(i+1);
+  if(localStorage.getItem('yoshida_read_'+n)==='true'){
+    links[i].insertAdjacentHTML('beforeend',' <span style="color:#0a0;float:right;">&#10003;</span>');
+  }
+}
+document.querySelector('.file-info').textContent='全15件 / 読了: '+count+'/15';
 </script>
 </body>
 </html>
