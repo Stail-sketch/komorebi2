@@ -360,7 +360,7 @@ L3['broadcast_audience'] =
 '<div class="data-bar">信頼     ███████████████████░ 96%</div>' +
 '<div class="data-bar">怒り     ████████░░░░░░░░░░░░ 43%</div>' +
 '<div class="data-bar">安心     █████████████████░░░ 88%</div>' +
-'<p class="dim" style="margin-top:8px;">目標: 全項目90%以上 → <span class="anomaly">Night6（最終夜）で達成見込み</span></p>' +
+'<p class="dim" style="margin-top:8px;">目標: 全項目90%以上 → <span class="anomaly">最終夜で達成見込み</span></p>' +
 '</div>' +
 '<div class="doc-section">' +
 '<h3>K-059選定タイムライン</h3>' +

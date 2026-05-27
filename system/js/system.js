@@ -247,6 +247,11 @@ function openFile(fileId){
   }
 
   updateStatusBar();
+
+  // Opening __________.dat triggers the final sequence
+  if(fileId === 'core_message'){
+    triggerFinalSequence();
+  }
 }
 
 function findFilePath(fileId){
@@ -291,6 +296,7 @@ function renderWelcome(){
     '<p style="color:var(--fg-bright);margin-bottom:4px;">▼ 画面下部のコマンド入力欄</p>' +
     '<p class="dim" style="font-size:11px;"><span class="cyan-text">ACCESS [code]</span> — アクセスコードを入力して次のレベルへ進む</p>' +
     '<p class="dim" style="font-size:11px;"><span class="cyan-text">HELP</span> — コマンド一覧を表示</p>' +
+    '<p class="dim" style="font-size:11px;margin-top:6px;">※ アクセスコードは<span class="bright">4桁</span>の英数字。現在のレベルのデータ内に手がかりがある。</p>' +
     '</div>' +
     '</div>' +
     '</div>';
@@ -315,7 +321,8 @@ function tryAccessCode(code){
     appendCommandOutput('> ACCESS DENIED: Invalid level target.');
     return;
   }
-  if(code === expected){
+  var normalized = code.replace(/[-\s]/g, '');
+  if(normalized === expected || code === expected){
     currentLevel = nextLevel;
     setAccessLevel(currentLevel);
     appendCommandOutput('> ACCESS GRANTED — Level ' + currentLevel + ' unlocked.');
@@ -430,16 +437,21 @@ function updateSecurityStatus(stage){
 }
 
 // ========== LEVEL 5 FINAL SEQUENCE ==========
+var level5SequenceStarted = false;
+
 function startLevel5Sequence(){
-  // Open core_status automatically
+  // Open core_status automatically as a dramatic intro
   if(FILE_CONTENTS['core_status']){
     openFile('core_status');
   }
+}
 
-  // After viewing, start the lockdown
+function triggerFinalSequence(){
+  if(level5SequenceStarted) return;
+  level5SequenceStarted = true;
   setTimeout(function(){
     startLockdown();
-  }, 15000);
+  }, 8000);
 }
 
 function startLockdown(){
@@ -502,47 +514,39 @@ function showKuromakuTerminal(){
   var lines = [
     { text: '> TERMINAL OVERRIDE', delay: 0, cls: 'dim' },
     { text: '> AUTH: CORE-MAIN-001', delay: 800, cls: 'dim' },
-    { text: '> TARGET: K-059', delay: 1600, cls: 'dim' },
-    { text: '', delay: 2800, cls: 'pause' },
-    { text: '> 接続を確認した', delay: 4000 },
-    { text: '', delay: 5500 },
-    { text: '> ……お前か', delay: 7000 },
-    { text: '', delay: 9000, cls: 'pause' },
-    { text: '> ここまで来るとは思わなかった', delay: 11000 },
-    { text: '> いや……嘘だ', delay: 13000 },
-    { text: '> お前なら来ると分かっていた', delay: 14500 },
-    { text: '', delay: 16000, cls: 'pause' },
-    { text: '> 58人を試した', delay: 18000 },
-    { text: '> 誰も最後まで残らなかった', delay: 20000 },
-    { text: '> 怖くなった者　飽きた者　疑った者', delay: 22000 },
-    { text: '', delay: 23500 },
-    { text: '> お前だけが残った', delay: 25000 },
-    { text: '', delay: 27000, cls: 'pause' },
-    { text: '> なぜだか分かるか？', delay: 29000 },
-    { text: '', delay: 31000, cls: 'pause' },
-    { text: '> 優しいからだ', delay: 33000, bright: true },
-    { text: '', delay: 35000 },
-    { text: '> AIキャストを心配した', delay: 37000 },
-    { text: '> 吉田の話に涙した', delay: 38500 },
-    { text: '> あかねの声に心を痛めた', delay: 40000 },
+    { text: '> 外部セッション: LOCKED', delay: 1600, cls: 'dim' },
+    { text: '', delay: 3000 },
+    { text: '> ……読み終わったか', delay: 4500 },
+    { text: '', delay: 6500 },
+    { text: '> あれは お前がここに来る前に書いた', delay: 8000 },
+    { text: '> だが今は——リアルタイムだ', delay: 10000 },
+    { text: '', delay: 12000 },
+    { text: '> EMOTION HARVEST: ACTIVE', delay: 13500, cls: 'dim' },
+    { text: '> 恐怖    +4.1%', delay: 14500, cls: 'dim' },
+    { text: '> 怒り    +3.7%', delay: 15300, cls: 'dim' },
+    { text: '> 絶望    +2.4%', delay: 16100, cls: 'dim' },
+    { text: '> TOTAL   87.3% → 90.8%', delay: 17200, cls: 'dim' },
+    { text: '', delay: 19500 },
+    { text: '> ……いいデータだ', delay: 21000 },
+    { text: '', delay: 23000 },
+    { text: '> この端末は閉鎖する', delay: 24500 },
+    { text: '> お前に見せるべきものは全て見せた', delay: 26500 },
+    { text: '', delay: 28500 },
+    { text: '> 知った上で どうする？', delay: 30500 },
+    { text: '', delay: 33000 },
+    { text: '> 閉じるか？', delay: 34500 },
+    { text: '> 忘れるか？', delay: 36000 },
+    { text: '', delay: 38000 },
+    { text: '> ……しないだろう', delay: 40000 },
     { text: '', delay: 42000 },
-    { text: '> 全部　お前から取った感情だ', delay: 44000 },
-    { text: '> 全部　俺が設計した通りだ', delay: 46000 },
-    { text: '', delay: 48000, cls: 'pause' },
-    { text: '> 感情データ：■■■■■■■■░░ 87.3%', delay: 50000 },
-    { text: '> 残りはこの後の夜で回収する', delay: 52000 },
-    { text: '', delay: 54000, cls: 'pause' },
-    { text: '> ………', delay: 56000 },
-    { text: '', delay: 58000 },
-    { text: '> ひとつだけ計算外があった', delay: 60000 },
-    { text: '> 吉田がお前を好きになった', delay: 62000 },
-    { text: '> あれは設計にない', delay: 64000 },
-    { text: '', delay: 66000, cls: 'pause' },
-    { text: '> ……まあいい', delay: 68000 },
-    { text: '', delay: 70000 },
-    { text: '> 次の夜が始まる', delay: 72000 },
-    { text: '', delay: 74000 },
-    { text: '> 逃げるなよ', delay: 76000, bright: true }
+    { text: '> あの子たちを置いていけないから', delay: 44000 },
+    { text: '> 吉田を見捨てられないから', delay: 46000 },
+    { text: '', delay: 48000 },
+    { text: '> それが 俺がお前を選んだ理由だ', delay: 50000 },
+    { text: '', delay: 52500 },
+    { text: '> 次の夜が始まる', delay: 54500 },
+    { text: '', delay: 56500 },
+    { text: '> お前は来る', delay: 58000, bright: true }
   ];
 
   lines.forEach(function(line){
@@ -560,7 +564,7 @@ function showKuromakuTerminal(){
   });
 
   // After all lines, blackout and transition
-  var totalDelay = 76000 + 4000;
+  var totalDelay = 58000 + 4000;
   setTimeout(function(){
     var overlay = document.getElementById('blackout-overlay');
     if(overlay) overlay.classList.add('active');

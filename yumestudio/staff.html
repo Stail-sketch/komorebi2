@@ -1,10 +1,25 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>社員専用アーカイブ - ゆめスタジオプロダクション</title>
   <link rel="stylesheet" href="css/corporate.css">
+  <style>
+    .staff-portal { max-width: 600px; margin: 0 auto; }
+    .staff-portal h2 { border: none; text-align: center; margin-bottom: 8px; }
+    .staff-portal .welcome-msg { font-size: 11px; color: #666; text-align: center; text-indent: 0; margin-bottom: 20px; }
+    .staff-section { background: var(--cream); border: 1px solid var(--border); padding: 16px; margin-bottom: 16px; }
+    .staff-section h3 { font-size: 13px; color: var(--navy); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 10px; }
+    .staff-section ul { list-style: none; padding: 0; }
+    .staff-section li { font-size: 12px; padding: 4px 0; border-bottom: 1px dotted #ddd; }
+    .staff-section li:last-child { border-bottom: none; }
+    .staff-section li .date { color: #999; font-size: 10px; margin-right: 8px; }
+    .staff-section li a { font-size: 12px; }
+    .staff-section p { font-size: 11px; color: #555; text-indent: 0; line-height: 1.6; }
+    .sys-link { display: block; margin-top: 6px; font-family: 'Courier New', monospace; font-size: 11px; color: #556677; word-break: break-all; }
+    .sys-link:visited { color: #556677; }
+  </style>
 </head>
 <body>
 
@@ -29,7 +44,9 @@
   </nav>
 
   <main class="corp-main">
-    <div class="staff-login-page">
+
+    <!-- ログイン前 -->
+    <div class="staff-login-page" id="login-view">
       <h2>社員専用アーカイブ</h2>
       <p style="font-size:12px; color:#666; text-indent:0;">このページは社員専用です。<br>アクセスコードを入力してください。</p>
 
@@ -41,6 +58,60 @@
         <div class="login-hint">※ 各文書の管理番号を参照してください。</div>
       </div>
     </div>
+
+    <!-- ログイン後（Night4クリア済み） -->
+    <div class="staff-portal" id="portal-view" style="display:none;">
+      <h2>社員専用ポータル</h2>
+      <p class="welcome-msg">ようこそ。最終更新: 1997年9月15日</p>
+
+      <div class="staff-section">
+        <h3>社内通達</h3>
+        <ul>
+          <li><span class="date">1997.09.12</span> 全社員への通達：9月末をもって業務を終了します</li>
+          <li><span class="date">1997.08.20</span> セキュリティ強化に伴うパスワード変更のお願い</li>
+          <li><span class="date">1997.07.15</span> 夏季休暇の取得について</li>
+          <li><span class="date">1997.06.01</span> Aスタジオ立入制限について（技術部以外立入禁止）</li>
+        </ul>
+      </div>
+
+      <div class="staff-section">
+        <h3>内部文書アーカイブ</h3>
+        <ul>
+          <li><a href="hidden/matsumoto_memo.html">技術部 松本幸男 社内報告メモ</a></li>
+          <li><a href="hidden/tanaka_resignation.html">脚本部 田中恵子 退職届控え</a></li>
+          <li><a href="hidden/tape_catalog.html">映像素材保管台帳</a></li>
+          <li><a href="hidden/incident_report.html">放送事故報告書</a></li>
+          <li><a href="hidden/final_recording.html">最終収録実施要領</a></li>
+          <li><a href="hidden/script_order.html">演出指示書</a></li>
+          <li><a href="hidden/prototype.html">試作アニマトロニクス開発記録</a></li>
+          <li><a href="hidden/minutes_1987.html">設立準備委員会 議事録</a></li>
+          <li><a href="hidden/blueprint.html">スタジオ施設 設備配置図</a></li>
+        </ul>
+      </div>
+
+      <div class="staff-section">
+        <h3>技術部専用</h3>
+        <p>以下は技術部所管のシステムです。アクセスにはセキュリティクリアランスが必要です。</p>
+        <ul>
+          <li><span class="date">1997.09.14</span> アニマトロニクス制御システム — <span style="color:#cc3333; font-size:10px;">停止済</span></li>
+          <li><span class="date">1997.09.14</span> 収録管理システム — <span style="color:#cc3333; font-size:10px;">停止済</span></li>
+          <li><span class="date">1997.09.15</span> 内部管理システム — <span style="color:#006600; font-size:10px;">稼働中</span>
+            <a class="sys-link" href="../system/">ysp-sys://internal/management</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="staff-section">
+        <h3>連絡先（社内用）</h3>
+        <p>
+          技術部: 内線 201-203<br>
+          制作部: 内線 301-305<br>
+          総務部: 内線 101<br>
+          <span style="color:#999; font-size:10px;">※ 外部回線は1997年9月20日をもって停止予定</span>
+        </p>
+      </div>
+    </div>
+
   </main>
 
   <footer class="corp-footer">
@@ -52,6 +123,16 @@
 <script>
 (function() {
   'use strict';
+
+  var loginView = document.getElementById('login-view');
+  var portalView = document.getElementById('portal-view');
+
+  // Night4クリア済みならポータル表示
+  if (localStorage.getItem('night4_clear') === 'true') {
+    loginView.style.display = 'none';
+    portalView.style.display = 'block';
+    return;
+  }
 
   var codeInput = document.getElementById('access-code');
   var loginBtn = document.getElementById('login-btn');
@@ -65,17 +146,14 @@
   function attemptLogin() {
     var code = codeInput.value.trim();
     if (code.length === 6 && parseInt(code,10) === 0x30C17) {
-      // Night4解放フラグをセット
       localStorage.setItem('yumestudio_unlocked', 'true');
       localStorage.setItem('night4_arg_complete', 'true');
 
-      // 演出：認証成功
       errorMsg.style.display = 'block';
       errorMsg.style.color = '#006600';
       errorMsg.textContent = '認証成功 — アクセスを許可します…';
 
       setTimeout(function() {
-        // Night4へ遷移
         window.location.href = '../night4/index.html';
       }, 1500);
     } else {

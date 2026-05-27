@@ -101,6 +101,20 @@ button.blue:hover{background:#48f;color:#000;}
   </div>
 </div>
 
+<!-- System Terminal -->
+<div class="section">
+  <h2>システム端末</h2>
+  <div id="sys-display"></div>
+  <div style="margin-top:12px;">
+    <button onclick="setSysLevel(1)">Level 1</button>
+    <button onclick="setSysLevel(2)">Level 2</button>
+    <button onclick="setSysLevel(3)">Level 3</button>
+    <button onclick="setSysLevel(4)">Level 4</button>
+    <button class="warn" onclick="setSysLevel(5)">Level 5</button>
+    <button class="danger" onclick="clearSys()">システム初期化</button>
+  </div>
+</div>
+
 <!-- Direct Links -->
 <div class="section">
   <h2>直接ジャンプ</h2>
@@ -124,6 +138,9 @@ button.blue:hover{background:#48f;color:#000;}
     <a href="ending_b/">エンドB</a>
     <a href="custom/">カスタムナイト</a>
     <a href="custom/game.html">カスタムゲーム</a>
+    <a href="yumestudio/">ゆめスタジオ</a>
+    <a href="yumestudio/staff.html">社員専用</a>
+    <a href="system/">システム端末</a>
   </div>
 </div>
 
@@ -246,6 +263,30 @@ function renderDM(){
   el.innerHTML = html;
 }
 
+function setSysLevel(n){
+  localStorage.setItem('sys_access_level', String(n));
+  refreshAll();
+  addLog('システム端末 → Level '+n);
+}
+
+function clearSys(){
+  localStorage.removeItem('sys_access_level');
+  var keys=[];
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k.indexOf('sys_visited_')===0) keys.push(k);
+  }
+  keys.forEach(function(k){localStorage.removeItem(k);});
+  refreshAll();
+  addLog('システム端末 全初期化（レベル+閲覧履歴）');
+}
+
+function renderSys(){
+  var el=document.getElementById('sys-display');
+  var lvl=localStorage.getItem('sys_access_level')||'1';
+  el.innerHTML='現在レベル: <span class="flag-value">Level '+lvl+'</span>';
+}
+
 function renderFlags(containerId, flags){
   var el = document.getElementById(containerId);
   var html = '';
@@ -284,6 +325,7 @@ function refreshAll(){
   renderFlags('ending-flags', ENDING_FLAGS);
   renderChat();
   renderDM();
+  renderSys();
 }
 
 refreshAll();

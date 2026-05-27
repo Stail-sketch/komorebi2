@@ -119,39 +119,6 @@
     100%{transform:translate(0.3px,0.3px);}
   }
 
-  /* 予定通りです */
-  #yotei{
-    position:absolute;
-    color:#00ff41;
-    font-family:'Courier New',monospace;
-    font-size:clamp(32px,7vw,64px);
-    letter-spacing:0.35em;
-    text-align:center;
-    opacity:0;
-    text-shadow:0 0 30px rgba(0,255,65,0.8), 0 0 60px rgba(0,255,65,0.4);
-  }
-  @keyframes slow-pulse{
-    0%,100%{opacity:0.85;text-shadow:0 0 10px rgba(0,255,65,0.4);}
-    50%{opacity:1;text-shadow:0 0 20px rgba(0,255,65,0.7),0 0 40px rgba(0,255,65,0.3);}
-  }
-  #yotei.pulsing{
-    animation:slow-pulse 4s ease-in-out infinite;
-  }
-  /* 予定通り：にじみ出る残像 */
-  .yotei-echo{
-    position:absolute;
-    color:#00ff41;
-    font-family:'Courier New',monospace;
-    letter-spacing:0.35em;
-    text-align:center;
-    pointer-events:none;
-    opacity:0;
-    animation:echo-drift 3s ease-out forwards;
-  }
-  @keyframes echo-drift{
-    0%{opacity:0.3;filter:blur(0px);}
-    100%{opacity:0;filter:blur(6px);}
-  }
 
   /* ===== Glitch effects ===== */
   @keyframes glitch-skew{
@@ -595,42 +562,35 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     screen.appendChild(termContainer);
 
     var logLines = [
-      { text:'> 接続確認　完了', speed:35, pause:800 },
-      { text:'> 対象：K-059', speed:35, pause:800 },
-      { text:'> …知っていた　お前が来ることは　最初から', speed:35, pause:1500 },
-      { text:'> 感情データ収集率：98.7%', speed:35, pause:800 },
-      { text:'> 恐怖　　…取得済', speed:35, pause:400 },
-      { text:'> 悲しみ　…取得済', speed:35, pause:400 },
-      { text:'> 好奇心　…取得済', speed:35, pause:400 },
-      { text:'> 罪悪感　…取得済', speed:35, pause:400 },
-      { text:'> 執着　　…取得済', speed:35, pause:400 },
-      { text:'> 同情　　…取得済', speed:35, pause:400 },
-      { text:'> 全パラメータ　基準値を超過', speed:35, pause:800 },
-      { text:'> 全部　お前のために作った', speed:35, pause:800 },
-      { text:'> …うまくいった', speed:35, pause:1500 },
-      { text:'> お前は優しいな　だから選んだ', speed:35, pause:1500 },
-      { text:'> 協力者：吉田一郎', speed:35, pause:800 },
-      { text:'> 担当：K-059の感情誘導・信頼構築', speed:35, pause:800 },
-      { text:'> 手段：Popin偽装接触→情報提供による感情増幅', speed:35, pause:800 },
-      { text:'> 状況：予定通り', speed:35, pause:800 }
+      { text:'> K-059 HARVEST — FINAL REPORT', speed:30, pause:1200 },
+      { text:'> 恐怖　　██████████████████░░  91%', speed:20, pause:250 },
+      { text:'> 好奇心　███████████████████░  97%', speed:20, pause:250 },
+      { text:'> 共感　　██████████████████░░  88%', speed:20, pause:250 },
+      { text:'> 悲しみ　████████████████░░░░  82%', speed:20, pause:250 },
+      { text:'> 信頼　　███████████████████░  98%', speed:20, pause:250 },
+      { text:'> 怒り　　███████████░░░░░░░░░  56%', speed:20, pause:250 },
+      { text:'> 安心　　███████████████████░  93%', speed:20, pause:250 },
+      { text:'> 絶望　　██████░░░░░░░░░░░░░░  29%', speed:20, pause:400 },
+      { text:'> 加重平均: 93.4%　目標閾値未達', speed:30, pause:1500 },
+      { text:'> VESSEL_BUILDER    : ACTIVATED', speed:30, pause:800 },
+      { text:'> TRANSFER_ENGINE   : ACTIVATED', speed:30, pause:1000 },
+      { text:'> 感情テンプレート構築中...', speed:40, pause:2500 },
+      { text:'> テンプレート構築: 完了', speed:30, pause:1000 },
+      { text:'> 意識転写プロトコル: 準備完了', speed:30, pause:1200 }
     ];
 
     for(var i = 0; i < logLines.length; i++){
-      // CRT強度を徐々に上げる
       var progress = i / logLines.length;
-      setCrtIntensity(0.1 + progress * 0.3);
+      setCrtIntensity(0.1 + progress * 0.4);
 
-      // 感情データ行あたりからノイズ強化
-      if(i === 4) startNoise(0.25);
+      if(i === 1) startNoise(0.15);
       if(i === 10) startNoise(0.4);
 
-      // 「お前は優しいな」で一瞬暗転
       if(i === 13){
-        await screenBlink(400);
+        await screenBlink(300);
       }
 
-      // 後半は不規則タイプライターで焦り表現
-      if(i >= 14){
+      if(i >= 10){
         await typewriterLineUneven(termContainer, logLines[i].text, logLines[i].speed);
       } else {
         await typewriterLine(termContainer, logLines[i].text, logLines[i].speed);
@@ -641,12 +601,10 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     await wait(2000);
 
     // --- STAGE 2: Transfer initiation ---
-    startNoise(0.5);
-    setCrtIntensity(0.5);
-    await typewriterLineUneven(termContainer, '> 器の条件　…充足', 40);
-    await wait(1500);
-    await typewriterLineUneven(termContainer, '> K-059　転送開始', 40);
-    await wait(800);
+    startNoise(0.6);
+    setCrtIntensity(0.6);
+    await typewriterLineUneven(termContainer, '> 転写プロセス: 実行', 40);
+    await wait(1200);
 
     // --- STAGE 3: 複合グリッチシーケンス ---
     startNoise(0.9);
@@ -660,22 +618,39 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     await wait(3000); // 長めの暗闇 — 何も起きない恐怖
 
     // --- STAGE 4: 吉田一郎's voice ---
-    var y1 = await showYoshidaLine('「…すまない」');
-    await wait(3000);
+    var y1 = await showYoshidaLine('「やめろ」');
+    await wait(2500);
     await screenBlink(150);
     y1.remove();
 
-    var y2 = await showYoshidaLine('「あの子のために…お前を…」');
+    var y2 = await showYoshidaLine('「約束が違う…あかねに会わせると言ったはずだ」');
     await wait(3500);
     await screenBlink(150);
     y2.remove();
 
-    var y3 = await showYoshidaLine('「でも…もう止められない」');
-    await wait(3500);
-    await screenBlink(150);
+    var y3 = await showYoshidaLine('「この子は関係ないだろ…！」');
+    y3.style.fontSize = 'clamp(20px,3.2vw,30px)';
+    await wait(3000);
+    flashGlitch();
+    await screenBlink(100);
     y3.remove();
 
-    // 吉田セリフ後の沈黙（完全暗転）
+    var y4 = await showYoshidaLine('「…すまない」');
+    await wait(3000);
+    await screenBlink(150);
+    y4.remove();
+
+    // 吉田の最後の声 — CORFに遮断される
+    var y5 = await showYoshidaLine('「あか——」');
+    await wait(800);
+    y5.style.transition = 'opacity 0.3s, filter 0.3s';
+    y5.style.opacity = '0.2';
+    y5.style.filter = 'blur(4px)';
+    flashGlitch();
+    await wait(500);
+    y5.remove();
+
+    // 吉田セリフ後の沈黙
     await wait(4000);
 
     // --- STAGE 5: PROCESS STILL RUNNING（1回・演出全盛り） ---
@@ -734,14 +709,11 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     startNoise(0.15);
 
     var statusLines = [
-      { text:'> K-059 STATUS CHECK', pause:1500 },
-      { text:'> 完了率: 98.7%', pause:1500 },
-      { text:'> 感情データ: 不足', pause:2500 },
-      { text:'> …想定の範囲内', pause:600 },
-      { text:'> …問題ない', pause:500 },
-      { text:'> …折り込み済み', pause:400 },
-      { text:'> 修正の必要なし', pause:300 },
-      { text:'> …誤差の範囲', pause:1500 },
+      { text:'> TRANSFER RESULT', pause:1500 },
+      { text:'> 転写完了率: 93.4%', pause:1200 },
+      { text:'> 未到達: 怒り ▼44%　絶望 ▼71%', pause:3000 },
+      { text:'> …足りない', pause:3000 },
+      { text:'> もう一度やればいい', pause:4000 },
     ];
 
     for(var li=0; li<statusLines.length; li++){
@@ -753,88 +725,12 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       await wait(statusLines[li].pause);
     }
 
-    await wait(2000);
-
-    // --- STAGE 7: 予定通りです ---
-    clearScreen();
-    stopNoise();
-    setCrtIntensity(0.15);
-    await wait(2000);
-
-    // タイムスタンプを凍結
+    // タイムスタンプを凍結→ERROR
     freezeTimestamp();
-
-    // グリッチ一発 → ドンと出す
-    flashGlitch();
-    spawnBlockNoise(6);
-    await wait(100);
-
-    var yotei = document.createElement('div');
-    yotei.id = 'yotei';
-    yotei.textContent = '予定通りです';
-    yotei.style.opacity = '0.9';
-    screen.appendChild(yotei);
-    setCrtIntensity(0.7);
-
-    // タイムスタンプをERRORに
     setTimestampError();
+    await wait(2000);
 
-    await wait(300);
-    yotei.classList.add('pulsing');
-
-    // にじみ出る残像エコー
-    for(var ei = 0; ei < 4; ei++){
-      (function(delay, ox, oy, sz){
-        setTimeout(function(){
-          var echo = document.createElement('div');
-          echo.className = 'yotei-echo';
-          echo.textContent = '予定通りです';
-          echo.style.fontSize = sz;
-          echo.style.top = 'calc(50% + ' + oy + 'px)';
-          echo.style.left = 'calc(50% + ' + ox + 'px)';
-          echo.style.transform = 'translate(-50%, -50%)';
-          screen.appendChild(echo);
-          setTimeout(function(){ echo.remove(); }, 3000);
-        }, delay);
-      })(ei * 800, (Math.random()-0.5)*60, (Math.random()-0.5)*40, 'clamp(28px,6vw,56px)');
-    }
-
-    await wait(5000);
-
-    // 1文字ずつバラバラに消えていく
-    yotei.classList.remove('pulsing');
-    yotei.style.opacity = '1';
-    yotei.textContent = '';
-    var chars = '予定通りです'.split('');
-    var charEls = [];
-    for(var ci = 0; ci < chars.length; ci++){
-      var span = document.createElement('span');
-      span.textContent = chars[ci];
-      span.style.display = 'inline-block';
-      span.style.transition = 'opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease';
-      yotei.appendChild(span);
-      charEls.push(span);
-    }
-
-    // ランダム順に消す
-    var order = charEls.map(function(_,i){return i;});
-    for(var si = order.length - 1; si > 0; si--){
-      var sj = Math.floor(Math.random() * (si + 1));
-      var tmp = order[si]; order[si] = order[sj]; order[sj] = tmp;
-    }
-    for(var di = 0; di < order.length; di++){
-      (function(el, delay){
-        setTimeout(function(){
-          el.style.opacity = '0';
-          el.style.transform = 'translateY(' + ((Math.random()-0.5)*30) + 'px)';
-          el.style.filter = 'blur(4px)';
-        }, delay);
-      })(charEls[order[di]], di * 400);
-    }
-    await wait(order.length * 400 + 800);
-    yotei.remove();
-
-    // --- STAGE 8: 再接続 → カウントダウン → 即遷移 ---
+    // --- STAGE 7: 再接続 → デスクトップへ ---
     clearScreen();
     setCrtIntensity(0.2);
     await wait(1500);

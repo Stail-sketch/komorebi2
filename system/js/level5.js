@@ -34,7 +34,7 @@ L5['core_status'] =
 '<tr><td>005</td><td>DM_MONITOR</td><td class="danger-text">RUNNING</td><td>吉田-K-059 DM監視</td></tr>' +
 '<tr><td>006</td><td>BROADCAST_ENGINE</td><td class="danger-text">RUNNING</td><td>放送制御</td></tr>' +
 '<tr><td>007</td><td>G0_CONTAINMENT</td><td class="anomaly">UNSTABLE</td><td>G-0意識断片の封じ込め ← <span class="danger-text">制御低下中</span></td></tr>' +
-'<tr><td>008</td><td>VESSEL_BUILDER</td><td style="color:var(--amber);">STANDBY</td><td>器構築モジュール。Night6開始で起動。</td></tr>' +
+'<tr><td>008</td><td>VESSEL_BUILDER</td><td style="color:var(--amber);">STANDBY</td><td>器構築モジュール。最終夜開始で起動。</td></tr>' +
 '<tr><td>009</td><td>TRANSFER_ENGINE</td><td style="color:var(--amber);">STANDBY</td><td>意識転写エンジン。器完成で起動。</td></tr>' +
 '</table>' +
 '</div>' +

@@ -417,12 +417,11 @@ L2['dm_operation'] =
 '<h3>DM会話フェーズ</h3>' +
 '<table class="sys-table">' +
 '<tr><th>Phase</th><th>タイミング</th><th>目的</th><th>吉田への指示</th></tr>' +
-'<tr><td>Phase 1</td><td>Night3後</td><td>接触・信頼構築</td><td>「ただの視聴者」として接触</td></tr>' +
-'<tr><td>Phase 2</td><td>Night4後</td><td>過去の共有</td><td>番組との関わりを匂わせる</td></tr>' +
-'<tr><td>Phase 3</td><td>Night5前</td><td>核心開示</td><td>娘・意識転写の全容を語る</td></tr>' +
-'<tr><td>Phase 4</td><td>EndB後</td><td>説得・対決</td><td class="anomaly">※制御不能</td></tr>' +
+'<tr><td>Phase 1</td><td>Night1後</td><td>接触・信頼構築</td><td>「ただの視聴者」として接触</td></tr>' +
+'<tr><td>Phase 2</td><td>Night3後</td><td>過去の共有</td><td>幼少期の記憶・5体目の存在を示唆</td></tr>' +
+'<tr><td>Phase 3</td><td>Night4後</td><td>恐怖共有</td><td>内部文書への反応・被験者への言及</td></tr>' +
 '</table>' +
-'<p class="dim" style="margin-top:8px;">Phase 4 は吉田一郎が<span class="danger-text">ディレクティブに反抗</span>し始めるフェーズ。システム側の想定外。</p>' +
+'<p class="dim" style="margin-top:8px;">Phase 3 以降のディレクティブは未策定。吉田の制御維持が課題。</p>' +
 '</div>';
 
 // ===== dm/directive_001.dat =====
@@ -454,22 +453,22 @@ L2['dm_directive1'] =
 
 // ===== dm/directive_002.dat =====
 L2['dm_directive2'] =
-'<div class="doc-title">ディレクティブ 002 — 感情深化</div>' +
+'<div class="doc-title">ディレクティブ 002 — 過去の共有</div>' +
 '<div class="doc-meta">発行: SYSTEM | 宛先: 吉田一郎（@yuuyake_sanpo）</div>' +
 '<div class="doc-section">' +
 '<h3>指示内容</h3>' +
 '<div style="border:1px solid var(--border);padding:16px;margin:8px 0;">' +
-'<p class="anomaly" style="margin-bottom:8px;">DIRECTIVE #002 — Phase 2: 感情深化</p>' +
+'<p class="anomaly" style="margin-bottom:8px;">DIRECTIVE #002 — Phase 2: 過去の共有</p>' +
 '<p>K-059との信頼関係が構築された段階で、以下を実行せよ。</p>' +
 '<br>' +
-'<p>1. 番組制作に「関わっていたことがある」と明かす。</p>' +
-'<p>2. 過去の記憶を断片的に語る（地下、検査室、消えた子どもたち）。</p>' +
-'<p>3. 感情的になりすぎた場合は「まだ話せない」と切り上げる。</p>' +
-'<p>4. K-059の感情を<span class="anomaly">最大限に揺さぶる</span>ことを優先せよ。</p>' +
-'<p>5. K-059が離脱しそうな場合は「あなたしかいない」と引き留めよ。</p>' +
+'<p>1. 「幼少期に番組をリアルタイムで視聴していた」という設定を語れ。</p>' +
+'<p>2. 番組の思い出を断片的に共有し、<span class="anomaly">5体目のキャラクター</span>の存在を示唆せよ。</p>' +
+'<p>3. 「記憶が曖昧」「でも確かにいた」と、K-059の好奇心を刺激せよ。</p>' +
+'<p>4. 本名・番組制作への関与は<span class="danger-text">引き続き隠匿</span>すること。</p>' +
+'<p>5. K-059が離脱しそうな場合は共感と不安の共有で引き留めよ。</p>' +
 '<br>' +
-'<p class="dim">目的: K-059の共感・悲しみ・正義感を喚起し、感情データの品質を向上させる。</p>' +
-'<p class="dim">副次目的: K-059をNight5まで確実に誘導する。</p>' +
+'<p class="dim">目的: 共感・懐かしさ・不安を喚起し、K-059の感情データ品質を向上させる。</p>' +
+'<p class="dim">副次目的: K-059をNight4（yumestudio探索）へ確実に誘導する。</p>' +
 '</div>' +
 '</div>' +
 '<div class="doc-section">' +
@@ -481,23 +480,25 @@ L2['dm_directive2'] =
 
 // ===== dm/directive_003.dat =====
 L2['dm_directive3'] =
-'<div class="doc-title">ディレクティブ 003 — 最終誘導</div>' +
+'<div class="doc-title">ディレクティブ 003 — 恐怖共有</div>' +
 '<div class="doc-meta">発行: SYSTEM | 宛先: 吉田一郎（@yuuyake_sanpo）</div>' +
 '<div class="doc-section">' +
 '<h3>指示内容</h3>' +
 '<div style="border:1px solid var(--border);padding:16px;margin:8px 0;">' +
-'<p class="anomaly" style="margin-bottom:8px;">DIRECTIVE #003 — Phase 3: 全容開示</p>' +
-'<p>K-059に対し、以下の情報を「告白」の形で開示せよ。</p>' +
+'<p class="anomaly" style="margin-bottom:8px;">DIRECTIVE #003 — Phase 3: 恐怖共有</p>' +
+'<p>K-059がyumestudioの内部文書を発見した段階で、以下を実行せよ。</p>' +
 '<br>' +
-'<p>1. 本名が吉田一郎であること。</p>' +
-'<p>2. 娘（あかね）が意識転写の被験者であったこと。</p>' +
-'<p>3. あかねの意識がまだシステム内に残っていること。</p>' +
-'<p>4. 自分が<span class="redacted">████████</span>に騙されていたこと。</p>' +
+'<p>1. 内部文書の発見に「自分も見つけた」と反応せよ。</p>' +
+'<p>2. 被験者リスト、行方不明者の記録に対する恐怖を語れ。</p>' +
+'<p>3. 「夜間のスタジオで子どもの声が聞こえた」等の証言を挿入せよ。</p>' +
+'<p>4. 調査をやめようか迷う演技をし、K-059の<span class="anomaly">正義感</span>を喚起せよ。</p>' +
+'<p>5. 本名・番組制作への関与は<span class="danger-text">引き続き隠匿</span>すること。</p>' +
 '<br>' +
-'<p class="danger-text">重要: 上記はすべて事実である。吉田は「本心から話している」と感じるはずである。</p>' +
-'<p class="danger-text">この告白によりK-059の感情は最大化される。</p>' +
+'<p class="danger-text">重要: 吉田にとって上記は「演技」ではない。恐怖は本物である。</p>' +
+'<p class="danger-text">吉田の本心と指示が一致する最後のフェーズ。</p>' +
 '<br>' +
-'<p class="dim">目的: K-059の感情データ収集率を90%以上に引き上げ、Night5→Night6への遷移条件を充足させる。</p>' +
+'<p class="dim">目的: K-059の恐怖・好奇心・正義感を同時に喚起し、システム端末への探索を誘導する。</p>' +
+'<p class="dim">副次目的: 感情データ収集率を87%→90%台へ引き上げる。</p>' +
 '</div>' +
 '</div>' +
 '<div class="doc-section">' +

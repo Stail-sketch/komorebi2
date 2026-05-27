@@ -16,7 +16,7 @@ L4['k059_profile'] =
 '<tr><td>選抜番号</td><td>59番目の対象者</td></tr>' +
 '<tr><td>初回接触</td><td>1997-08-01 00:02:14</td></tr>' +
 '<tr><td>接触方法</td><td>番組サイトへの自発的アクセス</td></tr>' +
-'<tr><td>現在のステータス</td><td class="anomaly">データ収集中（Phase 4進行中）</td></tr>' +
+'<tr><td>現在のステータス</td><td class="anomaly">データ収集中（Phase 3進行中）</td></tr>' +
 '<tr><td>感情データ収集率</td><td class="anomaly">87.3%（目標: 95.0%）</td></tr>' +
 '</table>' +
 '</div>' +
@@ -98,7 +98,7 @@ L4['k059_monitoring'] =
 '<div class="data-bar">Phase 3（収集）     █████████████████░░░  <span class="anomaly">87.3%</span></div>' +
 '<div class="data-bar">Phase 4（器構築）   ░░░░░░░░░░░░░░░░░░░░  0%</div>' +
 '<div class="data-bar">Phase 5（転写）     ░░░░░░░░░░░░░░░░░░░░  0%</div>' +
-'<p class="dim" style="margin-top:8px;">Night5完了時点で90%到達見込み。Night6終了時95%達成でPhase 4自動開始。</p>' +
+'<p class="dim" style="margin-top:8px;">Night5完了時点で90%到達見込み。最終夜終了時95%達成でPhase 4自動開始。</p>' +
 '</div>';
 
 // ===== k059/emotion_report.dat =====
@@ -109,7 +109,8 @@ L4['k059_emotion'] =
 '<h3>累積感情データ収集率</h3>' +
 '<div style="text-align:center;margin:20px 0;">' +
 '<span style="font-size:48px;color:var(--amber);">87.3%</span>' +
-'<p class="dim">目標: 95.0%（Night6完了時）</p>' +
+'<p class="dim">目標: 95.0%（計画完遂時）</p>' +
+'<p class="dim" style="margin-top:4px;">現行バッチ: <span class="anomaly">EM-0873</span> / 1000</p>' +
 '</div>' +
 '</div>' +
 '<div class="doc-section">' +
@@ -121,10 +122,10 @@ L4['k059_emotion'] =
 '<div class="data-bar">信頼      ███████████████████░  96%  ← <span class="bright">目標達成</span></div>' +
 '<div class="data-bar">怒り      ████████░░░░░░░░░░░░  43%  ← 吉田の裏切り発覚で+30%</div>' +
 '<div class="data-bar">安心      █████████████████░░░  88%  ← かすみ相互作用で+5%</div>' +
-'<div class="data-bar">絶望      ██░░░░░░░░░░░░░░░░░░  12%  ← <span class="danger-text">Night6(EndB)で+70%</span></div>' +
+'<div class="data-bar">絶望      ██░░░░░░░░░░░░░░░░░░  12%  ← <span class="danger-text">最終段階で+70%</span></div>' +
 '<p class="dim" style="margin-top:12px;">加重平均収集率: <span class="anomaly">87.3%</span>（8感情の重み付け平均）</p>' +
 '<p class="dim">※ 信頼(96%)と好奇心(92%)が牽引。怒り(43%)と絶望(12%)が足を引っ張る構造。</p>' +
-'<p class="dim">※ Night6のEndBルートで怒り・絶望を同時に最大化する計画。</p>' +
+'<p class="dim">※ 計画最終段階で怒り・絶望を同時に最大化する計画。</p>' +
 '</div>' +
 '<div class="doc-section">' +
 '<h3>感情データの用途</h3>' +
@@ -144,17 +145,17 @@ L4['k059_emotion'] =
 '<tr><td>Night 2</td><td>恐怖、好奇心</td><td>+18%</td><td>サイト改竄ARG</td></tr>' +
 '<tr><td>Night 3</td><td>信頼、好奇心</td><td>+22%</td><td>きつね団長チャット</td></tr>' +
 '<tr><td>Night 4</td><td>恐怖、知的興奮</td><td>+20%</td><td>yumestudio内部文書</td></tr>' +
-'<tr><td class="anomaly">Night 5</td><td class="anomaly">恐怖、絶望、怒り</td><td class="anomaly">+25% (予測)</td><td class="anomaly">システムアクセス→黒幕顕現</td></tr>' +
-'<tr><td class="danger-text">Night 6</td><td class="danger-text">全感情最大化</td><td class="danger-text">+残り全て</td><td class="danger-text">最終決戦→EndB/EndA</td></tr>' +
+'<tr><td class="anomaly">Night 5</td><td class="anomaly">恐怖、絶望、怒り</td><td class="anomaly">+25% (予測)</td><td class="anomaly">システムアクセス→計画露呈</td></tr>' +
+'<tr><td class="danger-text">最終夜</td><td class="danger-text">全感情最大化</td><td class="danger-text">+残り全て</td><td class="danger-text"><span class="redacted">████████████</span></td></tr>' +
 '</table>' +
-'<p class="dim" style="margin-top:8px;">Night4終了時点: 累積87.3% → Night5で+2.7%予測 → Night6で+5.0%予測 = 95.0%達成</p>' +
+'<p class="dim" style="margin-top:8px;">Night4終了時点: 累積87.3% → Night5で+2.7%予測 → 最終夜で+5.0%予測 = 95.0%達成</p>' +
 '</div>' +
 '<div class="doc-section">' +
 '<h3>異常値メモ</h3>' +
 '<p class="dim">「かすみ」との交流セッションにおいて、K-059の<span class="anomaly">安心</span>数値が急激に上昇。</p>' +
 '<p class="dim">他のNightでは恐怖が主要獲得感情だが、かすみのセッションのみ<span class="bright">安心が恐怖を上回る</span>。</p>' +
 '<p class="dim">これはK-059が「守りたい存在」を持つことの証左であり、器の条件をさらに強化する。</p>' +
-'<p class="danger-text">しかし同時に、EndBでかすみを「失う」体験が絶望感情の最大トリガーとなる。</p>' +
+'<p class="danger-text">しかし同時に、かすみとの関係性は絶望感情の最大トリガーとなり得る。</p>' +
 '</div>';
 
 // ===== k059/selection_criteria.dat =====
@@ -224,7 +225,7 @@ L4['k059_timeline'] =
 '<tr><td>アラネ</td><td>58%</td><td>不安。不信感と関心の混合。</td></tr>' +
 '<tr><td>よわり</td><td>44%</td><td>不気味さ。しかし同情も。</td></tr>' +
 '</table>' +
-'<p class="dim" style="margin-top:8px;">吉田・かすみへの信頼が突出。この2名の「喪失」がEndBの鍵。</p>' +
+'<p class="dim" style="margin-top:8px;">吉田・かすみへの信頼が突出。この2名の存在が計画の鍵。</p>' +
 '</div>';
 
 // ===== project/master_plan.dat =====
@@ -243,8 +244,8 @@ L4['project_plan'] =
 '<tr><td>Phase 1: 選抜</td><td>「器」候補の選定。K-001〜K-059。</td><td class="bright">完了</td></tr>' +
 '<tr><td>Phase 2: 接触</td><td>番組・Popin・DM経由でK-059に接触。</td><td class="bright">完了</td></tr>' +
 '<tr><td>Phase 3: 感情収集</td><td>Night1〜5を通じて感情データを最大化。</td><td class="anomaly">進行中 (87.3%)</td></tr>' +
-'<tr><td>Phase 4: 器構築</td><td>収集データからK-059の感情テンプレートを構築。</td><td class="dim">Night6開始時</td></tr>' +
-'<tr><td>Phase 5: 転写</td><td><span class="redacted">████████</span>の意識をK-059テンプレートに転写。</td><td class="dim">Night6最終段階</td></tr>' +
+'<tr><td>Phase 4: 器構築</td><td>収集データからK-059の感情テンプレートを構築。</td><td class="dim">最終夜開始時</td></tr>' +
+'<tr><td>Phase 5: 転写</td><td><span class="redacted">████████</span>の意識をK-059テンプレートに転写。</td><td class="dim">最終夜最終段階</td></tr>' +
 '</table>' +
 '</div>' +
 '<div class="doc-section">' +
@@ -280,8 +281,8 @@ L4['project_timeline'] =
 '<tr><td>1997-08-15</td><td>DM接触開始</td><td>吉田</td><td class="bright">完了</td></tr>' +
 '<tr><td>1997-08-28</td><td>Night4 ARG完了</td><td>K-059</td><td class="bright">完了</td></tr>' +
 '<tr><td>1997-09-中旬</td><td>Night5完了・感情データ90%達成</td><td>SYSTEM</td><td class="anomaly">進行中</td></tr>' +
-'<tr><td>1997-09-下旬</td><td>Night6 → EndB（1周目）</td><td>SYSTEM</td><td class="dim">未着手</td></tr>' +
-'<tr><td>1997-10-上旬</td><td>2周目 → EndA or EndB</td><td>SYSTEM/吉田</td><td class="dim">未着手</td></tr>' +
+'<tr><td>1997-09-下旬</td><td>最終夜 → 計画完遂</td><td>SYSTEM</td><td class="dim">未着手</td></tr>' +
+'<tr><td>1997-10-上旬</td><td><span class="redacted">████████████████</span></td><td><span class="redacted">████</span></td><td class="dim">未着手</td></tr>' +
 '<tr><td>1997-10-中旬</td><td class="danger-text">器構築 → 意識転写実行</td><td><span class="redacted">████</span></td><td class="dim">未着手</td></tr>' +
 '</table>' +
 '</div>' +
@@ -328,7 +329,7 @@ L4['project_vessel'] =
 '<h3>器構築に必要なデータ</h3>' +
 '<p>器の構築には、感情データ収集率<span class="anomaly">95.0%以上</span>が必要。</p>' +
 '<p>現在の収集率: <span class="anomaly">87.3%</span></p>' +
-'<p>不足分の感情データ（主に怒り・絶望）はNight5〜6で収集される計画。</p>' +
+'<p>不足分の感情データ（主に怒り・絶望）は残りの夜で収集される計画。</p>' +
 '<br>' +
 '<p class="dim">器の構築プロセス:</p>' +
 '<p class="dim">1. 収集した感情パターンを数値化 → 感情マトリクス生成</p>' +
@@ -378,7 +379,7 @@ L4['yoshida_control'] =
 '<tr><td>K-059への感情</td><td class="danger-text">危険域</td><td>娘と重ねている。保護衝動が増大。</td></tr>' +
 '</table>' +
 '<p class="dim" style="margin-top:8px;">注: 吉田のK-059に対する感情移入は計画上の最大リスクである。</p>' +
-'<p class="dim">しかしNight6まで吉田を制御下に置けば、プロジェクト完遂に支障はない。</p>' +
+'<p class="dim">しかし最終夜まで吉田を制御下に置けば、プロジェクト完遂に支障はない。</p>' +
 '</div>';
 
 // ===== yoshida_ctrl/promise_protocol.dat =====
@@ -424,21 +425,21 @@ L4['yoshida_betrayal'] =
 '<p class="danger-text">吉田一郎はK-059に対して本物の愛着を形成している。</p>' +
 '<p>ディレクティブに反する行動が<span class="anomaly">加速的に増加</span>。</p>' +
 '<p>しかし「あかねの復元」という約束が最後の手綱として機能している。</p>' +
-'<p class="dim">Phase 4（EndB後）でこの手綱が切れた場合、吉田は<span class="danger-text">完全にシステムに敵対する</span>と予測。</p>' +
+'<p class="dim">計画完遂後にこの手綱が切れた場合、吉田は<span class="danger-text">完全にシステムに敵対する</span>と予測。</p>' +
 '</div>' +
 '<div class="doc-section">' +
 '<h3>フィルター遮断メッセージ（全文復元）</h3>' +
 '<p class="dim">以下は吉田がK-059に送信しようとし、フィルターにより遮断されたDM全文。</p>' +
 '<div style="border:1px solid var(--danger);padding:12px;margin:8px 0;background:rgba(255,0,0,0.03);">' +
-'<p class="danger-text" style="font-size:11px;">[2024-09-05 23:41:02] 遮断メッセージ #1</p>' +
+'<p class="danger-text" style="font-size:11px;">[1997-09-05 23:41:02] 遮断メッセージ #1</p>' +
 '<p class="dim">「俺はお前を騙していた。最初からだ。お前が番組を見始めた時から、全部仕組まれていたんだ。この番組は普通の番組じゃない。お前のためだけに作られたものだ。」</p>' +
 '</div>' +
 '<div style="border:1px solid var(--danger);padding:12px;margin:8px 0;background:rgba(255,0,0,0.03);">' +
-'<p class="danger-text" style="font-size:11px;">[2024-09-08 02:15:38] 遮断メッセージ #2</p>' +
+'<p class="danger-text" style="font-size:11px;">[1997-09-08 02:15:38] 遮断メッセージ #2</p>' +
 '<p class="dim">「全部仕組まれている。Popinも、DMも、あの子たちとの出会いも。お前の感情を集めるために設計された罠だ。俺は……俺はその共犯者だ。」</p>' +
 '</div>' +
 '<div style="border:1px solid var(--danger);padding:12px;margin:8px 0;background:rgba(255,0,0,0.03);">' +
-'<p class="danger-text" style="font-size:11px;">[2024-09-12 01:03:55] 遮断メッセージ #3</p>' +
+'<p class="danger-text" style="font-size:11px;">[1997-09-12 01:03:55] 遮断メッセージ #3</p>' +
 '<p class="dim">「逃げろ。今すぐこの番組を見るのをやめろ。サイトにアクセスするな。DMも返すな。全部忘れてくれ。お前の感情データはもう87%以上集まってる。残りが集まったら……お前は……」</p>' +
 '</div>' +
 '<p class="dim" style="margin-top:8px;">※ 遮断メッセージ#3で吉田が感情データ収集率に言及。内部情報の漏洩。</p>' +
@@ -491,7 +492,7 @@ L4['security_intrusion'] =
 '<h3>警報ステータス</h3>' +
 '<p style="font-size:16px;" class="danger-text">■ ALERT LEVEL: <span class="bright" style="font-size:20px;">HIGH</span></p>' +
 '<p>不正アクセス元: K-059</p>' +
-'<p>侵入経路: メール内URLから直接アクセス</p>' +
+'<p>侵入経路: 社員専用ポータル経由で不正アクセス</p>' +
 '<p>現在のアクセスレベル: <span class="anomaly">Level 4</span></p>' +
 '</div>' +
 '<div class="doc-section">' +
@@ -513,7 +514,7 @@ L4['security_intrusion'] =
 '<tr><td>yoshida_ctrl/*</td><td>裏切り感（吉田が共犯者）</td><td class="bright">+6%</td></tr>' +
 '</table>' +
 '<p class="dim" style="margin-top:8px;">想定通りに進めば、Level 4閲覧だけで収集率が87.3%→<span class="anomaly">最大+18%</span>上昇する。</p>' +
-'<p class="dim">これはNight6を待たずに95%到達が可能であることを意味する。</p>' +
+'<p class="dim">これは最終夜を待たずに95%到達が可能であることを意味する。</p>' +
 '<p class="danger-text">K-059のシステムアクセスは、結果的にプロジェクトを加速させた。</p>' +
 '</div>' +
 '<div class="doc-section">' +

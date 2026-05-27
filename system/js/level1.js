@@ -58,6 +58,7 @@ L1['broadcast_config'] =
 '[STREAM]\n' +
 'protocol        = RTMP-TLS\n' +
 'carrier_freq    = <span class="anomaly">28.47 MHz</span>\n' +
+'carrier_index   = <span class="anomaly">2847</span>\n' +
 'bitrate         = 4800kbps\n' +
 'resolution      = 1920x1080\n' +
 'framerate       = 30fps\n' +
@@ -215,7 +216,7 @@ L1['staff_access'] =
 '<p>接続元: <span class="anomaly">外部（認証なし）</span></p>' +
 '<p>付与レベル: <span class="bright">Level 1</span></p>' +
 '<p class="dim">※ 上位レベルへのアクセスには各レベルのアクセスコードが必要。</p>' +
-'<p class="dim">※ アクセスコードのヒントは既存ファイル内に記録されている場合がある。</p>' +
+'<p class="dim">※ アクセスコードは<span class="bright">4桁</span>の英数字。各レベルのデータ内で繰り返し現れる値に注目せよ。</p>' +
 '</div>';
 
 // ===== facility/server_config.dat =====

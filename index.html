@@ -221,6 +221,12 @@ body {
       <span class="icon-label">チャット</span>
     </a>
 
+    <!-- ゆめスタジオ（night3_clear後に出現） -->
+    <a class="desktop-icon" id="yumestudio-icon" href="yumestudio/index.html" style="display:none;">
+      <div class="icon-img" style="background:linear-gradient(135deg,#2a2a4a,#3a3a6a);font-size:22px;">🏢</div>
+      <span class="icon-label">ゆめスタジオ</span>
+    </a>
+
     <!-- システムログ（EndB後に出現） -->
     <a class="desktop-icon" id="syslog-icon" href="#" onclick="openSyslog();return false;" style="display:none;">
       <div class="icon-img" style="background:linear-gradient(135deg,#1a2a1a,#0a3a0a);font-size:22px;">📄</div>
@@ -407,6 +413,11 @@ function openSyslog(){
 if(localStorage.getItem('chat_unlocked') === 'true'){
   document.getElementById('chat-icon').style.display = '';
   document.getElementById('chat-pin').style.display = '';
+}
+
+// ゆめスタジオアイコンの表示制御（night3_clear後）
+if(localStorage.getItem('night3_clear') === 'true'){
+  document.getElementById('yumestudio-icon').style.display = '';
 }
 
 // ===== デスクトップ通知 =====
