@@ -58,9 +58,11 @@
     #power-hud { position: absolute; z-index: 10; bottom: 20px; left: 20px; }
     #power-hud .power-label { font-size: 14px; color: #5a8ab5; letter-spacing: 2px; margin-bottom: 4px; }
     #power-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #2a3a50; }
-    #power-bar { height: 100%; background: #4c8; transition: width 0.5s; }
-    #power-bar.low { background: #e64; }
-    #power-bar.critical { background: #f22; animation: blink 0.5s infinite; }
+    #power-bar { height: 100%; background: linear-gradient(90deg, #4c8, #6ea); transition: width 0.5s; box-shadow: 0 0 6px rgba(60,200,120,0.3); }
+    #power-bar.low { background: linear-gradient(90deg, #e64, #f86); box-shadow: 0 0 8px rgba(230,100,60,0.4); }
+    #power-bar.critical { background: linear-gradient(90deg, #f22, #f44); box-shadow: 0 0 12px rgba(255,30,30,0.5); animation: blink 0.5s infinite; }
+    #power-hud.flicker { animation: hudFlicker 3s infinite; }
+    @keyframes hudFlicker { 0%,89%,91%,93%,95%,100%{opacity:1} 90%{opacity:0.3} 92%{opacity:0.5} 94%{opacity:0.2} }
 
     /* カメラ開閉ボタン */
     .cam-toggle-btn {
@@ -98,11 +100,28 @@
       animation: scanline 4s linear infinite;
     }
     @keyframes scanline { 0%{background-position:0 -30vh} 100%{background-position:0 130vh} }
-    #camera-vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%); }
+    #camera-vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%); }
+    /* CRTモニター感 */
+    #camera-feed::after {
+      content: ''; position: absolute; inset: 0; z-index: 8; pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(100,180,255,0.02) 0%, transparent 3%, transparent 97%, rgba(100,180,255,0.02) 100%);
+    }
+    /* ノイズ（切替時のTVスタティック） */
     #camera-noise {
       position: absolute; inset: 0; z-index: 6; pointer-events: none;
-      background: #000;
+      background: #080808;
     }
+    #camera-noise::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 3px),
+        repeating-linear-gradient(0deg, transparent 0%, transparent 25%, rgba(180,200,255,0.06) 25%, rgba(180,200,255,0.06) 25.5%, transparent 25.5%, transparent 60%, rgba(180,200,255,0.05) 60%, rgba(180,200,255,0.05) 60.4%, transparent 60.4%);
+      animation: noiseScroll 0.08s steps(3) infinite;
+    }
+    @keyframes noiseScroll { 0%{transform:translateY(0)} 100%{transform:translateY(-30px)} }
 
     /* カメラUI */
     #camera-label { position: absolute; top: 14px; left: 18px; font-size: 1.1rem; color: rgba(100,200,255,0.8); z-index: 10; text-shadow: 0 0 10px rgba(100,200,255,0.4); }
@@ -193,16 +212,20 @@
     .overlay-screen { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
     .overlay-screen.active { display: flex; }
     #jumpscare-screen { background: #000; }
-    #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: shake 0.3s infinite; }
-    @keyframes shake { 0%{transform:translate(0,0) scale(1.05)} 25%{transform:translate(-5px,3px) scale(1.08)} 50%{transform:translate(4px,-4px) scale(1.05)} 75%{transform:translate(-3px,5px) scale(1.07)} 100%{transform:translate(5px,-2px) scale(1.05)} }
+    #jumpscare-screen.active::before { content:''; position:absolute; inset:0; background:#fff; z-index:1; pointer-events:none; animation: jumpFlash 0.1s ease-out forwards; }
+    @keyframes jumpFlash { 0%{opacity:0.6} 100%{opacity:0} }
+    #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: jumpShake 0.12s infinite; filter: contrast(1.3) brightness(1.1); }
+    @keyframes jumpShake { 0%{transform:translate(0,0) scale(1.08)} 20%{transform:translate(-10px,8px) scale(1.14)} 40%{transform:translate(12px,-10px) scale(1.06)} 60%{transform:translate(-8px,-6px) scale(1.12)} 80%{transform:translate(10px,8px) scale(1.08)} 100%{transform:translate(-6px,-8px) scale(1.14)} }
     #gameover-screen { background: #000; gap: 30px; }
-    #gameover-screen h1 { font-size: 3rem; color: #c00; letter-spacing: 0.3em; text-shadow: 0 0 30px rgba(200,0,0,0.5); }
+    #gameover-screen h1 { font-size: 3rem; color: #c00; letter-spacing: 0.3em; text-shadow: 0 0 30px rgba(200,0,0,0.5); animation: goReveal 0.4s ease-out, goGlow 2s 0.4s infinite; }
+    @keyframes goReveal { 0%{opacity:0;transform:scale(1.5);letter-spacing:1em;filter:blur(8px)} 50%{opacity:1;transform:scale(0.95) skewX(-3deg);filter:blur(0)} 100%{transform:scale(1) skewX(0)} }
+    @keyframes goGlow { 0%,100%{text-shadow:0 0 30px rgba(200,0,0,0.5)} 50%{text-shadow:0 0 50px rgba(255,0,0,0.7),0 0 80px rgba(200,0,0,0.3)} }
     .overlay-btn { background: none; border: 1px solid #666; color: #888; padding: 10px 40px; font-family: 'Courier New', monospace; font-size: 1rem; cursor: pointer; }
     .overlay-btn:hover { border-color: #aaa; color: #fff; }
     #clear-screen { background: #000; }
-    #clear-screen h1 { font-size: 2.5rem; color: #acd; letter-spacing: 0.5em; animation: fadeUp 2s ease; }
-    #clear-screen p { margin-top: 20px; color: #567; font-size: 0.9rem; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    #clear-screen h1 { font-size: 2.5rem; color: #acd; letter-spacing: 0.5em; animation: clearReveal 2.5s ease; text-shadow: 0 0 20px rgba(150,200,230,0.3); }
+    #clear-screen p { margin-top: 20px; color: #567; font-size: 0.9rem; animation: fadeIn 1s 2s forwards; opacity: 0; }
+    @keyframes clearReveal { 0%{opacity:0;letter-spacing:2em;filter:blur(10px)} 40%{opacity:0.7;letter-spacing:0.8em;filter:blur(2px)} 100%{opacity:1;letter-spacing:0.5em;filter:blur(0)} }
 
     /* スタート画面 */
     #start-screen {
@@ -234,6 +257,8 @@
       0% { opacity: 1; }
       100% { opacity: 0; }
     }
+    body.reduce-flash #jumpscare-screen.active::before { display:none; }
+    body.reduce-flash #jumpscare-screen img { animation:none !important; filter:none !important; }
   </style>
 </head>
 <body>
@@ -259,7 +284,7 @@
 
     <!-- オフィスビュー -->
     <div id="office-view">
-      <img id="office-bg-open" src="../image/camera/desk_on.png.png" alt="">
+      <img id="office-bg-open" src="../image/camera/desk_on.png" alt="">
 
       <div id="left-area" class="side-area">
         <div class="side-light-overlay" id="left-light"></div>
@@ -358,6 +383,8 @@ var $ = function(id) { return document.getElementById(id); };
 if (localStorage.getItem('custom_night') !== 'true') {
   window.location.href = 'index.html';
 }
+var reduceFlash = localStorage.getItem('reduce_flash') === 'true';
+if(reduceFlash) document.body.classList.add('reduce-flash');
 
 // --- カスタムレベル読み込み ---
 var customLevels = JSON.parse(localStorage.getItem('custom_levels') || '{}');
@@ -661,7 +688,7 @@ function updateCamButtons() {
 function triggerNoise() {
   var n = $('camera-noise');
   n.classList.remove('hidden');
-  setTimeout(function() { n.classList.add('hidden'); }, 100);
+  setTimeout(function() { n.classList.add('hidden'); }, 180);
 }
 
 function updateCameraView() {
@@ -1298,6 +1325,7 @@ function powerTick() {
   $('power-bar').style.width = p + '%';
   $('power-bar').classList.toggle('low', p <= 25 && p > 10);
   $('power-bar').classList.toggle('critical', p <= 10);
+  $('power-hud').classList.toggle('flicker', p <= 20);
   if (power <= 0) powerOut();
 }
 

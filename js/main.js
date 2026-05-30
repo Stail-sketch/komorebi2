@@ -14,6 +14,7 @@
   if(!base) return;
   var hub = base + 'index.html';
   if(location.href.replace(/[#?].*$/,'').replace(/\/$/,'') === hub.replace(/\/$/,'').replace(/index\.html$/,'')) return;
+  if(/\/night\d+\//i.test(location.pathname) || /\/ending_[ab]\//i.test(location.pathname) || /\/custom\//i.test(location.pathname)) return;
   var btn = document.createElement('a');
   btn.href = hub;
   btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" style="fill:currentColor;vertical-align:middle;margin-right:4px;"><path d="M4 4h16v12H4V4zm-2 14h20v2H2v-2z"/></svg>Desktop';
@@ -256,13 +257,16 @@ function triggerNight2Transition(){
   }, 3000);
 
   // バグ文字の更新を続ける（ランダムに書き換わり続ける）
-  setInterval(function(){
+  var updateInterval = setInterval(function(){
     if(density >= maxChars){
       var s = '';
       for(var i = 0; i < maxChars; i++) s += ch[Math.floor(Math.random()*ch.length)];
       overlay.textContent = s;
     }
   }, 150);
+
+  // 遷移直前にクリア
+  setTimeout(function(){ clearInterval(updateInterval); }, 14500);
 }
 
 function initSiteErrors(){

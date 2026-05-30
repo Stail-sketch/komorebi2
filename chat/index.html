@@ -182,7 +182,6 @@
 
     // State
     var isNight6 = !!localStorage.getItem('night6_started');
-    var isKitsuneIdentified = !!localStorage.getItem('kitsune_identified');
     var isProcessing = false;
 
     // Set partner name (always キツネ団長)
@@ -324,7 +323,6 @@
     } else {
       // Warmup conversation stage
       var warmupStage = parseInt(localStorage.getItem('chat_warmup_stage') || '0');
-      var puzzleStarted = localStorage.getItem('chat_puzzle_started') === 'true';
 
       // Warmup script: キツネ団長の質問 + プレイヤーの返事に対する反応 + 次の質問
       var warmupScript = [

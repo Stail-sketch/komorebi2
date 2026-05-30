@@ -62,9 +62,11 @@
     #power-hud { position: absolute; z-index: 100; bottom: 20px; left: 20px; pointer-events: none; }
     #power-hud .power-label { font-size: 14px; color: #5a8ab5; letter-spacing: 2px; margin-bottom: 4px; }
     #power-bar-wrap { width: 160px; height: 10px; background: #111; border: 2px solid #2a3a50; }
-    #power-bar { height: 100%; background: #4c8; transition: width 0.5s; }
-    #power-bar.low { background: #e64; }
-    #power-bar.critical { background: #f22; animation: blink 0.5s infinite; }
+    #power-bar { height: 100%; background: linear-gradient(90deg, #4c8, #6ea); transition: width 0.5s; box-shadow: 0 0 6px rgba(60,200,120,0.3); }
+    #power-bar.low { background: linear-gradient(90deg, #e64, #f86); box-shadow: 0 0 8px rgba(230,100,60,0.4); }
+    #power-bar.critical { background: linear-gradient(90deg, #f22, #f44); box-shadow: 0 0 12px rgba(255,30,30,0.5); animation: blink 0.5s infinite; }
+    #power-hud.flicker { animation: hudFlicker 3s infinite; }
+    @keyframes hudFlicker { 0%,89%,91%,93%,95%,100%{opacity:1} 90%{opacity:0.3} 92%{opacity:0.5} 94%{opacity:0.2} }
 
     /* カメラ開閉ボタン（前作準拠） */
     .cam-toggle-btn {
@@ -128,12 +130,28 @@
     }
     @keyframes scanline { 0%{background-position:0 -30vh} 100%{background-position:0 130vh} }
     /* ビネット */
-    #camera-vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%); }
-    /* ノイズ（切替時に一瞬暗転） */
+    #camera-vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%); }
+    /* CRTモニター感 */
+    #camera-feed::after {
+      content: ''; position: absolute; inset: 0; z-index: 8; pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(100,180,255,0.02) 0%, transparent 3%, transparent 97%, rgba(100,180,255,0.02) 100%);
+    }
+    /* ノイズ（切替時のTVスタティック） */
     #camera-noise {
       position: absolute; inset: 0; z-index: 6; pointer-events: none;
-      background: #000;
+      background: #080808;
     }
+    #camera-noise::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 3px),
+        repeating-linear-gradient(0deg, transparent 0%, transparent 25%, rgba(180,200,255,0.06) 25%, rgba(180,200,255,0.06) 25.5%, transparent 25.5%, transparent 60%, rgba(180,200,255,0.05) 60%, rgba(180,200,255,0.05) 60.4%, transparent 60.4%);
+      animation: noiseScroll 0.08s steps(3) infinite;
+    }
+    @keyframes noiseScroll { 0%{transform:translateY(0)} 100%{transform:translateY(-30px)} }
 
     /* カメラUI */
     #camera-label { position: absolute; top: 14px; left: 18px; font-size: 1.1rem; color: rgba(100,200,255,0.8); z-index: 10; text-shadow: 0 0 10px rgba(100,200,255,0.4); }
@@ -172,16 +190,20 @@
     .overlay-screen.active { display: flex; opacity: 1; }
     .overlay-screen.fade-out { opacity: 0; }
     #jumpscare-screen { background: #000; }
-    #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: shake 0.3s infinite; }
-    @keyframes shake { 0%{transform:translate(0,0) scale(1.05)} 25%{transform:translate(-5px,3px) scale(1.08)} 50%{transform:translate(4px,-4px) scale(1.05)} 75%{transform:translate(-3px,5px) scale(1.07)} 100%{transform:translate(5px,-2px) scale(1.05)} }
+    #jumpscare-screen.active::before { content:''; position:absolute; inset:0; background:#fff; z-index:1; pointer-events:none; animation: jumpFlash 0.1s ease-out forwards; }
+    @keyframes jumpFlash { 0%{opacity:0.6} 100%{opacity:0} }
+    #jumpscare-screen img { width: 100vw; height: 100vh; object-fit: contain; animation: jumpShake 0.12s infinite; filter: contrast(1.3) brightness(1.1); }
+    @keyframes jumpShake { 0%{transform:translate(0,0) scale(1.08)} 20%{transform:translate(-10px,8px) scale(1.14)} 40%{transform:translate(12px,-10px) scale(1.06)} 60%{transform:translate(-8px,-6px) scale(1.12)} 80%{transform:translate(10px,8px) scale(1.08)} 100%{transform:translate(-6px,-8px) scale(1.14)} }
     #gameover-screen { background: #000; gap: 30px; }
-    #gameover-screen h1 { font-size: 3rem; color: #c00; letter-spacing: 0.3em; text-shadow: 0 0 30px rgba(200,0,0,0.5); }
+    #gameover-screen h1 { font-size: 3rem; color: #c00; letter-spacing: 0.3em; text-shadow: 0 0 30px rgba(200,0,0,0.5); animation: goReveal 0.4s ease-out, goGlow 2s 0.4s infinite; }
+    @keyframes goReveal { 0%{opacity:0;transform:scale(1.5);letter-spacing:1em;filter:blur(8px)} 50%{opacity:1;transform:scale(0.95) skewX(-3deg);filter:blur(0)} 100%{transform:scale(1) skewX(0)} }
+    @keyframes goGlow { 0%,100%{text-shadow:0 0 30px rgba(200,0,0,0.5)} 50%{text-shadow:0 0 50px rgba(255,0,0,0.7),0 0 80px rgba(200,0,0,0.3)} }
     .overlay-btn { background: none; border: 1px solid #666; color: #888; padding: 10px 40px; font-family: 'Courier New', monospace; font-size: 1rem; cursor: pointer; }
     .overlay-btn:hover { border-color: #aaa; color: #fff; }
     #clear-screen { background: #000; }
-    #clear-screen h1 { font-size: 2.5rem; color: #acd; letter-spacing: 0.5em; animation: fadeUp 2s ease; }
-    #clear-screen p { margin-top: 20px; color: #567; font-size: 0.9rem; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    #clear-screen h1 { font-size: 2.5rem; color: #acd; letter-spacing: 0.5em; animation: clearReveal 2.5s ease; text-shadow: 0 0 20px rgba(150,200,230,0.3); }
+    #clear-screen p { margin-top: 20px; color: #567; font-size: 0.9rem; animation: fadeIn 1s 2s forwards; opacity: 0; }
+    @keyframes clearReveal { 0%{opacity:0;letter-spacing:2em;filter:blur(10px)} 40%{opacity:0.7;letter-spacing:0.8em;filter:blur(2px)} 100%{opacity:1;letter-spacing:0.5em;filter:blur(0)} }
     /* スタート画面 */
     #start-screen {
       background: #000; z-index: 2000;
@@ -213,6 +235,8 @@
       0% { opacity: 1; }
       100% { opacity: 0; }
     }
+    body.reduce-flash #jumpscare-screen.active::before { display:none; }
+    body.reduce-flash #jumpscare-screen img { animation:none !important; filter:none !important; }
   </style>
 </head>
 <body>
@@ -243,7 +267,7 @@
 
     <!-- オフィスビュー -->
     <div id="office-view">
-      <img id="office-bg-open" src="../image/camera/desk_on.png.png" alt="">
+      <img id="office-bg-open" src="../image/camera/desk_on.png" alt="">
 
       <div id="left-area" class="side-area">
         <div class="side-light-overlay" id="left-light"></div>
@@ -322,6 +346,8 @@
 <script>
 if(localStorage.getItem('night2_clear')==='true'){window.location.href='../index.html';}
 if(localStorage.getItem('night1_clear')!=='true'){window.location.href='../index.html';}
+var reduceFlash = localStorage.getItem('reduce_flash') === 'true';
+if(reduceFlash) document.body.classList.add('reduce-flash');
 // ============================================================
 // Night2 ゲームエンジン（Night1ベースで拡張）
 // ============================================================
@@ -473,6 +499,10 @@ let mdMT=null, mdDT=null;
 
 let tickId=null, pwrId=null;
 
+// --- 適応型難易度救済 ---
+const DEATH_KEY = 'death_count_night2';
+var reliefDrainMult = 1.0, reliefDelayAdd = 0;
+
 // --- カメラ操作（前作と同じパターン） ---
 function openCamera() {
   if (!running) return;
@@ -507,7 +537,7 @@ function switchCam(id) {
 function triggerNoise() {
   const n = $('camera-noise');
   n.classList.remove('hidden');
-  setTimeout(() => n.classList.add('hidden'), 100);
+  setTimeout(() => n.classList.add('hidden'), 180);
 }
 
 function updateCameraView() {
@@ -652,6 +682,10 @@ function startGame() {
   setTimeout(() => {
     $('start-screen').classList.remove('active');
     running = true; elapsed = 0; power = 100;
+    var dc = parseInt(localStorage.getItem(DEATH_KEY) || '0', 10);
+    var stage = Math.min(Math.floor(dc / 8), 10);
+    reliefDrainMult = 1.0 - stage * 0.03;
+    reliefDelayAdd = stage * 200;
     sndBGM.play().catch(()=>{});
     sndClock.play().catch(()=>{});
     tickId = setInterval(gameTick, 1000);
@@ -674,7 +708,7 @@ function gameTick() {
 
 function powerTick() {
   if (!running) return;
-  let d = DRAIN_BASE;
+  let d = DRAIN_BASE * reliefDrainMult;
   if (camOpen) d += DRAIN_CAM;
   if (doorL) d += DRAIN_DOOR;
   if (doorR) d += DRAIN_DOOR;
@@ -686,11 +720,12 @@ function powerTick() {
   $('power-bar').style.width = p + '%';
   $('power-bar').classList.toggle('low', p <= 25 && p > 10);
   $('power-bar').classList.toggle('critical', p <= 10);
+  $('power-hud').classList.toggle('flicker', p <= 20);
   if (power <= 0) powerOut();
 }
 
 // --- くるるAI（リス） ---
-function scheduleMoveSq() { clearTimeout(sqMT); sqMT = setTimeout(moveSq, sqSpd === 'slow' ? SQ_SLOW : SQ_NORMAL); }
+function scheduleMoveSq() { clearTimeout(sqMT); sqMT = setTimeout(moveSq, (sqSpd === 'slow' ? SQ_SLOW : SQ_NORMAL) + reliefDelayAdd); }
 function moveSq() {
   if (!running || sqDoor) return;
   if (!sqPath || sqCam === 1) { sqPath = Math.random() < 0.5 ? PATH_L : PATH_R; sqIdx = 0; }
@@ -726,7 +761,7 @@ function checkWatch() {
 }
 
 // --- まだらAI（カメレオン） ---
-function scheduleMoveMd() { clearTimeout(mdMT); mdMT = setTimeout(moveMd, MD_MOVE_INTERVAL); }
+function scheduleMoveMd() { clearTimeout(mdMT); mdMT = setTimeout(moveMd, MD_MOVE_INTERVAL + reliefDelayAdd); }
 function moveMd() {
   if (!running || mdDoor) return;
   // パスを選択（まだ未選択 or 開始位置にいる場合）
@@ -771,6 +806,8 @@ function powerOut() {
 }
 function gameOver(killer) {
   running = false; clearTimers(); stopAllSounds();
+  var dc = parseInt(localStorage.getItem(DEATH_KEY) || '0', 10);
+  localStorage.setItem(DEATH_KEY, String(dc + 1));
   killer = killer || 'kururu';
   // ジャンプスケア画像
   const jumpImg = {
@@ -787,6 +824,7 @@ function gameOver(killer) {
 }
 function nightClear() {
   running = false; clearTimers(); stopAllSounds();
+  localStorage.removeItem(DEATH_KEY);
   localStorage.setItem('night2_clear', 'true'); localStorage.setItem('night2_pages_unlocked', 'true');
   localStorage.setItem('night2_just_cleared', 'true');
   playS(sndClearChime);
@@ -851,6 +889,7 @@ function collectBugIcon(){
   $('power-bar').style.width = p + '%';
   $('power-bar').classList.toggle('low', p <= 25 && p > 10);
   $('power-bar').classList.toggle('critical', p <= 10);
+  $('power-hud').classList.toggle('flicker', p <= 20);
   scheduleBugIcon();
 }
 
@@ -892,6 +931,7 @@ function retryGame() {
   $('power-display').textContent = '100';
   $('power-bar').style.width = '100%';
   $('power-bar').classList.remove('low', 'critical');
+  $('power-hud').classList.remove('flicker');
 }
 
 // --- イベント ---
@@ -943,10 +983,10 @@ function runBriefing(lines){
   var screen = $('briefing-screen');
   log.innerHTML = '';
   var idx = 0;
-  function fxShake(dur){ screen.style.animation='bfShake '+(dur<500?'0.05':'0.08')+'s infinite'; setTimeout(function(){screen.style.animation='';},dur); }
-  function fxFlash(color,dur){ ov.style.background=color||'#ff0000'; ov.style.opacity='0.6'; setTimeout(function(){ov.style.opacity='0';ov.style.background='';},dur); }
-  function fxFlicker(dur){ var end=Date.now()+dur; var iv=setInterval(function(){ if(Date.now()>end){clearInterval(iv);ov.style.opacity='0';return;} ov.style.background=Math.random()>0.5?'#ff0033':'#000'; ov.style.opacity=String(Math.random()*0.7); },50); }
-  function fxNoise(dur){ var ne=document.createElement('div'); ne.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9998;pointer-events:none;font-family:monospace;font-size:14px;color:rgba(255,0,0,0.25);overflow:hidden;line-height:1;word-break:break-all;'; var ch='\u2588\u2591\u2592\u2593\u2502\u2500\u253c\u2524\u251c\u00a7\u25a0\u25a1'; function fill(){var s='';for(var i=0;i<8000;i++)s+=ch[Math.floor(Math.random()*ch.length)];ne.textContent=s;} fill(); document.body.appendChild(ne); var niv=setInterval(fill,80); setTimeout(function(){clearInterval(niv);ne.remove();},dur); }
+  function fxShake(dur){ if(reduceFlash) return; screen.style.animation='bfShake '+(dur<500?'0.05':'0.08')+'s infinite'; setTimeout(function(){screen.style.animation='';},dur); }
+  function fxFlash(color,dur){ if(reduceFlash) return; ov.style.background=color||'#ff0000'; ov.style.opacity='0.6'; setTimeout(function(){ov.style.opacity='0';ov.style.background='';},dur); }
+  function fxFlicker(dur){ if(reduceFlash) return; var end=Date.now()+dur; var iv=setInterval(function(){ if(Date.now()>end){clearInterval(iv);ov.style.opacity='0';return;} ov.style.background=Math.random()>0.5?'#ff0033':'#000'; ov.style.opacity=String(Math.random()*0.7); },50); }
+  function fxNoise(dur){ if(reduceFlash) return; var ne=document.createElement('div'); ne.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9998;pointer-events:none;font-family:monospace;font-size:14px;color:rgba(255,0,0,0.25);overflow:hidden;line-height:1;word-break:break-all;'; var ch='\u2588\u2591\u2592\u2593\u2502\u2500\u253c\u2524\u251c\u00a7\u25a0\u25a1'; function fill(){var s='';for(var i=0;i<8000;i++)s+=ch[Math.floor(Math.random()*ch.length)];ne.textContent=s;} fill(); document.body.appendChild(ne); var niv=setInterval(fill,80); setTimeout(function(){clearInterval(niv);ne.remove();},dur); }
   function fxBlackout(dur){ ov.style.background='#000'; ov.style.opacity='1'; log.style.visibility='hidden'; setTimeout(function(){ov.style.opacity='0';log.style.visibility='';},dur); }
   function next(){
     if(idx>=lines.length){ var btn=$('briefing-start-btn'); btn.style.opacity='1'; btn.style.borderColor='#2a6a2a'; btn.style.color='#2a6a2a'; return; }

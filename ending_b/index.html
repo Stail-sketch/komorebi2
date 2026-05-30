@@ -19,7 +19,6 @@
     z-index:1;
   }
 
-  /* ===== CRT常駐レイヤー ===== */
   #crt-overlay{
     position:fixed;top:0;left:0;width:100%;height:100%;
     pointer-events:none;z-index:20;
@@ -27,268 +26,80 @@
     transition:opacity 8s ease;
   }
   #crt-overlay::before{
-    content:'';
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    background:repeating-linear-gradient(
-      0deg,
-      rgba(0,255,65,0.03) 0px,
-      rgba(0,255,65,0.03) 1px,
-      transparent 1px,
-      transparent 3px
-    );
+    content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+    background:repeating-linear-gradient(0deg,
+      rgba(0,255,65,0.03) 0px, rgba(0,255,65,0.03) 1px,
+      transparent 1px, transparent 3px);
     animation:crt-scroll 4s linear infinite;
   }
   #crt-overlay::after{
-    content:'';
-    position:absolute;top:0;left:0;width:100%;height:100%;
+    content:'';position:absolute;top:0;left:0;width:100%;height:100%;
     background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
-    animation:vignette-breathe 6s ease-in-out infinite;
   }
-  @keyframes crt-scroll{
-    0%{background-position:0 0;}
-    100%{background-position:0 100vh;}
-  }
-  @keyframes vignette-breathe{
-    0%,100%{opacity:0.7;}
-    50%{opacity:1;}
-  }
+  @keyframes crt-scroll{0%{background-position:0 0;}100%{background-position:0 100vh;}}
 
-  /* ===== ランダム緑線ノイズ ===== */
   #noise-layer{
     position:fixed;top:0;left:0;width:100%;height:100%;
-    pointer-events:none;z-index:18;
-    overflow:hidden;
+    pointer-events:none;z-index:18;overflow:hidden;
   }
   .noise-line{
-    position:absolute;
-    height:1px;
+    position:absolute;height:1px;
     background:rgba(0,255,65,0.15);
     animation:noise-flash 0.15s linear forwards;
   }
-  @keyframes noise-flash{
-    0%{opacity:1;}
-    100%{opacity:0;}
-  }
+  @keyframes noise-flash{0%{opacity:1;}100%{opacity:0;}}
 
-  /* Terminal log (黒幕) */
   .terminal-line{
     color:#00ff41;
     font-family:'Courier New',Consolas,monospace;
     font-size:clamp(14px,2.2vw,20px);
-    text-align:left;
-    opacity:0;
-    white-space:pre;
+    text-align:left;opacity:0;white-space:pre;
     text-shadow:0 0 8px rgba(0,255,65,0.4);
-    letter-spacing:0.08em;
-    line-height:1.8;
+    letter-spacing:0.08em;line-height:1.8;
     transition:opacity 0.3s ease;
   }
   .terminal-line.visible{opacity:1;}
 
   #terminal-container{
-    width:80%;
-    max-width:700px;
-    max-height:80vh;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    gap:0.2em;
+    width:80%;max-width:700px;max-height:80vh;
+    overflow:hidden;display:flex;flex-direction:column;gap:0.2em;
   }
 
-  /* 吉田一郎 text */
   .yoshida-text{
     color:#e0e0e0;
     font-family:'Yu Mincho','YuMincho','Hiragino Mincho ProN',serif;
     font-size:clamp(18px,3vw,28px);
-    text-align:center;
-    opacity:0;
-    position:absolute;
-    letter-spacing:0.15em;
-    line-height:2.2;
+    text-align:center;opacity:0;position:absolute;
+    letter-spacing:0.15em;line-height:2.2;
     transition:opacity 0.4s ease;
   }
   .yoshida-text.visible{opacity:1;}
-  .yoshida-text.trembling{
-    animation:text-tremble 0.08s linear infinite;
-  }
-  @keyframes text-tremble{
-    0%{transform:translate(0,0);}
-    25%{transform:translate(0.5px,-0.3px);}
-    50%{transform:translate(-0.3px,0.5px);}
-    75%{transform:translate(-0.5px,-0.5px);}
-    100%{transform:translate(0.3px,0.3px);}
-  }
 
-
-  /* ===== Glitch effects ===== */
-  @keyframes glitch-skew{
-    0%{transform:skew(0deg);}
-    20%{transform:skew(-3deg);}
-    40%{transform:skew(5deg);}
-    60%{transform:skew(-1deg);}
-    80%{transform:skew(3deg);}
-    100%{transform:skew(0deg);}
-  }
-  @keyframes scanline{
-    0%{background-position:0 0;}
-    100%{background-position:0 100vh;}
-  }
-  .screen-corrupt{
-    animation:glitch-skew 0.1s linear infinite;
-  }
-  .screen-corrupt::after{
-    content:'';
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:repeating-linear-gradient(
-      0deg,
-      rgba(0,255,65,0.03) 0px,
-      rgba(0,255,65,0.03) 1px,
-      transparent 1px,
-      transparent 3px
-    );
-    animation:scanline 0.5s linear infinite;
-    pointer-events:none;
-    z-index:5;
-  }
-  @keyframes hard-glitch{
-    0%{opacity:0;}
-    5%{opacity:1;background:#fff;}
-    10%{opacity:0;}
-    15%{opacity:0.8;background:#0f0;}
-    20%{opacity:0;}
-    30%{opacity:0.5;background:#f00;}
-    35%{opacity:0;}
-    100%{opacity:0;}
-  }
-  .hard-glitch{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    z-index:15;
-    pointer-events:none;
-    animation:hard-glitch 0.3s linear forwards;
-  }
-
-  /* RGB色収差 */
-  @keyframes rgb-split{
-    0%{text-shadow:0 0 8px rgba(0,255,65,0.4);}
-    25%{text-shadow:-3px 0 0 rgba(255,0,0,0.7), 3px 0 0 rgba(0,255,255,0.7), 0 0 8px rgba(0,255,65,0.4);}
-    50%{text-shadow:2px 1px 0 rgba(255,0,0,0.5), -2px -1px 0 rgba(0,255,255,0.5), 0 0 8px rgba(0,255,65,0.4);}
-    75%{text-shadow:-4px 0 0 rgba(255,0,0,0.8), 4px 0 0 rgba(0,100,255,0.8), 0 0 8px rgba(0,255,65,0.4);}
-    100%{text-shadow:0 0 8px rgba(0,255,65,0.4);}
-  }
-  .rgb-split{
-    animation:rgb-split 0.2s linear infinite;
-  }
-
-  /* ブロックノイズ */
-  .block-noise{
-    position:fixed;
-    z-index:14;
-    pointer-events:none;
-    animation:block-pop 0.15s linear forwards;
-  }
-  @keyframes block-pop{
-    0%{opacity:1;}
-    70%{opacity:1;}
-    100%{opacity:0;}
-  }
-
-  /* スライスずれ */
-  #slice-container{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    pointer-events:none;z-index:13;
-    display:none;
-  }
-  .glitch-slice{
-    position:absolute;
-    left:0;width:100%;
-    overflow:hidden;
-    background:#000;
-  }
-
-  /* サブリミナルテキスト */
-  .subliminal{
-    position:fixed;
-    top:50%;left:50%;
-    transform:translate(-50%,-50%);
-    color:#ff0000;
-    font-family:'Courier New',monospace;
-    font-size:clamp(32px,8vw,80px);
-    z-index:16;
-    pointer-events:none;
-    opacity:0;
-    letter-spacing:0.2em;
-    text-shadow:0 0 20px rgba(255,0,0,0.8);
-    animation:subliminal-flash 0.12s linear forwards;
-  }
-  @keyframes subliminal-flash{
-    0%{opacity:0;}
-    15%{opacity:0.9;}
-    70%{opacity:0.9;}
-    100%{opacity:0;}
-  }
-
-  /* PROCESS STILL RUNNING */
   .process-text{
     color:#00ff41;
     font-family:'Courier New',Consolas,monospace;
     font-size:clamp(14px,2.2vw,20px);
-    text-align:center;
-    opacity:0;
-    position:absolute;
+    text-align:center;opacity:0;position:absolute;
     letter-spacing:0.12em;
     text-shadow:0 0 8px rgba(0,255,65,0.4);
     transition:opacity 0.2s ease;
   }
   .process-text.visible{opacity:1;}
 
-  /* 画面端に残る小さいSTILL RUNNING */
-  .process-residue{
-    position:fixed;
-    bottom:12px;right:14px;
-    color:rgba(0,255,65,0.12);
-    font-family:'Courier New',monospace;
-    font-size:9px;
-    letter-spacing:0.1em;
-    pointer-events:none;
-    z-index:2;
-    animation:residue-flicker 5s ease-in-out infinite;
-  }
-  @keyframes residue-flicker{
-    0%,90%,100%{opacity:1;}
-    93%{opacity:0.3;}
-    96%{opacity:1;}
-  }
-
-  /* 暗転用 */
-  #blackout{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:#000;z-index:100;
-    opacity:0;
-    transition:opacity 0.4s ease;
-    pointer-events:none;
-  }
-
-  /* タイムスタンプ */
   #timestamp{
-    position:fixed;
-    bottom:10px;left:14px;
+    position:fixed;bottom:10px;left:14px;
     color:rgba(0,255,65,0.15);
     font-family:'Courier New',monospace;
-    font-size:10px;
-    letter-spacing:0.08em;
-    z-index:2;
-    pointer-events:none;
+    font-size:10px;letter-spacing:0.08em;
+    z-index:2;pointer-events:none;
   }
 </style>
 </head>
 <body>
 <div id="screen"></div>
-<div id="glitch-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;opacity:0;"></div>
 <div id="crt-overlay"></div>
 <div id="noise-layer"></div>
-<div id="slice-container"></div>
 <div id="timestamp">[00:00:00]</div>
-<div id="blackout"></div>
 
 <script>
 if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#333;font-family:monospace;font-size:14px;">アクセスできません</div>';throw new Error();}
@@ -296,7 +107,6 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
   var screen = document.getElementById('screen');
   var crtOverlay = document.getElementById('crt-overlay');
   var noiseLayer = document.getElementById('noise-layer');
-  var sliceContainer = document.getElementById('slice-container');
   var timestampEl = document.getElementById('timestamp');
 
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -309,13 +119,10 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     screen.style.flexDirection = 'column';
   }
 
-  /* ===== CRT intensity control ===== */
   function setCrtIntensity(level){
-    // level: 0.0 ~ 1.0
     crtOverlay.style.opacity = String(0.2 + level * 0.8);
   }
 
-  /* ===== ランダム緑線ノイズ ===== */
   var noiseInterval = null;
   function startNoise(intensity){
     if(noiseInterval) clearInterval(noiseInterval);
@@ -323,20 +130,19 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       if(Math.random() > intensity) return;
       var line = document.createElement('div');
       line.className = 'noise-line';
-      line.style.top = (Math.random() * 100) + '%';
+      line.style.top = (Math.random()*100)+'%';
       line.style.left = '0';
-      line.style.width = (20 + Math.random() * 80) + '%';
-      if(Math.random() > 0.5) { line.style.left = 'auto'; line.style.right = '0'; }
+      line.style.width = (20+Math.random()*80)+'%';
+      if(Math.random()>0.5){line.style.left='auto';line.style.right='0';}
       noiseLayer.appendChild(line);
-      setTimeout(function(){ line.remove(); }, 200);
-    }, 80);
+      setTimeout(function(){line.remove();},200);
+    },80);
   }
   function stopNoise(){
-    if(noiseInterval){ clearInterval(noiseInterval); noiseInterval = null; }
-    noiseLayer.innerHTML = '';
+    if(noiseInterval){clearInterval(noiseInterval);noiseInterval=null;}
+    noiseLayer.innerHTML='';
   }
 
-  /* ===== タイムスタンプ ===== */
   var tsStart = 0;
   var tsInterval = null;
   var tsFrozen = false;
@@ -348,93 +154,27 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       var h = String(Math.floor(elapsed/3600)).padStart(2,'0');
       var m = String(Math.floor((elapsed%3600)/60)).padStart(2,'0');
       var s = String(elapsed%60).padStart(2,'0');
-      timestampEl.textContent = '[' + h + ':' + m + ':' + s + ']';
+      timestampEl.textContent = '['+h+':'+m+':'+s+']';
     }, 1000);
   }
-  function freezeTimestamp(){
-    tsFrozen = true;
-  }
-  function setTimestampError(){
-    timestampEl.textContent = '[ERROR]';
-    timestampEl.style.color = 'rgba(255,0,0,0.25)';
-  }
 
-  /* ===== Glitch effects ===== */
-  function flashGlitch(){
-    var g = document.createElement('div');
-    g.className = 'hard-glitch';
-    document.body.appendChild(g);
-    setTimeout(function(){ g.remove(); }, 400);
-  }
-
-  /* RGB色収差をターミナルコンテナに適用 */
-  function applyRgbSplit(el, duration){
-    el.classList.add('rgb-split');
-    setTimeout(function(){ el.classList.remove('rgb-split'); }, duration || 500);
-  }
-
-  /* ブロックノイズ */
-  function spawnBlockNoise(count){
-    for(var i = 0; i < (count||5); i++){
-      (function(delay){
-        setTimeout(function(){
-          var block = document.createElement('div');
-          block.className = 'block-noise';
-          var w = 30 + Math.random() * 200;
-          var h = 5 + Math.random() * 40;
-          block.style.width = w + 'px';
-          block.style.height = h + 'px';
-          block.style.top = (Math.random() * 100) + '%';
-          block.style.left = (Math.random() * 100) + '%';
-          var colors = ['#000','#000','#0f0','#001a00','#0a0a0a'];
-          block.style.background = colors[Math.floor(Math.random()*colors.length)];
-          document.body.appendChild(block);
-          setTimeout(function(){ block.remove(); }, 180);
-        }, delay);
-      })(i * 60);
-    }
-  }
-
-  /* スライスずれ */
-  function glitchSlice(duration){
-    sliceContainer.style.display = 'block';
-    sliceContainer.innerHTML = '';
-    var sliceCount = 5 + Math.floor(Math.random() * 4);
-    var sliceH = 100 / sliceCount;
-    for(var i = 0; i < sliceCount; i++){
-      var slice = document.createElement('div');
-      slice.className = 'glitch-slice';
-      slice.style.top = (i * sliceH) + '%';
-      slice.style.height = sliceH + '%';
-      var offset = (Math.random() - 0.5) * 40;
-      slice.style.transform = 'translateX(' + offset + 'px)';
-      slice.style.background = (Math.random() > 0.7) ? 'rgba(0,255,65,0.04)' : 'transparent';
-      sliceContainer.appendChild(slice);
-    }
-    setTimeout(function(){
-      sliceContainer.style.display = 'none';
-      sliceContainer.innerHTML = '';
-    }, duration || 200);
-  }
-
-  /* サブリミナルテキスト */
-  function subliminalFlash(text){
-    var el = document.createElement('div');
-    el.className = 'subliminal';
-    el.textContent = text;
-    document.body.appendChild(el);
-    setTimeout(function(){ el.remove(); }, 150);
-  }
-
-  /* 画面暗転（まばたき） */
   function screenBlink(duration){
     var blink = document.createElement('div');
     blink.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:25;pointer-events:none;';
     document.body.appendChild(blink);
-    return wait(duration || 500).then(function(){ blink.remove(); });
+    return wait(duration||150).then(function(){blink.remove();});
   }
 
-  /* Typewriter for terminal lines */
+  var reduceFlash = localStorage.getItem('reduce_flash') === 'true';
+
+  function flashWhite(duration){
+    if(reduceFlash) return;
+    var f = document.createElement('div');
+    f.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:25;pointer-events:none;';
+    document.body.appendChild(f);
+    setTimeout(function(){ f.remove(); }, duration || 80);
+  }
+
   function typewriterLine(container, text, speed){
     return new Promise(function(resolve){
       var line = document.createElement('div');
@@ -443,18 +183,12 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       container.appendChild(line);
       var i = 0;
       var iv = setInterval(function(){
-        if(i < text.length){
-          line.textContent += text[i];
-          i++;
-        } else {
-          clearInterval(iv);
-          resolve(line);
-        }
+        if(i < text.length){line.textContent += text[i]; i++;}
+        else {clearInterval(iv); resolve(line);}
       }, speed || 40);
     });
   }
 
-  /* 不規則タイプライター */
   function typewriterLineUneven(container, text, baseSpeed){
     return new Promise(function(resolve){
       var line = document.createElement('div');
@@ -464,20 +198,16 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       var i = 0;
       function nextChar(){
         if(i < text.length){
-          line.textContent += text[i];
-          i++;
+          line.textContent += text[i]; i++;
           var jitter = baseSpeed + Math.floor((Math.random()-0.3)*baseSpeed*0.8);
           if(jitter < 10) jitter = 10;
           setTimeout(nextChar, jitter);
-        } else {
-          resolve(line);
-        }
+        } else { resolve(line); }
       }
       nextChar();
     });
   }
 
-  /* Show yoshida text centered */
   function showYoshidaLine(text){
     return new Promise(function(resolve){
       var el = document.createElement('div');
@@ -485,78 +215,19 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       el.textContent = text;
       screen.appendChild(el);
       requestAnimationFrame(function(){
-        requestAnimationFrame(function(){
-          el.classList.add('visible');
-          el.classList.add('trembling');
-        });
+        requestAnimationFrame(function(){ el.classList.add('visible'); });
       });
       setTimeout(function(){ resolve(el); }, 300);
     });
   }
 
-  function fadeOutEl(el, ms){
-    el.style.transition = 'opacity ' + (ms || 1500) + 'ms ease';
-    el.style.opacity = '0';
-    return wait(ms || 1500);
-  }
-
-  /* ===== 複合グリッチシーケンス ===== */
-  async function intenseGlitchSequence(){
-    document.body.classList.add('screen-corrupt');
-    var termContainer = document.getElementById('terminal-container');
-
-    // Phase 1: RGB色収差 + フラッシュ
-    if(termContainer) applyRgbSplit(termContainer, 2000);
-    flashGlitch();
-    await wait(200);
-    flashGlitch();
-    spawnBlockNoise(4);
-    await wait(150);
-
-    // Phase 2: スライスずれ + ブロックノイズ
-    glitchSlice(200);
-    flashGlitch();
-    await wait(200);
-    spawnBlockNoise(8);
-    await wait(100);
-
-    // Phase 3: サブリミナル
-    subliminalFlash('ミテル');
-    await wait(250);
-    flashGlitch();
-    glitchSlice(150);
-    spawnBlockNoise(6);
-    await wait(200);
-
-    // Phase 4: 連続フラッシュ + 2つ目のサブリミナル
-    flashGlitch();
-    await wait(80);
-    flashGlitch();
-    await wait(120);
-    subliminalFlash('タスケテ');
-    await wait(200);
-
-    // Phase 5: 最大強度
-    glitchSlice(250);
-    spawnBlockNoise(12);
-    flashGlitch();
-    await wait(100);
-    flashGlitch();
-    await wait(100);
-    flashGlitch();
-    await wait(300);
-
-    document.body.classList.remove('screen-corrupt');
-  }
-
-  /* ===== MAIN SEQUENCE ===== */
   async function main(){
     startTimestamp();
-    startNoise(0.1); // 最初は薄いノイズ
+    startNoise(0.1);
     setCrtIntensity(0.1);
     await wait(1000);
 
-    // --- STAGE 1: 黒幕's log ---
+    // --- STAGE 1: K-059 harvest log ---
     var termContainer = document.createElement('div');
     termContainer.id = 'terminal-container';
     screen.appendChild(termContainer);
@@ -580,16 +251,7 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     ];
 
     for(var i = 0; i < logLines.length; i++){
-      var progress = i / logLines.length;
-      setCrtIntensity(0.1 + progress * 0.4);
-
-      if(i === 1) startNoise(0.15);
-      if(i === 10) startNoise(0.4);
-
-      if(i === 13){
-        await screenBlink(300);
-      }
-
+      setCrtIntensity(0.1 + (i / logLines.length) * 0.4);
       if(i >= 10){
         await typewriterLineUneven(termContainer, logLines[i].text, logLines[i].speed);
       } else {
@@ -600,24 +262,28 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
 
     await wait(2000);
 
-    // --- STAGE 2: Transfer initiation ---
-    startNoise(0.6);
+    // --- STAGE 2: Transfer execution ---
     setCrtIntensity(0.6);
     await typewriterLineUneven(termContainer, '> 転写プロセス: 実行', 40);
     await wait(1200);
 
-    // --- STAGE 3: 複合グリッチシーケンス ---
-    startNoise(0.9);
-    setCrtIntensity(0.9);
-    await intenseGlitchSequence();
+    // CRT spikes to max → white flash → everything dies
+    setCrtIntensity(0.95);
+    startNoise(0.6);
+    await wait(300);
+    flashWhite(80);
+    await wait(80);
+
     stopNoise();
-
-    // 暗転（完全な暗闇）
     clearScreen();
-    setCrtIntensity(0.05);
-    await wait(3000); // 長めの暗闇 — 何も起きない恐怖
+    crtOverlay.style.transition = 'opacity 0.05s';
+    crtOverlay.style.opacity = '0';
+    timestampEl.style.display = 'none';
 
-    // --- STAGE 4: 吉田一郎's voice ---
+    // Total darkness
+    await wait(4000);
+
+    // --- STAGE 3: Yoshida's voice (from the void) ---
     var y1 = await showYoshidaLine('「やめろ」');
     await wait(2500);
     await screenBlink(150);
@@ -631,106 +297,78 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     var y3 = await showYoshidaLine('「この子は関係ないだろ…！」');
     y3.style.fontSize = 'clamp(20px,3.2vw,30px)';
     await wait(3000);
-    flashGlitch();
     await screenBlink(100);
     y3.remove();
 
     var y4 = await showYoshidaLine('「…すまない」');
+    y4.style.opacity = '0.6';
     await wait(3000);
     await screenBlink(150);
     y4.remove();
 
-    // 吉田の最後の声 — CORFに遮断される
     var y5 = await showYoshidaLine('「あか——」');
     await wait(800);
-    y5.style.transition = 'opacity 0.3s, filter 0.3s';
-    y5.style.opacity = '0.2';
-    y5.style.filter = 'blur(4px)';
-    flashGlitch();
-    await wait(500);
+    flashWhite(60);
+    await wait(60);
     y5.remove();
 
-    // 吉田セリフ後の沈黙
-    await wait(4000);
+    // Silence
+    await wait(5000);
 
-    // --- STAGE 5: PROCESS STILL RUNNING（1回・演出全盛り） ---
+    // --- STAGE 4: PROCESS STILL RUNNING ---
     var proc = document.createElement('div');
     proc.className = 'process-text';
     proc.textContent = '> PROCESS STILL RUNNING';
-    proc.style.fontSize = 'clamp(14px,2.2vw,20px)';
-    proc.style.textShadow = '0 0 8px rgba(0,255,65,0.4)';
     screen.appendChild(proc);
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ proc.classList.add('visible'); }); });
 
-    // 1.5秒静かに表示
     await wait(1500);
-
-    // ノイズ走り出す
-    startNoise(0.4);
-    applyRgbSplit(proc, 1500);
-
-    // 画面が揺れ始める
-    document.body.classList.add('screen-corrupt');
-    await wait(600);
-
-    // フォントが段階的に膨張
-    proc.style.transition = 'font-size 0.3s, text-shadow 0.3s';
-    proc.style.fontSize = 'clamp(20px,3.5vw,32px)';
-    proc.style.textShadow = '0 0 15px rgba(0,255,65,0.6)';
-    spawnBlockNoise(4);
-    await wait(500);
-
-    proc.style.fontSize = 'clamp(28px,5vw,48px)';
-    proc.style.textShadow = '0 0 25px rgba(0,255,65,0.8), 0 0 50px rgba(0,255,65,0.3)';
-    flashGlitch();
-    spawnBlockNoise(8);
-    await wait(400);
-
-    // 最大 → 一瞬で画面いっぱい → 消滅
-    proc.style.transition = 'font-size 0.1s, text-shadow 0.1s';
-    proc.style.fontSize = 'clamp(48px,12vw,120px)';
-    proc.style.textShadow = '0 0 40px rgba(0,255,65,0.9), 0 0 80px rgba(0,255,65,0.5)';
-    flashGlitch();
-    await wait(200);
+    proc.style.transition = 'none';
+    proc.style.opacity = '0';
+    await wait(120);
+    proc.style.opacity = '1';
+    await wait(1500);
     proc.remove();
-    document.body.classList.remove('screen-corrupt');
-    stopNoise();
 
-    // 画面端に小さく残り続ける
-    var residue = document.createElement('div');
-    residue.className = 'process-residue';
-    residue.textContent = 'STILL RUNNING';
-    document.body.appendChild(residue);
-
-    // --- STAGE 6: データ不足 ---
-    await wait(3000);
-    clearScreen();
-    setCrtIntensity(0.3);
-    startNoise(0.15);
-
-    var statusLines = [
-      { text:'> TRANSFER RESULT', pause:1500 },
-      { text:'> 転写完了率: 93.4%', pause:1200 },
-      { text:'> 未到達: 怒り ▼44%　絶望 ▼71%', pause:3000 },
-      { text:'> …足りない', pause:3000 },
-      { text:'> もう一度やればいい', pause:4000 },
-    ];
-
-    for(var li=0; li<statusLines.length; li++){
-      var line = document.createElement('div');
-      line.className = 'terminal-line';
-      line.textContent = statusLines[li].text;
-      screen.appendChild(line);
-      requestAnimationFrame(function(el){ return function(){ requestAnimationFrame(function(){ el.classList.add('visible'); }); }; }(line));
-      await wait(statusLines[li].pause);
-    }
-
-    // タイムスタンプを凍結→ERROR
-    freezeTimestamp();
-    setTimestampError();
     await wait(2000);
 
-    // --- STAGE 7: 再接続 → デスクトップへ ---
+    // --- STAGE 5: Transfer result ---
+    clearScreen();
+    crtOverlay.style.transition = 'opacity 2s ease';
+    setCrtIntensity(0.2);
+    timestampEl.style.display = '';
+    startNoise(0.1);
+
+    var termContainer2 = document.createElement('div');
+    termContainer2.id = 'terminal-container';
+    screen.appendChild(termContainer2);
+
+    await typewriterLine(termContainer2, '> TRANSFER RESULT', 35);
+    await wait(1500);
+    await typewriterLine(termContainer2, '> 転写完了率: 93.4%', 35);
+    await wait(1200);
+    await typewriterLine(termContainer2, '> 未到達: 怒り ▼44%　絶望 ▼71%', 35);
+    await wait(3000);
+    await typewriterLine(termContainer2, '> …足りない', 50);
+    await wait(3000);
+
+    // The world holds its breath
+    stopNoise();
+    crtOverlay.style.transition = 'opacity 1.5s ease';
+    crtOverlay.style.opacity = '0.08';
+    await wait(1500);
+
+    await typewriterLine(termContainer2, '> もう一度やればいい', 60);
+    await wait(5000);
+
+    tsFrozen = true;
+    timestampEl.textContent = '[ERROR]';
+    timestampEl.style.color = 'rgba(255,0,0,0.25)';
+    crtOverlay.style.transition = 'opacity 0.5s ease';
+    setCrtIntensity(0.3);
+    await wait(2000);
+
+    // --- STAGE 6: Reconnect → Desktop ---
     clearScreen();
     setCrtIntensity(0.2);
     await wait(1500);
@@ -739,7 +377,7 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
     reconnect.className = 'terminal-line visible';
     reconnect.textContent = '> 再接続します';
     screen.appendChild(reconnect);
-
+    startNoise(0.1);
     await wait(2000);
     reconnect.remove();
 
@@ -751,18 +389,19 @@ if(localStorage.getItem('night5_clear')!=='true'){document.body.innerHTML='<div 
       cd.style.textAlign = 'center';
       cd.style.fontSize = 'clamp(20px,4vw,36px)';
       screen.appendChild(cd);
-      setCrtIntensity(0.2 + (cdi + 1) * 0.15);
+      setCrtIntensity(0.2 + (cdi+1)*0.2);
+      startNoise(0.15 + (cdi+1)*0.15);
       await wait(1000);
       cd.remove();
     }
 
-    // 暗転 → デスクトップへ直行
     stopNoise();
+    clearScreen();
+    crtOverlay.style.transition = 'opacity 0.1s';
+    crtOverlay.style.opacity = '0';
     timestampEl.style.display = 'none';
-    var blackout = document.getElementById('blackout');
-    blackout.style.opacity = '1';
     await wait(800);
-    // --- Set localStorage flags ---
+
     try {
       localStorage.setItem('ending_b_seen', 'true');
       localStorage.setItem('save_point_night5', 'true');

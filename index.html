@@ -154,7 +154,7 @@ body {
   cursor: pointer;
   transition: background 0.15s;
 }
-.taskbar-start:hover {
+.taskbar-start:hover, .taskbar-start.active {
   background: rgba(255, 255, 255, 0.1);
 }
 .taskbar-start svg {
@@ -184,9 +184,172 @@ body {
 .taskbar-pin:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* 初回警告オーバーレイ */
+#flash-warning {
+  position:fixed;inset:0;z-index:999999;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Segoe UI','Hiragino Kaku Gothic ProN',system-ui,sans-serif;
+}
+#flash-warning .fw-inner {
+  text-align:center;max-width:480px;padding:30px;
+}
+#flash-warning p {
+  color:#ccc;font-size:15px;line-height:2.2;margin-bottom:36px;
+}
+#flash-warning .fw-highlight { color:#ffcc44; }
+#flash-warning .fw-buttons { display:flex;gap:16px;justify-content:center;flex-wrap:wrap; }
+#flash-warning button {
+  padding:12px 28px;border:1px solid #444;border-radius:6px;
+  font-size:14px;cursor:pointer;transition:background 0.2s,border-color 0.2s;
+  font-family:inherit;
+}
+#flash-warning .fw-normal {
+  background:#1a1a2e;color:#aaa;
+}
+#flash-warning .fw-normal:hover { background:#2a2a3e;border-color:#666; }
+#flash-warning .fw-reduce {
+  background:#2a2a1a;color:#eedd88;border-color:#665522;
+}
+#flash-warning .fw-reduce:hover { background:#3a3a2a;border-color:#887733; }
+
+/* 設定パネル（Win10スタートメニュー風） */
+#settings-modal {
+  position:fixed;bottom:34px;left:0;
+  width:360px;max-width:92vw;
+  background:rgba(20,20,36,0.96);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.08);
+  border-bottom:none;border-left:none;
+  border-radius:0 8px 0 0;
+  z-index:99999;
+  box-shadow:4px -4px 24px rgba(0,0,0,0.5);
+  font-family:'Segoe UI','Hiragino Kaku Gothic ProN',system-ui,sans-serif;
+  transform:translateY(100%);opacity:0;
+  transition:transform 0.25s ease,opacity 0.2s ease;
+  pointer-events:none;
+  overflow:hidden;
+}
+#settings-modal.open {
+  transform:translateY(0);opacity:1;
+  pointer-events:auto;
+}
+#settings-modal .sm-header {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px 10px;
+}
+#settings-modal .sm-header span { color:#ccc;font-size:14px;font-weight:600; }
+#settings-modal .sm-close {
+  color:#666;font-size:16px;cursor:pointer;background:none;border:none;padding:4px;
+}
+#settings-modal .sm-close:hover { color:#aaa; }
+#settings-modal .sm-body { padding:0 18px 18px;overflow-y:auto;max-height:calc(80vh - 60px); }
+.sm-section { margin-bottom:14px; }
+.sm-section-title {
+  color:#667;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;
+  margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.settings-row {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;
+}
+.settings-row label { color:#bbb;font-size:13px; }
+.toggle-switch {
+  position:relative;width:40px;height:22px;
+  background:#333;border-radius:11px;cursor:pointer;
+  transition:background 0.2s;flex-shrink:0;
+}
+.toggle-switch.on { background:#4a8a4a; }
+.toggle-switch::after {
+  content:'';position:absolute;top:2px;left:2px;
+  width:18px;height:18px;background:#ddd;border-radius:50%;
+  transition:transform 0.2s;
+}
+.toggle-switch.on::after { transform:translateX(18px); }
+.sm-range {
+  width:120px;height:4px;-webkit-appearance:none;appearance:none;
+  background:#333;border-radius:2px;outline:none;
+}
+.sm-range::-webkit-slider-thumb {
+  -webkit-appearance:none;width:14px;height:14px;
+  background:#aaa;border-radius:50%;cursor:pointer;
+}
+.sm-range-val { color:#888;font-size:11px;width:32px;text-align:right;flex-shrink:0; }
+.sm-select {
+  background:#2a2a3a;color:#aab;border:1px solid #3a3a4a;
+  border-radius:5px;padding:4px 8px;font-size:12px;cursor:pointer;
+  font-family:inherit;
+}
+
 </style>
 </head>
 <body>
+
+<!-- 初回フラッシュ警告 -->
+<div id="flash-warning" style="display:none;">
+  <div class="fw-inner">
+    <p>この作品には<span class="fw-highlight">光の点滅</span>・<span class="fw-highlight">画面の揺れ</span>を<br>含む表現があります</p>
+    <div class="fw-buttons">
+      <button class="fw-normal" onclick="setFlashPref(false)">通常モード</button>
+      <button class="fw-reduce" onclick="setFlashPref(true)">光の点滅を軽減する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 設定モーダル -->
+<div id="settings-modal">
+  <div class="sm-header">
+    <span>⚙ モニター設定</span>
+    <button class="sm-close" onclick="toggleSettings()">✕</button>
+  </div>
+  <div class="sm-body">
+
+    <div class="sm-section">
+      <div class="sm-section-title">画面</div>
+      <div class="settings-row">
+        <label>フルスクリーン</label>
+        <button class="sm-select" id="btn-fullscreen" onclick="toggleFullscreen()">切り替え</button>
+      </div>
+      <div class="settings-row">
+        <label>画面の明るさ</label>
+        <input type="range" class="sm-range" id="range-brightness" min="30" max="100" value="100" oninput="setBrightness(this.value)">
+        <span class="sm-range-val" id="val-brightness">100%</span>
+      </div>
+      <div class="settings-row">
+        <label>CRT効果</label>
+        <input type="range" class="sm-range" id="range-crt" min="0" max="100" value="100" oninput="setCrtPref(this.value)">
+        <span class="sm-range-val" id="val-crt">100%</span>
+      </div>
+    </div>
+
+    <div class="sm-section">
+      <div class="sm-section-title">アクセシビリティ</div>
+      <div class="settings-row">
+        <label>光の点滅を軽減</label>
+        <div class="toggle-switch" id="toggle-flash" onclick="togglePref('reduce_flash')"></div>
+      </div>
+      <div class="settings-row">
+        <label>テキスト速度</label>
+        <select class="sm-select" id="select-textspeed" onchange="setTextSpeed(this.value)">
+          <option value="normal">ふつう</option>
+          <option value="fast">はやい</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sm-section">
+      <div class="sm-section-title">ゲーム</div>
+      <div class="settings-row">
+        <label>既読会話スキップ</label>
+        <div class="toggle-switch" id="toggle-skipread" onclick="togglePref('skip_read')"></div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
 
 <!-- 初回起動演出 -->
 <div id="boot-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#000;font-family:'Courier New',monospace;font-size:14px;color:#0a0;padding:40px;overflow:hidden;line-height:2;">
@@ -261,7 +424,7 @@ body {
 
   <!-- タスクバー -->
   <div class="taskbar">
-    <div class="taskbar-start">
+    <div class="taskbar-start" onclick="toggleSettings()">
       <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
     </div>
     <div class="taskbar-divider"></div>
@@ -276,6 +439,112 @@ body {
 
 // 画像ドラッグ防止
 document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+// ===== 初回フラッシュ警告 =====
+function setFlashPref(reduce){
+  localStorage.setItem('reduce_flash', reduce ? 'true' : 'false');
+  localStorage.setItem('reduce_flash_asked', 'true');
+  document.getElementById('flash-warning').style.display = 'none';
+  startBoot();
+}
+
+// ===== 設定システム =====
+function toggleSettings(){
+  var modal = document.getElementById('settings-modal');
+  var startBtn = document.querySelector('.taskbar-start');
+  var isOpen = modal.classList.contains('open');
+  if(isOpen){
+    modal.classList.remove('open');
+    startBtn.classList.remove('active');
+  } else {
+    modal.classList.add('open');
+    startBtn.classList.add('active');
+    syncAllSettings();
+  }
+}
+
+function togglePref(key){
+  var current = localStorage.getItem(key) === 'true';
+  localStorage.setItem(key, current ? 'false' : 'true');
+  syncAllSettings();
+  if(key === 'brightness') applyBrightness();
+}
+
+function syncAllSettings(){
+  syncToggleEl('toggle-flash', 'reduce_flash');
+  syncToggleEl('toggle-skipread', 'skip_read');
+  var br = localStorage.getItem('brightness') || '100';
+  var crt = localStorage.getItem('crt_intensity') || '100';
+  var ts = localStorage.getItem('text_speed') || 'normal';
+  document.getElementById('range-brightness').value = br;
+  document.getElementById('val-brightness').textContent = br + '%';
+  document.getElementById('range-crt').value = crt;
+  document.getElementById('val-crt').textContent = crt + '%';
+  document.getElementById('select-textspeed').value = ts;
+}
+function syncToggleEl(elId, key){
+  var el = document.getElementById(elId);
+  if(el){
+    if(localStorage.getItem(key) === 'true') el.classList.add('on');
+    else el.classList.remove('on');
+  }
+}
+
+// 画面の明るさ
+function setBrightness(val){
+  localStorage.setItem('brightness', val);
+  document.getElementById('val-brightness').textContent = val + '%';
+  applyBrightness();
+}
+function applyBrightness(){
+  var val = localStorage.getItem('brightness') || '100';
+  document.documentElement.style.filter = val === '100' ? '' : 'brightness(' + (val/100) + ')';
+}
+applyBrightness();
+
+// CRT効果
+function setCrtPref(val){
+  localStorage.setItem('crt_intensity', val);
+  document.getElementById('val-crt').textContent = val + '%';
+}
+
+// テキスト速度
+function setTextSpeed(val){
+  localStorage.setItem('text_speed', val);
+}
+
+// フルスクリーン
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+syncAllSettings();
+
+// パネル外クリックで閉じる
+document.addEventListener('click', function(e){
+  var modal = document.getElementById('settings-modal');
+  var start = document.querySelector('.taskbar-start');
+  if(modal.classList.contains('open') && !modal.contains(e.target) && !start.contains(e.target)){
+    modal.classList.remove('open');
+    start.classList.remove('active');
+  }
+});
+
+// 初回警告チェック
+(function(){
+  if(localStorage.getItem('reduce_flash_asked') !== 'true'){
+    document.getElementById('flash-warning').style.display = '';
+    document.getElementById('desktop-main').style.display = 'none';
+    return;
+  }
+  startBoot();
+})();
+
+function startBoot(){
 
 // ===== 初回起動演出 =====
 (function(){
@@ -329,6 +598,8 @@ document.addEventListener('dragstart', function(e) { e.preventDefault(); });
     }, 1500);
   }, 10000);
 })();
+
+} // end startBoot
 
 // EndB後：syslogアイコン表示（EndA到達後も残す）
 if(localStorage.getItem('ending_b_seen') === 'true'){
