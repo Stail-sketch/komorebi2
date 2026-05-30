@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HINT - あの番組を覚えていますか</title>
 <meta property="og:title" content="ヒント - こもれびゆうえんち">
-<meta property="og:description" content="行き詰まった時のヒント集。Night1〜5の謎解きのヒントを段階的に確認できます。">
+<meta property="og:description" content="行き詰まった時のヒント集。Night1〜6の謎解きとFNaFパートのヒントを段階的に確認できます。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://komorebiyuenchi2.com/hint/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ヒント - こもれびゆうえんち">
-<meta name="twitter:description" content="行き詰まった時のヒント集。Night1〜5の謎解きのヒントを段階的に確認できます。">
+<meta name="twitter:description" content="行き詰まった時のヒント集。Night1〜6の謎解きとFNaFパートのヒントを段階的に確認できます。">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
@@ -120,24 +120,24 @@ h1{
     <div class="night-body">
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
-        <div class="hint-content">Night1クリア後のメールを読もう。「<span class="keyword">…間違ってる…ところがある…ひとつじゃない…</span>」</div>
+        <div class="hint-content">Night1クリア後のメールを読もう。「<span class="keyword">…情報が…書き換えられてる…3つ…正しくないところがある…触れてみて…</span>」</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
-        <div class="hint-content">サイトの中に「間違い」が3つ隠されている。キャラ紹介ページや番組概要ページをよく読んで、おかしいところを探してクリックしよう。</div>
+        <div class="hint-content">サイトの中に「間違い」が3つ隠されている。キャラ紹介ページや番組概要ページをよく読んで、おかしいテキストを見つけたら直接クリックしよう。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
-        <div class="hint-content">ヒント：コーナー名をよく見て。キツネ団長の担当コーナーは本当に正しい？ぽたまるの「ソング」って合ってる？番組の放送曜日は？</div>
+        <div class="hint-content">コーナー名をよく見て。キツネ団長の担当コーナーは本当に正しい？ぽたまるの「ソング」って合ってる？番組の放送曜日は？</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">答え</button>
         <div class="hint-content">
-          3つの間違いをクリック：<br>
+          間違いテキストを直接クリックすると、グリッチしながら正しい内容に修正される：<br>
           <span class="answer">1. キツネ団長のページ：「なぜなぜ教室」→ 正しくは「冒険タイム」</span><br>
           <span class="answer">2. ぽたまるのページ：「ぽたまるソング♪」→ 正しくは「ぽたまるダンス♪」</span><br>
           <span class="answer">3. 番組概要ページ：「毎週日曜日」→ 正しくは「毎週土曜日」</span><br>
-          3つ修正後にお問い合わせページを開くと、Night2への入口が出現する。
+          3つ目を修正した瞬間、画面にバグ文字が溢れ出し、Night2へ自動遷移する。
         </div>
       </div>
     </div>
@@ -152,23 +152,26 @@ h1{
     <div class="night-body">
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
-        <div class="hint-content">Night2クリア後のメールを確認しよう。チャットが解放されるはず。</div>
+        <div class="hint-content">Night2クリア後のメールを確認しよう。添付ファイルをクリックするとチャットが解放される。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
-        <div class="hint-content">キツネ団長とチャットで会話しよう。サイトで読んだ気になることを自分から聞いてみて。</div>
+        <div class="hint-content">キツネ団長とのチャットでは、サイトの内容を読んだか聞かれる。「読んだ」と答えるとクイズが始まる。答えは全てサイト内のページに書いてある。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
-        <div class="hint-content">Night2後に追加されたページで気になった情報をチャットで話題にしてみよう。脚本家のこと、不思議な映像のこと、消えたキャラのこと…</div>
+        <div class="hint-content">全部で5問。視聴率データ、不思議な放送日、アニマトロニクスの改修記録、VHSの映像、そして社長がよく使っていた言葉。番組調査レポートと関係者証言をよく読もう。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">答え</button>
         <div class="hint-content">
-          チャットで3つの敏感なトピックに触れる：<br>
-          <span class="answer">田中恵子（脚本家）について聞く</span><br>
-          <span class="answer">ブリッジ映像について聞く</span><br>
-          <span class="answer">ひかりちゃん（消えた5番目のキャラ）について聞く</span>
+          チャットで5問のクイズに全問正解する：<br>
+          <span class="answer">Q1「番組で一番視聴率が高かった回って何%？」→「9.1」</span><br>
+          <span class="answer">Q2「視聴率0%が記録された日は何月何日？」→「11月13日」</span><br>
+          <span class="answer">Q3「1996年改修の技術者は何日間泊まり込み？」→「3」</span><br>
+          <span class="answer">Q4「よわりが見つけたVHSのタイムスタンプは？」→「2時34分」</span><br>
+          <span class="answer">Q5「制作会社の社長がよく使ってた言葉は？」→「理想の子ども」</span><br>
+          全問正解後、キツネ団長がNight3への入口を教えてくれる。
         </div>
       </div>
     </div>
@@ -183,21 +186,21 @@ h1{
     <div class="night-body">
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
-        <div class="hint-content">Night3クリア後、チャットでキツネ団長がある企業サイトのことを教えてくれる。</div>
+        <div class="hint-content">Night3クリア後、チャットでキツネ団長がある企業サイトのことを教えてくれる。「ゆめスタジオプロダクションのサイトがまだ残ってるみたい」。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
-        <div class="hint-content">企業サイトの社員専用ページにログインフォームがある。パスコードは6桁の数字。</div>
+        <div class="hint-content">企業サイトの社員専用ページにログインフォームがある。パスコードは6桁の数字。ヒントは「<span class="keyword">各文書の管理番号を参照してください</span>」。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
-        <div class="hint-content">サイト内に散らばっている文書の管理番号「<span class="keyword">YSP-XXXX-XX</span>」に注目。黒塗りされている部分を他の文書と照合して埋めていこう。</div>
+        <div class="hint-content">ゆめスタジオのサイト内に散らばっている文書には全て管理番号「<span class="keyword">YSP-XXXX-XX</span>」がついている。黒塗り部分（█）が文書ごとに違う。9つの文書の番号を見比べて、6桁の数字を特定しよう。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">答え</button>
         <div class="hint-content">
-          <span class="answer">ゆめスタジオプロダクション社員専用ページ（yumestudio/staff.html）で6桁コード「199703」を入力する。</span><br>
-          各文書の管理番号YSP-XXXX-XXの黒塗り部分を9つの文書で照合すると1-9-9-7-0-3が導出される。
+          <span class="answer">ゆめスタジオ社員専用ページ（yumestudio/staff.html）で「199703」を入力する。</span><br>
+          9つの文書の管理番号YSP-XXXX-XXの黒塗りを照合すると、各桁が特定できる：1-9-9-7-0-3。入力成功でNight4に直接遷移。
         </div>
       </div>
     </div>
@@ -212,15 +215,102 @@ h1{
     <div class="night-body">
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
-        <div class="hint-content">Night4クリア後、新しいアプリが使えるようになっている。デスクトップをよく見よう。</div>
+        <div class="hint-content">Night4クリア後、デスクトップに新しいアプリが出現している。それを開いてみよう。</div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
-        <div class="hint-content">システム端末を最深部まで進めると、何かが起きる。各レベルのパスコードはファイルの中にある。</div>
+        <div class="hint-content">システム端末のフォルダを読み進めよう。各レベルの最深部にパスコード入力欄がある。パスコードのヒントはそのレベルのファイル内に隠されている。Level5まで到達すると何かが起きる。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 3</button>
+        <div class="hint-content">
+          各レベルのヒント：<br>
+          L1→L2：Level1のファイル内に散りばめられた数字を探そう<br>
+          L2→L3：Level2のファイル内にコードが書かれている<br>
+          L3→L4：トレースログに注目。ある重要な起動日<br>
+          L4→L5：K-059の収集率に関係する数字
+        </div>
       </div>
       <div class="hint-step">
         <button class="hint-btn" onclick="revealHint(this)">答え</button>
-        <div class="hint-content"><span class="answer">システム端末（system/index.html）でLevel5まで到達する。COREプロセスの正体が明かされ、Night5へ遷移する。</span></div>
+        <div class="hint-content">
+          システム端末のパスコード：<br>
+          <span class="answer">L1→L2：「2847」</span><br>
+          <span class="answer">L2→L3：「GX07」</span><br>
+          <span class="answer">L3→L4：「1128」（ysp-core-01起動日=11月28日）</span><br>
+          <span class="answer">L4→L5：「0873」（K-059の収集率87.3%）</span><br>
+          Level5到達でCOREプロセスの正体が明かされ、Night5へ遷移する。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Night 6 -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      Night 6（EndB後）
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 1</button>
+        <div class="hint-content">Night5をクリアするとEndBが再生される。EndBの後、デスクトップに戻されたら——まだ終わっていない。メールを確認しよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">ヒント 2</button>
+        <div class="hint-content">EndB後に解放される<span class="keyword">吉田の調査ファイル（全15通）</span>を全て読もう。メール経由でアクセスできる。全て読了するとNight6への道が開く。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">答え</button>
+        <div class="hint-content">
+          Night6の解放には<span class="answer">3つの条件</span>が必要：<br>
+          <span class="answer">1. Night5クリア済み</span><br>
+          <span class="answer">2. EndB視聴済み</span><br>
+          <span class="answer">3. 吉田ファイル全15通読了済み</span><br>
+          全て満たすとデスクトップにNight6のアイコンが出現する。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FNaFゲームプレイヒント -->
+  <div class="night-block">
+    <div class="night-header" onclick="toggleNight(this)">
+      FNaFパート（ゲームプレイ）
+      <span class="toggle">[ + ]</span>
+    </div>
+    <div class="night-body">
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">基本操作</button>
+        <div class="hint-content">
+          カメラ（数字キーorクリック）で部屋を監視。左右ドアの開閉で侵入を防ぐ。<br>
+          全ての操作は電力を消費する。電力が0%になるとゲームオーバー。<br>
+          カメラOFFの時間を意識しよう——カメラを使わないことも電力節約になる。
+        </div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">キャラ対策：くるる</button>
+        <div class="hint-content">カメラで見つめると移動速度が低下する。定期的にカメラで位置を確認しよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">キャラ対策：まだら</button>
+        <div class="hint-content">カメラにほとんど映らない（透明度が非常に高い）。画面を注意深く見ないと存在に気づけない。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">キャラ対策：かすみ</button>
+        <div class="hint-content">電力を回復してくれるが、引き換えに敵の移動速度が上がる。電力が余裕のある時は受け取らない方がいい場合もある。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">キャラ対策：アラネ（Night4〜）</button>
+        <div class="hint-content">ダクトカメラ（Wキー）で巣ゲージを維持する。ゲージが0%になると突撃してくる。他の操作と並行して定期的にダクトを確認しよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">キャラ対策：よわり（Night5〜）</button>
+        <div class="hint-content">カメラのどこかに現れて泣き始める。泣いている間は全敵が加速し、蜘蛛の巣ドレインも倍増する。すぐに見つけて対処しよう。</div>
+      </div>
+      <div class="hint-step">
+        <button class="hint-btn" onclick="revealHint(this)">どうしてもクリアできない時</button>
+        <div class="hint-content">何度もゲームオーバーになると、少しずつゲームが簡単になっていく。電力の減りが遅くなり、敵の動きも穏やかになる。諦めずに挑戦し続けよう。</div>
       </div>
     </div>
   </div>
