@@ -347,9 +347,9 @@ L4['yoshida_control'] =
 '<h3>吉田一郎の操作経緯</h3>' +
 '<table class="sys-table">' +
 '<tr><th>時期</th><th>状況</th><th>操作手法</th></tr>' +
-'<tr><td>1990年</td><td>娘（あかね）を「検査」に連れてくる</td><td>「発達検査」名目。真の目的は知らされず。</td></tr>' +
-'<tr><td>1990-1993</td><td>罪悪感に苛まれながらも会社に残る</td><td>「あかねのデータを守るため」と説明。</td></tr>' +
-'<tr><td>1993-1996</td><td>退職→外部からの協力者に</td><td>「協力すればあかねのデータに会わせる」</td></tr>' +
+'<tr><td>1995年</td><td>娘（あかね）を「検査」に連れてくる</td><td>「発達検査」名目。真の目的は知らされず。</td></tr>' +
+'<tr><td>1995-1996</td><td>罪悪感に苛まれながらも会社に残る</td><td>「あかねのデータを守るため」と説明。</td></tr>' +
+'<tr><td>1996-1997</td><td>退職→外部からの協力者に</td><td>「協力すればあかねのデータに会わせる」</td></tr>' +
 '<tr><td>1997年</td><td>K-059プロジェクトに参加</td><td>「K-059を連れてくればあかねを復元する」</td></tr>' +
 '</table>' +
 '</div>' +
@@ -358,7 +358,7 @@ L4['yoshida_control'] =
 '<p>吉田一郎は<span class="anomaly">娘への愛情</span>を利用して操作されている。</p>' +
 '<p>「あかねを復元してやる」という約束は<span class="danger-text">虚偽</span>である。</p>' +
 '<p>実際には、あかねの意識断片を復元する技術は<span class="danger-text">存在しない</span>。</p>' +
-'<p>しかし吉田はこの約束を信じ（信じたいと思い）、36年間協力を続けてきた。</p>' +
+'<p>しかし吉田はこの約束を信じ（信じたいと思い）、2年間協力を続けてきた。</p>' +
 '</div>' +
 '<div class="doc-section">' +
 '<h3>リスク評価</h3>' +
@@ -398,11 +398,11 @@ L4['yoshida_promise'] =
 '</div>' +
 '<div class="doc-section">' +
 '<h3>約束の更新履歴</h3>' +
-'<div class="log-entry"><span class="log-ts">1993-05</span><span class="log-level info">UPDATE</span><span class="log-msg">「次の実験が成功すれば復元できる」→ G-4失敗。延期。</span></div>' +
-'<div class="log-entry"><span class="log-ts">1995-03</span><span class="log-level info">UPDATE</span><span class="log-msg">「新しい方法を見つけた。もう少し待て」→ 具体的計画なし。</span></div>' +
+'<div class="log-entry"><span class="log-ts">1996-05</span><span class="log-level info">UPDATE</span><span class="log-msg">「次の実験が成功すれば復元できる」→ G-4失敗。延期。</span></div>' +
+'<div class="log-entry"><span class="log-ts">1996-09</span><span class="log-level info">UPDATE</span><span class="log-msg">「新しい方法を見つけた。もう少し待て」→ 具体的計画なし。</span></div>' +
 '<div class="log-entry"><span class="log-ts">1996-11</span><span class="log-level info">UPDATE</span><span class="log-msg">「B2Fの新設備で可能になる」→ 設備の目的はK-059プロジェクト。</span></div>' +
 '<div class="log-entry"><span class="log-ts">1997-07</span><span class="log-level info">UPDATE</span><span class="log-msg">「K-059を連れてくれば復元する」→ 現行の約束。</span></div>' +
-'<p class="dim" style="margin-top:8px;">7年間にわたり約束を更新し続け、吉田を操作してきた。</p>' +
+'<p class="dim" style="margin-top:8px;">2年間にわたり約束を更新し続け、吉田を操作してきた。</p>' +
 '<p class="danger-text">吉田は「今度こそ本当だ」と信じるたびに、より深く従属する。</p>' +
 '</div>';
 

@@ -151,9 +151,17 @@ function init(){
   if(currentLevel >= 4) startSecurityLogTimer();
 }
 
+function goHome(){
+  currentFileId = null;
+  var allFiles = fileTreeEl.querySelectorAll('.tree-file');
+  allFiles.forEach(function(f){ f.classList.remove('active'); });
+  if(contentPathEl) contentPathEl.innerHTML = 'sys:// <span>ready</span>';
+  renderWelcome();
+}
+
 function renderFileTree(){
   if(!fileTreeEl) return;
-  var html = '';
+  var html = '<div class="tree-home" onclick="window.SYS.goHome()">◆ HOME</div>';
   FILE_TREE.forEach(function(item){
     if(item.folder){
       html += renderFolder(item, '');
@@ -321,7 +329,7 @@ function tryAccessCode(code){
     appendCommandOutput('> ACCESS DENIED: Invalid level target.');
     return;
   }
-  var normalized = code.replace(/[-\s]/g, '');
+  var normalized = code.replace(/[-\s「」『』「」『』""'']/g, '');
   if(normalized === expected || code === expected){
     currentLevel = nextLevel;
     setAccessLevel(currentLevel);
@@ -601,6 +609,7 @@ window.SYS = {
   init: init,
   toggleFolder: toggleFolder,
   openFile: openFile,
+  goHome: goHome,
   registerContent: registerContent,
   registerBulk: registerBulk,
   getLevel: getAccessLevel,

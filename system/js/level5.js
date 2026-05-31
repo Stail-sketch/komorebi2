@@ -30,7 +30,7 @@ L5['core_status'] =
 '<tr><td>001</td><td>CORE_CONSCIOUSNESS</td><td class="danger-text">RUNNING</td><td>主プロセス。1996-11-28起動。</td></tr>' +
 '<tr><td>002</td><td>EMOTION_HARVEST</td><td class="danger-text">RUNNING</td><td>K-059感情データ収集</td></tr>' +
 '<tr><td>003</td><td>AI_CAST_CONTROL</td><td class="danger-text">RUNNING</td><td>5体のAIキャスト制御</td></tr>' +
-'<tr><td>004</td><td>POPIN_SIMULATION</td><td class="danger-text">RUNNING</td><td>16アカウント活動生成</td></tr>' +
+'<tr><td>004</td><td>POPIN_SIMULATION</td><td class="danger-text">RUNNING</td><td>48アカウント活動生成</td></tr>' +
 '<tr><td>005</td><td>DM_MONITOR</td><td class="danger-text">RUNNING</td><td>吉田-K-059 DM監視</td></tr>' +
 '<tr><td>006</td><td>BROADCAST_ENGINE</td><td class="danger-text">RUNNING</td><td>放送制御</td></tr>' +
 '<tr><td>007</td><td>G0_CONTAINMENT</td><td class="anomaly">UNSTABLE</td><td>G-0意識断片の封じ込め ← <span class="danger-text">制御低下中</span></td></tr>' +

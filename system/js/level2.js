@@ -16,11 +16,11 @@ L2['aicast_overview'] =
 '<h3>ユニット一覧</h3>' +
 '<table class="sys-table">' +
 '<tr><th>ユニットID</th><th>キャラ名</th><th>種別</th><th>主要役割</th><th>テンプレート</th></tr>' +
-'<tr><td>CAST-01</td><td>くるる</td><td>ウサギ型</td><td>番組MC / 明るさ誘導</td><td class="anomaly">GX-07</td></tr>' +
+'<tr><td>CAST-01</td><td>くるる</td><td>リス型</td><td>番組MC / 明るさ誘導</td><td class="anomaly">GX-07</td></tr>' +
 '<tr><td>CAST-02</td><td>まだら</td><td>カメレオン型</td><td>分析 / 知的好奇心誘導</td><td class="anomaly">GX-07</td></tr>' +
 '<tr><td>CAST-03</td><td>アラネ</td><td>クモ型</td><td>データ追跡 / 不安誘導</td><td class="anomaly">GX-07</td></tr>' +
 '<tr><td>CAST-04</td><td>かすみ</td><td>シカ型</td><td>癒し / 信頼構築</td><td class="anomaly">GX-07</td></tr>' +
-'<tr><td>CAST-05</td><td>よわり</td><td>ネコ型</td><td>共感 / 悲哀誘導</td><td class="anomaly">GX-07</td></tr>' +
+'<tr><td>CAST-05</td><td>よわり</td><td>ヒツジ型</td><td>共感 / 悲哀誘導</td><td class="anomaly">GX-07</td></tr>' +
 '</table>' +
 '<p class="dim" style="margin-top:12px;">※ 全ユニットの意識テンプレートは同一のソースデータ（<span class="anomaly">GX-07</span>）から派生。</p>' +
 '<p class="dim">※ GX-07はB2Fに格納された原型意識データの分類コード。</p>' +
@@ -49,7 +49,7 @@ L2['aicast_kururu'] =
 '<tr><th>項目</th><th>値</th></tr>' +
 '<tr><td>ユニットID</td><td>CAST-01</td></tr>' +
 '<tr><td>キャラクター名</td><td>くるる</td></tr>' +
-'<tr><td>外見モデル</td><td>ウサギ型AI（ピンク基調、大きな耳）</td></tr>' +
+'<tr><td>外見モデル</td><td>リス型AI（ピンク基調、大きなしっぽ）</td></tr>' +
 '<tr><td>性格テンプレート</td><td>元気・前向き・好奇心旺盛・少しおっちょこちょい</td></tr>' +
 '<tr><td>声質</td><td>高め・明るい・テンポ速め</td></tr>' +
 '<tr><td>番組内役割</td><td>MC（番組進行・視聴者への呼びかけ）</td></tr>' +
@@ -195,7 +195,7 @@ L2['aicast_yowari'] =
 '<tr><th>項目</th><th>値</th></tr>' +
 '<tr><td>ユニットID</td><td>CAST-05</td></tr>' +
 '<tr><td>キャラクター名</td><td>よわり</td></tr>' +
-'<tr><td>外見モデル</td><td>ネコ型AI（灰色、大きな瞳、涙目）</td></tr>' +
+'<tr><td>外見モデル</td><td>ヒツジ型AI（灰色、大きな瞳、涙目）</td></tr>' +
 '<tr><td>性格テンプレート</td><td>臆病・感受性が高い・泣き虫・純粋</td></tr>' +
 '<tr><td>声質</td><td>小さい・震える・時々かすれる</td></tr>' +
 '<tr><td>番組内役割</td><td>感情的反応・視聴者の共感誘発</td></tr>' +
@@ -335,7 +335,7 @@ L2['popin_generation'] =
 '<h3>生成ルール</h3>' +
 '<pre style="color:var(--fg);font-size:12px;line-height:1.7;">' +
 '[ACCOUNT_GENERATION]\n' +
-'total_accounts     = 16\n' +
+'total_accounts     = 48\n' +
 'type               = AI_GENERATED\n' +
 'creation_date      = 1997-07-01 (一括)\n' +
 '\n' +
@@ -399,7 +399,7 @@ L2['popin_activity'] =
 '<div class="doc-section">' +
 '<h3>生成ステータス</h3>' +
 '<p>投稿生成エンジン: <span class="bright">ACTIVE</span></p>' +
-'<p>本日の投稿予定: 147件（16アカウント合計）</p>' +
+'<p>本日の投稿予定: 147件（48アカウント合計）</p>' +
 '<p>K-059の行動に連動した投稿: <span class="anomaly">23件</span>（リアルタイム生成）</p>' +
 '<p class="dim">※ K-059が特定のシーンを見た直後に「私も今の見た！」的な投稿を生成。同時視聴の錯覚を強化。</p>' +
 '</div>';

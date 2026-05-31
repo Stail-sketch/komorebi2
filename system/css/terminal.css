@@ -122,6 +122,15 @@ html,body{
 .file-tree{
   flex:1;overflow-y:auto;padding:4px 0;
 }
+.tree-home{
+  padding:6px 12px;cursor:pointer;
+  font-size:12px;color:var(--amber);
+  border-bottom:1px solid var(--border);
+  margin-bottom:4px;
+  transition:background 0.15s;
+}
+.tree-home:hover{background:var(--panel-hover);color:var(--fg-bright);}
+
 .tree-folder{
   user-select:none;
 }

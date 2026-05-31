@@ -236,8 +236,8 @@ L3['transfer_protocol'] =
 '<tr><th>被験者</th><th>転写率</th><th>判定</th></tr>' +
 '<tr><td>G-0 (あかね)</td><td class="danger-text">18%</td><td class="danger-text">失敗（断片のみ）</td></tr>' +
 '<tr><td>G-1</td><td class="bright">87%</td><td class="bright">成功</td></tr>' +
-'<tr><td>G-2</td><td class="bright">91%</td><td class="bright">成功</td></tr>' +
-'<tr><td>G-3</td><td class="bright">84%</td><td class="bright">成功</td></tr>' +
+'<tr><td>G-2</td><td class="bright">84%</td><td class="bright">成功</td></tr>' +
+'<tr><td>G-3</td><td class="bright">91%</td><td class="bright">成功</td></tr>' +
 '<tr><td>G-4</td><td class="danger-text">0%</td><td class="danger-text">完全失敗（データ消失）</td></tr>' +
 '</table>' +
 '<p class="dim" style="margin-top:8px;">G-0の失敗はプロトコルの未成熟が原因。G-4の失敗はハードウェア故障。</p>' +
@@ -246,7 +246,7 @@ L3['transfer_protocol'] =
 // ===== transfer/results.dat =====
 L3['transfer_results'] =
 '<div class="doc-title">転写結果報告書</div>' +
-'<div class="doc-meta">プロジェクト統括報告 | 1993年5月作成</div>' +
+'<div class="doc-meta">プロジェクト統括報告 | 1996年10月作成</div>' +
 '<div class="doc-section">' +
 '<h3>プロジェクト成果</h3>' +
 '<p>5名の被験者に対して意識転写を実施。結果:</p>' +
@@ -258,8 +258,8 @@ L3['transfer_results'] =
 '<h3>転写後の観察</h3>' +
 '<p>成功した3体のアニマトロニクス（かあ博士・うっきち・ぽたまる）は、元の被験者の性格特性を色濃く反映している。</p>' +
 '<p>特に注目すべき現象:</p>' +
-'<p>・うっきち（G-2）が番組収録中に「おかあさん」と発語（1992年12月の収録）</p>' +
-'<p>・ぽたまる（G-3）が知らない歌を歌い始める</p>' +
+'<p>・うっきち（G-3）が番組収録中に「おかあさん」と発語（1996年12月の収録）</p>' +
+'<p>・ぽたまる（G-2）が知らない歌を歌い始める</p>' +
 '<p>・かあ博士（G-1）が収録後に静止したまま「泣いているような音」を発する</p>' +
 '<p class="dim">これらの現象はプログラムに存在しない。被験者の記憶残滓と考えられる。</p>' +
 '</div>' +
