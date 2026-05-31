@@ -38,43 +38,8 @@
   ];
 
   // ===== 隠しキーワード → 内部文書 =====
+  // 名前で直接見つかるのは松本・田中のみ。他は文書内の固有用語から連鎖的に発見する設計。
   const hiddenIndex = [
-    {
-      keyword: ['1987'],
-      title: '設立準備委員会 第1回議事録',
-      url: 'hidden/minutes_1987.html',
-      snippet: '議事録　昭和62年3月　於：██████会議室 ——「本計画の第一段階として、児童向け番組の制作体制を整備する…」'
-    },
-    {
-      keyword: ['地下', '地下室', '地下施設'],
-      title: 'スタジオ施設 設備配置図（非公開版）',
-      url: 'hidden/blueprint.html',
-      snippet: '世田谷スタジオ 設備配置図 B1F ——「本図面は社外秘とし、関係者以外への開示を禁ずる」'
-    },
-    {
-      keyword: ['試作', '試作きつね', 'プロトタイプ'],
-      title: '試作アニマトロニクス開発記録',
-      url: 'hidden/prototype.html',
-      snippet: '試作1号機（キツネ型）開発記録 ——「量産機とは異なる独自の制御系統を搭載。本機は██████目的で開発された」'
-    },
-    {
-      keyword: ['視聴率', '0.0'],
-      title: '放送事故報告書（1993年11月13日）',
-      url: 'hidden/incident_report.html',
-      snippet: '報告書　第312回放送に関する事故報告 ——「当該回の視聴率 0.0% について、番組内容の確認を行ったところ…」'
-    },
-    {
-      keyword: ['最終回', '最終収録'],
-      title: '最終収録実施要領（内部通達）',
-      url: 'hidden/final_recording.html',
-      snippet: '通達　最終収録の実施について ——「本収録は通常の制作体制とは異なる特別体制で実施する。出演児童の手配は不要」'
-    },
-    {
-      keyword: ['マスターテープ', 'テープ', 'VHS'],
-      title: '映像素材保管台帳（消去前最終版）',
-      url: 'hidden/tape_catalog.html',
-      snippet: '映像素材保管台帳 1991-1997 ——「本台帳記載の全素材について、1998年██月██日付で消去処分を完了」'
-    },
     {
       keyword: ['松本', '松本幸男'],
       title: '技術部 松本幸男 社内報告メモ',
@@ -88,10 +53,46 @@
       snippet: '退職届　株式会社ゆめスタジオプロダクション 御中 ——「一身上の都合により…」（添付：田中恵子 私信メモ）'
     },
     {
-      keyword: ['台本', '台本なし'],
+      keyword: ['1号機', 'キツネ型'],
+      title: '試作アニマトロニクス開発記録',
+      url: 'hidden/prototype.html',
+      snippet: '試作1号機（キツネ型）開発記録 ——「量産機とは異なる独自の制御系統を搭載。本機は██████目的で開発された」'
+    },
+    {
+      keyword: ['B1F', 'Bスタジオ'],
+      title: 'スタジオ施設 設備配置図（非公開版）',
+      url: 'hidden/blueprint.html',
+      snippet: '世田谷スタジオ 設備配置図 B1F ——「本図面は社外秘とし、関係者以外への開示を禁ずる」'
+    },
+    {
+      keyword: ['台本なし', '台本なしで'],
       title: '演出指示書 第███回（台本なし収録）',
       url: 'hidden/script_order.html',
       snippet: '演出指示書 ——「本回はスクリプトを使用しない。アニマトロニクスの████応答テストを兼ねて実施する」'
+    },
+    {
+      keyword: ['意識転写', '意識転写プロトコル'],
+      title: '映像素材保管台帳（消去前最終版）',
+      url: 'hidden/tape_catalog.html',
+      snippet: '映像素材保管台帳 1991-1997 ——「本台帳記載の全素材について、1998年██月██日付で消去処分を完了」'
+    },
+    {
+      keyword: ['9月27日', '1997年9月'],
+      title: '最終収録実施要領（内部通達）',
+      url: 'hidden/final_recording.html',
+      snippet: '通達　最終収録の実施について ——「本収録は通常の制作体制とは異なる特別体制で実施する。出演児童の手配は不要」'
+    },
+    {
+      keyword: ['第130回', '11月13日', '0.0%'],
+      title: '放送事故報告書（1993年11月13日）',
+      url: 'hidden/incident_report.html',
+      snippet: '報告書　第312回放送に関する事故報告 ——「当該回の視聴率 0.0% について、番組内容の確認を行ったところ…」'
+    },
+    {
+      keyword: ['1987', '昭和62'],
+      title: '設立準備委員会 第1回議事録',
+      url: 'hidden/minutes_1987.html',
+      snippet: '議事録　昭和62年3月　於：██████会議室 ——「本計画の第一段階として、児童向け番組の制作体制を整備する…」'
     }
   ];
 
@@ -111,12 +112,23 @@
       }
     });
 
-    // 隠しキーワードチェック
+    // 隠しキーワードチェック（双方向＋スペース区切り対応）
+    const qWords = q.split(/[\s　]+/).filter(function(w){ return w.length > 0; });
     let hiddenResult = null;
     hiddenIndex.forEach(function(entry) {
+      if (hiddenResult) return;
       entry.keyword.forEach(function(kw) {
-        if (q === kw.toLowerCase() || q.indexOf(kw.toLowerCase()) !== -1) {
+        if (hiddenResult) return;
+        var kwl = kw.toLowerCase();
+        if (q === kwl || q.indexOf(kwl) !== -1 || kwl.indexOf(q) !== -1) {
           hiddenResult = { type: 'hidden', title: entry.title, url: entry.url, snippet: entry.snippet };
+          return;
+        }
+        for (var i = 0; i < qWords.length; i++) {
+          if (qWords[i] === kwl || qWords[i].indexOf(kwl) !== -1 || kwl.indexOf(qWords[i]) !== -1) {
+            hiddenResult = { type: 'hidden', title: entry.title, url: entry.url, snippet: entry.snippet };
+            return;
+          }
         }
       });
     });
